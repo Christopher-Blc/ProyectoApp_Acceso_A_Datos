@@ -4,9 +4,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from "./users/users.module";
 import { AppService } from "./app.service";
 import { AppController } from "./app.controller";
+import { ReservaModule } from './reserva/reserva.module';
+import { ComentarioModule } from './comentario/comentario.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, ReservaModule, ComentarioModule],
   controllers: [AppController],
   providers: [AppService],
 })
