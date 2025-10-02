@@ -1,8 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany } from "typeorm";
 import { Timestamp } from "typeorm/browser";
 import { Noti } from "src/noti/noti.entity";  // Importa la entidad Noti
-import { membresia } from "src/membresia/membresia.entity";
 import { Comentario } from "src/comentario/comentario.entity";
+import { Reserva } from "src/reserva/reserva.entity";
+import { membresia } from "src/membresia/membresia.entity";
+import { Pago } from "../pago/pago.entity";
+
 
 export enum UserRole {
     GESTOR_RESERVAS = "GESTOR_RESERVAS",
@@ -62,5 +65,11 @@ export class User {
 
   @OneToMany(() => Comentario, comentario => comentario.user)
   comentarios: Comentario[];
+
+  @OneToMany(() => Pago, pago => pago.usuario)
+  pagos: Pago[];
+
+  @ManyToMany(() => Reserva, reserva => reserva.usuarios)
+  reservas: Reserva[];
 
 }

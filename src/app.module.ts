@@ -1,4 +1,3 @@
-
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from "./users/users.module";
@@ -26,10 +25,10 @@ import { PistaModule } from './pista/pista.module';
       host: "localhost",
       port: 3306,
       username: "root",
-      password: "password",
+      password: "root",
       database: "test",
-      entities: [""],
-      //synchronize: true,
+      autoLoadEntities: true,
+      synchronize: true,
     }),
     UsersModule,
     ReservaModule,
