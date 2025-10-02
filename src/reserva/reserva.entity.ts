@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, OneToOne } from "typeorm";
 import { Timestamp } from "typeorm/browser";
 import { User } from "src/users/user.entity";  // Importa la entidad User
 import { Pista } from "src/pista/pista.entity"; // Importa la entidad Pista
+import { Pago } from "src/pago/pago.entity";
 
 export enum estadoReserva {
     CONFIRMADA = "CONFIRMADA",
@@ -50,4 +51,7 @@ export class Reserva {
 
   @ManyToOne(() => Pista, pista => pista.reservas)
   pista: Pista;
+
+  @OneToOne(() => Pago, pago => pago.reserva)
+  pago: Pago;
 }
