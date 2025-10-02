@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Reserva } from "src/reserva/reserva.entity"; // Importa la entidad Reserva
 
 export enum tipo_pista {
   TENIS = 'TENNIS',
@@ -63,4 +64,7 @@ export class Pista {
 
   @Column()
   numero: string;
+
+  @OneToMany(() => Reserva, reserva => reserva.pista)
+  reservas: Reserva[];
 }

@@ -14,9 +14,6 @@ export class Noti {
   @PrimaryGeneratedColumn({type: "int"})
   noti_id: number;
 
-  @Column()
-  usuario_id: number;
-
   @ManyToOne(() => User, user => user.notificaciones)
   user: User;
 

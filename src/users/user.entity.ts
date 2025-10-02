@@ -19,7 +19,7 @@ export class User {
   @PrimaryGeneratedColumn({type: "int"})
   usuario_id: number;
 
-  @OneToMany(() => Noti, noti => noti.usuario_id)
+  @OneToMany(() => Noti, noti => noti.user)
   notificaciones: Noti[];
 
   @Column()
