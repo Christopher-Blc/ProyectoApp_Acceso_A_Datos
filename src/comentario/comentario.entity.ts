@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne } from "typeorm";
 import { Timestamp } from "typeorm/browser";
 import { User } from "src/users/user.entity";
 import { Reserva } from "src/reserva/reserva.entity";
+import { Pista } from "src/pista/pista.entity"; // Importa la entidad Pista
 
 @Entity()
 export class Comentario {
@@ -28,4 +29,7 @@ export class Comentario {
 
   @OneToOne(() => Reserva, reserva => reserva.reserva_id)
   reserva: Reserva;
+  
+  @ManyToOne(() => Pista, pista => pista.comentarios)
+  pista: Pista;
 }
