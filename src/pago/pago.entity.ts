@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne} from "typeorm";
 import { Double } from "typeorm/browser";
+import { User } from "../users/user.entity";
 
 export enum metodo_pago {
 
@@ -22,7 +23,7 @@ export enum estado_pago {
 
 
 @Entity()
-export class User {
+export class Pago {
   @PrimaryGeneratedColumn({type: "int"})
   pago_id: number;
 
@@ -56,7 +57,6 @@ export class User {
   @Column()
   nota: string;
 
-
-  
-
+  @ManyToOne(() => User, user => user.pagos)
+  usuario: User;
 }
