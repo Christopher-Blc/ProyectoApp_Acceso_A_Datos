@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
 import { Timestamp } from "typeorm/browser";
+import { Noti } from "src/noti/noti.entity";  // Importa la entidad Noti
 
 import { membresia } from "src/membresia/membresia.entity";
 
@@ -14,6 +15,9 @@ export enum UserRole {
 export class User {
   @PrimaryGeneratedColumn({type: "int"})
   usuario_id: number;
+
+  @OneToMany(() => Noti, noti => noti.usuario_id)
+  notificaciones: Noti[];
 
   @Column()
   name: string;
@@ -55,6 +59,4 @@ export class User {
 
   @ManyToOne(() => membresia, membresia => membresia.users)
   membresia: membresia;
-
-
 }
