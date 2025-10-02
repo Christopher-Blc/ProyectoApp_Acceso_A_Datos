@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { Timestamp } from "typeorm/browser";
+import { Noti } from "src/noti/noti.entity";  // Importa la entidad Noti
 
 export enum UserRole {
     GESTOR_RESERVAS = "GESTOR_RESERVAS",
@@ -12,6 +13,9 @@ export enum UserRole {
 export class User {
   @PrimaryGeneratedColumn({type: "int"})
   usuario_id: number;
+
+  @OneToMany(() => Noti, noti => noti.user_id)
+  notificaciones: Noti[];
 
   @Column()
   name: string;
@@ -50,6 +54,5 @@ export class User {
 
   @Column()
   direccion: string;
-
 
 }

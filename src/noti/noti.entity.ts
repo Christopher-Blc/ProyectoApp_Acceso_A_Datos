@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne } from "typeorm";
 import { Timestamp } from "typeorm/browser";
+import { User } from "src/users/user.entity"; // Importa la entidad User
 
 export enum tipoNoti {
   AVISO = 'Aviso',
@@ -13,8 +14,8 @@ export class Noti {
   @PrimaryGeneratedColumn({type: "int"})
   noti_id: number;
 
-  @Column({type: "int"})
-  user_id: number; // Clave foranea de usuario
+  @ManyToOne(() => User, user => user.notificaciones)
+  user_id: User;
 
   @Column()
   mensaje: string;
