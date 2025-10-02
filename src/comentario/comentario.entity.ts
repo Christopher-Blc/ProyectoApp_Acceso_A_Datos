@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from "typeorm";
 import { Timestamp } from "typeorm/browser";
 import { User } from "src/users/user.entity";
+import { Reserva } from "src/reserva/reserva.entity";
 
 @Entity()
 export class Comentario {
@@ -24,4 +25,7 @@ export class Comentario {
 
   @OneToOne(() => User, user => user.usuario_id)
   user: User;
+
+  @OneToOne(() => Reserva, reserva => reserva.reserva_id)
+  reserva: Reserva;
 }

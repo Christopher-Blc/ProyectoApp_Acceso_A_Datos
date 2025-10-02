@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany } from "typeorm";
 import { Timestamp } from "typeorm/browser";
 import { User } from "src/users/user.entity";  // Importa la entidad User
+import { Comentario } from "src/comentario/comentario.entity"; // Importa la entidad Comentario
 
 export enum estadoReserva {
     CONFIRMADA = "CONFIRMADA",
@@ -46,4 +47,7 @@ export class Reserva {
 
   @ManyToMany(() => User, user => user.reservas)
   usuarios: User[];
+
+  @OneToMany(() => Comentario, comentario => comentario.reserva)
+  comentarios: Comentario[];
 }
