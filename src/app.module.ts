@@ -10,10 +10,12 @@ import { MembresiaModule } from './membresia/membresia.module';
 import { InstalacionModule } from './instalacion/instalacion.module';
 import { HorarioPistaModule } from './horario_pista/horario_pista.module';
 import { PagoModule } from './pago/pago.module';
+import { NotiModule } from './noti/noti.module';
+import { PistaModule } from './pista/pista.module';
 
 @Module({
-  imports: [UsersModule, MembresiaModule, InstalacionModule, HorarioPistaModule, PagoModule],
- controllers: [AppController],
+  imports: [UsersModule, ReservaModule, ComentarioModule, MembresiaModule, InstalacionModule, HorarioPistaModule, PagoModule, NotiModule, PistaModule],
+  controllers: [AppController],
   providers: [AppService],
 })
 
@@ -30,6 +32,14 @@ import { PagoModule } from './pago/pago.module';
       //synchronize: true,
     }),
     UsersModule,
+    ReservaModule,
+    ComentarioModule,
+    MembresiaModule,
+    InstalacionModule,
+    HorarioPistaModule,
+    PagoModule,
+    NotiModule,
+    PistaModule,
   ],
 })
 export class AppModule {}

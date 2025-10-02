@@ -1,5 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { Timestamp } from "typeorm/browser";
+
+import { membresia } from "src/membresia/membresia.entity";
 
 export enum UserRole {
     GESTOR_RESERVAS = "GESTOR_RESERVAS",
@@ -50,6 +52,9 @@ export class User {
 
   @Column()
   direccion: string;
+
+  @ManyToOne(() => membresia, membresia => membresia.users)
+  membresia: membresia;
 
 
 }

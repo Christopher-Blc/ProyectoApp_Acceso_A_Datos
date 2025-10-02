@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { Double } from "typeorm/browser";
+import { User } from "../users/user.entity";
 
 
 export enum estado_instalacion {
@@ -41,4 +42,6 @@ export class membresia {
   @Column()
   fecha_renovacion: Date;
 
+  @OneToMany(() => User, user => user.usuario_id)
+  users: User[];
 }
