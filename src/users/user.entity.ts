@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany } from "typeorm";
 import { Timestamp } from "typeorm/browser";
 import { Noti } from "src/noti/noti.entity";  // Importa la entidad Noti
+import { Reserva } from "src/reserva/reserva.entity";
 
 import { membresia } from "src/membresia/membresia.entity";
 
@@ -59,4 +60,7 @@ export class User {
 
   @ManyToOne(() => membresia, membresia => membresia.users)
   membresia: membresia;
+
+  @ManyToMany(() => Reserva, reserva => reserva.usuarios)
+  reservas: Reserva[];
 }
