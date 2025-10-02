@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne} from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne} from "typeorm";
 import { Double } from "typeorm/browser";
-import { User } from "../users/user.entity";
+import { User } from "../users/user.entity"; // Importa la entidad User
+import { Reserva } from "src/reserva/reserva.entity"; // Importa la entidad Reserva
 
 export enum metodo_pago {
 
@@ -59,4 +60,8 @@ export class Pago {
 
   @ManyToOne(() => User, user => user.pagos)
   usuario: User;
+
+  @OneToOne(() => Reserva, reserva => reserva.pago)
+  reserva: Reserva;
+
 }
