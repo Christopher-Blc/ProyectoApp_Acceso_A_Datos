@@ -63,7 +63,7 @@ export class User {
   @ManyToOne(() => membresia, membresia => membresia.users)
   membresia: membresia;
 
-  @OneToMany(() => Comentario, comentario => comentario.user)
+  @OneToMany(() => Comentario, comentario => comentario.users)
   comentarios: Comentario[];
 
   @OneToMany(() => Pago, pago => pago.usuario)

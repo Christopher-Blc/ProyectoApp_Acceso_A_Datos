@@ -23,8 +23,8 @@ export class Comentario {
   @Column()
   visible: boolean;
 
-  @OneToOne(() => User, user => user.usuario_id)
-  user: User;
+  @OneToOne(() => User, users => users.usuario_id)
+  users: User;
 
   @OneToOne(() => Reserva, reserva => reserva.reserva_id)
   reserva: Reserva;
