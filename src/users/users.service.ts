@@ -18,7 +18,7 @@ export class UserService {
   async findAll(): Promise<User[]> {
     // Llamamos al método find() de TypeORM para traer todos los usuarios
     // Incluimos las relaciones (por ejemplo, las reservas del usuario)
-    return this.userRepo.find({ relations: ['reserva'] });
+    return this.userRepo.find({ relations: ['reservas'] });
   }
 
   // 🔹 Método para obtener un usuario por su ID
@@ -27,7 +27,7 @@ export class UserService {
     // También cargamos las reservas relacionadas con ese usuario
     const user = await this.userRepo.findOne({
       where: { usuario_id: usuario_id },
-      relations: ['reserva'],
+      relations: ['reservas'],
     });
     if (!user) {
       throw new Error(`Usuario ${usuario_id} no encontrado`); // Lanzamos un error si no se encuentra el usuario
