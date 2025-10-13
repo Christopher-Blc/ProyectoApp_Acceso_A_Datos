@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from "typeorm";
-import { Timestamp } from "typeorm/browser";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, OneToOne } from "typeorm";
 import { User } from "src/users/user.entity";  // Importa la entidad User
+import { Pista } from "src/pista/pista.entity"; // Importa la entidad Pista
+import { Pago } from "src/pago/pago.entity";
 
 export enum estadoReserva {
     CONFIRMADA = "CONFIRMADA",
@@ -36,7 +37,7 @@ export class Reserva {
   precio_total: number;
 
   @Column()
-  fecha_creacion: Timestamp;
+  fecha_creacion: Date;
 
   @Column()
   codigo_reserva: string;
@@ -46,4 +47,10 @@ export class Reserva {
 
   @ManyToMany(() => User, user => user.reservas)
   usuarios: User[];
+
+  @ManyToOne(() => Pista, pista => pista.reservas)
+  pista: Pista;
+
+  @OneToOne(() => Pago, pago => pago.reserva)
+  pago: Pago;
 }

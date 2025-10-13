@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Pista } from "src/pista/pista.entity"; // Importa la entidad Pista
 
 @Entity()
-export class User {
+export class Instalacion {
   @PrimaryGeneratedColumn({type: "int"})
   instalacion_id: number;
 
@@ -36,5 +37,6 @@ export class User {
   @Column()
   horario_cierre: Date;
 
-
+  @ManyToOne(() => Pista, pista => pista.instalacion_id)
+  pista: Pista;
 }

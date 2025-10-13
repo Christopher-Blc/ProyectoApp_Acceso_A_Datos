@@ -1,5 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { Reserva } from "src/reserva/reserva.entity"; // Importa la entidad Reserva
+import { Comentario } from "src/comentario/comentario.entity"; // Importa la entidad Comentario
+import { Horario_Pista } from "src/horario_pista/horario_pista.entity"; // Importa la entidad Horario_Pista
+import { Instalacion } from "src/instalacion/instalacion.entity"; // Importa la entidad Instalacion
 
 export enum tipo_pista {
   TENIS = 'TENNIS',
@@ -67,4 +70,13 @@ export class Pista {
 
   @OneToMany(() => Reserva, reserva => reserva.pista)
   reservas: Reserva[];
+
+  @OneToMany(() => Comentario, comentario => comentario.pista)
+  comentarios: Comentario[];
+
+  @OneToMany(() => Horario_Pista, (horario: Horario_Pista) => horario.pista)
+  horarios: Horario_Pista[];
+
+  @OneToMany(() => Instalacion, instalacion => instalacion.instalacion_id)
+  instalaciones: Instalacion[];
 }

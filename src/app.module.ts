@@ -12,18 +12,14 @@ import { PagoModule } from './pago/pago.module';
 import { NotiModule } from './noti/noti.module';
 import { PistaModule } from './pista/pista.module';
 
-@Module({
-  imports: [UsersModule, ReservaModule, ComentarioModule, MembresiaModule, InstalacionModule, HorarioPistaModule, PagoModule, NotiModule, PistaModule],
-  controllers: [AppController],
-  providers: [AppService],
-})
+
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: "mysql",
       host: "localhost",
-      port: 3306,
+      port: 8889,
       username: "root",
       password: "root",
       database: "test",
@@ -40,5 +36,7 @@ import { PistaModule } from './pista/pista.module';
     NotiModule,
     PistaModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

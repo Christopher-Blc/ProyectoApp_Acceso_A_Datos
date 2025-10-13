@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Pista } from "src/pista/pista.entity"; // Importa la entidad Pista
 
 export enum dia_semana {
   LUNES = "Lunes",
@@ -10,13 +11,13 @@ export enum dia_semana {
   DOMINGO = "Domingo"
 }
 
-@Entity()
-export class User {
+@Entity("horario_pista")
+export class Horario_Pista {
   @PrimaryGeneratedColumn({type: "int"})
   horario_id: number;
 
-  @Column()
-  pista_id: string;//llave secundaria que viene de la tabla pista
+  @Column({type: "int"})
+  pista_id: number;//llave secundaria que viene de la tabla pista
 
   @Column({
     type: "enum",
@@ -36,5 +37,6 @@ export class User {
   @Column({type: "int"})
   intervalos_minutos: number;
 
-
+ @ManyToOne(() => Pista, pista => pista.horarios)
+ pista: Pista;
 }

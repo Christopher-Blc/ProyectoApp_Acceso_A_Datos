@@ -1,9 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany } from "typeorm";
-import { Timestamp } from "typeorm/browser";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany, JoinTable } from "typeorm";
 import { Noti } from "src/noti/noti.entity";  // Importa la entidad Noti
 import { Comentario } from "src/comentario/comentario.entity";
 import { Reserva } from "src/reserva/reserva.entity";
-import { membresia } from "src/membresia/membresia.entity";
+import { Membresia } from "src/membresia/membresia.entity";
 import { Pago } from "../pago/pago.entity";
 
 
@@ -49,10 +48,10 @@ export class User {
   isActive: boolean;
 
   @Column()
-  fecha_registro: Timestamp;
+  fecha_registro: Date;
 
   @Column()
-  fecha_ultimo_login: Timestamp;
+  fecha_ultimo_login: Date;
 
   @Column()
   fecha_nacimiento: Date;
@@ -60,8 +59,8 @@ export class User {
   @Column()
   direccion: string;
 
-  @ManyToOne(() => membresia, membresia => membresia.users)
-  membresia: membresia;
+  @ManyToOne(() => Membresia, membresia => membresia.users)
+  membresia: Membresia;
 
   @OneToMany(() => Comentario, comentario => comentario.users)
   comentarios: Comentario[];
@@ -70,6 +69,7 @@ export class User {
   pagos: Pago[];
 
   @ManyToMany(() => Reserva, reserva => reserva.usuarios)
+  @JoinTable()
   reservas: Reserva[];
 
 }

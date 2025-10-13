@@ -1,7 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from "typeorm";
-import { Timestamp } from "typeorm/browser";
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne } from "typeorm";
 import { User } from "src/users/user.entity";
 import { Reserva } from "src/reserva/reserva.entity";
+import { Pista } from "src/pista/pista.entity"; // Importa la entidad Pista
 
 @Entity()
 export class Comentario {
@@ -12,20 +12,23 @@ export class Comentario {
   titulo: string;
 
   @Column()
-  texto: Text;
+  texto: string;
 
   @Column({type: "int"})
   calificacion: number;
 
   @Column()
-  fecha_comentario: Timestamp;
+  fecha_comentario: Date;
 
   @Column()
   visible: boolean;
 
-  @OneToOne(() => User, users => users.usuario_id)
-  users: User;
+  @OneToOne(() => User, user => user.usuario_id)
+  user: User;
 
   @OneToOne(() => Reserva, reserva => reserva.reserva_id)
   reserva: Reserva;
+  
+  @ManyToOne(() => Pista, pista => pista.comentarios)
+  pista: Pista;
 }
