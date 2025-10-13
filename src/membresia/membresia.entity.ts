@@ -1,5 +1,4 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
-import { Double } from "typeorm/browser";
 import { User } from "../users/user.entity";
 
 
@@ -10,7 +9,7 @@ export enum estado_instalacion {
 }
 
 @Entity()
-export class membresia {
+export class Membresia {
   @PrimaryGeneratedColumn({type: "int"})
   membresia_id: number;
 
@@ -33,8 +32,8 @@ export class membresia {
   })
   estado: estado_instalacion;
 
-  @Column()
-  descuento: Double;
+  @Column({type: "decimal", precision: 10, scale: 2})
+  descuento: number;
 
   @Column()
   renovable: boolean;
@@ -42,6 +41,7 @@ export class membresia {
   @Column()
   fecha_renovacion: Date;
 
-  @OneToMany(() => User, user => user.usuario_id)
+  @OneToMany(() => User, user => user.membresia)
   users: User[];
+
 }

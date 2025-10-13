@@ -1,5 +1,4 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, OneToOne } from "typeorm";
-import { Timestamp } from "typeorm/browser";
 import { User } from "src/users/user.entity";  // Importa la entidad User
 import { Pista } from "src/pista/pista.entity"; // Importa la entidad Pista
 import { Pago } from "src/pago/pago.entity";
@@ -38,7 +37,7 @@ export class Reserva {
   precio_total: number;
 
   @Column()
-  fecha_creacion: Timestamp;
+  fecha_creacion: Date;
 
   @Column()
   codigo_reserva: string;
