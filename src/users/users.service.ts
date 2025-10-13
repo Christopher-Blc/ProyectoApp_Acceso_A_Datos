@@ -1,13 +1,7 @@
 // Importamos el decorador Injectable para poder inyectar este servicio en otros módulos
 import { Injectable } from '@nestjs/common';
-
-// Importamos el decorador InjectRepository para acceder al repositorio de TypeORM
 import { InjectRepository } from '@nestjs/typeorm';
-
-// Importamos la clase Repository de TypeORM, que nos da los métodos para interactuar con la base de datos
 import { Repository } from 'typeorm';
-
-// Importamos la entidad User (nuestra tabla en la base de datos)
 import { User } from './user.entity';
 import { UserDto } from './users.dto';
 
@@ -63,5 +57,4 @@ export class UserService {
   async remove(usuario_id: number): Promise<void> {
     // Borramos el registro que tenga el ID indicado
     await this.userRepo.delete(usuario_id);
-  }
-}
+  }}
