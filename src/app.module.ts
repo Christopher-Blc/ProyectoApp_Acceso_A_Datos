@@ -17,12 +17,12 @@ import { PistaModule } from './pista/pista.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: "mysql",
-      host: "localhost",
-      port: 8889,
-      username: "root",
-      password: "root",
-      database: "test",
+      type: 'mysql',
+      host:'localhost',
+      port: 2222,                             
+      username: process.env.MYSQL_USER || 'root',
+      password: process.env.MYSQL_PASSWORD || 'my-secret-pw',
+      database: process.env.MYSQL_DATABASE || 'test',
       autoLoadEntities: true,
       synchronize: true,
     }),

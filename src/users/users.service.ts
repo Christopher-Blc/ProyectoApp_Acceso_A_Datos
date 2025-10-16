@@ -57,4 +57,5 @@ export class UserService {
   async remove(usuario_id: number): Promise<void> {
     // Borramos el registro que tenga el ID indicado
     await this.userRepo.delete(usuario_id);
-  }}
+  }
+}

@@ -1,0 +1,45 @@
+
+services:
+  web_server:
+    build: .
+    container_name: APP-respi-webserver
+    ports:
+      - "${WEB_SERVER_PORT}:3000"
+    working_dir: /app
+    command: npm run start:dev
+    volumes:
+      - ./volumen_webserver:/app
+    depends_on:
+      - database
+    environment:
+      - TZ=Europe/Berlin
+    restart: always
+
+  database:
+    image: yobasystems/alpine-mariadb:11.4.5
+    container_name: APP-respi-db
+    ports:
+      - "2222:3306"
+    restart: always
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=Europe/Berlin
+    volumes:
+      - ./data/db/mysql:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: APP-respi-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      - database
+    restart: always

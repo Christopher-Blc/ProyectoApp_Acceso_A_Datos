@@ -1,0 +1,14 @@
+WEB_SERVER_PORT=8080
+MYSQL_ROOT_PASSWORD=my-secret-pw
+MYSQL_DATABASE=specify the name of the database
+MYSQL_USER=specify the User for the database
+MYSQL_PASSWORD=specify the User password for the database
+MYSQL_ROOT_PASSWORD=specify the root password for Mariadb
+MAIL_USER=mailUser
+MAIL_CLIENT_ID=Nothing
+MAIL_PASSWORD=passwordEmail
+ENABLE_TOKEN_VALIDATION=false
+MONGODB_URI=mongodb://admin:password@mongodb:27017/inventory
+MONGO_INITDB_ROOT_USERNAME=admin
+MONGO_INITDB_ROOT_PASSWORD=password
+MONGO_INITDB_DATABASE=inventory

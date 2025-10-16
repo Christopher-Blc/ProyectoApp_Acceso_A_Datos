@@ -66,7 +66,7 @@ export class Pista {
   estado: EstadoPista;
 
   @Column()
-  numero: string;
+  numero: number;
 
   @OneToMany(() => Reserva, reserva => reserva.pista)
   reservas: Reserva[];
