@@ -10,7 +10,7 @@ export class ComentarioDto {
 
     @IsOptional()
     @IsString()
-    texto: String;
+    texto: string;
 
     @IsNumber()
     calificacion: number;
