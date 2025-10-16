@@ -30,8 +30,8 @@ export class UserDto {
 
   // Fechas
   @IsDateString()
-  fecha_nacimiento?: Date;
+  fecha_nacimiento: Date;
 
   @IsString()
-  direccion?: string;
+  direccion: string;
 }
