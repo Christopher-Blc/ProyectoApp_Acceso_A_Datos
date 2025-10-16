@@ -3,10 +3,11 @@ import { Double } from "typeorm/browser";
 import { User } from "../users/user.entity";
 
 
-export enum estado_instalacion {
-  ACTIVA = "activa",
-  EN_MANTENIMIENTO = "En mantenimiento",
-  INACTIVA = "Inactiva"
+export enum estado_membresia {
+  FINALIZADA = "finalizada",
+  A_PAGAR = "a_pagar",
+  CONFIRMADA = "confirmada",
+  ACTIVA = "activa"
 }
 
 @Entity()
@@ -28,10 +29,10 @@ export class membresia {
 
   @Column({
     type: "enum",
-    enum: estado_instalacion,
-    default: estado_instalacion.INACTIVA, // valor por defecto
+    enum: estado_membresia,
+    default: estado_membresia.FINALIZADA, // valor por defecto
   })
-  estado: estado_instalacion;
+  estado: estado_membresia;
 
   @Column()
   descuento: Double;

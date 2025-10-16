@@ -1,11 +1,15 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { Pista } from "src/pista/pista.entity"; // Importa la entidad Pista
 
+export enum estado_instalacion {
+  ACTIVA = "activa", 
+  EN_MANTENIMIENTO = "en_mantenimiento",
+  INACTIVA = "inactiva"
+}
 @Entity()
 export class Instalacion {
   @PrimaryGeneratedColumn({type: "int"})
   instalacion_id: number;
-
   
   @Column()
   nombre: string;
@@ -28,8 +32,12 @@ export class Instalacion {
   @Column()
   fecha_creacion: Date;
 
-  @Column()
-  estado: string;//tendra que ser un enum
+  @Column({
+      type: "enum",
+      enum: estado_instalacion,
+      default: estado_instalacion.INACTIVA, // valor por defecto
+    })
+    estado: estado_instalacion;
 
   @Column()
   horario_apertura: Date;

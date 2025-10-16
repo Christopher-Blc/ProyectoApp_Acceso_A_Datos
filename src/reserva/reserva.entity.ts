@@ -38,7 +38,7 @@ export class Reserva {
   precio_total: number;
 
   @Column()
-  fecha_creacion: Timestamp;
+  fecha_creacion: Date;
 
   @Column()
   codigo_reserva: string;

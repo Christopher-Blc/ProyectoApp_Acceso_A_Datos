@@ -1,13 +1,6 @@
-// Importamos el decorador Injectable para poder inyectar este servicio en otros módulos
 import { Injectable } from '@nestjs/common';
-
-// Importamos el decorador InjectRepository para acceder al repositorio de TypeORM
 import { InjectRepository } from '@nestjs/typeorm';
-
-// Importamos la clase Repository de TypeORM, que nos da los métodos para interactuar con la base de datos
 import { Repository } from 'typeorm';
-
-// Importamos la entidad User (nuestra tabla en la base de datos)
 import { User } from './user.entity';
 import { UserDto } from './users.dto';
 
@@ -24,7 +17,7 @@ export class UserService {
   async findAll(): Promise<User[]> {
     // Llamamos al método find() de TypeORM para traer todos los usuarios
     // Incluimos las relaciones (por ejemplo, las reservas del usuario)
-    return this.userRepo.find({ relations: ['reserva'] });
+    return this.userRepo.find({ relations: ['reserva', 'membresia', 'pago', 'comentario'] });
   }
 
   // 🔹 Método para obtener un usuario por su ID
@@ -33,7 +26,7 @@ export class UserService {
     // También cargamos las reservas relacionadas con ese usuario
     const user = await this.userRepo.findOne({
       where: { usuario_id: usuario_id },
-      relations: ['reserva'],
+      relations: ['reserva', 'membresia', 'pago', 'comentario'],
     });
     if (!user) {
       throw new Error(`Usuario ${usuario_id} no encontrado`); // Lanzamos un error si no se encuentra el usuario
