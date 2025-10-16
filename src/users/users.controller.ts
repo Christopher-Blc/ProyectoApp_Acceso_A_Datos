@@ -1,39 +1,39 @@
 import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
-import { UserService } from './users.service';
+import { UsersService } from './users.service';
 import { UserDto } from './users.dto';
 import { User } from './user.entity';
 
 @Controller('users') // La ruta base para este controlador será /users
 export class UsersController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UsersService) {}
 
-  // 🔹 GET /users -> obtener todos los usuarios
+  // GET /users -> obtener todos los usuarios
   @Get()
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
 
-  // 🔹 GET /users/:id -> obtener un usuario por ID
+  // GET /users/:id -> obtener un usuario por ID
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<User> {
+  async findOne(@Param('id') id: number): Promise<User | null> {
     return this.userService.findOne(id);
   }
 
-  // 🔹 POST /users -> crear un nuevo usuario
+  // POST /users -> crear un nuevo usuario
   @Post()
-  async create(@Body() userDto: UserDto): Promise<User> {
+  async create(@Body() userDto: UserDto): Promise<User | null> {
     return this.userService.create(userDto);
   }
 
-  // 🔹 PUT /users/:id -> actualizar un usuario existente
+  // PUT /users/:id -> actualizar un usuario existente
   @Put(':id')
-  async update(@Param('id') id: number, @Body() userDto: UserDto): Promise<User> {
+  async update(@Param('id') id: number, @Body() userDto: UserDto): Promise<User | null> {
     return this.userService.update(id, userDto);
   }
 
-  // 🔹 DELETE /users/:id -> eliminar un usuario
+  // DELETE /users/:id -> eliminar un usuario
   @Delete(':id')
-  async remove(@Param('id') id: number): Promise<void> {
+  async remove(@Param('id') id: number): Promise<void | { deleted: boolean }> {
     return this.userService.remove(id);
   }
 }

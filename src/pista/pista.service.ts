@@ -51,4 +51,4 @@ export class PistaService {
 
         await this.pistaRepo.delete(pista_id);
     }
-}
+  }

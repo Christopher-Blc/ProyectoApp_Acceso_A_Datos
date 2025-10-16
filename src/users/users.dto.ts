@@ -1,8 +1,12 @@
 
-import { IsString, IsEmail, IsBoolean, IsPhoneNumber, IsEnum, IsOptional, IsDateString } from 'class-validator';
+import { IsString, IsEmail, IsBoolean, IsPhoneNumber, IsEnum, IsOptional, IsDateString, IsNumber } from 'class-validator';
 import { UserRole } from './user.entity'; // Importamos el enum UserRole desde user.entity
 
 export class UserDto {
+  @IsOptional()
+  @IsNumber()
+  user_id: number;
+
   @IsString()
   name: string;
 
@@ -30,8 +34,8 @@ export class UserDto {
 
   // Fechas
   @IsDateString()
-  fecha_nacimiento?: Date;
+  fecha_nacimiento: Date;
 
   @IsString()
-  direccion?: string;
+  direccion: string;
 }

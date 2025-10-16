@@ -13,9 +13,6 @@ export class Noti {
   @PrimaryGeneratedColumn({type: "int"})
   noti_id: number;
 
-  @ManyToOne(() => User, user => user.notificaciones)
-  user: User;
-
   @Column()
   mensaje: string;
 
@@ -34,4 +31,7 @@ export class Noti {
 
   @Column()
   fecha: Date;
+
+   @ManyToOne(() => User, user => user.notificaciones)
+  user: User;
 }

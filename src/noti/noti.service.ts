@@ -1,4 +1,40 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Noti } from './noti.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class NotiService {}
+export class NotiService {
+    constructor( 
+        @InjectRepository(Noti)
+        private readonly notiRepository: Repository<Noti>,
+    ){}
+
+    findAll() {
+        return this.notiRepository.find({
+            relations: ['user'],
+        });
+    }
+
+    findOne(noti_id: number) {
+        return this.notiRepository.findOne({
+            where: { noti_id },
+            relations: ['user'],
+        });
+    }
+
+    async create(data: Partial<Noti>) {
+        const noti = this.notiRepository.create(data);
+        return this.notiRepository.save(noti);
+    }
+
+    async update(noti_id: number, data: Partial<Noti>) {
+        await this.notiRepository.update(noti_id, data);
+        return this.findOne(noti_id);
+    }
+
+    async remove (id: number) {
+        await this.notiRepository.delete(id);
+        return { deleted: true };
+    }
+}
