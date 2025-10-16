@@ -6,7 +6,7 @@ import { Pista } from "src/pista/pista.entity"; // Importa la entidad Pista
 @Entity()
 export class Comentario {
   @PrimaryGeneratedColumn({ type: "int" })
-  reserva_id: number;
+  comentario_id: number;
 
   @Column()
   titulo: string;
