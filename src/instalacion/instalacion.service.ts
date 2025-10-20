@@ -8,7 +8,7 @@ import { InstalacionDto } from './instalacion.dto';
 export class InstalacionService {
     constructor(
         @InjectRepository(Instalacion)
-        private instalacionRepository: Repository<Instalacion>,
+        private readonly instalacionRepository: Repository<Instalacion>,
     ) {}
 
     async findAll(): Promise<Instalacion[]> {

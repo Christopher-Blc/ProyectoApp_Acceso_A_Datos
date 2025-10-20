@@ -11,32 +11,33 @@ export class MembresiaService {
             private readonly Repo: Repository<Membresia>,
         ) {}
 
-    async findAll(): Promise<Membresia[]> {
-        return this.Repo.find({ relations: ['users'] });
-    }
 
-    async findOne(membresia_id: number): Promise<Membresia> {
-        const membresia = await this.Repo.findOne({
-            where: { membresia_id: membresia_id },
-            relations: ['users'],
-        });
-        if (!membresia) {
-            throw new Error(`Membresia ${membresia_id} no encontrada`);
+        async findAll(): Promise<Membresia[]> {
+            return this.Repo.find({ relations: ['users'] });
         }
-        return membresia;
-    }
 
-    async create(info_membresia: MembresiaDto){
-        const newMembresia = this.Repo.create(info_membresia)
-        return this.Repo.save(newMembresia);
-    }
+        async findOne(membresia_id: number): Promise<Membresia> {
+            const membresia = await this.Repo.findOne({
+                where: { membresia_id: membresia_id },
+                relations: ['users'],
+            });
+            if (!membresia) {
+                throw new Error(`Membresia ${membresia_id} no encontrada`);
+            }
+            return membresia;
+        }
 
-    async update(membresia_id: number, info_membresia: MembresiaDto): Promise<Membresia>{
-        await this.Repo.update(membresia_id, info_membresia);
-        return this.findOne(membresia_id);
-    }
+        async create(info_membresia: MembresiaDto){
+            const newMembresia = this.Repo.create(info_membresia)
+            return this.Repo.save(newMembresia);
+        }
 
-    async remove(membresia_id: number): Promise<void>{
-        await this.Repo.delete(membresia_id);
-    }
+        async update(membresia_id: number, info_membresia: MembresiaDto): Promise<Membresia>{
+            await this.Repo.update(membresia_id, info_membresia);
+            return this.findOne(membresia_id);
+        }
+
+        async remove(membresia_id: number): Promise<void>{
+            await this.Repo.delete(membresia_id);
+        }
 }
