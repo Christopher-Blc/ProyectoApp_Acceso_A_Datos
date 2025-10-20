@@ -8,7 +8,7 @@ import { ComentarioDto } from './comentario.dto';
 export class ComentarioService {
     constructor(
         @InjectRepository(Comentario)
-        private comentarioRepository: Repository<Comentario>,
+        private readonly comentarioRepository: Repository<Comentario>,
     ) {}
 
     async findAll(): Promise<Comentario[]> {
