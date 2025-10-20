@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
 import { Reserva } from './reserva.entity';
 import { ReservaDto } from './reserva.dto';
+import { ReservaService } from './reserva.service';
 
 @Controller('reserva')
 export class ReservaController {
-      constructor(private readonly reservaService: ReservaController) {}
+      constructor(private readonly reservaService: ReservaService) {}
     
       @Get()
       async findAll(): Promise<Reserva[]> {
@@ -12,7 +13,7 @@ export class ReservaController {
       }
 
       @Get(':id')
-      async findOne(@Param(':id') id:number): Promise<Reserva | null> {
+      async findOne(@Param('id') id:number): Promise<Reserva | null> {
         return this.reservaService.findOne(id);
       }
 
@@ -22,7 +23,7 @@ export class ReservaController {
       }
 
       @Put(':id')
-      async update(@Param(':id') id: number, @Body() reservaDto: ReservaDto): Promise<Reserva | null> {
+      async update(@Param('id') id: number, @Body() reservaDto: ReservaDto): Promise<Reserva | null> {
         return this.reservaService.update(id,reservaDto);
       }
 
