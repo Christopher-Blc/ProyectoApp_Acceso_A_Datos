@@ -33,5 +33,9 @@ export class PagoService {
         await this.pagoRepository.update(pago_id, data);
         return this.findOne(pago_id);
     }
+
+    async remove(pago_id: number): Promise<void> {
+        await this.pagoRepository.delete(pago_id)
+    }
     
 }
