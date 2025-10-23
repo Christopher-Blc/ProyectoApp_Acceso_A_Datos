@@ -10,6 +10,7 @@ import { Pago } from "./pago/pago.entity";
 import { Pista } from "./pista/pista.entity";
 import { Instalacion } from "./instalacion/instalacion.entity";
 import { Horario_Pista } from "./horario_pista/horario_pista.entity";
+import { ReservaSeeder } from "./db/seeding/seeds/reservas.seeder";
 
 
 const options: DataSourceOptions & SeederOptions = {
@@ -35,6 +36,7 @@ const options: DataSourceOptions & SeederOptions = {
   ],
   seeds: [
     UserSeeder,
+    ReservaSeeder
   ],
 };
 

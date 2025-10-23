@@ -1,4 +1,4 @@
-import { estadoReserva } from "src/reserva/reserva.entity";
+import { estadoReserva } from "../reserva/reserva.entity";
 
 export default [
     {

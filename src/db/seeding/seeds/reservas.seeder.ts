@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { resetEnv, Seeder } from 'typeorm-extension';
-import { Reserva } from 'src/reserva/reserva.entity';
+import { Reserva } from '../../../reserva/reserva.entity';
 import reservaData from '../../../data_info/inventory_reserva';
 
 export class ReservaSeeder implements Seeder {
