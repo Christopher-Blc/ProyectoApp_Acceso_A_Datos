@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne } from "typeorm";
-import { User } from "src/users/user.entity";
-import { Reserva } from "src/reserva/reserva.entity";
-import { Pista } from "src/pista/pista.entity"; // Importa la entidad Pista
+import { User } from "../users/user.entity";
+import { Reserva } from "../reserva/reserva.entity";
+import { Pista } from "../pista/pista.entity"; // Importa la entidad Pista
 
 @Entity()
 export class Comentario {

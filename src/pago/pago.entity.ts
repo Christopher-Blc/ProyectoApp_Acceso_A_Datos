@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne} from "typeorm";
 import { User } from "../users/user.entity"; // Importa la entidad User
-import { Reserva } from "src/reserva/reserva.entity"; // Importa la entidad Reserva
+import { Reserva } from "../reserva/reserva.entity"; // Importa la entidad Reserva
 
 export enum metodo_pago {
 

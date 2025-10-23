@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
-import { Reserva } from "src/reserva/reserva.entity"; // Importa la entidad Reserva
-import { Comentario } from "src/comentario/comentario.entity"; // Importa la entidad Comentario
-import { Horario_Pista } from "src/horario_pista/horario_pista.entity"; // Importa la entidad Horario_Pista
-import { Instalacion } from "src/instalacion/instalacion.entity"; // Importa la entidad Instalacion
+import { Reserva } from "../reserva/reserva.entity"; // Importa la entidad Reserva
+import { Comentario } from "../comentario/comentario.entity"; // Importa la entidad Comentario
+import { Horario_Pista } from "../horario_pista/horario_pista.entity"; // Importa la entidad Horario_Pista
+import { Instalacion } from "../instalacion/instalacion.entity"; // Importa la entidad Instalacion
 
 export enum tipo_pista {
   TENIS = 'TENNIS',

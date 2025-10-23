@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany, JoinTable } from "typeorm";
-import { Noti } from "src/noti/noti.entity";  // Importa la entidad Noti
-import { Comentario } from "src/comentario/comentario.entity";
-import { Reserva } from "src/reserva/reserva.entity";
-import { Membresia } from "src/membresia/membresia.entity";
+import { Noti } from "../noti/noti.entity";  // Importa la entidad Noti
+import { Comentario } from "../comentario/comentario.entity";
+import { Reserva } from "../reserva/reserva.entity";
+import { Membresia } from "../membresia/membresia.entity";
 import { Pago } from "../pago/pago.entity";
 
 
@@ -31,7 +31,7 @@ export class User {
   email: string;
 
   @Column()
-  phone: string;
+  phone: number;
 
   @Column()
   password: string;
