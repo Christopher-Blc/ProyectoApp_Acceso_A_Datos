@@ -17,7 +17,7 @@ export class UserDto {
   email: string;
 
   @IsPhoneNumber('ES')
-  phone: string;
+  phone: number;
 
   @IsString()
   password: string;
