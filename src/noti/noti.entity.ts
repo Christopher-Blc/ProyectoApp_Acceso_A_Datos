@@ -24,9 +24,6 @@ export class Noti {
   tipoNoti: tipoNoti;
 
   @Column()
-  canal: string;
-
-  @Column()
   leida: boolean;
 
   @Column()

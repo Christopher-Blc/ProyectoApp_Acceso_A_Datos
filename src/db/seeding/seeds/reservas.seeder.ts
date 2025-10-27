@@ -26,7 +26,7 @@ export class ReservaSeeder implements Seeder {
 
     await reservaRepository.save(reservaEntries);
 
-    console.log('Users seeding completed!');
+    console.log('Reservas seeding completed!');
   }
 }
      
