@@ -11,7 +11,7 @@ export class Horario_PistaSeeder implements Seeder {
             horariopistaData.map(async (item) => {
 
             const horariopistaEntry = new Horario_Pista();
-
+            horariopistaEntry.pista_id = item.pista_id;
             horariopistaEntry.dia_semana = item.dia_semana;
             horariopistaEntry.hora_apertura = item.hora_apertura;
             horariopistaEntry.hora_cierre = item.hora_cierre;
