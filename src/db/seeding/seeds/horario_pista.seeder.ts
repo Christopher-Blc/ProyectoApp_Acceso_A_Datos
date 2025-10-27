@@ -16,8 +16,12 @@ export class Horario_PistaSeeder implements Seeder {
             horariopistaEntry.hora_apertura = item.hora_apertura;
             horariopistaEntry.hora_cierre = item.hora_cierre;
             horariopistaEntry.intervalos_minutos = item.intervalos_minutos;
+
+            return horariopistaEntry;
             }),
         );
+        await horario_pistaRepository.save(horarioPistaEntries);
+        console.log("Horario_Pista seeding completado!");
     }
 
 }

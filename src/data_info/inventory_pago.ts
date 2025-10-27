@@ -1,5 +1,5 @@
-import { metodo_pago } from "src/pago/pago.entity"
-import { estado_pago } from "src/pago/pago.entity"
+import { metodo_pago } from "../pago/pago.entity"
+import { estado_pago } from "../pago/pago.entity"
 
 export default [
 

@@ -1,4 +1,4 @@
-import { tipoNoti } from "src/noti/noti.entity"
+import { tipoNoti } from "../noti/noti.entity"
 
 export default [
     {

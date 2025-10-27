@@ -1,4 +1,4 @@
-import { Noti } from "src/noti/noti.entity";
+import { Noti } from "../../../noti/noti.entity";
 import { DataSource } from "typeorm";
 import { Seeder, SeederFactoryManager } from "typeorm-extension";
 import notiData from '../../../data_info/inventory_noti'

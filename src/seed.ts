@@ -16,6 +16,8 @@ import { PagoSeeder } from "./db/seeding/seeds/pago.seeder";
 import { MembresiaSeeder } from "./db/seeding/seeds/membresia.seeder";
 import { InstalacionSeeder } from "./db/seeding/seeds/instalacion.seeder";
 import { ComentarioSeeder } from "./db/seeding/seeds/comentario.seeder";
+import { Horario_PistaSeeder } from "./db/seeding/seeds/horario_pista.seeder";
+import { NotiSeeder } from "./db/seeding/seeds/noti.seeder";
 
 
 const options: DataSourceOptions & SeederOptions = {
@@ -46,7 +48,9 @@ const options: DataSourceOptions & SeederOptions = {
     PagoSeeder,
     MembresiaSeeder,
     InstalacionSeeder,
-    ComentarioSeeder
+    ComentarioSeeder,
+    Horario_PistaSeeder,
+    NotiSeeder
   ],
 };
 
