@@ -21,7 +21,7 @@ export class Membresia {
   tipo: string;
 
   @Column()
-  frcha_inicio: Date;
+  fecha_inicio: Date;
 
   @Column()
   fecha_fin: Date;

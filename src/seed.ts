@@ -12,6 +12,10 @@ import { Instalacion } from "./instalacion/instalacion.entity";
 import { Horario_Pista } from "./horario_pista/horario_pista.entity";
 import { ReservaSeeder } from "./db/seeding/seeds/reservas.seeder";
 import { pistaSeed } from "./db/seeding/seeds/pista.seeder";
+import { PagoSeeder } from "./db/seeding/seeds/pago.seeder";
+import { MembresiaSeeder } from "./db/seeding/seeds/membresia.seeder";
+import { InstalacionSeeder } from "./db/seeding/seeds/instalacion.seeder";
+import { ComentarioSeeder } from "./db/seeding/seeds/comentario.seeder";
 
 
 const options: DataSourceOptions & SeederOptions = {
@@ -38,7 +42,11 @@ const options: DataSourceOptions & SeederOptions = {
   seeds: [
     UserSeeder,
     ReservaSeeder,
-    pistaSeed
+    pistaSeed,
+    PagoSeeder,
+    MembresiaSeeder,
+    InstalacionSeeder,
+    ComentarioSeeder
   ],
 };
 
