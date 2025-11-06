@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UserDto } from './users.dto';
+import { CreateUserDto } from './users.dto';
 import { User } from './user.entity';
 
 @Controller('users') // La ruta base para este controlador será /users
@@ -21,14 +21,14 @@ export class UsersController {
 
   // POST /users -> crear un nuevo usuario
   @Post()
-  async create(@Body() userDto: UserDto): Promise<User | null> {
+  async create(@Body() userDto: CreateUserDto): Promise<User | null> {
     return this.userService.create(userDto);
   }
 
   // PUT /users/:id -> actualizar un usuario existente
   @Put(':id')
-  async update(@Param('id') id: number, @Body() userDto: UserDto): Promise<User | null> {
-    return this.userService.update(id, userDto);
+  async update(@Param('id') id: number, @Body() CreateUserDto: CreateUserDto): Promise<User | null> {
+    return this.userService.update(id, CreateUserDto);
   }
 
   // DELETE /users/:id -> eliminar un usuario
