@@ -37,6 +37,6 @@ export class Horario_Pista {
   @Column({type: "int"})
   intervalos_minutos: number;
 
- @ManyToOne(() => Pista, pista => pista.horarios)
+ @ManyToOne(() => Pista, pista => pista.horarios_pista)
  pista: Pista;
 }

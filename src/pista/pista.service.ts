@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Pista } from './pista.entity';
 import { Repository } from 'typeorm';
@@ -22,7 +22,7 @@ export class PistaService {
         const pista = await this.pistaRepo.findOne({where: {pista_id: pista_id},
                                             relations: ['reservas', 'comentarios', 'horarios_pista', 'instalacion']});
         if (!pista){
-            throw new Error(`Usuario ${pista_id} no encontrado`); // Lanzamos un error si no se encuentra la pista
+            throw new NotFoundException(`Pista ${pista_id} no encontrado`); // Lanzamos un error si no se encuentra la pista
         }
         return pista;
       }
