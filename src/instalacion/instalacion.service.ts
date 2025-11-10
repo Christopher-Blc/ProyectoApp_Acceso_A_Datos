@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Instalacion } from './instalacion.entity';
-import { InstalacionDto } from './instalacion.dto';
+import { CreateInstalacionDto } from './instalacion.dto';
 
 @Injectable()
 export class InstalacionService {
@@ -26,12 +26,12 @@ export class InstalacionService {
         return instalacion;
     }
 
-    async create(info_instalacion: InstalacionDto){
+    async create(info_instalacion: CreateInstalacionDto){
         const newInstalacion = this.instalacionRepository.create(info_instalacion)
         return this.instalacionRepository.save(newInstalacion);
     }
 
-    async update(instalacion_id: number, info_instalacion: InstalacionDto): Promise<Instalacion>{
+    async update(instalacion_id: number, info_instalacion: CreateInstalacionDto): Promise<Instalacion>{
         await this.instalacionRepository.update(instalacion_id, info_instalacion);
         return this.findOne(instalacion_id);
     }

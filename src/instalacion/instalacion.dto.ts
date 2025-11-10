@@ -1,7 +1,7 @@
 import { IsString, IsEnum, IsOptional, IsDateString, IsBoolean, IsNumber } from 'class-validator';
 import { estado_instalacion } from './instalacion.entity' // Importamos el enum estadoReserva desde instalacion.entity
 
-export class InstalacionDto {
+export class CreateInstalacionDto {
     @IsNumber()
     instalacion_id: number;
 
@@ -36,4 +36,43 @@ export class InstalacionDto {
 
     @IsDateString()
     horario_cierre: Date;
+}
+
+export class UpdateInstalacionDto {
+    @IsOptional()
+    @IsString()
+    nombre?: string;
+
+    @IsOptional()
+    @IsString()
+    direccion?: string;
+
+    @IsOptional()
+    @IsString()
+    telefono?: string;
+
+    @IsOptional()
+    @IsString()
+    email?: string;
+
+    @IsOptional()
+    @IsNumber()
+    capacidad_max?: number;
+
+    @IsOptional()
+    @IsString()
+    descripcion?: string;
+
+    // Estado de la instalacion
+    @IsOptional()
+    @IsEnum(estado_instalacion)
+    estado?: estado_instalacion;
+
+    @IsOptional()
+    @IsDateString()
+    horario_apertura?: Date;
+
+    @IsOptional()
+    @IsDateString()
+    horario_cierre?: Date;
 }

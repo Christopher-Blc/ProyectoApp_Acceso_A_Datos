@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { HorarioPistaService } from './horario_pista.service';
 import { Horario_Pista } from './horario_pista.entity';
-import { horario_pistaDto } from './horario_pista.dto';
+import { CreateHorarioPistaDto } from './horario_pista.dto';
 
 @Controller('horario-pista')
 export class HorarioPistaController {
@@ -18,12 +18,12 @@ export class HorarioPistaController {
     }
 
     @Post()
-    async create(@Body() horario_pistaDto: horario_pistaDto): Promise<Horario_Pista | null> {
+    async create(@Body() horario_pistaDto: CreateHorarioPistaDto): Promise<Horario_Pista | null> {
         return this.HorarioPistaService.create(horario_pistaDto);
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() horario_pistaDto: horario_pistaDto): Promise<Horario_Pista | null> {
+    async update(@Param('id') id: number, @Body() horario_pistaDto: CreateHorarioPistaDto): Promise<Horario_Pista | null> {
         return this.HorarioPistaService.update(id, horario_pistaDto);
     }
 

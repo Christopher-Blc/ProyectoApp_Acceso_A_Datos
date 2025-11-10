@@ -2,7 +2,7 @@
 import { IsString, IsEmail, IsBoolean, IsPhoneNumber, IsEnum, IsOptional, IsDateString, IsNumber } from 'class-validator';
 import { UserRole } from './user.entity'; // Importamos el enum UserRole desde user.entity
 
-export class UserDto {
+export class CreateUserDto {
   @IsOptional()
   @IsNumber()
   user_id: number;
@@ -38,4 +38,45 @@ export class UserDto {
 
   @IsString()
   direccion: string;
+}
+
+export class UpdateUserDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  surname?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsPhoneNumber('ES')
+  phone?: number;
+
+  @IsOptional()
+  @IsString()
+  password?: string;
+
+  // Rol con enumeración
+  @IsEnum(UserRole)
+  @IsOptional()
+  role?: UserRole;
+
+  //Estado del usuario
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
+
+  // Fechas
+  @IsOptional()
+  @IsDateString()
+  fecha_nacimiento?: Date;
+
+  @IsOptional()
+  @IsString()
+  direccion?: string;
 }

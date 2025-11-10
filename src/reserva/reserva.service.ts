@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Reserva } from './reserva.entity';
-import { ReservaDto } from './reserva.dto';
+import { CreateReservaDto } from './reserva.dto';
 
 @Injectable()
 export class ReservaService {
@@ -26,12 +26,12 @@ export class ReservaService {
         return reserva;
     }
 
-    async create(info_reserva: ReservaDto){
+    async create(info_reserva: CreateReservaDto){
         const newReserva = this.reservaRepo.create(info_reserva)
         return this.reservaRepo.save(newReserva);
     }
 
-    async update(reserva_id: number, info_reserva: ReservaDto): Promise<Reserva>{
+    async update(reserva_id: number, info_reserva: CreateReservaDto): Promise<Reserva>{
         await this.reservaRepo.update(reserva_id, info_reserva);
         return this.findOne(reserva_id);
     }
