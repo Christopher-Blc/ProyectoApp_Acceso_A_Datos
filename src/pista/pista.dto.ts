@@ -33,3 +33,39 @@ export class PistaDto {
     numero: number;;
 
 }
+
+export class UpdatePistaDto {
+
+    @IsOptional()
+    @IsEnum(tipo_pista)
+    tipo_Pista: tipo_pista;
+
+    @IsOptional()
+    @IsNumber()
+    capacidad: number;
+
+    @IsOptional()
+    @IsNumber()
+    precio_hora: number;
+    
+    @IsOptional()
+    @IsEnum(CoberturaPista)
+    cobertura: CoberturaPista;
+
+    @IsOptional()
+    @IsBoolean()
+    iluminacion: boolean;
+
+    @IsString()
+    @IsOptional()
+    descripcion: string;
+
+    @IsOptional()
+    @IsEnum(EstadoPista)
+    estado: EstadoPista;
+    
+    @IsOptional()
+    @IsNumber()
+    numero: number;;
+
+}

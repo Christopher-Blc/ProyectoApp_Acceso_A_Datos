@@ -23,3 +23,26 @@ export class NotiDto{
     @IsDateString()
     fecha: Date;
 }
+
+export class UpdateNotiDto{
+
+    // @IsString()
+    // @IsOptional()
+    // mensaje?: string;
+
+    // @IsOptional()
+    // @IsEnum(tipoNoti)
+    // tipoNoti: tipoNoti;
+
+    // @IsOptional()
+    // @IsString()
+    // canal: string;
+
+    @IsBoolean()
+    @IsOptional()
+    leida?: boolean;
+
+    // @IsOptional()
+    // @IsDateString()
+    // fecha: Date;
+}
