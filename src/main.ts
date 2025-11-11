@@ -13,7 +13,7 @@ async function bootstrap() {
   });
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
-    .setDescription('API Documentation')
+    .setDescription('API Documentation Respi Backend')
     .setVersion('2.0')
     //Usar cuando tengamos la autentidicacion hecho
     // .addBearerAuth({

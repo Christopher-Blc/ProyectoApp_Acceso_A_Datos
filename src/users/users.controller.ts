@@ -2,12 +2,15 @@ import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common'
 import { UsersService } from './users.service';
 import { CreateUserDto } from './users.dto';
 import { User } from './user.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users') 
 @Controller('users') // La ruta base para este controlador será /users
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   // GET /users -> obtener todos los usuarios
+  //@ApiTags('users')
   @Get()
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
