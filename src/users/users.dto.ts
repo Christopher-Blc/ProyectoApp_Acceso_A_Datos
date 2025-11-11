@@ -1,5 +1,5 @@
 
-import { IsString, IsEmail, IsBoolean, IsPhoneNumber, IsEnum, IsOptional, IsDateString, IsNumber } from 'class-validator';
+import { IsString, IsEmail, IsBoolean, IsPhoneNumber, IsEnum, IsOptional, IsDateString, IsNumber, Length, Matches } from 'class-validator';
 import { UserRole } from './user.entity'; // Importamos el enum UserRole desde user.entity
 
 export class CreateUserDto {
@@ -20,6 +20,13 @@ export class CreateUserDto {
   phone: number;
 
   @IsString()
+  @Length(8, 100)
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    {
+      message: 'password too weak',
+    },
+  )
   password: string;
 
   // Rol con enumeración
