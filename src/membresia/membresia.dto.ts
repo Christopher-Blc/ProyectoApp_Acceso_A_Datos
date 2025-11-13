@@ -28,3 +28,32 @@ export class MembresiaDto {
     @IsDateString()
     fecha_renovacion: Date;
 }
+
+export class UpdateMembresiaDto {
+
+    @IsOptional()
+    @IsString()
+    tipo: string;
+
+    // @IsOptional()
+    // @IsDateString()
+    // fecha_inicio: Date; 
+
+    @IsOptional()
+    @IsDateString()
+    fecha_fin: Date;
+
+    @IsOptional()
+    @IsEnum(estado_membresia)
+    estado: estado_membresia;
+
+    @IsOptional()
+    @IsNumber()
+    descuento: number;
+
+    @IsBoolean()
+    renovable: boolean;
+
+    @IsDateString()
+    fecha_renovacion: Date;
+}

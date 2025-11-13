@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
 import { Reserva } from './reserva.entity';
-import { ReservaDto } from './reserva.dto';
+import { CreateReservaDto } from './reserva.dto';
 import { ReservaService } from './reserva.service';
 
 @Controller('reserva')
@@ -18,12 +18,12 @@ export class ReservaController {
       }
 
       @Post()
-      async create(@Body() reservaDto: ReservaDto): Promise<Reserva | null> {
+      async create(@Body() reservaDto: CreateReservaDto): Promise<Reserva | null> {
         return this.reservaService.create(reservaDto);
       }
 
       @Put(':id')
-      async update(@Param('id') id: number, @Body() reservaDto: ReservaDto): Promise<Reserva | null> {
+      async update(@Param('id') id: number, @Body() reservaDto: CreateReservaDto): Promise<Reserva | null> {
         return this.reservaService.update(id,reservaDto);
       }
 

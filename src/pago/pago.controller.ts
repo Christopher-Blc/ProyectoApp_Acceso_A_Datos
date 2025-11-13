@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { PagoService } from './pago.service';
 import { Pago } from './pago.entity';
-import { PagoDto } from './pago.dto';
+import { CreatePagoDto } from './pago.dto';
 
 @Controller('pago')
 export class PagoController {
@@ -18,13 +18,13 @@ export class PagoController {
     }
 
     @Post()
-    async create(@Param('id') id: number, @Body() PagoDto: PagoDto): Promise<Pago | null> {
-        return this.pagoService.create(PagoDto);
+    async create(@Param('id') id: number, @Body() createPagoDto: CreatePagoDto): Promise<Pago | null> {
+        return this.pagoService.create(createPagoDto);
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() PagoDto: PagoDto): Promise<Pago | null> {
-        return this.pagoService.update(id, PagoDto);
+    async update(@Param('id') id: number, @Body() createPagoDto: CreatePagoDto): Promise<Pago | null> {
+        return this.pagoService.update(id, createPagoDto);
     }
 
     @Delete(':id')

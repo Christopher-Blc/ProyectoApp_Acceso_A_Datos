@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { InstalacionService } from './instalacion.service';
 import { Instalacion } from './instalacion.entity';
-import { InstalacionDto } from './instalacion.dto';
+import { CreateInstalacionDto } from './instalacion.dto';
 
 @Controller('instalacion')
 export class InstalacionController {
@@ -18,12 +18,12 @@ export class InstalacionController {
     }
 
     @Post()
-    async create(@Body() instalacionDto: InstalacionDto): Promise<Instalacion | null> {
+    async create(@Body() instalacionDto: CreateInstalacionDto): Promise<Instalacion | null> {
         return this.instalacionService.create(instalacionDto)
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() instalacionDto: InstalacionDto): Promise<Instalacion | null> {
+    async update(@Param('id') id: number, @Body() instalacionDto: CreateInstalacionDto): Promise<Instalacion | null> {
         return this.instalacionService.update(id, instalacionDto);
     }
 
