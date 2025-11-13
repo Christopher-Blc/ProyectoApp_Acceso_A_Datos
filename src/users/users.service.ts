@@ -1,5 +1,5 @@
 // Importamos el decorador Injectable para poder inyectar este servicio en otros módulos
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -35,7 +35,7 @@ export class UsersService {
       relations: ['reservas', 'membresia', 'pagos', 'comentarios'],
     });
     if (!user) {
-      throw new Error(`Usuario ${usuario_id} no encontrado`); // Lanzamos un error si no se encuentra el usuario
+      throw new NotFoundException(`Usuario ${usuario_id} no encontrado`); // Lanzamos un error si no se encuentra el usuario
     }
     return user;
   }

@@ -72,7 +72,7 @@ export class Pista {
   comentarios: Comentario[];
 
   @OneToMany(() => Horario_Pista, (horario: Horario_Pista) => horario.pista)
-  horarios: Horario_Pista[];
+  horarios_pista: Horario_Pista[];
 
   @ManyToOne(() => Instalacion, (instalacion) => instalacion.pista)
   instalacion: Instalacion;
