@@ -47,10 +47,11 @@ export class User {
   @Column()
   isActive: boolean;
 
-  @Column()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fecha_registro: Date;
 
-  @Column()
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fecha_ultimo_login: Date;
 
   @Column()
