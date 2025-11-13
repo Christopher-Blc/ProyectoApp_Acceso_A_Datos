@@ -12,13 +12,13 @@ export class ReservaService {
     ) {}
 
     async findAll(): Promise<Reserva[]> {
-        return this.reservaRepo.find({ relations: ['user', 'pista', 'pago'] });
+        return this.reservaRepo.find({ relations: ['usuarios', 'pista', 'pago'] });
     }
 
     async findOne(reserva_id: number): Promise<Reserva> {
         const reserva = await this.reservaRepo.findOne({
             where: { reserva_id: reserva_id },
-            relations: ['user', 'pista', 'pago'],
+            relations: ['usuarios', 'pista', 'pago'],
         });
         if (!reserva) {
             throw new Error(`Reserva ${reserva_id} no encontrada`);

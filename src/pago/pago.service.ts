@@ -13,14 +13,14 @@ export class PagoService {
 
     findAll() {
         return this.pagoRepository.find({
-            relations: ['user', 'reserva'],
+            relations: ['usuario', 'reserva'],
         });
     }
 
     findOne(pago_id: number) {
         return this.pagoRepository.findOne({
             where: { pago_id },
-            relations: ['user', 'reserva'],
+            relations: ['usuario', 'reserva'],
         });
     }
 
