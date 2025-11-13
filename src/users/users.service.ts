@@ -21,8 +21,6 @@ export class UsersService {
 
   // 🔹 Método para obtener todos los usuarios
   async findAll(): Promise<User[]> {
-    // Llamamos al método find() de TypeORM para traer todos los usuarios
-    // Incluimos las relaciones (por ejemplo, las reservas del usuario)
     return this.userRepository.find({ relations: ['reservas', 'membresia', 'pagos', 'comentarios'] });
   }
 

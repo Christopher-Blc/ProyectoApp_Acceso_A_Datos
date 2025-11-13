@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpException,
+  HttpStatus, } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './users.dto';
 import { User } from './user.entity';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('users') 
 @Controller('users') // La ruta base para este controlador será /users
@@ -12,31 +13,97 @@ export class UsersController {
   // GET /users -> obtener todos los usuarios
   //@ApiTags('users')
   @Get()
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({ status: 200, description: 'Users retrieved successfully.' })
+  @ApiResponse({ status: 204, description: 'No content.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async findAllUser()/*: Promise<User[]>*/ {
+    try {
+      return this.userService.findAll();
+    } catch (err) {
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   // GET /users/:id -> obtener un usuario por ID
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<User | null> {
-    return this.userService.findOne(id);
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiResponse({ status: 200, description: 'User retrieved successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid user ID.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'User not found.' })
+  @ApiParam({ name: 'id', example: 12345 })
+  async findOneUser(@Param('id') id: number)/*: Promise<User | null>*/ {
+    try {
+      return this.userService.findOne(id);
+    } catch (err) {
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   // POST /users -> crear un nuevo usuario
   @Post()
-  async create(@Body() userDto: CreateUserDto): Promise<User | null> {
-    return this.userService.create(userDto);
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({ status: 201, description: 'User created successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async createUser(@Body() userDto: CreateUserDto)/*: Promise<User | null>*/ {
+    try {
+      return this.userService.create(userDto);
+    } catch (err) {
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   // PUT /users/:id -> actualizar un usuario existente
   @Put(':id')
-  async update(@Param('id') id: number, @Body() userDto: CreateUserDto): Promise<User | null> {
-    return this.userService.update(id, userDto);
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user by ID' })
+  @ApiResponse({ status: 200, description: 'User updated successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid user ID.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'User not found.' })
+  @ApiParam({ name: 'id', example: 12345 })
+  async updateUser(@Param('id') id: number, @Body() userDto: CreateUserDto)/*: Promise<User | null>*/ {
+    try {
+      return this.userService.update(id, userDto);
+    } catch (err) {
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   // DELETE /users/:id -> eliminar un usuario
   @Delete(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete user by ID' })
+  @ApiResponse({ status: 200, description: 'User deleted successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid user ID.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'User not found.' })
+  @ApiParam({ name: 'id', example: 12345 })
   async remove(@Param('id') id: number): Promise<void | { deleted: boolean }> {
-    return this.userService.remove(id);
+    try {
+      return this.userService.remove(id);
+    } catch (err) {
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }
