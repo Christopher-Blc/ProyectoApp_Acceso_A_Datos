@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { NotiService } from './noti.service';
 import { NotiDto } from './noti.dto';
 import { Noti } from './noti.entity';
-
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('noti')
 export class NotiController {
@@ -10,31 +10,89 @@ export class NotiController {
 
   // GET /noti -> obtener todas las noti
   @Get()
+  @ApiOperation({ summary: 'Obtener todas las notificaciones' })
+  @ApiResponse({ status: 200, description: 'Lista de notificaciones obtenida correctamente.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async findAll(): Promise<Noti[]> {
-    return this.notiService.findAll();
+    try {
+      return this.notiService.findAll();
+    } catch (err) {
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   // GET /noti/:id -> obtener una noti por ID
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener una notificación por ID' })
+  @ApiResponse({ status: 200, description: 'Notificación obtenida correctamente.' })
+  @ApiResponse({ status: 404, description: 'Notificación no encontrada.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async findOne(@Param('id') id: number): Promise<Noti | null> {
-    return this.notiService.findOne(id);
+    try {
+      return this.notiService.findOne(id);
+    } catch (err) {
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   // POST /noti -> crear una nueva noti
   @Post()
+  @ApiOperation({ summary: 'Crear una nueva notificación' })
+  @ApiResponse({ status: 201, description: 'Notificación creada correctamente.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(@Body() notiDto: NotiDto): Promise<Noti | null> {
-    return this.notiService.create(notiDto);
+    try {
+      return this.notiService.create(notiDto);
+    } catch (err) {
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   // PUT /noti/:id -> actualizar un noti existente
   @Put(':id')
+  @ApiOperation({ summary: 'Actualizar una notificación por ID' })
+  @ApiResponse({ status: 200, description: 'Notificación actualizada correctamente.' })
+  @ApiResponse({ status: 404, description: 'Notificación no encontrada.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async update(@Param('id') id: number, @Body() notiDto: NotiDto): Promise<Noti | null> {
-    return this.notiService.update(id, notiDto);
+    try {
+      return this.notiService.update(id, notiDto);
+    } catch (err) {
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   // DELETE /noti/:id -> eliminar un noti
   @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar una notificación por ID' })
+  @ApiResponse({ status: 200, description: 'Notificación eliminada correctamente.' })
+  @ApiResponse({ status: 404, description: 'Notificación no encontrada.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async remove(@Param('id') id: number): Promise<void | { deleted: boolean }> {
-    return this.notiService.remove(id);
+    try {
+      return this.notiService.remove(id);
+    } catch (err) {
+      throw new HttpException(
+        err.message,
+        err.status || HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

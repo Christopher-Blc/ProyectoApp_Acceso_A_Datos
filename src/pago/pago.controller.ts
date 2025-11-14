@@ -1,34 +1,94 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { PagoService } from './pago.service';
 import { Pago } from './pago.entity';
 import { CreatePagoDto } from './pago.dto';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('pago')
 export class PagoController {
     constructor(private readonly pagoService: PagoService) {}
 
     @Get()
+    @ApiOperation({ summary: 'Get all payments' })
+    @ApiResponse({ status: 200, description: 'List of payments', type: [Pago] })
+    @ApiResponse({ status: 204, description: 'No content.' })
+    @ApiResponse({ status: 400, description: 'Bad request.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
     async findAll(): Promise<Pago[]>{
-        return this.pagoService.findAll();
+        try {
+            return this.pagoService.findAll();
+        } catch (err) {
+            throw new HttpException(
+              err.message,
+              err.status || HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     @Get(':id')
+    @ApiOperation({ summary: 'Get a payment by ID' })
+    @ApiResponse({ status: 200, description: 'The payment', type: Pago })
+    @ApiResponse({ status: 404, description: 'Payment not found.' })
+    @ApiResponse({ status: 400, description: 'Bad request.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
     async findOne(@Param('id') id: number): Promise<Pago | null> {
-        return this.pagoService.findOne(id);
+        try {
+            return this.pagoService.findOne(id);
+        } catch (err) {
+            throw new HttpException(
+              err.message,
+              err.status || HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     @Post()
-    async create(@Param('id') id: number, @Body() createPagoDto: CreatePagoDto): Promise<Pago | null> {
-        return this.pagoService.create(createPagoDto);
+    @ApiOperation({ summary: 'Create a new payment' })
+    @ApiResponse({ status: 201, description: 'Payment created successfully.', type: Pago })
+    @ApiResponse({ status: 400, description: 'Bad request.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' }) 
+    async create(@Body() createPagoDto: CreatePagoDto): Promise<Pago | null> {
+        try {
+            return this.pagoService.create(createPagoDto);
+        } catch (err) {
+            throw new HttpException(
+              err.message,
+              err.status || HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     @Put(':id')
+    @ApiOperation({ summary: 'Update a payment by ID' })
+    @ApiResponse({ status: 200, description: 'Payment updated successfully.', type: Pago })
+    @ApiResponse({ status: 404, description: 'Payment not found.' })
+    @ApiResponse({ status: 400, description: 'Bad request.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
     async update(@Param('id') id: number, @Body() createPagoDto: CreatePagoDto): Promise<Pago | null> {
-        return this.pagoService.update(id, createPagoDto);
+        try {
+            return this.pagoService.update(id, createPagoDto);
+        } catch (err) {
+            throw new HttpException(
+              err.message,
+              err.status || HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     @Delete(':id')
+    @ApiOperation({ summary: 'Delete a payment by ID' })
+    @ApiResponse({ status: 200, description: 'Payment deleted successfully.' })
+    @ApiResponse({ status: 404, description: 'Payment not found.' })
+    @ApiResponse({ status: 400, description: 'Bad request.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
     async remove(@Param('id') id: number): Promise<void | {deleted: boolean}>{
-        return this.pagoService.remove(id);
+        try {
+            return this.pagoService.remove(id);
+        } catch (err) {
+            throw new HttpException(
+              err.message,
+              err.status || HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 }

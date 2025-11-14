@@ -1,10 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany, JoinTable } from "typeorm";
-import { Noti } from "../noti/noti.entity";  // Importa la entidad Noti
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable, ManyToOne } from "typeorm";
+import { Noti } from "../noti/noti.entity";
 import { Comentario } from "../comentario/comentario.entity";
 import { Reserva } from "../reserva/reserva.entity";
 import { Membresia } from "../membresia/membresia.entity";
 import { Pago } from "../pago/pago.entity";
-
 
 export enum UserRole {
     GESTOR_RESERVAS = "GESTOR_RESERVAS",
@@ -13,64 +12,62 @@ export enum UserRole {
     MANTENIMIENTO = "MANTENIMIENTO",
     SUPER_ADMIN = "SUPER_ADMIN",
 }
+
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn({type: "int"})
-  usuario_id: number;
+    @PrimaryGeneratedColumn({ type: "int" })
+    usuario_id: number;
 
-  @OneToMany(() => Noti, noti => noti.user)
-  notificaciones: Noti[];
+    @OneToMany(() => Noti, noti => noti.user)
+    notificaciones: Noti[];
 
-  @Column()
-  name: string;
+    @Column()
+    name: string;
 
-  @Column()
-  surname: string;
+    @Column()
+    surname: string;
 
-  @Column()
-  email: string;
+    @Column()
+    email: string;
 
-  @Column()
-  phone: number;
+    @Column()
+    phone: number;
 
-  @Column()
-  password: string;
+    @Column()
+    password: string;
 
-  @Column({
-    type: "enum",
-    enum: UserRole,
-    default: UserRole.CLIENTE,
-  })
-  role: UserRole;
-  
+    @Column({
+        type: "enum",
+        enum: UserRole,
+        default: UserRole.CLIENTE,
+    })
+    role: UserRole;
 
-  @Column()
-  isActive: boolean;
+    @Column()
+    isActive: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  fecha_registro: Date;
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    fecha_registro: Date;
 
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    fecha_ultimo_login: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  fecha_ultimo_login: Date;
+    @Column()
+    fecha_nacimiento: Date;
 
-  @Column()
-  fecha_nacimiento: Date;
+    @Column()
+    direccion: string;
 
-  @Column()
-  direccion: string;
+    @ManyToOne(() => Membresia, membresia => membresia.users)
+    membresia: Membresia;
 
-  @ManyToOne(() => Membresia, membresia => membresia.users)
-  membresia: Membresia;
+    @OneToMany(() => Comentario, comentario => comentario.user)
+    comentarios: Comentario[];
 
-  @OneToMany(() => Comentario, comentario => comentario.user)
-  comentarios: Comentario[];
+    @OneToMany(() => Pago, pago => pago.usuario)
+    pagos: Pago[];
 
-  @OneToMany(() => Pago, pago => pago.usuario)
-  pagos: Pago[];
-
-  @ManyToMany(() => Reserva, reserva => reserva.usuarios)
-  @JoinTable()
-  reservas: Reserva[];
-
+    @ManyToMany(() => Reserva, reserva => reserva.usuarios)
+    @JoinTable()
+    reservas: Reserva[];
 }

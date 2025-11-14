@@ -38,7 +38,7 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Invalid user ID.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  @ApiParam({ name: 'id', example: 12345 })
+  @ApiParam({ name: 'id', example: 1 })
   async findOneUser(@Param('id') id: number)/*: Promise<User | null>*/ {
     try {
       return this.userService.findOne(id);
@@ -76,7 +76,7 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Invalid user ID.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  @ApiParam({ name: 'id', example: 12345 })
+  @ApiParam({ name: 'id', example: 1 })
   async updateUser(@Param('id') id: number, @Body() userDto: CreateUserDto)/*: Promise<User | null>*/ {
     try {
       return this.userService.update(id, userDto);
