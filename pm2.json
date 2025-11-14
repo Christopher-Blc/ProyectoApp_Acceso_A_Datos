@@ -1,0 +1,14 @@
+{
+    "name": "respi",
+    "script": "npm i && npm run start:dev",
+    "instances": "1",
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "env_production": {
+        "NODE_ENV": "production"
+    },
+    "watch": false,
+    "ignore_watch": [".*", "node_modules", "dist"],
+    "merge_logs": true
+}

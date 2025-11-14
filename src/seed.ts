@@ -19,14 +19,13 @@ import { ComentarioSeeder } from "./db/seeding/seeds/comentario.seeder";
 import { Horario_PistaSeeder } from "./db/seeding/seeds/horario_pista.seeder";
 import { NotiSeeder } from "./db/seeding/seeds/noti.seeder";
 
-
 const options: DataSourceOptions & SeederOptions = {
   type: 'mysql',
   host: 'localhost',
-  port: 2222,
-  username: process.env.MYSQL_USER || 'root',
-  password: process.env.MYSQL_PASSWORD || 'my-secret-pw',
-  database: process.env.MYSQL_DATABASE || 'test',
+  port: 3306,
+  username: 'respi',
+  password: 'my-secret',
+  database: 'respi',
 
   entities: [
     User,
