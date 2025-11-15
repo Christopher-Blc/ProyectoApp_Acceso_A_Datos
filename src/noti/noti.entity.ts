@@ -26,9 +26,10 @@ export class Noti {
   @Column()
   leida: boolean;
 
-  @Column()
+  @Column({type: "datetime"})
   fecha: Date;
 
-   @ManyToOne(() => User, user => user.notificaciones)
+  @ManyToOne(() => User, user => user.notificaciones)
   user: User;
+
 }
