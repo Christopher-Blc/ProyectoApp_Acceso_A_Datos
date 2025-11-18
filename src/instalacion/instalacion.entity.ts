@@ -32,7 +32,7 @@ export class Instalacion {
   @Column()
   descripcion: string;
 
-  @Column()
+  @Column({ type: "date", default: () => "CURRENT_DATE" })
   fecha_creacion: Date;
 
   @Column({

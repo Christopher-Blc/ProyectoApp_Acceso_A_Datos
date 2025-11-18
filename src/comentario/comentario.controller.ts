@@ -1,33 +1,58 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ComentarioService } from './comentario.service';
 import { Comentario } from './comentario.entity';
-import { ComentarioDto } from './comentario.dto';
+import { CreateComentarioDto, UpdateComentarioDto } from './comentario.dto';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('comentario')
 export class ComentarioController {
     constructor(private readonly comentarioService: ComentarioService) {}
 
     @Get()
+    @ApiOperation({ summary: 'Get all comentarios' })
+    @ApiResponse({ status: 200, description: 'Comentarios retrieved successfully.' })
+    @ApiResponse({ status: 204, description: 'No content.' })
+    @ApiResponse({ status: 400, description: 'Bad request.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
     async findAll(): Promise<Comentario[]> {
         return this.comentarioService.findAll();
     }
 
     @Get(':id')
+    @ApiOperation({ summary: 'Get a comentario by ID' })
+    @ApiResponse({ status: 200, description: 'Comentario retrieved successfully.' })
+    @ApiResponse({ status: 400, description: 'Invalid comentario ID.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 404, description: 'Comentario not found.' })
     async findOne(@Param('id') id: number): Promise<Comentario | null> {
         return this.comentarioService.findOne(id);
     }
 
     @Post()
-    async create(@Body() comentarioDto: ComentarioDto): Promise<Comentario | null> {
+    @ApiOperation({ summary: 'Create a new comentario' })
+    @ApiResponse({ status: 201, description: 'Comentario created successfully.' })
+    @ApiResponse({ status: 400, description: 'Invalid input.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    async create(@Body() comentarioDto: CreateComentarioDto): Promise<Comentario | null> {
         return this.comentarioService.create(comentarioDto);
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() comentarioDto: ComentarioDto): Promise<Comentario | null> {
+    @ApiOperation({ summary: 'Update a comentario by ID' })
+    @ApiResponse({ status: 200, description: 'Comentario updated successfully.' })
+    @ApiResponse({ status: 400, description: 'Invalid input.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 404, description: 'Comentario not found.' })
+    async update(@Param('id') id: number, @Body() comentarioDto: UpdateComentarioDto): Promise<Comentario | null> {
         return this.comentarioService.update(id, comentarioDto);
     }   
 
     @Delete(':id')
+    @ApiOperation({ summary: 'Delete a comentario by ID' })
+    @ApiResponse({ status: 200, description: 'Comentario deleted successfully.' })
+    @ApiResponse({ status: 400, description: 'Invalid comentario ID.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 404, description: 'Comentario not found.' })
     async remove(@Param('id') id: number): Promise<void | { deleted: boolean }> {
         return this.comentarioService.remove(id);
     }

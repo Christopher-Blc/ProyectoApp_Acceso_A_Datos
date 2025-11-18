@@ -14,7 +14,7 @@ export class CreateUserDto {
     description: 'Name of the user',
     minLength: 1,
     maxLength: 40,
-    example: 'Christtopher',
+    example: 'Name_User',
   })  
   name: string;
 
@@ -24,21 +24,21 @@ export class CreateUserDto {
     description: 'Surname of the user',
     minLength: 1,
     maxLength: 40,
-    example: 'Bolocan',
+    example: 'Surname_User',
   })
   surname: string;
 
   @IsEmail()
   @ApiProperty({
     description: 'Email address of the user',
-    example: 'christtopher.bolocan@example.com',
+    example: 'email@example.com',
   })
   email: string;
 
   @IsPhoneNumber('ES')
   @ApiProperty({
     description: 'Phone number of the user',
-    example: '123456789',
+    example: 123456789,
   })
   phone: number;
 
@@ -100,7 +100,7 @@ export class UpdateUserDto {
     description: 'Name of the user',
     minLength: 1,
     maxLength: 40,
-    example: 'Christtopher',
+    example: 'Name_User',
   })
   name?: string;
 
@@ -110,7 +110,7 @@ export class UpdateUserDto {
     description: 'Surname of the user',
     minLength: 1,
     maxLength: 40,
-    example: 'Bolocan',
+    example: 'Surname_User',
   })
   surname?: string;
 
@@ -118,7 +118,7 @@ export class UpdateUserDto {
   @IsEmail()
   @ApiProperty({
     description: 'Email address of the user',
-    example: 'christtopher.bolocan@example.com',
+    example: 'email@example.com',
   })
   email?: string;
 
@@ -126,7 +126,7 @@ export class UpdateUserDto {
   @IsPhoneNumber('ES')
   @ApiProperty({
     description: 'Phone number of the user',
-    example: '+34123456789',
+    example: 123456789,
   })
   phone?: number;
 

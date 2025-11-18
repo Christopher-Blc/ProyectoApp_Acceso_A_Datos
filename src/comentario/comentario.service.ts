@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comentario } from './comentario.entity';
-import { ComentarioDto } from './comentario.dto';
+import {  CreateComentarioDto, UpdateComentarioDto } from './comentario.dto';
 
 @Injectable()
 export class ComentarioService {
@@ -26,12 +26,12 @@ export class ComentarioService {
         return comentario;
     }
 
-    async create(info_comentario: ComentarioDto){
+    async create(info_comentario: CreateComentarioDto){
         const newComentario = this.comentarioRepository.create(info_comentario)
         return this.comentarioRepository.save(newComentario);
     }
 
-    async update(comentario_id: number, info_comentario: ComentarioDto): Promise<Comentario>{
+    async update(comentario_id: number, info_comentario: UpdateComentarioDto): Promise<Comentario>{
         await this.comentarioRepository.update(comentario_id, info_comentario);
         return this.findOne(comentario_id);
     }

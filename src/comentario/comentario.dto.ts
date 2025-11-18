@@ -1,23 +1,44 @@
 import { IsString, IsEnum, IsOptional, IsDateString, IsBoolean, IsNumber } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
 
-export class ComentarioDto {
+export class CreateComentarioDto {
     @IsNumber()
     comentario_id: number;  
 
     @IsString()
+    @ApiProperty({
+        description: 'Title of the comentario',
+        example: 'Great experience!',
+    })
     titulo: string;
 
     @IsOptional()
     @IsString()
+    @ApiProperty({
+        description: 'Text of the comentario',
+        example: 'The court was in excellent condition and the staff was very friendly.',
+    })
     texto: string;
 
     @IsNumber()
+    @ApiProperty({
+        description: 'Rating of the comentario',
+        example: 5,
+    })
     calificacion: number;
 
     @IsDateString()
+    @ApiProperty({
+        description: 'Date of the comentario',
+        example: '2023-12-31T23:59:59Z',
+    })
     fecha_comentario: Date;
 
     @IsBoolean()
+    @ApiProperty({
+        description: 'Visibility of the comentario',
+        example: true,
+    })
     visible: boolean;
 }
 
@@ -25,14 +46,26 @@ export class UpdateComentarioDto {
     
     @IsOptional()
     @IsString()
+    @ApiProperty({
+        description: 'Title of the comentario',
+        example: 'Great experience!',
+    })
     titulo: string;
 
     @IsOptional()
     @IsString()
+    @ApiProperty({
+        description: 'Text of the comentario',
+        example: 'The court was in excellent condition and the staff was very friendly.',
+    })
     texto: string;
 
     @IsOptional()
     @IsNumber()
+    @ApiProperty({
+        description: 'Rating of the comentario',
+        example: 5,
+    })
     calificacion: number;
 
     // @IsOptional()
@@ -41,5 +74,9 @@ export class UpdateComentarioDto {
 
     @IsOptional()
     @IsBoolean()
+    @ApiProperty({
+        description: 'Visibility of the comentario',
+        example: true,
+    })
     visible: boolean;
 }
