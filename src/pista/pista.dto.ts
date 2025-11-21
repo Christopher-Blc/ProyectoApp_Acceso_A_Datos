@@ -71,6 +71,9 @@ export class PistaDto {
 }
 
 export class UpdatePistaDto {
+    @IsOptional()
+    @IsNumber()
+    instalacion_id: number; // clave foranea instalacion
 
     @IsOptional()
     @IsEnum(tipo_pista)

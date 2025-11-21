@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, ManyToOne, JoinColumn } from "typeorm";
 import { User } from "../users/user.entity";
 
 
@@ -11,10 +11,10 @@ export enum estado_membresia {
 
 @Entity()
 export class Membresia {
-  @PrimaryGeneratedColumn({type: "int"})
+  @PrimaryGeneratedColumn({name: "membresia_id", type: "int"})
   membresia_id: number;
 
-  @Column({type: "int"})
+  @Column({name: "usuario_id", type: "int"})
   usuario_id: number;//llave secundairia que viene de la tabla usuario
 
   @Column()
@@ -42,7 +42,8 @@ export class Membresia {
   @Column()
   fecha_renovacion: Date;
 
-  @OneToMany(() => User, user => user.membresia)
-  users: User[];
+  @ManyToOne(() => User, (u) => u.membresia)
+  @JoinColumn({ name: "usuario_id" })
+  user: User;
 
 }

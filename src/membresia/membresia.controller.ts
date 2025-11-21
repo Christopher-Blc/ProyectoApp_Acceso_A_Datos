@@ -35,7 +35,7 @@ export class MembresiaController {
     @ApiResponse({ status: 201, description: 'Membership created successfully.' })
     @ApiResponse({ status: 400, description: 'Invalid membership data.' })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
-    async create(@Body() membresiaDto: CreateMembresiaDto): Promise<Membresia[]>{
+    async create(@Body() membresiaDto: CreateMembresiaDto): Promise<Membresia>{
         return this.membresiaService.create(membresiaDto);
     }
 

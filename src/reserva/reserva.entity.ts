@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, OneToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn } from "typeorm";
 import { User } from "../users/user.entity";
 import { Pista } from "../pista/pista.entity";
 import { Pago } from "../pago/pago.entity";
@@ -14,8 +14,17 @@ export enum estadoReserva {
 
 @Entity()
 export class Reserva {
-    @PrimaryGeneratedColumn({ type: "int" })
+    @PrimaryGeneratedColumn({name: "reserva_id", type: "int" })
     reserva_id: number;
+
+    @Column({name: "usuario_id", type: "int" }) // Clave FK hacia Usuario
+    usuario_id: number;
+
+    @Column({name: "pista_id", type: "int" }) // Clave FK hacia Pista
+    pista_id: number;
+
+    @Column({name: "pago_id", type: "int", nullable: true }) // Clave FK hacia Pago (nullable por dependencia circular)
+    pago_id: number | null;
 
     @Column()
     fecha_reserva: Date;
@@ -45,12 +54,15 @@ export class Reserva {
     @Column()
     nota: string;
 
-    @ManyToMany(() => User, user => user.reservas)
-    usuarios: User[];
+    @ManyToOne(() => User, (u) => u.reservas)
+    @JoinColumn({ name: "usuario_id" })
+    usuario: User;
 
-    @ManyToOne(() => Pista, pista => pista.reservas)
+    @ManyToOne(() => Pista, (pi) => pi.reservas)
+    @JoinColumn({ name: "pista_id" })
     pista: Pista;
 
-    @OneToOne(() => Pago, pago => pago.reserva)
+    @OneToOne(() => Pago, (p) => p.reserva)
+    @JoinColumn({ name: "pago_id" })
     pago: Pago;
 }

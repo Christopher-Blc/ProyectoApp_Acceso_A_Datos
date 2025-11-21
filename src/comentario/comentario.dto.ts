@@ -3,7 +3,25 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateComentarioDto {
     @IsNumber()
+    @ApiProperty({
+        description: 'ID of the comentario',
+        example: 1,
+    })
     comentario_id: number;  
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the usuario',
+        example: 1,
+    })
+    usuario_id: number;
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the pista',
+        example: 1,
+    })
+    pista_id: number;
 
     @IsString()
     @ApiProperty({

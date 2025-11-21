@@ -12,13 +12,13 @@ export class ComentarioService {
     ) {}
 
     async findAll(): Promise<Comentario[]> {
-        return this.comentarioRepository.find({ relations: ['user', 'reserva', 'pista'] });
+        return this.comentarioRepository.find({ relations: ['user', 'pista'] });
     }
 
     async findOne(comentario_id: number): Promise<Comentario> {
         const comentario = await this.comentarioRepository.findOne({
             where: { comentario_id: comentario_id },
-            relations: ['user', 'reserva', 'pista'],
+            relations: ['user', 'pista'],
         });
         if (!comentario) {
             throw new Error(`Comentario ${comentario_id} no encontrado`);

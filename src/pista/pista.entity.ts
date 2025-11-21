@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from "typeorm";
 import { Reserva } from "../reserva/reserva.entity"; // Importa la entidad Reserva
 import { Comentario } from "../comentario/comentario.entity"; // Importa la entidad Comentario
 import { Horario_Pista } from "../horario_pista/horario_pista.entity"; // Importa la entidad Horario_Pista
@@ -27,8 +27,11 @@ export enum EstadoPista {
 
 @Entity("pista")
 export class Pista {
-  @PrimaryGeneratedColumn({type: "int"})
+  @PrimaryGeneratedColumn({name: "pista_id", type: "int"})
   pista_id: number;
+
+  @Column({name: "instalacion_id", type: "int"}) 
+  instalacion_id: number; // clave foranea instalacion
 
   @Column({
       type: "enum",
@@ -65,16 +68,17 @@ export class Pista {
   @Column()
   numero: number;
 
-  @OneToMany(() => Reserva, reserva => reserva.pista)
+  @OneToMany(() => Reserva, (r) => r.pista)
   reservas: Reserva[];
 
-  @OneToMany(() => Comentario, comentario => comentario.pista)
+  @OneToMany(() => Comentario, (c) => c.pista)
   comentarios: Comentario[];
 
-  @OneToMany(() => Horario_Pista, (horario: Horario_Pista) => horario.pista)
+  @OneToMany(() => Horario_Pista, (hp) => hp.pista)
   horarios_pista: Horario_Pista[];
 
-  @ManyToOne(() => Instalacion, (instalacion) => instalacion.pista)
+  @ManyToOne(() => Instalacion, (i) => i.pista)
+  @JoinColumn({ name: "instalacion_id" })
   instalacion: Instalacion;
 
 }

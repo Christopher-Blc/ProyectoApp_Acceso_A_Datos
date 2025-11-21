@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from "typeorm";
 import { Pista } from "../pista/pista.entity"; // Importa la entidad Pista
 
 export enum estado_instalacion {
@@ -8,12 +8,9 @@ export enum estado_instalacion {
 }
 @Entity()
 export class Instalacion {
-  @PrimaryGeneratedColumn({type: "int"})
+  @PrimaryGeneratedColumn({ name: "instalacion_id", type: "int" })
   instalacion_id: number;
 
-  @Column({type: "int"})
-    pista_id: number; // clave foranea instalacion
-  
   @Column()
   nombre: string;
 
@@ -48,7 +45,7 @@ export class Instalacion {
   @Column()
   horario_cierre: Date;
 
-  @OneToMany(() => Pista, (pista) => pista.instalacion)
+  @OneToMany(() => Pista, (pi) => pi.instalacion)
   pista: Pista[];
 
 }

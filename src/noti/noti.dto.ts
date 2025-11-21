@@ -7,6 +7,10 @@ export class NotiDto{
     @IsInt()
     noti_id: number;
 
+    @IsNumber()
+    @IsOptional()
+    usuario_id?: number;
+
     @IsString()
     @IsOptional()
     @ApiProperty({ 

@@ -13,7 +13,7 @@ export class pistaSeed implements Seeder{
         const pistaEntries = await Promise.all(
             pistaData.map(async (item) => {
                 const  pistaEntry = new Pista();
-                //pistaEntry.instalacion_id: 
+                pistaEntry.instalacion_id = item.instalacion_id;
                 pistaEntry.tipo_Pista = item.tipo_pista,
                 pistaEntry.capacidad = item.capacidad;
                 pistaEntry.precio_hora = item.precio_hora;

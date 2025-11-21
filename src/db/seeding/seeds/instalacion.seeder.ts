@@ -11,7 +11,6 @@ export class InstalacionSeeder implements Seeder{
             instalacionData.map(async (item) => {
                 const instalacionEntry = new Instalacion();
 
-                instalacionEntry.pista_id = item.pista_id;
                 instalacionEntry.nombre = item.nombre;
                 instalacionEntry.direccion = item.direccion;
                 instalacionEntry.telefono = item.telefono;

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Pista } from './pista.entity';
 import { Repository } from 'typeorm';
-import { PistaDto } from './pista.dto';
+import { PistaDto, UpdatePistaDto } from './pista.dto';
 
 @Injectable()
 export class PistaService {
@@ -37,7 +37,7 @@ export class PistaService {
         return this.pistaRepo.save(newPista);
     }
 
-    async update(pista_id: number , info_pista : PistaDto): Promise<Pista>{
+    async update(pista_id: number , info_pista : UpdatePistaDto): Promise<Pista>{
 
         //Actualizar pista con datos nuevos
         await this.pistaRepo.update(pista_id , info_pista);

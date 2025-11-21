@@ -6,6 +6,9 @@ export class CreateMembresiaDto {
     @IsNumber()
     membresia_id: number;
     
+    @IsNumber()
+    usuario_id: number;
+    
     @IsString()
     @ApiProperty({
         description: 'Type of the membership',

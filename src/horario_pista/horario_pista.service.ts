@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Horario_Pista } from './horario_pista.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateHorarioPistaDto } from './horario_pista.dto';
 
 @Injectable()
 export class HorarioPistaService {
@@ -29,7 +30,7 @@ export class HorarioPistaService {
         return this.horarioPistaRepository.save(horarioPista);
     }
 
-    async update(horario_id: number, data: Partial<Horario_Pista>) {
+    async update(horario_id: number, data: UpdateHorarioPistaDto) {
         await this.horarioPistaRepository.update(horario_id, data);
         return this.findOne(horario_id);
     }
