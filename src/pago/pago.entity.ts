@@ -19,7 +19,7 @@ export enum estado_pago {
 
 @Entity()
 export class Pago {
-    @PrimaryGeneratedColumn({ type: "int" })
+    @PrimaryGeneratedColumn({name: "pago_id", type: "int" })
     pago_id: number;
 
     @Column({ type: "decimal" })
@@ -45,10 +45,10 @@ export class Pago {
     @Column()
     nota: string;
 
-    @ManyToOne(() => User, user => user.pagos)
+    @ManyToOne(() => User, (u) => u.pagos, {nullable: true})
+    @JoinColumn({ name: "usuario_id" })
     usuario: User;
 
-    @OneToOne(() => Reserva, reserva => reserva.pago)
-    @JoinColumn()
+    @OneToOne(() => Reserva, (r) => r.pago)
     reserva: Reserva;
 }

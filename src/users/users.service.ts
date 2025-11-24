@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 // Importamos la entidad User, que representa la tabla en la base de datos
 import { User } from './user.entity';
+import { UpdateUserDto } from './users.dto';
 
 // El decorador @Injectable() le dice a Nest que esta clase puede ser inyectada
 // en otras clases (por ejemplo, en el controlador)
@@ -47,7 +48,7 @@ export class UsersService {
   }
 
   // Método para actualizar un usuario existente
-  async update(usuario_id: number, data: Partial<User>) {
+  async update(usuario_id: number, data: UpdateUserDto): Promise<User> {
     // "update" modifica los campos en la base de datos
     await this.userRepository.update(usuario_id, data);
     // Retornamos el usuario actualizado

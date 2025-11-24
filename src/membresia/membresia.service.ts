@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Membresia } from './membresia.entity';
-import { MembresiaDto } from './membresia.dto';
+import { CreateMembresiaDto, UpdateMembresiaDto } from './membresia.dto';
 
 @Injectable()
 export class MembresiaService {
@@ -13,13 +13,13 @@ export class MembresiaService {
 
 
         async findAll(): Promise<Membresia[]> {
-            return this.Repo.find({ relations: ['users'] });
+            return this.Repo.find({ relations: ['user'] });
         }
 
         async findOne(membresia_id: number): Promise<Membresia> {
             const membresia = await this.Repo.findOne({
                 where: { membresia_id: membresia_id },
-                relations: ['users'],
+                relations: ['user'],
             });
             if (!membresia) {
                 throw new Error(`Membresia ${membresia_id} no encontrada`);
@@ -27,12 +27,12 @@ export class MembresiaService {
             return membresia;
         }
 
-        async create(info_membresia: MembresiaDto){
+        async create(info_membresia: CreateMembresiaDto){
             const newMembresia = this.Repo.create(info_membresia)
             return this.Repo.save(newMembresia);
         }
 
-        async update(membresia_id: number, info_membresia: MembresiaDto): Promise<Membresia>{
+        async update(membresia_id: number, info_membresia: UpdateMembresiaDto): Promise<Membresia>{
             await this.Repo.update(membresia_id, info_membresia);
             return this.findOne(membresia_id);
         }

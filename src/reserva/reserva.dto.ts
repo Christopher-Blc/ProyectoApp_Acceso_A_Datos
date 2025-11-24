@@ -5,6 +5,15 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateReservaDto {
     @IsNumber()
     reserva_id: number;
+
+    @IsNumber()
+    usuario_id: number;
+
+    @IsNumber()
+    pista_id: number;
+
+    @IsNumber()
+    pago_id: number;
     
     @IsDateString()
     @ApiProperty({

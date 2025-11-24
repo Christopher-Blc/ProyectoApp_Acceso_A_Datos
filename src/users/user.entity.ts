@@ -60,8 +60,8 @@ export class User {
     @Column({ name: "direccion" })
     direccion: string;
 
-    @ManyToOne(() => Membresia, (m) => m.users)
-    membresia: Membresia;
+    @OneToMany(() => Membresia, (m) => m.user)
+    membresia: Membresia[];
 
     @OneToMany(() => Comentario, (c) => c.user)
     comentarios: Comentario[];
@@ -69,7 +69,6 @@ export class User {
     @OneToMany(() => Pago, (p) => p.usuario)
     pagos: Pago[];
 
-    @ManyToMany(() => Reserva, (r) => r.usuarios)
-    @JoinTable()
+    @OneToMany(() => Reserva, (r) => r.usuario)
     reservas: Reserva[];
 }

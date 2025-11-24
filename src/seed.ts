@@ -35,20 +35,20 @@ const options: DataSourceOptions & SeederOptions = {
     Membresia,
     Pago,
     Reserva,
-    Pista,
     Instalacion,
+    Pista,
     Horario_Pista,
 
   ],
   seeds: [
     UserSeeder,
-    ReservaSeeder,
-    pistaSeed,
-    PagoSeeder,
-    MembresiaSeeder,
     InstalacionSeeder,
-    ComentarioSeeder,
+    pistaSeed,
+    MembresiaSeeder,
     Horario_PistaSeeder,
+    ReservaSeeder,
+    PagoSeeder,
+    ComentarioSeeder,
     NotiSeeder
   ],
 };

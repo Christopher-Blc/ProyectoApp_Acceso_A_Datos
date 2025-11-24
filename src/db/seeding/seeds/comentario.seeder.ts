@@ -11,6 +11,8 @@ export class ComentarioSeeder implements Seeder{
             comentarioData.map(async (item) => {
                 const comentarioEntry = new Comentario();
 
+                comentarioEntry.pista_id = item.pista_id;
+                comentarioEntry.usuario_id = item.usuario_id;
                 comentarioEntry.titulo = item.titulo;
                 comentarioEntry.texto = item.texto;
                 comentarioEntry.calificacion = item.calificacion;

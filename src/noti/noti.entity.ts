@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { User } from "../users/user.entity"; // Importa la entidad User
 
 export enum tipoNoti {
@@ -24,7 +24,10 @@ export class Noti {
   })
   tipoNoti: tipoNoti;
 
-  @Column({ name: "leida" })
+  @Column({ name: "usuario_id", type: "int", nullable: true })
+  usuario_id: number;
+
+  @Column({ name: "leida", default: false })
   leida: boolean;
 
   @Column()
