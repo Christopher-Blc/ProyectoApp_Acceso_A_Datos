@@ -30,10 +30,10 @@ export class Noti {
   @Column({ name: "leida", default: false })
   leida: boolean;
 
-  @Column({ name: "fecha", type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column()
   fecha: Date;
 
-  @ManyToOne(() => User, (u) => u.notificaciones)
-  @JoinColumn({ name: "usuario_id" })
+   @ManyToOne(() => User, user => user.notificaciones)
   user: User;
+
 }

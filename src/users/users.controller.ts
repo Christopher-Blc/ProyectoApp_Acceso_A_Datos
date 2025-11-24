@@ -69,6 +69,7 @@ export class UsersController {
 
   // PUT /users/:id -> actualizar un usuario existente
   @Put(':id')
+
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user by ID' })
   @ApiResponse({ status: 200, description: 'User updated successfully.' })

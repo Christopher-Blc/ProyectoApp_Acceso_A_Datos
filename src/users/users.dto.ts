@@ -100,7 +100,7 @@ export class UpdateUserDto {
     description: 'Name of the user',
     minLength: 1,
     maxLength: 40,
-    example: 'Name_User',
+    example: 'Christtopher',
   })
   name?: string;
 
@@ -110,7 +110,7 @@ export class UpdateUserDto {
     description: 'Surname of the user',
     minLength: 1,
     maxLength: 40,
-    example: 'Surname_User',
+    example: 'Bolocan',
   })
   surname?: string;
 
@@ -118,7 +118,7 @@ export class UpdateUserDto {
   @IsEmail()
   @ApiProperty({
     description: 'Email address of the user',
-    example: 'email@example.com',
+    example: 'christtopher.bolocan@example.com',
   })
   email?: string;
 
@@ -126,53 +126,30 @@ export class UpdateUserDto {
   @IsPhoneNumber('ES')
   @ApiProperty({
     description: 'Phone number of the user',
-    example: 123456789,
+    example: '+34123456789',
   })
   phone?: number;
 
   @IsOptional()
   @IsString()
-  @ApiProperty({
-    description: 'Password of the user',
-    minLength: 8,
-    maxLength: 100,
-    example: 'StrongP@ssw0rd!',
-  })
   password?: string;
 
   // Rol con enumeración
   @IsEnum(UserRole)
   @IsOptional()
-  @ApiProperty({
-    description: 'Role of the user',
-    enum: UserRole,
-    example: UserRole.CLIENTE,
-  })
   role?: UserRole;
 
   //Estado del usuario
   @IsBoolean()
   @IsOptional()
-  @ApiProperty({
-    description: 'Indicates if the user is active',
-    example: true,
-  })
   isActive?: boolean;
 
   // Fechas
   @IsOptional()
   @IsDateString()
-  @ApiProperty({
-    description: 'Date of birth of the user',
-    example: '1990-01-01',
-  })
   fecha_nacimiento?: Date;
 
   @IsOptional()
   @IsString()
-  @ApiProperty({
-    description: 'Address of the user',
-    example: '123 Main St, City, Country',
-  })
   direccion?: string;
 }
