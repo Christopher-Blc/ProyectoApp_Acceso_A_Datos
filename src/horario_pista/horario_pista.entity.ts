@@ -28,10 +28,10 @@ export class Horario_Pista {
 
   
 
-  @Column()
+  @Column({ type: "time" })
   hora_apertura: Date;//Time
 
-  @Column()
+  @Column({ type: "time" })
   hora_cierre: Date;//Time
 
   @Column({type: "int"})

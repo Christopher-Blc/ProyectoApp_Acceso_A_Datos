@@ -5,6 +5,10 @@ import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from "class-validat
 export class PistaDto {
 
     @IsNumber()
+    @ApiProperty({
+        description: 'ID of the installation',
+        example: 1,
+    })
     instalacion_id: number; // clave foranea instalacion
 
     @IsEnum(tipo_pista)

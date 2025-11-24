@@ -4,10 +4,14 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateHorarioPistaDto {
 
-    @IsInt()
-    horario_id: number;
+    // @IsInt()
+    // horario_id: number;
 
     @IsInt()
+    @ApiProperty({
+        description: 'ID of the pista',
+        example: 1,
+    })
     pista_id: number;//llave secundaria que viene de la tabla pista
 
     @IsEnum(dia_semana)
