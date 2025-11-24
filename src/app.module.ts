@@ -19,11 +19,11 @@ import { PistaModule } from './pista/pista.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host:'localhost',
-      port: 2222,                             
-      username: process.env.MYSQL_USER || 'root',
-      password: process.env.MYSQL_PASSWORD || 'my-secret-pw',
-      database: process.env.MYSQL_DATABASE || 'test',
+      host: process.env.DB_HOST || 'database',
+      port: parseInt(process.env.DB_PORT!) || 3306,                             
+      username: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || 'my-secret',
+      database: process.env.DB_DATABASE || 'test',
       autoLoadEntities: true,
       synchronize: true,
     }),

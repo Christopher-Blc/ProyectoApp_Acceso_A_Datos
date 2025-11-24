@@ -12,7 +12,7 @@ export class NotiSeeder implements Seeder {
             notiData.map(async (item) => {
                 const notiEntry = new Noti();
 
-                notiEntry.noti_id = item.noti_id;
+                // notiEntry.noti_id = item.noti_id;
                 notiEntry.mensaje = item.mensaje;
                 notiEntry.tipoNoti = item.tipoNoti;
                 notiEntry.leida = item.leida;

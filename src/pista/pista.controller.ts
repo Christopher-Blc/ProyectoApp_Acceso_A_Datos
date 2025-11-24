@@ -33,6 +33,7 @@ export class PistaController {
   @ApiResponse({ status: 404, description: 'Court not found' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 500, description: 'Error en alguno de los datos.' })
   async findOne(@Param('id') id: number): Promise<Pista> {
     try {
       return this.pistaService.findOne(id);

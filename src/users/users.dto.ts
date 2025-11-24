@@ -38,10 +38,16 @@ export class CreateUserDto {
   @IsPhoneNumber('ES')
   @ApiProperty({
     description: 'Phone number of the user',
-    example: '+34123456789',
+    example: '123456789',
   })
   phone: number;
 
+  @ApiProperty({
+    description: 'Password of the user',
+    minLength: 8,
+    maxLength: 100,
+    example: 'StrongP@ssw0rd!',
+  })
   @IsString()
   @Length(8, 100)
   @Matches(

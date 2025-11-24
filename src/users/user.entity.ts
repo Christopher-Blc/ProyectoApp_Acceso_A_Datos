@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable, ManyToOne, Unique } from "typeorm";
 import { Noti } from "../noti/noti.entity";
 import { Comentario } from "../comentario/comentario.entity";
 import { Reserva } from "../reserva/reserva.entity";
@@ -13,61 +13,63 @@ export enum UserRole {
     SUPER_ADMIN = "SUPER_ADMIN",
 }
 
-@Entity()
+@Entity({ name: "user" })
 export class User {
-    @PrimaryGeneratedColumn({ type: "int" })
+    @PrimaryGeneratedColumn({ name: "usuario_id", type: "int" })
     usuario_id: number;
 
-    @OneToMany(() => Noti, noti => noti.user)
+    @OneToMany(() => Noti, (n) => n.user)
     notificaciones: Noti[];
 
-    @Column()
+    @Column({ name: "name" })
     name: string;
 
-    @Column()
+    @Column({ name: "surname" })
     surname: string;
 
-    @Column()
+    @Column({ name: "email" })
+    //@Unique(["email"])
     email: string;
 
-    @Column()
+    @Column({ name: "phone" })
     phone: number;
 
-    @Column()
+    @Column({ name: "password" })
     password: string;
 
     @Column({
+        name: "role",
         type: "enum",
         enum: UserRole,
         default: UserRole.CLIENTE,
     })
     role: UserRole;
 
-    @Column()
+    @Column({ name: "isActive", default: true })
     isActive: boolean;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @Column({ name: "fecha_registro", type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     fecha_registro: Date;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @Column({ name: "fecha_ultimo_login", type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     fecha_ultimo_login: Date;
 
-    @Column()
+    @Column({ name: "fecha_nacimiento", type: 'date' })
     fecha_nacimiento: Date;
 
-    @Column()
+    @Column({ name: "direccion" })
     direccion: string;
 
-    @ManyToOne(() => Membresia, membresia => membresia.users)
+    @ManyToOne(() => Membresia, (m) => m.users)
     membresia: Membresia;
 
-    @OneToMany(() => Comentario, comentario => comentario.user)
+    @OneToMany(() => Comentario, (c) => c.user)
     comentarios: Comentario[];
 
-    @OneToMany(() => Pago, pago => pago.usuario)
+    @OneToMany(() => Pago, (p) => p.usuario)
     pagos: Pago[];
 
-    @ManyToMany(() => Reserva, reserva => reserva.usuarios)
+    @ManyToMany(() => Reserva, (r) => r.usuarios)
     @JoinTable()
     reservas: Reserva[];
 }
