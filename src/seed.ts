@@ -18,14 +18,16 @@ import { InstalacionSeeder } from "./db/seeding/seeds/instalacion.seeder";
 import { ComentarioSeeder } from "./db/seeding/seeds/comentario.seeder";
 import { Horario_PistaSeeder } from "./db/seeding/seeds/horario_pista.seeder";
 import { NotiSeeder } from "./db/seeding/seeds/noti.seeder";
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const options: DataSourceOptions & SeederOptions = {
   type: 'mysql',
-  host: 'localhost',
-  port: 3306,
-  username: 'respi',
-  password: 'my-secret',
-  database: 'respi',
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT || "3306"),
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 
   entities: [
     User,

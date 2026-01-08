@@ -11,6 +11,7 @@ import { HorarioPistaModule } from './horario_pista/horario_pista.module';
 import { PagoModule } from './pago/pago.module';
 import { NotiModule } from './noti/noti.module';
 import { PistaModule } from './pista/pista.module';
+import { AuthModule } from './auth/auth.module';
 
 
 
@@ -36,6 +37,7 @@ import { PistaModule } from './pista/pista.module';
     PagoModule,
     NotiModule,
     PistaModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
