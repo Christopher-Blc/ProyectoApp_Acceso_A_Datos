@@ -11,6 +11,7 @@ import { UpdateUserDto } from './users.dto';
 // en otras clases (por ejemplo, en el controlador)
 @Injectable()
 export class UsersService {
+
   // En el constructor, declaramos las dependencias que queremos que NestJS inyecte automáticamente.
   // En este caso, el repositorio de la entidad User.
   constructor(
@@ -60,4 +61,18 @@ export class UsersService {
     // Borramos el registro que tenga el ID indicado
     await this.userRepository.delete(usuario_id);
   }
+
+  //Metodo para encontrar un usuario por su email
+  async findByEmail(email: string) {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
+  //Metodo para actualizar la fecha del ultimo login
+  async updateLastLogin(usuario_id: number) {
+  await this.userRepository.update(
+    { usuario_id },
+    { fecha_ultimo_login: new Date() },
+  );
+}
+
 }
