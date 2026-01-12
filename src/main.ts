@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  //await app.listen(process.env.PORT ?? 3000);
+
   const app = await NestFactory.create(AppModule);
   //para que la app valide los dtos y de los mensajes de error que tocan 
   app.useGlobalPipes(
@@ -15,6 +15,7 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+  
   app.enableCors({
     //en produccion no se pondria * para restringir el acceso a las apis
     origin: '*',
