@@ -1,10 +1,11 @@
-import { IsString, IsEmail , IsPhoneNumber , IsOptional, IsDateString , Length, Matches } from 'class-validator';
+import { IsString, IsEmail , IsPhoneNumber , IsOptional, IsDateString , Length, Matches, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto {
 
   //Apellido
   @IsString()
+  @IsNotEmpty()
   @Length(1, 40)
   @ApiProperty({
     description: 'Name of the user',
@@ -16,6 +17,7 @@ export class RegisterDto {
 
   //Apellido
   @IsString()
+  @IsNotEmpty()
   @Length(1, 40)
   @ApiProperty({
     description: 'Surname of the user',
@@ -27,6 +29,7 @@ export class RegisterDto {
 
   //Correo electronico
   @IsEmail()
+  @IsNotEmpty()
   @ApiProperty({
     description: 'Email address of the user',
     example: 'email@example.com',
@@ -35,6 +38,7 @@ export class RegisterDto {
 
   //Telefono
   @IsPhoneNumber('ES')
+  @IsNotEmpty()
   @ApiProperty({
     description: 'Phone number of the user',
     example: 123456789,
@@ -50,6 +54,7 @@ export class RegisterDto {
     example: 'StrongP@ssw0rd!',
   })
   @IsString()
+  @IsNotEmpty()
   @Length(8, 100)
   @Matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
@@ -62,6 +67,7 @@ export class RegisterDto {
 
   // Fechas
   @IsDateString()
+  @IsNotEmpty()
   @ApiProperty({
     description: 'Date of birth of the user',
     example: '1990-01-01',
@@ -70,6 +76,7 @@ export class RegisterDto {
 
   //direccion
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     description: 'Address of the user',
     example: '123 Main St, City, Country',
