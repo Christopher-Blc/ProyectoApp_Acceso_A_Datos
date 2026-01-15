@@ -31,6 +31,7 @@ export class AuthService {
       role: UserRole.CLIENTE,
       isActive: true,
       fecha_registro: new Date(),
+      fecha_nacimiento: new Date(dto.fecha_nacimiento),
     });
 
     const { password, ...userSafe } = created;
@@ -62,7 +63,10 @@ export class AuthService {
     //devolvemos el usuario sin la contraseña
     const { password, ...userSafe } = user;
     //returnamos el token y el usuario sin la contraseña
+        console.log('JWT_SECRET:', process.env.JWT_SECRET);
+
     return { access_token, user: userSafe };
+
   }
 
 }

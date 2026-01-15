@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { Membresia } from './membresia.entity';
 import { MembresiaService } from './membresia.service';
 import { CreateMembresiaDto, UpdateMembresiaDto } from './membresia.dto';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
-
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller('membresia')
 export class MembresiaController {
     constructor(private readonly membresiaService: MembresiaService){}

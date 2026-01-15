@@ -1,9 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { InstalacionService } from './instalacion.service';
 import { Instalacion } from './instalacion.entity';
 import { CreateInstalacionDto, UpdateInstalacionDto } from './instalacion.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller('instalacion')
 export class InstalacionController {
     constructor(private readonly instalacionService: InstalacionService) {}
