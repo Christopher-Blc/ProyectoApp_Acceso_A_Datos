@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { PistaService } from './pista.service';
 import { PistaDto } from './pista.dto';
 import { Pista } from './pista.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller('pista')
 export class PistaController {
   constructor(private readonly pistaService: PistaService) {}

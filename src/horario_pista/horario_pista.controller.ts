@@ -1,9 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { HorarioPistaService } from './horario_pista.service';
 import { Horario_Pista } from './horario_pista.entity';
 import { CreateHorarioPistaDto, UpdateHorarioPistaDto } from './horario_pista.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller('horario-pista')
 export class HorarioPistaController {
     constructor(private readonly HorarioPistaService: HorarioPistaService) {}
