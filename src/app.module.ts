@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from "./users/users.module";
 import { AppService } from "./app.service";
@@ -11,12 +12,16 @@ import { HorarioPistaModule } from './horario_pista/horario_pista.module';
 import { PagoModule } from './pago/pago.module';
 import { NotiModule } from './noti/noti.module';
 import { PistaModule } from './pista/pista.module';
+import { AuthModule } from './auth/auth.module';
 
 
 
 @Module({
   
   imports: [
+     ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || 'database',
@@ -36,6 +41,7 @@ import { PistaModule } from './pista/pista.module';
     PagoModule,
     NotiModule,
     PistaModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

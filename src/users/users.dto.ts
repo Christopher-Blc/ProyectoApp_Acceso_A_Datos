@@ -40,7 +40,7 @@ export class CreateUserDto {
     description: 'Phone number of the user',
     example: 123456789,
   })
-  phone: number;
+  phone: string;
 
   @ApiProperty({
     description: 'Password of the user',
@@ -128,7 +128,7 @@ export class UpdateUserDto {
     description: 'Phone number of the user',
     example: '+34123456789',
   })
-  phone?: number;
+  phone?: string;
 
   @IsOptional()
   @IsString()
