@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-
+import type { StringValue } from 'ms';
 
 @Module({
   imports: [
@@ -13,13 +13,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       global: true,
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: process.env.JWT_SECRET,
-        signOptions: { expiresIn: '1h' },
+      useFactory: (_configService: ConfigService) => ({
+        secret: process.env.JWT_ACCESS_SECRET as string,
+        signOptions: {expiresIn: (process.env.JWT_EXPIRES_IN ?? '1h') as StringValue, },
       }),
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService]
+  providers: [AuthService],
 })
 export class AuthModule {}

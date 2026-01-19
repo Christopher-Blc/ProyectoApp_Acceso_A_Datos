@@ -36,13 +36,13 @@ export class AuthService {
   const newPayload = { sub: user.usuario_id, email: user.email, role: user.role };
 
   const access_token = await this.jwtService.signAsync(newPayload, {
-    secret: process.env.JWT_ACCESS_SECRET as string,
-    expiresIn: (process.env.JWT_ACCESS_EXPIRES || "15m") as StringValue,
+    secret: process.env.JWT_SECRET as string,
+    expiresIn: (process.env.JWT_EXPIRES_IN || "15m") as StringValue,
   });
 
   const new_refresh_token = await this.jwtService.signAsync(newPayload, {
     secret: process.env.JWT_REFRESH_SECRET as string,
-    expiresIn: (process.env.JWT_REFRESH_EXPIRES || "7d") as StringValue,
+    expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || "7d") as StringValue,
   });
 
   const newHash = await bcrypt.hash(new_refresh_token, 10);
@@ -61,11 +61,9 @@ export class AuthService {
     const existing = await this.usersService.findByEmail(dto.email);
     if (existing) throw new ConflictException('Email ya registrado');
 
-    const hash = await bcrypt.hash(dto.password, 10);
-
     const created = await this.usersService.create({
       ...dto,
-      password: hash,
+      password: dto.password,
       role: UserRole.CLIENTE,
       isActive: true,
       fecha_registro: new Date(),
@@ -98,16 +96,13 @@ export class AuthService {
 
     //generamos el token
     const access_token = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_ACCESS_SECRET as string,
-      expiresIn: (process.env.JWT_ACCESS_EXPIRES || "15m") as StringValue,
+      secret: process.env.JWT_SECRET as string,
+      expiresIn: (process.env.JWT_EXPIRES_IN || "15m") as StringValue,
     });
     
-    console.log('JWT_SECRET:', process.env.JWT_SECRET);
-
-
     const refresh_token = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_REFRESH_SECRET as string,
-      expiresIn: (process.env.JWT_REFRESH_EXPIRES || "7d") as StringValue,
+      expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || "7d") as StringValue,
     });
 
     const refreshHash = await bcrypt.hash(refresh_token, 10);
