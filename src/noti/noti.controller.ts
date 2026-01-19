@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { NotiService } from './noti.service';
 import { NotiDto } from './noti.dto';
 import { Noti } from './noti.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller('noti')
 export class NotiController {
   constructor(private readonly notiService: NotiService) {}

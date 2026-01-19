@@ -3,12 +3,12 @@ import { UserRole } from "../users/user.entity";
 export default [
 
     {
-        name: 'Christopher',
-        surname: 'Bolocan',
-        email: 'chris@bolocan.com',
+        name: 'test',
+        surname: 'test',
+        email: 'test@test.com',
         phone: '634323242',
-        password: 'chris',
-        role: UserRole.GESTOR_RESERVAS,
+        password: 'Abc@1234',
+        role: UserRole.SUPER_ADMIN,
         isActive: true,
         fecha_registro: new Date('2025-10-23T08:00:00'),
         fecha_ultimo_login: new Date('2025-10-23T09:00:00') ,

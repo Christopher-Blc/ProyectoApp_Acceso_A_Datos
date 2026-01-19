@@ -63,7 +63,9 @@ export class AuthService {
     //devolvemos el usuario sin la contraseña
     const { password, ...userSafe } = user;
     //returnamos el token y el usuario sin la contraseña
+
     return { access_token, user: userSafe };
+
   }
 
 }

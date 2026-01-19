@@ -1,11 +1,19 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpException,
-  HttpStatus, } from '@nestjs/common';
+  HttpStatus,
+  UseGuards, } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './users.dto';
 import { User } from './user.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from './user.entity';
 
 @ApiTags('users') 
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(UserRole.SUPER_ADMIN)
+@ApiBearerAuth()
 @Controller('users') // La ruta base para este controlador será /users
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
@@ -13,7 +21,6 @@ export class UsersController {
   // GET /users -> obtener todos los usuarios
   //@ApiTags('users')
   @Get()
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'Users retrieved successfully.' })
   @ApiResponse({ status: 204, description: 'No content.' })
@@ -29,10 +36,10 @@ export class UsersController {
       );
     }
   }
+  
 
   // GET /users/:id -> obtener un usuario por ID
   @Get(':id')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiResponse({ status: 200, description: 'User retrieved successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid user ID.' })
@@ -69,8 +76,6 @@ export class UsersController {
 
   // PUT /users/:id -> actualizar un usuario existente
   @Put(':id')
-
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user by ID' })
   @ApiResponse({ status: 200, description: 'User updated successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid user ID.' })
@@ -90,7 +95,6 @@ export class UsersController {
 
   // DELETE /users/:id -> eliminar un usuario
   @Delete(':id')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete user by ID' })
   @ApiResponse({ status: 200, description: 'User deleted successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid user ID.' })
