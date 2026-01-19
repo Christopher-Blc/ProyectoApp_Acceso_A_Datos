@@ -2,6 +2,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 // Importamos la entidad User, que representa la tabla en la base de datos
 import { User } from './user.entity';
@@ -21,12 +22,12 @@ export class UsersService {
     private readonly userRepository: Repository<User>, // Repositorio genérico de TypeORM para la entidad User
   ) {}
 
-  // 🔹 Método para obtener todos los usuarios
+  // Metodo para obtener todos los usuarios
   async findAll(): Promise<User[]> {
     return this.userRepository.find({ relations: ['reservas', 'membresia', 'pagos', 'comentarios'] });
   }
 
-  // 🔹 Método para obtener un usuario por su ID
+  //Metodo para obtener un usuario por su ID
   async findOne(usuario_id: number): Promise<User> {
     // findOne busca un registro que cumpla la condición `where: { id }`
     // También cargamos las reservas relacionadas con ese usuario
@@ -42,6 +43,9 @@ export class UsersService {
 
   // Método para crear un nuevo usuario
   async create(data: Partial<User>) {
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
+    }
     // "create" crea una instancia del objeto User (no la guarda todavía)
     const user = this.userRepository.create(data);
     // "save" guarda el usuario en la base de datos
@@ -50,6 +54,9 @@ export class UsersService {
 
   // Método para actualizar un usuario existente
   async update(usuario_id: number, data: UpdateUserDto): Promise<User> {
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
+    }
     // "update" modifica los campos en la base de datos
     await this.userRepository.update(usuario_id, data);
     // Retornamos el usuario actualizado
