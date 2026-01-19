@@ -14,6 +14,43 @@ import type { StringValue } from "ms";
 
 @Injectable()
 export class AuthService {
+  async refresh(refresh_token: string): Promise<{ access_token: string; refresh_token: string }> {
+  let payload: any;
+
+  try {
+    payload = await this.jwtService.verifyAsync(refresh_token, {
+      secret: process.env.JWT_REFRESH_SECRET as string,
+    });
+  } catch {
+    throw new UnauthorizedException("Refresh token inválido o caducado");
+  }
+
+  const user = await this.usersService.findById(Number(payload.sub));
+  if (!user) throw new UnauthorizedException("Usuario no existe");
+  if (!user.isActive) throw new ForbiddenException("Usuario inactivo");
+  if (!user.refresh_token_hash) throw new UnauthorizedException("No hay refresh guardado");
+
+  const ok = await bcrypt.compare(refresh_token, user.refresh_token_hash);
+  if (!ok) throw new UnauthorizedException("Refresh token inválido");
+
+  const newPayload = { sub: user.usuario_id, email: user.email, role: user.role };
+
+  const access_token = await this.jwtService.signAsync(newPayload, {
+    secret: process.env.JWT_ACCESS_SECRET as string,
+    expiresIn: (process.env.JWT_ACCESS_EXPIRES || "15m") as StringValue,
+  });
+
+  const new_refresh_token = await this.jwtService.signAsync(newPayload, {
+    secret: process.env.JWT_REFRESH_SECRET as string,
+    expiresIn: (process.env.JWT_REFRESH_EXPIRES || "7d") as StringValue,
+  });
+
+  const newHash = await bcrypt.hash(new_refresh_token, 10);
+  await this.usersService.updateRefreshTokenHash(user.usuario_id, newHash);
+
+  return { access_token, refresh_token: new_refresh_token };
+}
+
 
    constructor(
     private readonly usersService: UsersService,

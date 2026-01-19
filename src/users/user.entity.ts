@@ -10,6 +10,7 @@ export enum UserRole {
     GESTOR_RESERVAS = "GESTOR_RESERVAS",
     CLIENTE = "CLIENTE",
     SUPER_ADMIN = "SUPER_ADMIN",
+    ADMINISTRACION = "ADMINISTRACION",
 }
 
 @Entity({ name: "user" })
@@ -58,8 +59,9 @@ export class User {
     @Column({ name: "direccion" })
     direccion: string;
 
-    @Column({ nullable: true })
+    @Column({ name: "refresh_token_hash", type: "varchar", length: 255, nullable: true })
     refresh_token_hash: string | null;
+
 
     @OneToMany(() => Membresia, (m) => m.user)
     membresia: Membresia[];
