@@ -6,7 +6,7 @@ export default [
         name: 'Christopher',
         surname: 'Bolocan',
         email: 'chris@bolocan.com',
-        phone: 634323242,
+        phone: '634323242',
         password: 'chris',
         role: UserRole.GESTOR_RESERVAS,
         isActive: true,

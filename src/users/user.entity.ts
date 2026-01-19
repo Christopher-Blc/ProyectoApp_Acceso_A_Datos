@@ -32,7 +32,7 @@ export class User {
     email: string;
 
     @Column({ name: "phone" })
-    phone: number;
+    phone: string;
 
     @Column({ name: "password" })
     password: string;

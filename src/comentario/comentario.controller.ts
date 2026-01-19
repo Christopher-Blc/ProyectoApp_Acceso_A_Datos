@@ -1,9 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ComentarioService } from './comentario.service';
 import { Comentario } from './comentario.entity';
 import { CreateComentarioDto, UpdateComentarioDto } from './comentario.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller('comentario')
 export class ComentarioController {
     constructor(private readonly comentarioService: ComentarioService) {}

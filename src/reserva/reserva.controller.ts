@@ -1,16 +1,17 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Reserva } from './reserva.entity';
 import { CreateReservaDto } from './reserva.dto';
 import { ReservaService } from './reserva.service';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
-
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller('reserva')
 export class ReservaController {
       constructor(private readonly reservaService: ReservaService) {}
     
       @Get()
-      @ApiBearerAuth()
       @ApiOperation({ summary: 'Get all reservas' })
       @ApiResponse({ status: 200, description: 'Reservas retrieved successfully.' })
       @ApiResponse({ status: 204, description: 'No content.' })
@@ -28,7 +29,6 @@ export class ReservaController {
       }
 
       @Get(':id')
-      @ApiBearerAuth()
       @ApiOperation({ summary: 'Get reserva by ID' })
       @ApiResponse({ status: 200, description: 'Reserva retrieved successfully.' })
       @ApiResponse({ status: 400, description: 'Invalid reserva ID.' })
@@ -63,7 +63,6 @@ export class ReservaController {
       }
 
       @Put(':id')
-      @ApiBearerAuth()
       @ApiOperation({ summary: 'Update an existing reserva' })
       @ApiResponse({ status: 200, description: 'Reserva updated successfully.' })
       @ApiResponse({ status: 400, description: 'Invalid reserva ID.' })
@@ -82,7 +81,6 @@ export class ReservaController {
       }
 
       @Delete(':id')
-      @ApiBearerAuth()
       @ApiOperation({ summary: 'Delete reserva by ID' })
       @ApiResponse({ status: 200, description: 'Reserva deleted successfully.' })
       @ApiResponse({ status: 400, description: 'Invalid reserva ID.' })
