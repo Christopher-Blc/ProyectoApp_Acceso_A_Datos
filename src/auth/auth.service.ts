@@ -31,6 +31,7 @@ export class AuthService {
       role: UserRole.CLIENTE,
       isActive: true,
       fecha_registro: new Date(),
+      fecha_nacimiento: new Date(dto.fecha_nacimiento),
     });
 
     const { password, ...userSafe } = created;
