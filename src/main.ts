@@ -26,15 +26,19 @@ async function bootstrap() {
     .setTitle('Respi API')
     .setDescription('API Documentation Respi Backend')
     .setVersion('1.0')
-    //Usar cuando tengamos la autentidicacion hecho
-    // .addBearerAuth({
-    //   type: 'http',
-    //   scheme: 'bearer',
-    //   in: 'header',
-    // })
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      in: 'header',
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
