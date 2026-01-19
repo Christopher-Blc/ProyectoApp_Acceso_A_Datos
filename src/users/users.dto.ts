@@ -50,6 +50,7 @@ export class CreateUserDto {
   })
   @IsString()
   @Length(8, 100)
+  //minimo una mayuscula, una minuscula, un numero y un caracter especial que sea uno de: @$!%*?&
   @Matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
     {

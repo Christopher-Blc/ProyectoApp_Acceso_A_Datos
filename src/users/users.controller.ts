@@ -6,9 +6,13 @@ import { CreateUserDto } from './users.dto';
 import { User } from './user.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from './user.entity';
 
 @ApiTags('users') 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
 @ApiBearerAuth()
 @Controller('users') // La ruta base para este controlador será /users
 export class UsersController {
