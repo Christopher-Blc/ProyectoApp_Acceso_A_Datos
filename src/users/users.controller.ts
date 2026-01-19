@@ -12,14 +12,13 @@ import { UserRole } from './user.entity';
 
 @ApiTags('users') 
 @UseGuards(AuthGuard, RolesGuard)
+//solo puede entrar un usuario con rol SUPER_ADMIN
 @Roles(UserRole.SUPER_ADMIN)
 @ApiBearerAuth()
 @Controller('users') // La ruta base para este controlador será /users
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  // GET /users -> obtener todos los usuarios
-  //@ApiTags('users')
   @Get()
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'Users retrieved successfully.' })
