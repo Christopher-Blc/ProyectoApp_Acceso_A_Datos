@@ -5,6 +5,7 @@ import { Reserva } from "../reserva/reserva.entity";
 import { Membresia } from "../membresia/membresia.entity";
 import { Pago } from "../pago/pago.entity";
 
+
 export enum UserRole {
     GESTOR_RESERVAS = "GESTOR_RESERVAS",
     ADMINISTRACION = "ADMINISTRACION",
@@ -59,6 +60,9 @@ export class User {
 
     @Column({ name: "direccion" })
     direccion: string;
+
+    @Column({ nullable: true })
+    refresh_token_hash: string | null;
 
     @OneToMany(() => Membresia, (m) => m.user)
     membresia: Membresia[];
