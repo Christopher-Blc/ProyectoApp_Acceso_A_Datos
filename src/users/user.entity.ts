@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable, ManyToOne, Unique } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm";
 import { Noti } from "../noti/noti.entity";
 import { Comentario } from "../comentario/comentario.entity";
 import { Reserva } from "../reserva/reserva.entity";
