@@ -64,9 +64,9 @@ export class AuthService {
       secret: process.env.JWT_ACCESS_SECRET as string,
       expiresIn: (process.env.JWT_ACCESS_EXPIRES || "15m") as StringValue,
     });
-    //returnamos el token y el usuario sin la contraseña
-        console.log('JWT_SECRET:', process.env.JWT_SECRET);
     
+    console.log('JWT_SECRET:', process.env.JWT_SECRET);
+
 
     const refresh_token = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_REFRESH_SECRET as string,
@@ -78,7 +78,6 @@ export class AuthService {
 
     //devolvemos el usuario sin la contraseña y sin el hash del refresh token
     const { password, refresh_token_hash, ...userSafe } = user;
-
 
 
     return { access_token, refresh_token, user: userSafe };

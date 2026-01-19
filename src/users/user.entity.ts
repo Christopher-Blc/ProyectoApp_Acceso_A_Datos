@@ -8,9 +8,7 @@ import { Pago } from "../pago/pago.entity";
 
 export enum UserRole {
     GESTOR_RESERVAS = "GESTOR_RESERVAS",
-    ADMINISTRACION = "ADMINISTRACION",
     CLIENTE = "CLIENTE",
-    MANTENIMIENTO = "MANTENIMIENTO",
     SUPER_ADMIN = "SUPER_ADMIN",
 }
 
@@ -28,8 +26,7 @@ export class User {
     @Column({ name: "surname" })
     surname: string;
 
-    @Column({ name: "email" })
-    //@Unique(["email"])
+    @Column({ name: "email"  , unique: true})
     email: string;
 
     @Column({ name: "phone" })
