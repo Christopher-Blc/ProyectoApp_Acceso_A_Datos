@@ -59,7 +59,7 @@ export class User {
     @Column({ name: "direccion" })
     direccion: string;
 
-    @Column({ name: "refresh_token_hash", type: "varchar", length: 255, nullable: true })
+    @Column({ name: "refresh_token_hash", type: "text", nullable: true })
     refresh_token_hash: string | null;
 
 
