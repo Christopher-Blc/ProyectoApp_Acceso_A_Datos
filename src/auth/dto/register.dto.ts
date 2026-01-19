@@ -29,8 +29,8 @@ export class RegisterDto {
 
   //Correo electronico
   @IsEmail()
-  @IsNotEmpty()
   @ApiProperty({
+    uniqueItems: true,
     description: 'Email address of the user',
     example: 'email@example.com',
   })
