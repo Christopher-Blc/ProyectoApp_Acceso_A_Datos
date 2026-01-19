@@ -10,6 +10,7 @@ import { UserRole } from '../users/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import type { StringValue } from "ms";
 
 @Injectable()
 export class AuthService {
@@ -38,7 +39,7 @@ export class AuthService {
     return userSafe;
   }
 
-  async login(dto: LoginDto): Promise<{ access_token: string; user: any }> {
+  async login(dto: LoginDto): Promise<{ access_token: string; refresh_token: string; user: any }> {
 
     //se busca el user por email y se comprueba que sea un usuario activo y que contraseña correcta
     const user = await this.usersService.findByEmail(dto.email);
@@ -59,13 +60,27 @@ export class AuthService {
     };
 
     //generamos el token
-    const access_token = await this.jwtService.signAsync(payload);
-    //devolvemos el usuario sin la contraseña
-    const { password, ...userSafe } = user;
-    //returnamos el token y el usuario sin la contraseña
+    const access_token = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_ACCESS_SECRET as string,
+      expiresIn: (process.env.JWT_ACCESS_EXPIRES || "15m") as StringValue,
+    });
+    
+    console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
-    return { access_token, user: userSafe };
+
+    const refresh_token = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_REFRESH_SECRET as string,
+      expiresIn: (process.env.JWT_REFRESH_EXPIRES || "7d") as StringValue,
+    });
+
+    const refreshHash = await bcrypt.hash(refresh_token, 10);
+    await this.usersService.updateRefreshTokenHash(user.usuario_id, refreshHash);
+
+    //devolvemos el usuario sin la contraseña y sin el hash del refresh token
+    const { password, refresh_token_hash, ...userSafe } = user;
+
+
+    return { access_token, refresh_token, user: userSafe };
 
   }
-
 }

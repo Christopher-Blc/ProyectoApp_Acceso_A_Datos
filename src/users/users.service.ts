@@ -76,10 +76,24 @@ export class UsersService {
 
   //Metodo para actualizar la fecha del ultimo login
   async updateLastLogin(usuario_id: number) {
-  await this.userRepository.update(
-    { usuario_id },
-    { fecha_ultimo_login: new Date() },
-  );
-}
+    await this.userRepository.update(
+      { usuario_id },
+      { fecha_ultimo_login: new Date() },
+    );
+  }
+
+    // Metodo para obtener usuario por id (sin lanzar exception si no existe)
+  async findById(usuario_id: number) {
+    return this.userRepository.findOne({ where: { usuario_id } });
+  }
+
+  // Metodo para guardar o borrar el hash del refresh token
+  async updateRefreshTokenHash(usuario_id: number, hash: string | null) {
+    await this.userRepository.update(
+      { usuario_id },
+      { refresh_token_hash: hash },
+    );
+  }
+
 
 }
