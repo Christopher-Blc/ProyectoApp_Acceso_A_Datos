@@ -5,6 +5,7 @@ import { Pista } from './pista.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
+@ApiTags('pistas')
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
 @Controller('pista')

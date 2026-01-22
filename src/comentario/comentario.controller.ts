@@ -2,9 +2,10 @@ import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nes
 import { ComentarioService } from './comentario.service';
 import { Comentario } from './comentario.entity';
 import { CreateComentarioDto, UpdateComentarioDto } from './comentario.dto';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
+@ApiTags('comentarios')
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
 @Controller('comentario')

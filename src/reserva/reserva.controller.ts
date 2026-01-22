@@ -5,6 +5,7 @@ import { ReservaService } from './reserva.service';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
+@ApiTags('reservas')
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
 @Controller('reserva')
