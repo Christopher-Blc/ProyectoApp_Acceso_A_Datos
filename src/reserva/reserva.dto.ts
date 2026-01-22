@@ -4,15 +4,31 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateReservaDto {
     @IsNumber()
+    @ApiProperty({
+        description: 'ID of the reservation',
+        example: 1,
+    })
     reserva_id: number;
 
     @IsNumber()
+    @ApiProperty({
+        description: 'ID of the user',
+        example: 1,
+    })
     usuario_id: number;
 
     @IsNumber()
+    @ApiProperty({
+        description: 'ID of the pista',
+        example: 1,
+    })
     pista_id: number;
 
     @IsNumber()
+    @ApiProperty({
+        description: 'ID of the payment',
+        example: 1,
+    })
     pago_id: number;
     
     @IsDateString()
@@ -20,21 +36,21 @@ export class CreateReservaDto {
         description: 'Date of the reservation',
         example: '1990-01-01',
     })
-    fecha_reserva: Date;
+    fecha_reserva: string;
 
     @IsDateString()
     @ApiProperty({
         description: 'Start date of the reservation',
         example: '1990-01-01',
     })
-    fecha_inicio: Date; 
+    fecha_inicio: string; 
 
     @IsDateString()
     @ApiProperty({  
         description: 'End date of the reservation',
         example: '1990-01-01',
     })
-    fecha_fin: Date;
+    fecha_fin: string;
 
     @IsOptional()
     @IsEnum(estadoReserva)

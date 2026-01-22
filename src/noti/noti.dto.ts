@@ -39,7 +39,7 @@ export class NotiDto{
         description: 'Date of the notification',
         example: '2024-01-01T10:00:00Z',
      })
-    fecha: Date;
+    fecha: string;
 }
 
 export class UpdateNotiDto{

@@ -50,7 +50,7 @@ export class CreateComentarioDto {
         description: 'Date of the comentario',
         example: '2023-12-31T23:59:59Z',
     })
-    fecha_comentario: Date;
+    fecha_comentario: string;
 
     @IsBoolean()
     @ApiProperty({
