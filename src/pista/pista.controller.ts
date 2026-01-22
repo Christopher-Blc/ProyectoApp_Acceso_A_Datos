@@ -4,9 +4,12 @@ import { PistaDto } from './pista.dto';
 import { Pista } from './pista.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from 'src/users/user.entity';
 
+@UseGuards(AuthGuard, RolesGuard)
 @ApiTags('pistas')
-@UseGuards(AuthGuard)
 @ApiBearerAuth()
 @Controller('pista')
 export class PistaController {
@@ -51,6 +54,7 @@ export class PistaController {
 
   // POST /pista -> crear un nuevo pista
   @Post()
+  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new court' })
   @ApiResponse({ status: 201, description: 'Court created successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
@@ -68,6 +72,7 @@ export class PistaController {
 
   // PUT /pista/:id -> actualizar un pista existente
   @Put(':id')
+  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update an existing court' })
   @ApiResponse({ status: 200, description: 'Court updated successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
@@ -86,6 +91,7 @@ export class PistaController {
 
   // DELETE /pista/:id -> eliminar un pista
   @Delete(':id')
+  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Delete a court' })
   @ApiResponse({ status: 200, description: 'Court deleted successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })

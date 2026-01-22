@@ -4,8 +4,11 @@ import { NotiDto } from './noti.dto';
 import { Noti } from './noti.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from 'src/users/user.entity';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller('noti')
 export class NotiController {
@@ -48,6 +51,7 @@ export class NotiController {
 
   // POST /noti -> crear una nueva noti
   @Post()
+  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Crear una nueva notificación' })
   @ApiResponse({ status: 201, description: 'Notificación creada correctamente.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
@@ -70,6 +74,7 @@ export class NotiController {
 
   // PUT /noti/:id -> actualizar un noti existente
   @Put(':id')
+  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Actualizar una notificación por ID' })
   @ApiResponse({ status: 200, description: 'Notificación actualizada correctamente.' })
   @ApiResponse({ status: 404, description: 'Notificación no encontrada.' })
@@ -88,6 +93,7 @@ export class NotiController {
 
   // DELETE /noti/:id -> eliminar un noti
   @Delete(':id')
+  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Eliminar una notificación por ID' })
   @ApiResponse({ status: 200, description: 'Notificación eliminada correctamente.' })
   @ApiResponse({ status: 404, description: 'Notificación no encontrada.' })
@@ -103,4 +109,6 @@ export class NotiController {
       );
     }
   }
+
+  
 }
