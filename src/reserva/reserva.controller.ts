@@ -4,9 +4,12 @@ import { CreateReservaDto, UpdateReservaDto } from './reserva.dto';
 import { ReservaService } from './reserva.service';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from 'src/users/user.entity';
 
 @ApiTags('reservas')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller('reserva')
 export class ReservaController {
@@ -48,6 +51,7 @@ export class ReservaController {
       }
 
       @Post()
+      @Roles(UserRole.CLIENTE, UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
       @ApiOperation({ summary: 'Create a new reserva' })
       @ApiResponse({ status: 201, description: 'Reserva created successfully.' })
       @ApiResponse({ status: 400, description: 'Bad request.' })
@@ -64,6 +68,7 @@ export class ReservaController {
       }
 
       @Put(':id')
+      @Roles(UserRole.CLIENTE , UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
       @ApiOperation({ summary: 'Update an existing reserva' })
       @ApiResponse({ status: 200, description: 'Reserva updated successfully.' })
       @ApiResponse({ status: 400, description: 'Invalid reserva ID.' })
@@ -82,6 +87,7 @@ export class ReservaController {
       }
 
       @Delete(':id')
+      @Roles(UserRole.CLIENTE , UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
       @ApiOperation({ summary: 'Delete reserva by ID' })
       @ApiResponse({ status: 200, description: 'Reserva deleted successfully.' })
       @ApiResponse({ status: 400, description: 'Invalid reserva ID.' })
@@ -98,4 +104,4 @@ export class ReservaController {
           );
         }
       } 
-      }
+}

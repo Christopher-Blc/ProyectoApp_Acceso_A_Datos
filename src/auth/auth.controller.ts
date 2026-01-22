@@ -1,12 +1,17 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { AuthService } from './auth.service';
 import { RefreshDto } from "./dto/refresh.dto";
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-
-@ApiTags('auth')
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -16,35 +21,56 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'Usuario registrado exitosamente.' })
   @ApiResponse({ status: 400, description: 'Validación fallida o usuario ya existe.' })
   register(@Body() dto: RegisterDto) {
+    // el rol no se decide desde el cliente
+    // si alguien intenta colarlo, lo ideal es bloquearlo con ValidationPipe whitelist + forbidNonWhitelisted
     return this.authService.register(dto);
   }
 
   @Post('login')
-  @ApiOperation({ summary: 'Iniciar sesión y obtener Token JWT' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Login exitoso. Retorna el access_token que debes copiar al botón "Authorize" en Swagger para probar endpoints protegidos.',
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Iniciar sesión y obtener token JWT' })
+  @ApiResponse({
+    status: 200,
+    description: 'Login exitoso. Retorna token y datos del usuario',
     schema: {
       type: 'object',
       properties: {
-        access_token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
+        access_token: {
+          type: 'string',
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        },
+        refresh_token: {
+          type: 'string',
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        },
         user: { type: 'object' },
-      }
-    }
+      },
+    },
   })
-  @ApiResponse({ status: 401, description: 'Credenciales incorrectas.' })
+
+  @ApiResponse({ status: 401, description: 'Credenciales incorrectas' })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
 
-  @Post("refresh")
-  @ApiOperation({ summary: 'Refrescar token JWT' })
-  @ApiResponse({ status: 200, description: 'Token refrescado exitosamente.' })
-  @ApiResponse({ status: 401, description: 'Refresh token inválido o expirado.' })
+
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Renovar access token usando refresh token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Token renovado correctamente',
+    schema: {
+      type: 'object',
+      properties: {
+        access_token: { type: 'string' },
+        refresh_token: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Refresh token faltante o inválido' })
+  @ApiResponse({ status: 401, description: 'Refresh token expirado o no autorizado' })
   refresh(@Body() dto: RefreshDto) {
     return this.authService.refresh(dto.refresh_token);
   }
-
-
-
 }

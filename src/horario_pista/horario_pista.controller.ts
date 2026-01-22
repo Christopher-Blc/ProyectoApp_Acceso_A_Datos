@@ -4,9 +4,12 @@ import { Horario_Pista } from './horario_pista.entity';
 import { CreateHorarioPistaDto, UpdateHorarioPistaDto } from './horario_pista.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from 'src/users/user.entity';
 
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller('horario-pista')
 export class HorarioPistaController {
@@ -33,6 +36,7 @@ export class HorarioPistaController {
     }
 
     @Post()
+    @Roles(UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Create a new horario_pista' })
     @ApiResponse({ status: 201, description: 'Horario_Pista created successfully.' })
     @ApiResponse({ status: 400, description: 'Invalid horario_pista data.' })
@@ -48,6 +52,7 @@ export class HorarioPistaController {
     }
 
     @Put(':id')
+    @Roles(UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Update a horario_pista by ID' })
     @ApiResponse({ status: 200, description: 'Horario_Pista updated successfully.' })
     @ApiResponse({ status: 400, description: 'Invalid horario_pista data.' })
@@ -58,6 +63,7 @@ export class HorarioPistaController {
     }
 
     @Delete(':id')
+    @Roles(UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Delete a horario_pista by ID' })
     @ApiResponse({ status: 200, description: 'Horario_Pista deleted successfully.' })
     @ApiResponse({ status: 400, description: 'Invalid horario_pista ID.' })

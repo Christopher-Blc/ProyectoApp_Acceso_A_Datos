@@ -4,9 +4,12 @@ import { Comentario } from './comentario.entity';
 import { CreateComentarioDto, UpdateComentarioDto } from './comentario.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from 'src/users/user.entity';
 
 @ApiTags('comentarios')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller('comentario')
 export class ComentarioController {
@@ -33,6 +36,7 @@ export class ComentarioController {
     }
 
     @Post()
+    @Roles(UserRole.CLIENTE, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Create a new comentario' })
     @ApiResponse({ status: 201, description: 'Comentario created successfully.' })
     @ApiResponse({ status: 400, description: 'Invalid input.' })
@@ -42,6 +46,7 @@ export class ComentarioController {
     }
 
     @Put(':id')
+    @Roles(UserRole.CLIENTE, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Update a comentario by ID' })
     @ApiResponse({ status: 200, description: 'Comentario updated successfully.' })
     @ApiResponse({ status: 400, description: 'Invalid input.' })
@@ -52,6 +57,7 @@ export class ComentarioController {
     }   
 
     @Delete(':id')
+    @Roles(UserRole.CLIENTE, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Delete a comentario by ID' })
     @ApiResponse({ status: 200, description: 'Comentario deleted successfully.' })
     @ApiResponse({ status: 400, description: 'Invalid comentario ID.' })
