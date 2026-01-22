@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Reserva } from './reserva.entity';
-import { CreateReservaDto } from './reserva.dto';
+import { CreateReservaDto, UpdateReservaDto } from './reserva.dto';
 import { ReservaService } from './reserva.service';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -69,9 +69,9 @@ export class ReservaController {
       @ApiResponse({ status: 401, description: 'Unauthorized.' })
       @ApiResponse({ status: 404, description: 'Reserva not found.' })
       @ApiParam({ name: 'id', example: 1 })
-      async update(@Param('id') id: number, @Body() reservaDto: CreateReservaDto): Promise<Reserva | null> {
+      async update(@Param('id') id: number, @Body() reservaDto: UpdateReservaDto): Promise<Reserva | null> {
         try {
-          return this.reservaService.update(id,reservaDto);
+          return this.reservaService.update(id, reservaDto);
         } catch (err) {
           throw new HttpException(
             err.message,

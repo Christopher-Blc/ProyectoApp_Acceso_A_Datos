@@ -26,14 +26,14 @@ export class CreateHorarioPistaDto {
         description: 'Opening time of the pista',
         example: '08:00:00',
     })
-    hora_apertura: Date;//Time
+    hora_apertura: string;//Time
 
     @IsDateString()
     @ApiProperty({
         description: 'Closing time of the pista',
         example: '22:00:00',
     })
-    hora_cierre: Date;//Time
+    hora_cierre: string;//Time
 
     @IsInt()
     @ApiProperty({
@@ -59,7 +59,7 @@ export class UpdateHorarioPistaDto {
         description: 'Opening time of the pista',
         example: '08:00:00',
     })
-    hora_apertura?: Date;//Time
+    hora_apertura?: string;//Time
 
     @IsOptional()
     @IsDateString()
@@ -67,7 +67,7 @@ export class UpdateHorarioPistaDto {
         description: 'Closing time of the pista',
         example: '22:00:00',
     })
-    hora_cierre?: Date;//Time
+    hora_cierre?: string;//Time
 
     @IsOptional()
     @IsInt()

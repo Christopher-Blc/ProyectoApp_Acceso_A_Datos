@@ -20,7 +20,7 @@ monto: number;
     description: 'Date of the payment',
     example: '2024-01-01T10:00:00Z',
 })
-fecha_pago: Date;
+fecha_pago: string;
 
 // Método de pago
 @IsEnum(metodo_pago)

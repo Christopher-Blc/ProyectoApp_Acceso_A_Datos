@@ -64,7 +64,10 @@ export class UsersController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async createUser(@Body() userDto: CreateUserDto)/*: Promise<User | null>*/ {
     try {
-      return this.userService.create(userDto);
+      return this.userService.create({
+        ...userDto,
+        fecha_nacimiento: new Date(userDto.fecha_nacimiento),
+      });
     } catch (err) {
       throw new HttpException(
         err.message,
@@ -83,7 +86,10 @@ export class UsersController {
   @ApiParam({ name: 'id', example: 1 })
   async updateUser(@Param('id') id: number, @Body() userDto: CreateUserDto)/*: Promise<User | null>*/ {
     try {
-      return this.userService.update(id, userDto);
+      return this.userService.update(id, {
+        ...userDto,
+        fecha_nacimiento: new Date(userDto.fecha_nacimiento),
+      });
     } catch (err) {
       throw new HttpException(
         err.message,

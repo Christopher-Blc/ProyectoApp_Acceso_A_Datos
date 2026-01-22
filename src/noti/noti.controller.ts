@@ -54,7 +54,12 @@ export class NotiController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(@Body() notiDto: NotiDto): Promise<Noti | null> {
     try {
-      return this.notiService.create(notiDto);
+      // Convert 'fecha' from string to Date if present
+      const data = {
+        ...notiDto,
+        fecha: notiDto.fecha ? new Date(notiDto.fecha) : undefined,
+      };
+      return this.notiService.create(data);
     } catch (err) {
       throw new HttpException(
         err.message,

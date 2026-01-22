@@ -25,14 +25,14 @@ export class CreateMembresiaDto {
         description: 'Start date of the membership',
         example: '2024-01-01',
     })
-    fecha_inicio: Date; 
+    fecha_inicio: string; 
 
     @IsDateString()
     @ApiProperty({
         description: 'End date of the membership',
         example: '2024-12-31',
     })
-    fecha_fin: Date;
+    fecha_fin: string;
 
     @IsOptional()
     @IsEnum(estado_membresia)
@@ -63,7 +63,7 @@ export class CreateMembresiaDto {
         description: 'Renewal date of the membership',
         example: '2024-12-31',
     })
-    fecha_renovacion: Date;
+    fecha_renovacion: string;
 }
 
 export class UpdateMembresiaDto {
@@ -82,7 +82,7 @@ export class UpdateMembresiaDto {
         description: 'End date of the membership',
         example: '2024-12-31',
     })
-    fecha_fin: Date;
+    fecha_fin: string;
 
     @IsOptional()
     @IsEnum(estado_membresia)
@@ -113,5 +113,5 @@ export class UpdateMembresiaDto {
         description: 'Renewal date of the membership',
         example: '2024-12-31',
     })
-    fecha_renovacion: Date;
+    fecha_renovacion: string;
 }

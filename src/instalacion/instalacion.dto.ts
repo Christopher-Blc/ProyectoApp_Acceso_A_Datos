@@ -69,14 +69,14 @@ export class CreateInstalacionDto {
         description: 'Opening time of the installation',
         example: '08:00:00',
     })
-    horario_apertura: Date;
+    horario_apertura: string;
 
     @IsDateString()
     @ApiProperty({
         description: 'Closing time of the installation',
         example: '22:00:00',
     })
-    horario_cierre: Date;
+    horario_cierre: string;
 }
 
 export class UpdateInstalacionDto {
@@ -143,7 +143,7 @@ export class UpdateInstalacionDto {
         description: 'Opening time of the installation',
         example: '08:00:00',
     })
-    horario_apertura?: Date;
+    horario_apertura?: string;
 
     @IsOptional()
     @IsDateString()
@@ -151,5 +151,5 @@ export class UpdateInstalacionDto {
         description: 'Closing time of the installation',
         example: '22:00:00',
     })
-    horario_cierre?: Date;
+    horario_cierre?: string;
 }

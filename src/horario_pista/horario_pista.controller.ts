@@ -38,7 +38,13 @@ export class HorarioPistaController {
     @ApiResponse({ status: 400, description: 'Invalid horario_pista data.' })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     async create(@Body() horario_pistaDto: CreateHorarioPistaDto): Promise<Horario_Pista | null> {
-        return this.HorarioPistaService.create(horario_pistaDto);
+        // Convert string dates to Date objects
+        const data: Partial<Horario_Pista> = {
+            ...horario_pistaDto,
+            hora_apertura: new Date(horario_pistaDto.hora_apertura),
+            hora_cierre: new Date(horario_pistaDto.hora_cierre),
+        };
+        return this.HorarioPistaService.create(data);
     }
 
     @Put(':id')

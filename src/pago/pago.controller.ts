@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { PagoService } from './pago.service';
 import { Pago } from './pago.entity';
-import { CreatePagoDto } from './pago.dto';
+import { CreatePagoDto, UpdatePagoDto } from './pago.dto';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
@@ -52,7 +52,11 @@ export class PagoController {
     @ApiResponse({ status: 401, description: 'Unauthorized.' }) 
     async create(@Body() createPagoDto: CreatePagoDto): Promise<Pago | null> {
         try {
-            return this.pagoService.create(createPagoDto);
+            const pagoData = {
+                ...createPagoDto,
+                fecha_pago: new Date(createPagoDto.fecha_pago),
+            };
+            return this.pagoService.create(pagoData);
         } catch (err) {
             throw new HttpException(
               err.message,
@@ -67,9 +71,9 @@ export class PagoController {
     @ApiResponse({ status: 404, description: 'Payment not found.' })
     @ApiResponse({ status: 400, description: 'Bad request.' })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
-    async update(@Param('id') id: number, @Body() createPagoDto: CreatePagoDto): Promise<Pago | null> {
+    async update(@Param('id') id: number, @Body() updatePagoDto: UpdatePagoDto): Promise<Pago | null> {
         try {
-            return this.pagoService.update(id, createPagoDto);
+            return this.pagoService.update(id, updatePagoDto);
         } catch (err) {
             throw new HttpException(
               err.message,
