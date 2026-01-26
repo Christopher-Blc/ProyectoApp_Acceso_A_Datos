@@ -4,9 +4,12 @@ import { Instalacion } from './instalacion.entity';
 import { CreateInstalacionDto, UpdateInstalacionDto } from './instalacion.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from 'src/users/user.entity';
 
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller('instalacion')
 export class InstalacionController {
@@ -33,6 +36,7 @@ export class InstalacionController {
     }
 
     @Post()
+    @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Create a new membership' })
     @ApiResponse({ status: 201, description: 'Membership created successfully.' })
     @ApiResponse({ status: 400, description: 'Invalid membership data.' })
@@ -42,6 +46,7 @@ export class InstalacionController {
     }
 
     @Put(':id')
+    @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Update a membership by ID' })
     @ApiResponse({ status: 200, description: 'Membership updated successfully.' })
     @ApiResponse({ status: 400, description: 'Invalid membership data.' })
@@ -52,6 +57,7 @@ export class InstalacionController {
     }
 
     @Delete(':id')
+    @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Delete a membership by ID' })
     @ApiResponse({ status: 200, description: 'Membership deleted successfully.' })
     @ApiResponse({ status: 400, description: 'Invalid membership ID.' })

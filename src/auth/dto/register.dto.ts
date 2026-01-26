@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto {
 
-  //Apellido
+  //Nombre
   @IsString()
   @IsNotEmpty()
   @Length(1, 40)
@@ -30,7 +30,6 @@ export class RegisterDto {
   //Correo electronico
   @IsEmail()
   @ApiProperty({
-    uniqueItems: true,
     description: 'Email address of the user',
     example: 'email@example.com',
   })
@@ -38,7 +37,6 @@ export class RegisterDto {
 
   //Telefono
   @IsPhoneNumber('ES')
-  @IsNotEmpty()
   @ApiProperty({
     description: 'Phone number of the user',
     example: 123456789,
