@@ -11,6 +11,10 @@ import { RegisterDto } from './dto/register.dto';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import type { StringValue } from "ms";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { createHash } from 'crypto';
+import { AuthTokenBlacklist } from './auth-token-blacklist.entity';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +40,7 @@ export class AuthService {
   const newPayload = { sub: user.usuario_id, email: user.email, role: user.role };
 
   const access_token = await this.jwtService.signAsync(newPayload, {
-    secret: process.env.JWT_SECRET as string,
+    secret: process.env.JWT_ACCESS_SECRET as string,
     expiresIn: (process.env.JWT_EXPIRES_IN || "15m") as StringValue,
   });
 
@@ -54,8 +58,27 @@ export class AuthService {
 
    constructor(
     private readonly usersService: UsersService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    // Repositorio para persistir tokens revocados
+    @InjectRepository(AuthTokenBlacklist)
+    private readonly tokenBlacklistRepository: Repository<AuthTokenBlacklist>
   ) {}
+
+  // Devuelve un hash SHA-256 del token para guardarlo de forma segura
+  private hashToken(token: string): string {
+    return createHash('sha256').update(token).digest('hex');
+  }
+
+  // Comprueba si un access token está revocado y sigue dentro de su expiración
+  async isAccessTokenBlacklisted(token: string): Promise<boolean> {
+    const tokenHash = this.hashToken(token);
+    const now = new Date();
+    const record = await this.tokenBlacklistRepository.findOne({
+      where: { token_hash: tokenHash },
+    });
+
+    return !!record && record.expires_at > now;
+  }
 
   async register(dto: RegisterDto) {
     const existing = await this.usersService.findByEmail(dto.email);
@@ -96,7 +119,7 @@ export class AuthService {
 
     //generamos el token
     const access_token = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET as string,
+      secret: process.env.JWT_ACCESS_SECRET as string,
       expiresIn: (process.env.JWT_EXPIRES_IN || "15m") as StringValue,
     });
     
@@ -114,5 +137,23 @@ export class AuthService {
 
     return { access_token, refresh_token, user: userSafe };
 
+  }
+
+  // Logout fuerte: revoca el access token y elimina el refresh token almacenado
+  async logout(userId: number, accessToken: string, expiresAt: Date): Promise<{ message: string }> {
+    if (!userId) throw new UnauthorizedException('No autorizado');
+    if (!accessToken) throw new UnauthorizedException('No autorizado');
+
+    const tokenHash = this.hashToken(accessToken);
+    await this.tokenBlacklistRepository.save({
+      usuario_id: userId,
+      token_hash: tokenHash,
+      expires_at: expiresAt,
+    });
+
+    // Invalidas cualquier refresh existente
+    await this.usersService.updateRefreshTokenHash(userId, null);
+
+    return { message: 'Logout ok' };
   }
 }

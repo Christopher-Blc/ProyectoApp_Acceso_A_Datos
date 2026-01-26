@@ -1,12 +1,14 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
 import { RefreshDto } from "./dto/refresh.dto";
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from './auth.guard';
 
 
 @ApiTags('auth')
+@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -46,5 +48,27 @@ export class AuthController {
   }
 
 
+  @UseGuards(AuthGuard)
+  @Post('logout')
+  async logout(@Req() req: any) {
+    // esto depende de cómo tu guard mete el user en req
+    // normalmente req.user.sub
+    const userId = Number(req.user?.sub);
+    // Extraemos el access token del header Authorization
+    const authHeader: string | undefined = req.headers?.authorization;
+    const accessToken = authHeader?.startsWith('Bearer ')
+      ? authHeader.slice('Bearer '.length)
+      : undefined;
+
+    // Calculamos fecha de expiración usando el claim exp del JWT
+    const exp = req.user?.exp;
+    const expiresAt = typeof exp === 'number' ? new Date(exp * 1000) : new Date();
+
+    if (!accessToken) {
+      throw new Error('Access token not found');
+    }
+
+    return this.authService.logout(userId, accessToken, expiresAt);
+  }
 
 }
