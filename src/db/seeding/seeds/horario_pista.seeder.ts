@@ -7,8 +7,20 @@ export class Horario_PistaSeeder implements Seeder {
     public async run(dataSource: DataSource): Promise<any> {
         const horario_pistaRepository = dataSource.getRepository(Horario_Pista);
 
-        const horarioPistaEntries = await Promise.all(
-            horariopistaData.map(async (item) => {
+        const horarioPistaEntries: Horario_Pista[] = [];
+
+        for (const item of horariopistaData) {
+            const existing = await horario_pistaRepository.findOne({
+                where: {
+                    pista_id: item.pista_id,
+                    dia_semana: item.dia_semana,
+                    hora_apertura: item.hora_apertura,
+                    hora_cierre: item.hora_cierre,
+                },
+            });
+            if (existing) {
+                continue;
+            }
 
             const horariopistaEntry = new Horario_Pista();
             horariopistaEntry.pista_id = item.pista_id;
@@ -17,10 +29,12 @@ export class Horario_PistaSeeder implements Seeder {
             horariopistaEntry.hora_cierre = item.hora_cierre;
             horariopistaEntry.intervalos_minutos = item.intervalos_minutos;
 
-            return horariopistaEntry;
-            }),
-        );
-        await horario_pistaRepository.save(horarioPistaEntries);
+            horarioPistaEntries.push(horariopistaEntry);
+        }
+
+        if (horarioPistaEntries.length > 0) {
+            await horario_pistaRepository.save(horarioPistaEntries);
+        }
         console.log("Horario_Pista seeding completado!");
     }
 
