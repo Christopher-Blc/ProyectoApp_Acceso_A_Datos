@@ -18,6 +18,7 @@ import { InstalacionSeeder } from "./db/seeding/seeds/instalacion.seeder";
 import { ComentarioSeeder } from "./db/seeding/seeds/comentario.seeder";
 import { Horario_PistaSeeder } from "./db/seeding/seeds/horario_pista.seeder";
 import { NotiSeeder } from "./db/seeding/seeds/noti.seeder";
+import { AuthTokenBlacklist } from "./auth/auth-token-blacklist.entity";
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -40,6 +41,7 @@ const options: DataSourceOptions & SeederOptions = {
     Instalacion,
     Pista,
     Horario_Pista,
+    AuthTokenBlacklist,
 
   ],
   seeds: [
@@ -60,7 +62,7 @@ const dataSource = new DataSource(options);
 dataSource
   .initialize()
   .then(async () => {
-    await dataSource.synchronize(true);
+    await dataSource.synchronize(false);
     await runSeeders(dataSource);
     process.exit();
   })

@@ -11,60 +11,66 @@ export class ReservaSeeder implements Seeder {
     const userRepository = dataSource.getRepository(User);
     const pistaRepository = dataSource.getRepository(Pista);
 
-    const reservaEntries = await Promise.all(
-      reservaData.map(async (item) => {
-        const reservaEntry = new Reserva();
+    const reservaEntries: Reserva[] = [];
 
-        reservaEntry.fecha_reserva = item.fecha_reserva;
-        reservaEntry.fecha_inicio = item.fecha_inicio;
-        reservaEntry.fecha_fin = item.fecha_fin;
-        reservaEntry.estado = item.estado;
-        reservaEntry.precio_total = item.precio_final;
-        reservaEntry.fecha_creacion = item.fecha_creacion;
-        reservaEntry.codigo_reserva = item.codigo_reserva;
-        reservaEntry.nota = item.nota;
+    for (const item of reservaData) {
+      const existing = await reservaRepository.findOne({
+        where: { codigo_reserva: item.codigo_reserva },
+      });
+      if (existing) {
+        continue;
+      }
 
-        // Si el archivo de datos incluye IDs de relaciones, las asociamos
-        if (item.usuario_id) {
-          const user = await userRepository.findOneBy({ usuario_id: Number(item.usuario_id) });
-          if (user) {
-            reservaEntry.usuario = user;
-            reservaEntry.usuario_id = Number(item.usuario_id);
-          }
+      const reservaEntry = new Reserva();
+      reservaEntry.fecha_reserva = item.fecha_reserva;
+      reservaEntry.fecha_inicio = item.fecha_inicio;
+      reservaEntry.fecha_fin = item.fecha_fin;
+      reservaEntry.estado = item.estado;
+      reservaEntry.precio_total = item.precio_final;
+      reservaEntry.fecha_creacion = item.fecha_creacion;
+      reservaEntry.codigo_reserva = item.codigo_reserva;
+      reservaEntry.nota = item.nota;
+
+      if (item.usuario_id) {
+        const user = await userRepository.findOneBy({ usuario_id: Number(item.usuario_id) });
+        if (user) {
+          reservaEntry.usuario = user;
+          reservaEntry.usuario_id = Number(item.usuario_id);
         }
+      }
 
-        if (item.pista_id) {
-          const pista = await pistaRepository.findOneBy({ pista_id: Number(item.pista_id) });
-          if (pista) {
-            reservaEntry.pista = pista;
-            reservaEntry.pista_id = Number(item.pista_id);
-          }
+      if (item.pista_id) {
+        const pista = await pistaRepository.findOneBy({ pista_id: Number(item.pista_id) });
+        if (pista) {
+          reservaEntry.pista = pista;
+          reservaEntry.pista_id = Number(item.pista_id);
         }
+      }
 
-        // Fallbacks: si no hay pista o usuario explícito en los datos, asignamos el primero disponible
-        if (!reservaEntry.pista_id) {
-          const anyPistas = await pistaRepository.find({ take: 1 });
-          const anyPista = anyPistas && anyPistas.length ? anyPistas[0] : null;
-          if (anyPista) {
-            reservaEntry.pista = anyPista;
-            reservaEntry.pista_id = anyPista.pista_id;
-          }
+      if (!reservaEntry.pista_id) {
+        const anyPistas = await pistaRepository.find({ take: 1 });
+        const anyPista = anyPistas && anyPistas.length ? anyPistas[0] : null;
+        if (anyPista) {
+          reservaEntry.pista = anyPista;
+          reservaEntry.pista_id = anyPista.pista_id;
         }
+      }
 
-        if (!reservaEntry.usuario_id) {
-          const anyUsers = await userRepository.find({ take: 1 });
-          const anyUser = anyUsers && anyUsers.length ? anyUsers[0] : null;
-          if (anyUser) {
-            reservaEntry.usuario = anyUser;
-            reservaEntry.usuario_id = anyUser.usuario_id;
-          }
+      if (!reservaEntry.usuario_id) {
+        const anyUsers = await userRepository.find({ take: 1 });
+        const anyUser = anyUsers && anyUsers.length ? anyUsers[0] : null;
+        if (anyUser) {
+          reservaEntry.usuario = anyUser;
+          reservaEntry.usuario_id = anyUser.usuario_id;
         }
+      }
 
-        return reservaEntry;
-      }),
-    );
+      reservaEntries.push(reservaEntry);
+    }
 
-    await reservaRepository.save(reservaEntries);
+    if (reservaEntries.length > 0) {
+      await reservaRepository.save(reservaEntries);
+    }
 
     console.log('Reserva seeding completado!');
   }
