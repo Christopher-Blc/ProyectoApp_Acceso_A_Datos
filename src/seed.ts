@@ -22,6 +22,7 @@ import { AuthTokenBlacklist } from "./auth/auth-token-blacklist.entity";
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+//para arrancar con docker: docker exec -it respi-webserver npm run seed
 const options: DataSourceOptions & SeederOptions = {
   type: 'mysql',
   host: process.env.DB_HOST,

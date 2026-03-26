@@ -11,6 +11,7 @@ services:
     depends_on:
       - database
     environment:
+      - APP_URL=http://localhost:${WEB_SERVER_PORT}
       - TZ=Europe/Madrid
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
@@ -20,7 +21,7 @@ services:
     restart: unless-stopped
 
   database:
-    image: yobasystems/alpine-mariadb:11.4.5
+    image: mariadb:11.4
     container_name: respi-db
     ports:
       - "${DB_PORT}:3306"
