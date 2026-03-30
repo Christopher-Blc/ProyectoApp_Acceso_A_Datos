@@ -3,9 +3,9 @@ import { ComentarioService } from './comentario.service';
 import { Comentario } from './entities/comentario.entity';
 import { CreateComentarioDto, UpdateComentarioDto } from './dto/comentario.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '../auth/auth.guard';
-import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('comentarios')
@@ -67,6 +67,7 @@ export class ComentarioController {
         return this.comentarioService.remove(id);
     }
 }
+
 
 
 

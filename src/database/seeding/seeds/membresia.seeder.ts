@@ -39,3 +39,4 @@ export class MembresiaSeeder implements Seeder{
         console.log("Membresia seeding completado!");
     }
 }
+

@@ -16,3 +16,4 @@ export default [
         horario_cierre: new Date('1970-01-01T22:00:00'),
     }
 ]
+

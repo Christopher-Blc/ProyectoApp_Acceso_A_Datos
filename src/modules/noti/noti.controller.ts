@@ -3,9 +3,9 @@ import { NotiService } from './noti.service';
 import { NotiDto } from './dto/noti.dto';
 import { Noti } from './entities/noti.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '../auth/auth.guard';
-import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
@@ -112,6 +112,7 @@ export class NotiController {
 
   
 }
+
 
 
 

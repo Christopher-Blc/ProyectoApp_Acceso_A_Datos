@@ -3,9 +3,9 @@ import { Membresia } from './entities/membresia.entity';
 import { MembresiaService } from './membresia.service';
 import { CreateMembresiaDto, UpdateMembresiaDto } from './dto/membresia.dto';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '../auth/auth.guard';
-import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
@@ -68,6 +68,7 @@ export class MembresiaController {
     }
 
 }
+
 
 
 

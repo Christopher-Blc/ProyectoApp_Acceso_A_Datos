@@ -82,3 +82,4 @@ export class Pista {
   horarios_pista: Horario_Pista[];
 
 }
+

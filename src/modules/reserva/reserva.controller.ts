@@ -3,9 +3,9 @@ import { Reserva } from './entities/reserva.entity';
 import { CreateReservaDto, UpdateReservaDto } from './dto/reserva.dto';
 import { ReservaService } from './reserva.service';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '../auth/auth.guard';
-import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('reservas')
@@ -105,6 +105,7 @@ export class ReservaController {
         }
       } 
 }
+
 
 
 

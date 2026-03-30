@@ -40,3 +40,4 @@ export class ComentarioSeeder implements Seeder{
         console.log("Comentario seeding completado!");
     }
 }
+

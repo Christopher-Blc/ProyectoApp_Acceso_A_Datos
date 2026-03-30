@@ -3,9 +3,9 @@ import { InstalacionService } from './instalacion.service';
 import { Instalacion } from './entities/instalacion.entity';
 import { CreateInstalacionDto, UpdateInstalacionDto } from './dto/instalacion.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AuthGuard } from '../auth/auth.guard';
-import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 
 
@@ -69,6 +69,7 @@ export class InstalacionController {
 }
 
 }
+
 
 
 

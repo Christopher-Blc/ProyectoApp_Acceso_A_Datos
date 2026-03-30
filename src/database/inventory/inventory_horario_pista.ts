@@ -9,3 +9,4 @@ export default[
         intervalos_minutos: 30
     }
 ]
+
