@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { HorarioPistaService } from './horario_pista.service';
-import { Horario_Pista } from './horario_pista.entity';
-import { CreateHorarioPistaDto, UpdateHorarioPistaDto } from './horario_pista.dto';
+import { Horario_Pista } from './entities/horario_pista.entity';
+import { CreateHorarioPistaDto, UpdateHorarioPistaDto } from './dto/horario_pista.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { Roles } from 'src/auth/roles.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { UserRole } from 'src/users/user.entity';
+import { AuthGuard } from '../auth/auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { UserRole } from '../users/entities/user.entity';
 
 
 @UseGuards(AuthGuard, RolesGuard)
@@ -73,3 +73,7 @@ export class HorarioPistaController {
         return this.HorarioPistaService.remove(id);
     }
 }
+
+
+
+

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsDateString, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
-import { estado_pago, metodo_pago } from "./pago.entity";
+import { estado_pago, metodo_pago } from "../entities/pago.entity";
 
 
 export class CreatePagoDto {
@@ -86,3 +86,5 @@ export class UpdatePagoDto {
     })
     nota?: string;
 }
+
+

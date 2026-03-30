@@ -4,9 +4,8 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import type { StringValue } from 'ms';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthTokenBlacklist } from './auth-token-blacklist.entity';
+import { AuthTokenBlacklist } from './entities/auth-token-blacklist.entity';
 import { AuthGuard } from './auth.guard';
 
 @Global()
@@ -23,7 +22,7 @@ import { AuthGuard } from './auth.guard';
         // Secret para firmar/verificar access tokens (configurado por ENV)
         secret: process.env.JWT_ACCESS_SECRET as string,
         // Duración por defecto del access token
-        signOptions: {expiresIn: (process.env.JWT_EXPIRES_IN ?? '1h') as StringValue, },
+        signOptions: { expiresIn: (process.env.JWT_EXPIRES_IN ?? '1h') as any },
       }),
     }),
   ],
@@ -32,3 +31,7 @@ import { AuthGuard } from './auth.guard';
   exports: [AuthService, AuthGuard],
 })
 export class AuthModule {}
+
+
+
+

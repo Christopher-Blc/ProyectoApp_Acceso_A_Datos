@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne, JoinColumn } from "typeorm";
-import { User } from "../users/user.entity";
-import { Reserva } from "../reserva/reserva.entity";
-import { Pista } from "../pista/pista.entity"; // Importa la entidad Pista
+import { User } from "../../users/entities/user.entity";
+import { Reserva } from "../../reserva/entities/reserva.entity";
+import { Pista } from "../../pista/entities/pista.entity"; // Importa la entidad Pista
 
 @Entity()
 export class Comentario {
@@ -37,3 +37,4 @@ export class Comentario {
   @JoinColumn({ name: "pista_id" })
   pista: Pista;
 }
+

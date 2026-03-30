@@ -1,4 +1,4 @@
-import { UserRole } from "../users/user.entity";
+import { UserRole } from "../../modules/users/entities/user.entity";
 
 export default [
 

@@ -1,4 +1,4 @@
-import { Comentario } from "../../modules/comentario/comentario.entity";
+import { Comentario } from "../../../modules/comentario/entities/comentario.entity";
 import { DataSource } from "typeorm";
 import { Seeder } from "typeorm-extension";
 import comentarioData from "../../inventory/inventory_comentario";

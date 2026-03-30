@@ -1,4 +1,4 @@
-import { estadoReserva } from "../reserva/reserva.entity";
+import { estadoReserva } from "../../modules/reserva/entities/reserva.entity";
 
 export default [
     {

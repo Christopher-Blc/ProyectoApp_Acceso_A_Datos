@@ -1,4 +1,4 @@
-import { Instalacion } from "../../modules/instalacion/instalacion.entity";
+import { Instalacion } from "../../../modules/instalacion/entities/instalacion.entity";
 import { DataSource } from "typeorm";
 import { Seeder } from "typeorm-extension";
 import instalacionData from "../../inventory/inventory_instalacion";

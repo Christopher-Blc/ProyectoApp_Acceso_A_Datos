@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn } from "typeorm";
-import { User } from "../users/user.entity";
-import { Pista } from "../pista/pista.entity";
-import { Pago } from "../pago/pago.entity";
+import { User } from "../../users/entities/user.entity";
+import { Pista } from "../../pista/entities/pista.entity";
+import { Pago } from "../../pago/entities/pago.entity";
 
 export enum estadoReserva {
     CONFIRMADA = "CONFIRMADA",
@@ -66,3 +66,4 @@ export class Reserva {
     @JoinColumn({ name: "pago_id" })
     pago: Pago;
 }
+

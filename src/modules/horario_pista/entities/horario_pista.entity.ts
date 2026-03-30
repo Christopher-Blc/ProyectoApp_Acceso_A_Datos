@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
-import { Pista } from "../pista/pista.entity"; // Importa la entidad Pista
+import { Pista } from "../../pista/entities/pista.entity"; // Importa la entidad Pista
 
 export enum dia_semana {
   LUNES = "Lunes",

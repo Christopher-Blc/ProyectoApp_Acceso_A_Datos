@@ -1,4 +1,4 @@
-import { estado_instalacion } from "../instalacion/instalacion.entity";
+import { estado_instalacion } from "../../modules/instalacion/entities/instalacion.entity";
 
 export default [
 

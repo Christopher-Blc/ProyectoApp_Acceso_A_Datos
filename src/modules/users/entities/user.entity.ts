@@ -1,9 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm";
-import { Noti } from "../noti/noti.entity";
-import { Comentario } from "../comentario/comentario.entity";
-import { Reserva } from "../reserva/reserva.entity";
-import { Membresia } from "../membresia/membresia.entity";
-import { Pago } from "../pago/pago.entity";
+import { Noti } from "../../noti/entities/noti.entity";
+import { Comentario } from "../../comentario/entities/comentario.entity";
+import { Reserva } from "../../reserva/entities/reserva.entity";
+import { Membresia } from "../../membresia/entities/membresia.entity";
+import { Pago } from "../../pago/entities/pago.entity";
 
 
 export enum UserRole {
@@ -74,7 +74,5 @@ export class User {
 
     @OneToMany(() => Pago, (p) => p.usuario)
     pagos: Pago[];
-
-    @OneToMany(() => Reserva, (r) => r.usuario)
-    reservas: Reserva[];
 }
+

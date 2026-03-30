@@ -6,15 +6,14 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
-import { UserRole } from '../users/user.entity';
+import { UserRole } from '../users/entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import type { StringValue } from "ms";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { createHash } from 'crypto';
-import { AuthTokenBlacklist } from './auth-token-blacklist.entity';
+import { AuthTokenBlacklist } from './entities/auth-token-blacklist.entity';
 
 @Injectable()
 export class AuthService {
@@ -41,12 +40,12 @@ export class AuthService {
 
   const access_token = await this.jwtService.signAsync(newPayload, {
     secret: process.env.JWT_ACCESS_SECRET as string,
-    expiresIn: (process.env.JWT_EXPIRES_IN || "15m") as StringValue,
+    expiresIn: (process.env.JWT_EXPIRES_IN || '15m') as any,
   });
 
     const new_refresh_token = await this.jwtService.signAsync(newPayload, {
       secret: process.env.JWT_REFRESH_SECRET as string,
-      expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || "7d") as StringValue,
+      expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as any,
     });
 
     const newHash = await bcrypt.hash(new_refresh_token, 10);
@@ -120,13 +119,13 @@ export class AuthService {
     //generamos el token
     const access_token = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_ACCESS_SECRET as string,
-      expiresIn: (process.env.JWT_EXPIRES_IN || "15m") as StringValue,
+      expiresIn: (process.env.JWT_EXPIRES_IN || '15m') as any,
     });
     
     //generamos el refresh token
     const refresh_token = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_REFRESH_SECRET as string,
-      expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || "7d") as StringValue,
+      expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as any,
     });
 
     const refreshHash = await bcrypt.hash(refresh_token, 10);
@@ -158,3 +157,7 @@ export class AuthService {
     return { message: 'Logout ok' };
   }
 }
+
+
+
+

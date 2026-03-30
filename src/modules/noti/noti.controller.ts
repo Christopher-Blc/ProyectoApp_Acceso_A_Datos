@@ -1,12 +1,12 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { NotiService } from './noti.service';
-import { NotiDto } from './noti.dto';
-import { Noti } from './noti.entity';
+import { NotiDto } from './dto/noti.dto';
+import { Noti } from './entities/noti.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { Roles } from 'src/auth/roles.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { UserRole } from 'src/users/user.entity';
+import { AuthGuard } from '../auth/auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { UserRole } from '../users/entities/user.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -112,3 +112,7 @@ export class NotiController {
 
   
 }
+
+
+
+

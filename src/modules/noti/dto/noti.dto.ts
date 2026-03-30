@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsDate, IsDateString, IsEnum, IsInt, IsNumber, IsOptional, IsString } from "class-validator";
-import { tipoNoti } from "./noti.entity";
+import { tipoNoti } from "../entities/noti.entity";
 
 export class NotiDto{
 
@@ -68,3 +68,5 @@ export class UpdateNotiDto{
     // @IsDateString()
     // fecha: Date;
 }
+
+

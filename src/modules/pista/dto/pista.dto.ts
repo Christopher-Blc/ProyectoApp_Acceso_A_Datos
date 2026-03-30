@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { CoberturaPista, EstadoPista, tipo_pista } from "./pista.entity";
+import { CoberturaPista, EstadoPista, tipo_pista } from "../entities/pista.entity";
 import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class PistaDto {
@@ -147,3 +147,6 @@ export class UpdatePistaDto {
     numero: number;;
 
 }
+
+
+

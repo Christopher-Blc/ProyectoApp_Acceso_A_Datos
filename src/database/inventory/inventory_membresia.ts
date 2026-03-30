@@ -1,4 +1,4 @@
-import { estado_membresia } from "../membresia/membresia.entity";
+import { estado_membresia } from "../../modules/membresia/entities/membresia.entity";
 
 export default [
 

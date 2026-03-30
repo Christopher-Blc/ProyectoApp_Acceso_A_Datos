@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Pista } from './pista.entity';
+import { Pista } from './entities/pista.entity';
 import { Repository } from 'typeorm';
-import { PistaDto, UpdatePistaDto } from './pista.dto';
+import { PistaDto, UpdatePistaDto } from './dto/pista.dto';
 
 @Injectable()
 export class PistaService {
@@ -52,3 +52,7 @@ export class PistaService {
         await this.pistaRepo.delete(pista_id);
     }
   }
+
+
+
+

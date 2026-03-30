@@ -1,4 +1,4 @@
-import { CoberturaPista, EstadoPista, tipo_pista } from "../pista/pista.entity";
+import { CoberturaPista, EstadoPista, tipo_pista } from "../../modules/pista/entities/pista.entity";
 
 export default[
 

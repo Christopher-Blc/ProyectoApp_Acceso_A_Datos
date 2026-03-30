@@ -1,9 +1,9 @@
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
-import { Reserva } from '../../modules/reserva/reserva.entity';
+import { Reserva } from '../../../modules/reserva/entities/reserva.entity';
 import reservaData from '../../inventory/inventory_reserva';
-import { User } from '../../modules/users/user.entity';
-import { Pista } from '../../modules/pista/pista.entity';
+import { User } from '../../../modules/users/entities/user.entity';
+import { Pista } from '../../../modules/pista/entities/pista.entity';
 
 export class ReservaSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {

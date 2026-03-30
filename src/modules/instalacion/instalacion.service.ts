@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Instalacion } from './instalacion.entity';
-import { CreateInstalacionDto, UpdateInstalacionDto } from './instalacion.dto';
+import { Instalacion } from './entities/instalacion.entity';
+import { CreateInstalacionDto, UpdateInstalacionDto } from './dto/instalacion.dto';
 
 @Injectable()
 export class InstalacionService {
@@ -40,3 +40,7 @@ export class InstalacionService {
         await this.instalacionRepository.delete(instalacion_id);
     }
 }
+
+
+
+

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Membresia } from './membresia.entity';
-import { CreateMembresiaDto, UpdateMembresiaDto } from './membresia.dto';
+import { Membresia } from './entities/membresia.entity';
+import { CreateMembresiaDto, UpdateMembresiaDto } from './dto/membresia.dto';
 
 @Injectable()
 export class MembresiaService {
@@ -41,3 +41,7 @@ export class MembresiaService {
             await this.Repo.delete(membresia_id);
         }
 }
+
+
+
+

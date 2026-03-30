@@ -1,5 +1,5 @@
 import { IsString, IsEnum, IsOptional, IsDateString, IsBoolean, IsNumber } from 'class-validator';
-import { estado_membresia } from './membresia.entity' // Importamos el enum estadoReserva desde membresia.entity
+import { estado_membresia } from '../entities/membresia.entity' // Importamos el enum estadoReserva desde membresia.entity
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMembresiaDto {
@@ -115,3 +115,5 @@ export class UpdateMembresiaDto {
     })
     fecha_renovacion: string;
 }
+
+

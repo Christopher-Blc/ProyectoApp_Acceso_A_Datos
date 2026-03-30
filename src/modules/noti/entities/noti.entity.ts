@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
-import { User } from "../users/user.entity"; // Importa la entidad User
+import { User } from "../../users/entities/user.entity"; // Importa la entidad User
 
 export enum tipoNoti {
   AVISO = 'Aviso',

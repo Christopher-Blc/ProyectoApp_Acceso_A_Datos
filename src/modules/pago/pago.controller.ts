@@ -1,12 +1,12 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { PagoService } from './pago.service';
-import { Pago } from './pago.entity';
-import { CreatePagoDto, UpdatePagoDto } from './pago.dto';
+import { Pago } from './entities/pago.entity';
+import { CreatePagoDto, UpdatePagoDto } from './dto/pago.dto';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { Roles } from 'src/auth/roles.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { UserRole } from 'src/users/user.entity';
+import { AuthGuard } from '../auth/auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { UserRole } from '../users/entities/user.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -106,3 +106,7 @@ export class PagoController {
         }
     }
 }
+
+
+
+

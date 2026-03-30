@@ -1,4 +1,4 @@
-import { Membresia } from "../../modules/membresia/membresia.entity";
+import { Membresia } from "../../../modules/membresia/entities/membresia.entity";
 import { DataSource } from "typeorm";
 import { Seeder } from "typeorm-extension";
 import membresiaData from "../../inventory/inventory_membresia";

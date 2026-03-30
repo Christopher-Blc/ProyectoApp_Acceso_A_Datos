@@ -1,12 +1,12 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { PistaService } from './pista.service';
-import { PistaDto } from './pista.dto';
-import { Pista } from './pista.entity';
+import { PistaDto } from './dto/pista.dto';
+import { Pista } from './entities/pista.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { Roles } from 'src/auth/roles.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { UserRole } from 'src/users/user.entity';
+import { AuthGuard } from '../auth/auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { UserRole } from '../users/entities/user.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiTags('pistas')
@@ -108,3 +108,7 @@ export class PistaController {
     }
   }
 }
+
+
+
+
