@@ -42,13 +42,17 @@ export class Pago {
     })
     estado_pago: estado_pago;
 
-    @Column()
-    nota: string;
+    @Column({ name: "usuario_id", type: "int", nullable: true })
+    usuario_id?: number;
+
+    @Column({ nullable: true })
+    nota?: string;
 
     @ManyToOne(() => User, (u) => u.pagos, {nullable: true})
     @JoinColumn({ name: "usuario_id" })
     usuario: User;
 
     @OneToOne(() => Reserva, (r) => r.pago)
+    @JoinColumn({ name: "reserva_id" })
     reserva: Reserva;
 }

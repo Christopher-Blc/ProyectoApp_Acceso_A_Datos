@@ -68,8 +68,15 @@ export class Pista {
   @Column()
   numero: number;
 
+  @ManyToOne(() => Instalacion, (i) => i.pistas)
+  @JoinColumn({ name: "instalacion_id" })
+  instalacion: Instalacion;
+
   @OneToMany(() => Reserva, (r) => r.pista)
   reservas: Reserva[];
+
+  @OneToMany(() => Comentario, (c) => c.pista)
+  comentarios: Comentario[];
 
   @OneToMany(() => Comentario, (c) => c.pista)
   comentarios: Comentario[];
