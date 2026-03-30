@@ -1,6 +1,6 @@
 import { IsString, IsEmail , IsPhoneNumber , IsOptional, IsDateString , Length, Matches, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { VALIDATION_LENGTHS, VALIDATION_PATTERNS } from '../../../common/constants/validation-patterns';
+import { VALIDATION_LENGTHS, VALIDATION_PATTERNS } from '../../../common/constants/validation_patterns';
 
 export class RegisterDto {
 
@@ -85,6 +85,7 @@ export class RegisterDto {
   })
   direccion: string;
 }
+
 
 
 

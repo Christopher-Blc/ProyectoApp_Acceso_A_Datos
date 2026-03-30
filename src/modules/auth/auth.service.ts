@@ -13,7 +13,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { createHash } from 'crypto';
-import { AuthTokenBlacklist } from './blacklist/auth-token-blacklist.entity';
+import { AuthTokenBlacklist } from './blacklist/auth_token_blacklist.entity';
 
 @Injectable()
 export class AuthService {
@@ -157,6 +157,7 @@ export class AuthService {
     return { message: 'Logout ok' };
   }
 }
+
 
 
 
