@@ -69,6 +69,9 @@ export class User {
     @OneToMany(() => Comentario, (c) => c.user)
     comentarios: Comentario[];
 
+    @OneToMany(() => Reserva, (r) => r.usuario)
+    reservas: Reserva[];
+
     @OneToMany(() => Pago, (p) => p.usuario)
     pagos: Pago[];
 

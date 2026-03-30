@@ -39,6 +39,9 @@ export class Instalacion {
     })
     estado: estado_instalacion;
 
+  @OneToMany(() => Pista, (pi) => pi.instalacion)
+  pistas: Pista[];
+
   @Column({type: "time"})
   horario_apertura: Date;
 

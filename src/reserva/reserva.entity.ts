@@ -23,8 +23,8 @@ export class Reserva {
     @Column({name: "pista_id", type: "int" }) // Clave FK hacia Pista
     pista_id: number;
 
-    @Column({name: "pago_id", type: "int", nullable: true }) // Clave FK hacia Pago (nullable por dependencia circular)
-    pago_id: number | null;
+    @Column({name: "pago_id", type: "int"})
+    pago_id: number;
 
     @Column()
     fecha_reserva: Date;
