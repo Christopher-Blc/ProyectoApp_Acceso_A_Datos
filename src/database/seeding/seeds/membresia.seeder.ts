@@ -1,7 +1,7 @@
-import { Membresia } from "../../../membresia/membresia.entity";
+import { Membresia } from "../../modules/membresia/membresia.entity";
 import { DataSource } from "typeorm";
 import { Seeder } from "typeorm-extension";
-import membresiaData from "../../../data_info/inventory_membresia";
+import membresiaData from "../../inventory/inventory_membresia";
 
 export class MembresiaSeeder implements Seeder{
     public async run(dataSource: DataSource): Promise<any>{

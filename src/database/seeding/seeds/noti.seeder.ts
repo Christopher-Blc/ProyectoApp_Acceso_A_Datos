@@ -1,7 +1,7 @@
-import { Noti } from "../../../noti/noti.entity";
+import { Noti } from "../../modules/noti/noti.entity";
 import { DataSource } from "typeorm";
 import { Seeder, SeederFactoryManager } from "typeorm-extension";
-import notiData from '../../../data_info/inventory_noti'
+import notiData from '../../inventory/inventory_noti'
 
 
 export class NotiSeeder implements Seeder {

@@ -1,18 +1,18 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { UsersModule } from "./users/users.module";
+import { UsersModule } from "./modules/users/users.module";
 import { AppService } from "./app.service";
 import { AppController } from "./app.controller";
-import { ReservaModule } from './reserva/reserva.module';
-import { ComentarioModule } from './comentario/comentario.module';
-import { MembresiaModule } from './membresia/membresia.module';
-import { InstalacionModule } from './instalacion/instalacion.module';
-import { HorarioPistaModule } from './horario_pista/horario_pista.module';
-import { PagoModule } from './pago/pago.module';
-import { NotiModule } from './noti/noti.module';
-import { PistaModule } from './pista/pista.module';
-import { AuthModule } from './auth/auth.module';
+import { ReservaModule } from './modules/reserva/reserva.module';
+import { ComentarioModule } from './modules/comentario/comentario.module';
+import { MembresiaModule } from './modules/membresia/membresia.module';
+import { InstalacionModule } from './modules/instalacion/instalacion.module';
+import { HorarioPistaModule } from './modules/horario_pista/horario_pista.module';
+import { PagoModule } from './modules/pago/pago.module';
+import { NotiModule } from './modules/noti/noti.module';
+import { PistaModule } from './modules/pista/pista.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 
 

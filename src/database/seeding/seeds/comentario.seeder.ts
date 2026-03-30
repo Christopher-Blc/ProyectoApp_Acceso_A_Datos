@@ -1,7 +1,7 @@
-import { Comentario } from "../../../comentario/comentario.entity";
+import { Comentario } from "../../modules/comentario/comentario.entity";
 import { DataSource } from "typeorm";
 import { Seeder } from "typeorm-extension";
-import comentarioData from "../../../data_info/inventory_comentario";
+import comentarioData from "../../inventory/inventory_comentario";
 
 export class ComentarioSeeder implements Seeder{
     public async run(dataSource: DataSource): Promise<any>{

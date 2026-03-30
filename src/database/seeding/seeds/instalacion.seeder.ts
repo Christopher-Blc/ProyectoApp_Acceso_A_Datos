@@ -1,7 +1,7 @@
-import { Instalacion } from "../../../instalacion/instalacion.entity";
+import { Instalacion } from "../../modules/instalacion/instalacion.entity";
 import { DataSource } from "typeorm";
 import { Seeder } from "typeorm-extension";
-import instalacionData from "../../../data_info/inventory_instalacion";
+import instalacionData from "../../inventory/inventory_instalacion";
 
 export class InstalacionSeeder implements Seeder{
     public async run(dataSource: DataSource): Promise<any>{

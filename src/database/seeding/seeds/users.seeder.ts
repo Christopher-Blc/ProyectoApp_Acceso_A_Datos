@@ -1,7 +1,7 @@
 import { DataSource } from "typeorm";
 import { Seeder } from 'typeorm-extension';
-import userData from '../../../data_info/inventory_users';
-import { User } from '../../../users/user.entity';
+import userData from '../../inventory/inventory_users';
+import { User } from '../../modules/users/user.entity';
 import * as bcrypt from 'bcryptjs';
 
 
