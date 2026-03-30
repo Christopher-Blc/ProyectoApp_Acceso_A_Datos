@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from "typeorm";
-import { Reserva } from "../reserva/reserva.entity"; // Importa la entidad Reserva
-import { Comentario } from "../comentario/comentario.entity"; // Importa la entidad Comentario
-import { Horario_Pista } from "../horario_pista/horario_pista.entity"; // Importa la entidad Horario_Pista
-import { Instalacion } from "../instalacion/instalacion.entity"; // Importa la entidad Instalacion
+import { Reserva } from "../../reserva/entities/reserva.entity"; // Importa la entidad Reserva
+import { Comentario } from "../../comentario/entities/comentario.entity"; // Importa la entidad Comentario
+import { Horario_Pista } from "../../horario_pista/entities/horario_pista.entity"; // Importa la entidad Horario_Pista
+import { Instalacion } from "../../instalacion/entities/instalacion.entity"; // Importa la entidad Instalacion
 
 export enum tipo_pista {
   TENIS = 'TENNIS',
@@ -78,14 +78,7 @@ export class Pista {
   @OneToMany(() => Comentario, (c) => c.pista)
   comentarios: Comentario[];
 
-  @OneToMany(() => Comentario, (c) => c.pista)
-  comentarios: Comentario[];
-
   @OneToMany(() => Horario_Pista, (hp) => hp.pista)
   horarios_pista: Horario_Pista[];
-
-  @ManyToOne(() => Instalacion, (i) => i.pista)
-  @JoinColumn({ name: "instalacion_id" })
-  instalacion: Instalacion;
 
 }

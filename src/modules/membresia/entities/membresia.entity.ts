@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, ManyToOne, JoinColumn } from "typeorm";
-import { User } from "../users/user.entity";
+import { User } from "../../users/entities/user.entity";
 
 
 export enum estado_membresia {

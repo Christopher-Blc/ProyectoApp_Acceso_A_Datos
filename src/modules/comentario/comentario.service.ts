@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Comentario } from './comentario.entity';
-import {  CreateComentarioDto, UpdateComentarioDto } from './comentario.dto';
+import { Comentario } from './entities/comentario.entity';
+import {  CreateComentarioDto, UpdateComentarioDto } from './dto/comentario.dto';
 
 @Injectable()
 export class ComentarioService {
@@ -40,3 +40,7 @@ export class ComentarioService {
         await this.comentarioRepository.delete(comentario_id);
     }
 }
+
+
+
+

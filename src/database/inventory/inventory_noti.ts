@@ -1,4 +1,4 @@
-import { tipoNoti } from "../noti/noti.entity"
+import { tipoNoti } from "../../modules/noti/entities/noti.entity"
 
 export default [
     {

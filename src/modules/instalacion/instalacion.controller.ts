@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { InstalacionService } from './instalacion.service';
-import { Instalacion } from './instalacion.entity';
-import { CreateInstalacionDto, UpdateInstalacionDto } from './instalacion.dto';
+import { Instalacion } from './entities/instalacion.entity';
+import { CreateInstalacionDto, UpdateInstalacionDto } from './dto/instalacion.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { Roles } from 'src/auth/roles.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { UserRole } from 'src/users/user.entity';
+import { AuthGuard } from '../auth/auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { UserRole } from '../users/entities/user.entity';
 
 
 @UseGuards(AuthGuard, RolesGuard)
@@ -69,3 +69,7 @@ export class InstalacionController {
 }
 
 }
+
+
+
+

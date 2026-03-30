@@ -1,7 +1,7 @@
 import { Seeder } from "typeorm-extension";
 import { DataSource } from "typeorm";
 import pistaData from "../../inventory/inventory_pista";
-import { Pista } from '../../modules/pista/pista.entity';
+import { Pista } from '../../../modules/pista/entities/pista.entity';
 import * as bcrypt from 'bcryptjs';
 
 
@@ -41,3 +41,4 @@ export class pistaSeed implements Seeder{
     }
     
 }
+

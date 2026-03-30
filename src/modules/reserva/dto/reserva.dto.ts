@@ -1,5 +1,5 @@
 import { IsString, IsEnum, IsOptional, IsDateString, IsNumber, Length } from 'class-validator';
-import {estadoReserva} from './reserva.entity'; // Importamos el enum estadoReserva desde reserva.entity
+import {estadoReserva} from '../entities/reserva.entity'; // Importamos el enum estadoReserva desde reserva.entity
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateReservaDto {
@@ -142,3 +142,5 @@ export class UpdateReservaDto {
     })
     nota?: string;
 }
+
+

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Reserva } from './reserva.entity';
-import { CreateReservaDto, UpdateReservaDto } from './reserva.dto';
+import { Reserva } from './entities/reserva.entity';
+import { CreateReservaDto, UpdateReservaDto } from './dto/reserva.dto';
 
 @Injectable()
 export class ReservaService {
@@ -41,3 +41,7 @@ export class ReservaService {
         await this.reservaRepo.delete(reserva_id);
     }
 }
+
+
+
+

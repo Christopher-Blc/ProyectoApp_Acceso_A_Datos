@@ -1,5 +1,5 @@
 import { IsDateString, IsEnum, IsInt, IsOptional } from "class-validator";
-import { dia_semana } from "./horario_pista.entity";
+import { dia_semana } from "../entities/horario_pista.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateHorarioPistaDto {
@@ -77,3 +77,5 @@ export class UpdateHorarioPistaDto {
     })
     intervalos_minutos?: number;
 }
+
+

@@ -5,8 +5,8 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 // Importamos la entidad User, que representa la tabla en la base de datos
-import { User } from './user.entity';
-import { UpdateUserDto } from './users.dto';
+import { User } from './entities/user.entity';
+import { UpdateUserDto } from './dto/users.dto';
 
 // El decorador @Injectable() le dice a Nest que esta clase puede ser inyectada
 // en otras clases (por ejemplo, en el controlador)
@@ -97,3 +97,7 @@ export class UsersService {
 
 
 }
+
+
+
+

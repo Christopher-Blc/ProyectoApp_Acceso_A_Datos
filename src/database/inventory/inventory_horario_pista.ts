@@ -1,4 +1,4 @@
-import { dia_semana } from "../horario_pista/horario_pista.entity";
+import { dia_semana } from "../../modules/horario_pista/entities/horario_pista.entity";
 
 export default[
     {

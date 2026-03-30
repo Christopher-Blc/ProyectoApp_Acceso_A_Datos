@@ -1,9 +1,9 @@
-import { Pago } from "../../modules/pago/pago.entity";
+import { Pago } from "../../../modules/pago/entities/pago.entity";
 import { DataSource } from "typeorm";
 import { Seeder } from "typeorm-extension";
 import pagoData from "../../inventory/inventory_pago";
-import { User } from "../../modules/users/user.entity";
-import { Reserva } from "../../modules/reserva/reserva.entity";
+import { User } from "../../../modules/users/entities/user.entity";
+import { Reserva } from "../../../modules/reserva/entities/reserva.entity";
 
 export class PagoSeeder implements Seeder {
     public async run(dataSource: DataSource): Promise<any> {
@@ -52,3 +52,4 @@ export class PagoSeeder implements Seeder {
         console.log("Pago seeding completado!");
     }
 }
+

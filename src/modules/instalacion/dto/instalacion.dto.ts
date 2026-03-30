@@ -1,5 +1,5 @@
 import { IsString, IsEnum, IsOptional, IsDateString, IsBoolean, IsNumber } from 'class-validator';
-import { estado_instalacion } from './instalacion.entity' // Importamos el enum estadoReserva desde instalacion.entity
+import { estado_instalacion } from '../entities/instalacion.entity' // Importamos el enum estadoReserva desde instalacion.entity
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateInstalacionDto {
@@ -153,3 +153,5 @@ export class UpdateInstalacionDto {
     })
     horario_cierre?: string;
 }
+
+

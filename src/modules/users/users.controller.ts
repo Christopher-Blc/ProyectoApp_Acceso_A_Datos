@@ -2,13 +2,13 @@ import { Controller, Get, Post, Put, Delete, Param, Body, HttpException,
   HttpStatus,
   UseGuards, } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './users.dto';
-import { User } from './user.entity';
+import { CreateUserDto } from './dto/users.dto';
+import { User } from './entities/user.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { Roles } from 'src/auth/roles.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { UserRole } from './user.entity';
+import { AuthGuard } from '../auth/auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { UserRole } from './entities/user.entity';
 
 @ApiTags('users') 
 @UseGuards(AuthGuard, RolesGuard)
@@ -117,3 +117,7 @@ export class UsersController {
     }
   }
 }
+
+
+
+

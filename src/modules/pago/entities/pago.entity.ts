@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn } from "typeorm";
-import { User } from "../users/user.entity";
-import { Reserva } from "../reserva/reserva.entity";
+import { User } from "../../users/entities/user.entity";
+import { Reserva } from "../../reserva/entities/reserva.entity";
 
 export enum metodo_pago {
     VISA = "Visa",
@@ -56,3 +56,4 @@ export class Pago {
     @JoinColumn({ name: "reserva_id" })
     reserva: Reserva;
 }
+

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Horario_Pista } from './horario_pista.entity';
+import { Horario_Pista } from './entities/horario_pista.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateHorarioPistaDto } from './horario_pista.dto';
+import { UpdateHorarioPistaDto } from './dto/horario_pista.dto';
 
 @Injectable()
 export class HorarioPistaService {
@@ -40,3 +40,7 @@ export class HorarioPistaService {
         return { deleted: true };
     }
 }   
+
+
+
+

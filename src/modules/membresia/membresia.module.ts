@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MembresiaController } from './membresia.controller';
 import { MembresiaService } from './membresia.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Membresia } from './membresia.entity';
+import { Membresia } from './entities/membresia.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Membresia])],
@@ -10,3 +10,7 @@ import { Membresia } from './membresia.entity';
   providers: [MembresiaService]
 })
 export class MembresiaModule {}
+
+
+
+

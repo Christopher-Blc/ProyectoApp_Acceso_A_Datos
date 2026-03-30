@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Noti } from './noti.entity';
+import { Noti } from './entities/noti.entity';
 import { Repository } from 'typeorm';
-import { UpdateNotiDto } from './noti.dto';
+import { UpdateNotiDto } from './dto/noti.dto';
 
 @Injectable()
 export class NotiService {
@@ -39,3 +39,7 @@ export class NotiService {
         return { deleted: true };
     }
 }
+
+
+
+
