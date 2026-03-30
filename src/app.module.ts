@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { UsersModule } from "./modules/users/users.module";
 import { AppService } from "./app.service";
 import { AppController } from "./app.controller";
@@ -22,6 +24,25 @@ import { AuthModule } from './modules/auth/auth.module';
      ConfigModule.forRoot({
       isGlobal: true,
     }),
+
+    /**
+     * ThrottlerModule.forRoot()
+     *
+     * Configura rate limiting (protección contra abuso de API)
+     */
+    ThrottlerModule.forRoot([
+      {
+        name: 'default',
+        ttl: 900000,
+        limit: 100,
+      },
+      {
+        name: 'auth',
+        ttl: 3600000,
+        limit: 10,
+      },
+    ]),
+
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || 'database',
@@ -44,7 +65,13 @@ import { AuthModule } from './modules/auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
 
