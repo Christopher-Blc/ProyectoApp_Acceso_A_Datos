@@ -1,9 +1,9 @@
-import { Pago } from "../../../pago/pago.entity";
+import { Pago } from "../../modules/pago/pago.entity";
 import { DataSource } from "typeorm";
 import { Seeder } from "typeorm-extension";
-import pagoData from "../../../data_info/inventory_pago"; 
-import { User } from "../../../users/user.entity";
-import { Reserva } from "../../../reserva/reserva.entity";
+import pagoData from "../../inventory/inventory_pago";
+import { User } from "../../modules/users/user.entity";
+import { Reserva } from "../../modules/reserva/reserva.entity";
 
 export class PagoSeeder implements Seeder {
     public async run(dataSource: DataSource): Promise<any> {

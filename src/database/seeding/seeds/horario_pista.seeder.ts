@@ -1,7 +1,7 @@
 import { DataSource } from "typeorm";
 import { Seeder } from "typeorm-extension";
-import  horariopistaData from '../../../data_info/inventory_horario_pista';
-import { Horario_Pista } from "../../../horario_pista/horario_pista.entity";
+import  horariopistaData from '../../inventory/inventory_horario_pista';
+import { Horario_Pista } from "../../modules/horario_pista/horario_pista.entity";
 
 export class Horario_PistaSeeder implements Seeder {
     public async run(dataSource: DataSource): Promise<any> {

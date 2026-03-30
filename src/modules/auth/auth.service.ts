@@ -8,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { UserRole } from '../users/user.entity';
 import { RegisterDto } from './dto/register.dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import type { StringValue } from "ms";
 import { InjectRepository } from '@nestjs/typeorm';
