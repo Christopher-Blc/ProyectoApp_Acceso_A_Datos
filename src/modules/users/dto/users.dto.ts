@@ -2,7 +2,7 @@
 import { IsString, IsEmail, IsBoolean, IsPhoneNumber, IsEnum, IsOptional, IsDateString, IsNumber, Length, Matches } from 'class-validator';
 import { UserRole } from '../entities/user.entity'; // Importamos el enum UserRole desde user.entity
 import { ApiProperty } from '@nestjs/swagger';
-import { VALIDATION_LENGTHS, VALIDATION_PATTERNS } from '../../../common/constants/validation-patterns';
+import { VALIDATION_LENGTHS, VALIDATION_PATTERNS } from '../../../common/constants/validation_patterns';
 
 export class CreateUserDto {
   @IsOptional()
@@ -157,6 +157,7 @@ export class UpdateUserDto {
   @IsString()
   direccion?: string;
 }
+
 
 
 

@@ -5,7 +5,7 @@ import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthTokenBlacklist } from './blacklist/auth-token-blacklist.entity';
+import { AuthTokenBlacklist } from './blacklist/auth_token_blacklist.entity';
 import { AuthGuard } from './guards/auth.guard';
 
 @Global()
@@ -31,6 +31,7 @@ import { AuthGuard } from './guards/auth.guard';
   exports: [AuthService, AuthGuard],
 })
 export class AuthModule {}
+
 
 
 
