@@ -9,6 +9,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from "./dto/refresh.dto";
 import { AuthGuard } from './guards/auth.guard';
+import { Throttle } from '../../common/decorators/throttle.decorator';
 
 
 @ApiTags('auth')
@@ -28,6 +29,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @Throttle('auth')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Iniciar sesión y obtener token JWT' })
   @ApiResponse({
@@ -56,6 +58,7 @@ export class AuthController {
 
 
   @Post('refresh')
+  @Throttle('auth')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Renovar access token usando refresh token' })
   @ApiResponse({

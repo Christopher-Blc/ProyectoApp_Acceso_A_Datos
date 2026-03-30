@@ -1,4 +1,7 @@
-import { SetMetadata } from '@nestjs/common';
+import {
+  SkipThrottle as NestSkipThrottle,
+  Throttle as NestThrottle,
+} from '@nestjs/throttler';
 
 /**
  * @Throttle(name)
@@ -25,8 +28,10 @@ import { SetMetadata } from '@nestjs/common';
  * 2. ThrottlerGuard lee esta metadata en tiempo de ejecución
  * 3. Aplica los límites del perfil especificado
  */
-export const Throttle = (name: 'default' | 'Auth') =>
-  SetMetadata('throttle', name);
+export const Throttle = (name: 'default' | 'auth' | 'Auth') => {
+  const profile = name === 'Auth' ? 'auth' : name;
+  return NestThrottle({ [profile]: {} });
+};
 
 /**
  * @SkipThrottle()
@@ -49,4 +54,5 @@ export const Throttle = (name: 'default' | 'Auth') =>
  *
  * ⚠️ Cuidado: úsalo solo para endpoints que deban ser accesibles
  */
-export const SkipThrottle = () => SetMetadata('skipThrottle', true);
+export const SkipThrottle = () =>
+  NestSkipThrottle({ default: true, auth: true });
