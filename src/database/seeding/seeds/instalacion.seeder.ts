@@ -38,3 +38,4 @@ export class InstalacionSeeder implements Seeder{
         console.log("Instalacion seeding completado!");
     }
 }
+

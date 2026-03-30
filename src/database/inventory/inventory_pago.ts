@@ -22,3 +22,4 @@ export default [
         nota: 'Pago pendiente de confirmación'
     }
 ]
+

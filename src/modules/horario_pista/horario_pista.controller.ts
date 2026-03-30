@@ -3,9 +3,9 @@ import { HorarioPistaService } from './horario_pista.service';
 import { Horario_Pista } from './entities/horario_pista.entity';
 import { CreateHorarioPistaDto, UpdateHorarioPistaDto } from './dto/horario_pista.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AuthGuard } from '../auth/auth.guard';
-import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 
 
@@ -73,6 +73,7 @@ export class HorarioPistaController {
         return this.HorarioPistaService.remove(id);
     }
 }
+
 
 
 

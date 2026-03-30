@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
-import { AuthService } from "./auth.service";
+import { AuthService } from "../auth.service";
 
 //esta clase implementa la logica para proteger rutas usando JWT , asegurando que solo los usuarios autenticados puedan acceder a ellas
 @Injectable()
@@ -57,6 +57,7 @@ export class AuthGuard implements CanActivate {
     return type === "Bearer" ? token : undefined;
   }
 }
+
 
 
 

@@ -24,3 +24,4 @@ export class AuthTokenBlacklist {
   created_at: Date;
 }
 
+

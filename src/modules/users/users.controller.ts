@@ -5,9 +5,9 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/users.dto';
 import { User } from './entities/user.entity';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '../auth/auth.guard';
-import { Roles } from '../auth/roles.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from './entities/user.entity';
 
 @ApiTags('users') 
@@ -117,6 +117,7 @@ export class UsersController {
     }
   }
 }
+
 
 
 

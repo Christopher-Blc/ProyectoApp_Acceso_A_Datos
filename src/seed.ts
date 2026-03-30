@@ -18,7 +18,7 @@ import { InstalacionSeeder } from "./database/seeding/seeds/instalacion.seeder";
 import { ComentarioSeeder } from "./database/seeding/seeds/comentario.seeder";
 import { Horario_PistaSeeder } from "./database/seeding/seeds/horario_pista.seeder";
 import { NotiSeeder } from "./database/seeding/seeds/noti.seeder";
-import { AuthTokenBlacklist } from "./modules/auth/entities/auth-token-blacklist.entity";
+import { AuthTokenBlacklist } from "./modules/auth/blacklist/auth-token-blacklist.entity";
 
 //para arrancar con docker: docker exec -it respi-webserver npm run seed
 const options: DataSourceOptions & SeederOptions = {

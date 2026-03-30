@@ -52,3 +52,4 @@ export class Instalacion {
   pista: Pista[];
 
 }
+

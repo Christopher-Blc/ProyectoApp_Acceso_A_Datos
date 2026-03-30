@@ -40,3 +40,4 @@ export class UserSeeder implements Seeder {
     console.log('Users seeding completado!');
   }
 }
+

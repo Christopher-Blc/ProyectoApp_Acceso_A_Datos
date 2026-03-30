@@ -41,3 +41,4 @@ export class Horario_Pista {
  @JoinColumn({ name: "pista_id" })
  pista: Pista;
 }
+

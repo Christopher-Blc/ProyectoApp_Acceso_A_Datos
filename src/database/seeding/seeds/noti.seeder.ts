@@ -38,3 +38,4 @@ export class NotiSeeder implements Seeder {
         console.log('Noti seeding completed!')
     }
 }
+

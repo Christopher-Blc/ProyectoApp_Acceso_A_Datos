@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from "./dto/refresh.dto";
-import { AuthGuard } from './auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 
 @ApiTags('auth')
@@ -99,6 +99,7 @@ export class AuthController {
   }
 
 }
+
 
 
 
