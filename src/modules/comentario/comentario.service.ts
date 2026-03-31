@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comentario } from './entities/comentario.entity';
 import {  CreateComentarioDto, UpdateComentarioDto } from './dto/comentario.dto';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class ComentarioService {
@@ -21,7 +22,7 @@ export class ComentarioService {
             relations: ['user', 'pista'],
         });
         if (!comentario) {
-            throw new Error(`Comentario ${comentario_id} no encontrado`);
+            throw new NotFoundException(`Comentario ${comentario_id} no encontrado`);
         }
         return comentario;
     }

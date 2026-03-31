@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Pago } from './entities/pago.entity';
 import { Repository } from 'typeorm';
@@ -18,11 +18,15 @@ export class PagoService {
         });
     }
 
-    findOne(pago_id: number) {
-        return this.pagoRepository.findOne({
+    async findOne(pago_id: number): Promise<Pago> {
+        const pago = await this.pagoRepository.findOne({
             where: { pago_id },
             relations: ['usuario', 'reserva'],
         });
+        if (!pago) {
+            throw new NotFoundException(`Pago ${pago_id} no encontrado`);
+        }
+        return pago;
     }
 
     async create(data: Partial<Pago>) {
@@ -36,7 +40,11 @@ export class PagoService {
     }
 
     async remove(pago_id: number): Promise<void> {
-        await this.pagoRepository.delete(pago_id)
+        const pago = await this.findOne(pago_id);
+        if (!pago) {
+            throw new NotFoundException(`Pago ${pago_id} no encontrado`);
+        }
+        await this.pagoRepository.delete(pago_id);
     }
     
 }

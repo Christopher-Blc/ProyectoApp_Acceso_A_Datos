@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Membresia } from './entities/membresia.entity';
@@ -17,12 +17,13 @@ export class MembresiaService {
         }
 
         async findOne(membresia_id: number): Promise<Membresia> {
+            
             const membresia = await this.Repo.findOne({
                 where: { membresia_id: membresia_id },
                 relations: ['user'],
             });
             if (!membresia) {
-                throw new Error(`Membresia ${membresia_id} no encontrada`);
+                throw new NotFoundException(`Membresia ${membresia_id} no encontrada`);
             }
             return membresia;
         }

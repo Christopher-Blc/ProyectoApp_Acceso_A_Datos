@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Instalacion } from './entities/instalacion.entity';
@@ -21,7 +21,7 @@ export class InstalacionService {
             relations: ['pista'],
         });
         if (!instalacion) {
-            throw new Error(`Instalacion ${instalacion_id} no encontrada`);
+            throw new NotFoundException(`Instalacion ${instalacion_id} no encontrada`);
         }   
         return instalacion;
     }
@@ -37,10 +37,10 @@ export class InstalacionService {
     }
 
     async remove(instalacion_id: number): Promise<void>{
+        const instalacion = await this.findOne(instalacion_id);
         await this.instalacionRepository.delete(instalacion_id);
     }
 }
-
 
 
 
