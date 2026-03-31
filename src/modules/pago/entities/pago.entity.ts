@@ -22,6 +22,10 @@ export class Pago {
     @PrimaryGeneratedColumn({name: "pago_id", type: "int" })
     pago_id: number;
 
+    //Dejamos reserva_id en pago
+    @Column({ name: "reserva_id", type: "int" })
+    reserva_id: number;
+
     @Column({ type: "decimal" })
     monto: number;
 
@@ -52,7 +56,7 @@ export class Pago {
     @JoinColumn({ name: "usuario_id" })
     usuario: User;
 
-    @OneToOne(() => Reserva, (r) => r.pago)
+    @ManyToOne(() => Reserva, (r) => r.pagos) 
     @JoinColumn({ name: "reserva_id" })
     reserva: Reserva;
 }
