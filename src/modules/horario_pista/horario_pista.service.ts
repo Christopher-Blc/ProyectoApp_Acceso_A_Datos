@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Horario_Pista } from './entities/horario_pista.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,11 +18,16 @@ export class HorarioPistaService {
         });
     }
 
-    findOne(horario_id: number) {
-        return this.horarioPistaRepository.findOne({
+
+    async findOne(horario_id: number): Promise<Horario_Pista> {
+        const horarioPista = await this.horarioPistaRepository.findOne({
             where: { horario_id },
             relations: ['pista'],
-    });
+        });
+        if (!horarioPista) {
+            throw new NotFoundException(`Horario_Pista ${horario_id} no encontrado`);
+        }
+        return horarioPista;
     }
 
     async create(data: Partial<Horario_Pista>) {

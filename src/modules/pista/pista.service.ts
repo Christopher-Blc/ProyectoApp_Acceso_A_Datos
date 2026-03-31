@@ -22,7 +22,7 @@ export class PistaService {
         const pista = await this.pistaRepo.findOne({where: {pista_id: pista_id},
                                             relations: ['reservas', 'comentarios', 'horarios_pista', 'instalacion']});
         if (!pista){
-            throw new Error(`pista ${pista_id} no encontrado`); // Lanzamos un error si no se encuentra la pista
+            throw new NotFoundException(`Pista ${pista_id} no encontrada`); // Lanzamos un error si no se encuentra la pista
         }
         return pista;
       }
@@ -48,7 +48,7 @@ export class PistaService {
     }
 
     async remove(pista_id: number): Promise<void>{
-
+        const pista = await this.findOne(pista_id);
         await this.pistaRepo.delete(pista_id);
     }
   }
