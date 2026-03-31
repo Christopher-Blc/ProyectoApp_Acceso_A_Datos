@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, OneToMany } from "typeorm";
 import { User } from "../../users/entities/user.entity";
 import { Pista } from "../../pista/entities/pista.entity";
 import { Pago } from "../../pago/entities/pago.entity";
@@ -22,9 +22,6 @@ export class Reserva {
 
     @Column({name: "pista_id", type: "int" }) // Clave FK hacia Pista
     pista_id: number;
-
-    @Column({name: "pago_id", type: "int"})
-    pago_id: number;
 
     @Column()
     fecha_reserva: Date;
@@ -62,9 +59,10 @@ export class Reserva {
     @JoinColumn({ name: "pista_id" })
     pista: Pista;
 
-    @OneToOne(() => Pago, (p) => p.reserva)
-    @JoinColumn({ name: "pago_id" })
-    pago: Pago;
+    //reserva_Id estara en pago. he puesto onetomany aunque en teoria era onetoone
+    //porque si falla un pago queremos todos los registros de pagos asociados a la reserva
+    @OneToMany(() => Pago, (pago) => pago.reserva)
+    pagos: Pago[]; // Esto es virtual, no crea una columna "pago_id" en la tabla reserva
 }
 
 
