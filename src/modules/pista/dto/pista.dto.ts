@@ -6,6 +6,13 @@ export class PistaDto {
 
     @IsNumber()
     @ApiProperty({
+        description: 'ID of the reservation',
+        example: 1,
+    })
+    reserva_id: number; // clave foranea reserva
+
+    @IsNumber()
+    @ApiProperty({
         description: 'ID of the installation',
         example: 1,
     })

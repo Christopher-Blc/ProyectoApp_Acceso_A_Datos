@@ -23,13 +23,6 @@ export class CreateReservaDto {
         example: 1,
     })
     pista_id: number;
-
-    @IsNumber()
-    @ApiProperty({
-        description: 'ID of the payment',
-        example: 1,
-    })
-    pago_id: number;
     
     @IsDateString()
     @ApiProperty({
