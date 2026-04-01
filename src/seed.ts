@@ -9,14 +9,12 @@ import { Membresia } from "./modules/membresia/entities/membresia.entity";
 import { Pago } from "./modules/pago/entities/pago.entity";
 import { Pista } from "./modules/pista/entities/pista.entity";
 import { Instalacion } from "./modules/instalacion/entities/instalacion.entity";
-import { Horario_Pista } from "./modules/horario_pista/entities/horario_pista.entity";
 import { ReservaSeeder } from "./database/seeding/seeds/reservas.seeder";
 import { pistaSeed } from "./database/seeding/seeds/pista.seeder";
 import { PagoSeeder } from "./database/seeding/seeds/pago.seeder";
 import { MembresiaSeeder } from "./database/seeding/seeds/membresia.seeder";
 import { InstalacionSeeder } from "./database/seeding/seeds/instalacion.seeder";
 import { ResenyaSeeder } from "./database/seeding/seeds/resenya.seeder";
-import { Horario_PistaSeeder } from "./database/seeding/seeds/horario_pista.seeder";
 import { NotiSeeder } from "./database/seeding/seeds/noti.seeder";
 import { AuthTokenBlacklist } from "./modules/auth/blacklist/auth_token_blacklist.entity";
 
@@ -39,7 +37,6 @@ const options: DataSourceOptions & SeederOptions = {
     Reserva,
     Instalacion,
     Pista,
-    Horario_Pista,
     AuthTokenBlacklist,
 
   ],
@@ -48,7 +45,6 @@ const options: DataSourceOptions & SeederOptions = {
     InstalacionSeeder,
     pistaSeed,
     MembresiaSeeder,
-    Horario_PistaSeeder,
     ReservaSeeder,
     PagoSeeder,
     ResenyaSeeder,
