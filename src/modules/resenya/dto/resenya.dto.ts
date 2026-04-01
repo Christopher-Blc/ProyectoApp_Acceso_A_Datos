@@ -1,17 +1,18 @@
-import { IsString, IsEnum, IsOptional, IsDateString, IsBoolean, IsNumber } from 'class-validator';
+import { IsString, IsOptional, IsDateString, IsBoolean, IsNumber } from 'class-validator';
 import { ApiProperty } from "@nestjs/swagger";
 
-export class CreateComentarioDto {
-    @IsNumber()
-    @ApiProperty({
-        description: 'ID of the comentario',
-        example: 1,
-    })
-    comentario_id: number;  
+export class CreateResenyaDto { 
 
     @IsNumber()
     @ApiProperty({
-        description: 'ID of the usuario',
+        description: 'ID of the review',
+        example: 1,
+    })
+    resenya_id: number;
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the user',
         example: 1,
     })
     usuario_id: number;
@@ -25,7 +26,7 @@ export class CreateComentarioDto {
 
     @IsString()
     @ApiProperty({
-        description: 'Title of the comentario',
+        description: 'Title of the resenya',
         example: 'Great experience!',
     })
     titulo: string;
@@ -60,7 +61,7 @@ export class CreateComentarioDto {
     visible: boolean;
 }
 
-export class UpdateComentarioDto {
+export class UpdateResenyaDto {
     
     @IsOptional()
     @IsString()

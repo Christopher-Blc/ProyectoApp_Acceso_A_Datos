@@ -4,12 +4,11 @@ import { Pista } from "../../pista/entities/pista.entity";
 import { Pago } from "../../pago/entities/pago.entity";
 
 export enum estadoReserva {
-    CONFIRMADA = "CONFIRMADA",
-    FINALIZADA = "FINALIZADA",
-    PAUSADA = "PAUSADA",
-    CANCELADA = "CANCELADA",
-    NO_PRESENTADO = "NO_PRESENTADO",
-    PENDIENTE = "PENDIENTE",
+    PENDIENTE = "PENDIENTE",     // Se ha solicitado (ej: esperando pago)
+    CONFIRMADA = "CONFIRMADA",   // Todo ok, el hueco está ocupado
+    CANCELADA = "CANCELADA",     // El usuario o el admin la anularon (hueco libre)
+    FINALIZADA = "FINALIZADA",   // El evento ya pasó con éxito
+    NO_PRESENTADO = "NO_PRESENTADO" // El usuario no vino y no avisó (penalizable)
 }
 
 @Entity()
@@ -17,20 +16,20 @@ export class Reserva {
     @PrimaryGeneratedColumn({name: "reserva_id", type: "int" })
     reserva_id: number;
 
-    @Column({name: "usuario_id", type: "int" }) // Clave FK hacia Usuario
+    @Column({name: "usuario_id", type: "int" }) 
     usuario_id: number;
 
-    @Column({name: "pista_id", type: "int" }) // Clave FK hacia Pista
+    @Column({name: "pista_id", type: "int" }) 
     pista_id: number;
 
     @Column()
     fecha_reserva: Date;
 
-    @Column()
-    fecha_inicio: Date;
+    @Column({type: 'time'})
+    hora_inicio: string;
 
-    @Column()
-    fecha_fin: Date;
+    @Column({type: 'time'})
+    hora_fin: string;
 
     @Column({
         type: "enum",
@@ -44,9 +43,6 @@ export class Reserva {
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     fecha_creacion: Date;
-
-    @Column()
-    codigo_reserva: string;
 
     @Column()
     nota: string;
@@ -63,6 +59,7 @@ export class Reserva {
     //porque si falla un pago queremos todos los registros de pagos asociados a la reserva
     @OneToMany(() => Pago, (pago) => pago.reserva)
     pagos: Pago[]; // Esto es virtual, no crea una columna "pago_id" en la tabla reserva
+
 }
 
 

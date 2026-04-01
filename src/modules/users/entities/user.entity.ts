@@ -1,9 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn, Unique, OneToOne} from "typeorm";
 import { Noti } from "../../noti/entities/noti.entity";
-import { Comentario } from "../../comentario/entities/comentario.entity";
+import { Resenya } from "../../resenya/entities/resenya.entity";
 import { Reserva } from "../../reserva/entities/reserva.entity";
 import { Membresia } from "../../membresia/entities/membresia.entity";
-import { Pago } from "../../pago/entities/pago.entity";
 
 
 export enum UserRole {
@@ -18,8 +17,11 @@ export class User {
     @PrimaryGeneratedColumn({ name: "usuario_id", type: "int" })
     usuario_id: number;
 
-    @OneToMany(() => Noti, (n) => n.user)
-    notificaciones: Noti[];
+    @Column({name: "membresia_id", type: "int" })
+    membresia_id: number;
+
+    @Column({ name: "username", unique: true })
+    username: string;
 
     @Column({ name: "name" })
     name: string;
@@ -33,7 +35,7 @@ export class User {
     @Column({ name: "phone" })
     phone: string;
 
-    @Column({ name: "password" })
+    @Column({ name: "password", select: false })
     password: string;
 
     @Column({
@@ -62,18 +64,18 @@ export class User {
     @Column({ name: "refresh_token_hash", type: "text", nullable: true })
     refresh_token_hash: string | null;
 
-
-    @OneToMany(() => Membresia, (m) => m.user)
-    membresia: Membresia[];
-
-    @OneToMany(() => Comentario, (c) => c.user)
-    comentarios: Comentario[];
+    @ManyToOne(() => Membresia, (m) => m.users)
+    @JoinColumn({ name: "membresia_id" })
+    membresia: Membresia;
 
     @OneToMany(() => Reserva, (r) => r.usuario)
     reservas: Reserva[];
 
-    @OneToMany(() => Pago, (p) => p.usuario)
-    pagos: Pago[];
+    @OneToMany(() => Noti, (n) => n.user)
+    notificaciones: Noti[];
+
+    @OneToOne(() => Resenya, (r) => r.user)
+    resenya: Resenya;   
 }
 
 

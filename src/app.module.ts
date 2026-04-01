@@ -7,7 +7,7 @@ import { UsersModule } from "./modules/users/users.module";
 import { AppService } from "./app.service";
 import { AppController } from "./app.controller";
 import { ReservaModule } from './modules/reserva/reserva.module';
-import { ComentarioModule } from './modules/comentario/comentario.module';
+import { ResenyaModule } from './modules/resenya/resenya.module';
 import { MembresiaModule } from './modules/membresia/membresia.module';
 import { InstalacionModule } from './modules/instalacion/instalacion.module';
 import { HorarioPistaModule } from './modules/horario_pista/horario_pista.module';
@@ -15,6 +15,7 @@ import { PagoModule } from './modules/pago/pago.module';
 import { NotiModule } from './modules/noti/noti.module';
 import { PistaModule } from './modules/pista/pista.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
 
 
 
@@ -55,7 +56,7 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
     UsersModule,
     ReservaModule,
-    ComentarioModule,
+    ResenyaModule,
     MembresiaModule,
     InstalacionModule,
     HorarioPistaModule,
@@ -63,6 +64,7 @@ import { AuthModule } from './modules/auth/auth.module';
     NotiModule,
     PistaModule,
     AuthModule,
+    TipoPistaModule,
   ],
   controllers: [AppController],
   providers: [
