@@ -3,7 +3,7 @@ import { runSeeders, SeederOptions } from "typeorm-extension";
 import { User } from "./modules/users/entities/user.entity";
 import { UserSeeder } from "./database/seeding/seeds/users.seeder";
 import { Noti } from "./modules/noti/entities/noti.entity";
-import { Comentario } from "./modules/comentario/entities/comentario.entity";
+import { Resenya } from "./modules/resenya/entities/resenya.entity";
 import { Reserva } from "./modules/reserva/entities/reserva.entity";
 import { Membresia } from "./modules/membresia/entities/membresia.entity";
 import { Pago } from "./modules/pago/entities/pago.entity";
@@ -15,7 +15,7 @@ import { pistaSeed } from "./database/seeding/seeds/pista.seeder";
 import { PagoSeeder } from "./database/seeding/seeds/pago.seeder";
 import { MembresiaSeeder } from "./database/seeding/seeds/membresia.seeder";
 import { InstalacionSeeder } from "./database/seeding/seeds/instalacion.seeder";
-import { ComentarioSeeder } from "./database/seeding/seeds/comentario.seeder";
+import { ResenyaSeeder } from "./database/seeding/seeds/resenya.seeder";
 import { Horario_PistaSeeder } from "./database/seeding/seeds/horario_pista.seeder";
 import { NotiSeeder } from "./database/seeding/seeds/noti.seeder";
 import { AuthTokenBlacklist } from "./modules/auth/blacklist/auth_token_blacklist.entity";
@@ -32,7 +32,7 @@ const options: DataSourceOptions & SeederOptions = {
   entities: [
     User,
     Noti,
-    Comentario,
+    Resenya,
     Reserva,
     Membresia,
     Pago,
@@ -51,7 +51,7 @@ const options: DataSourceOptions & SeederOptions = {
     Horario_PistaSeeder,
     ReservaSeeder,
     PagoSeeder,
-    ComentarioSeeder,
+    ResenyaSeeder,
     NotiSeeder
   ],
 };

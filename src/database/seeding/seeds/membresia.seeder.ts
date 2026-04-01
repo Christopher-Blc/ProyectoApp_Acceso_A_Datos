@@ -12,7 +12,7 @@ export class MembresiaSeeder implements Seeder{
         for (const item of membresiaData) {
             const existing = await membresiaRepository.findOne({
                 where: {
-                    usuario_id: item.usuario_id,
+                    membresia_id: item.membresia_id,
                     tipo: item.tipo,
                     fecha_inicio: item.fecha_inicio,
                 },
@@ -22,7 +22,6 @@ export class MembresiaSeeder implements Seeder{
             }
 
             const membresiaEntry = new Membresia();
-            membresiaEntry.usuario_id = item.usuario_id;
             membresiaEntry.tipo = item.tipo;
             membresiaEntry.fecha_inicio = item.fecha_inicio;
             membresiaEntry.fecha_fin = item.fecha_fin;

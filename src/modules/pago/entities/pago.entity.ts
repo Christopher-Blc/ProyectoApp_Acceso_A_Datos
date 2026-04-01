@@ -1,5 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn } from "typeorm";
-import { User } from "../../users/entities/user.entity";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { Reserva } from "../../reserva/entities/reserva.entity";
 
 export enum metodo_pago {
@@ -17,19 +16,22 @@ export enum estado_pago {
     REEMBOLSADO = "Reembolsado"
 }
 
-@Entity()
+@Entity("pago")
 export class Pago {
-    @PrimaryGeneratedColumn({name: "pago_id", type: "int" })
+    @PrimaryGeneratedColumn({ name: "pago_id" })
     pago_id: number;
 
-    //Dejamos reserva_id en pago
     @Column({ name: "reserva_id", type: "int" })
     reserva_id: number;
 
-    @Column({ type: "decimal" })
+    // de momento como solo habra un poli no lo ponemos
+    // @Column({ name: "instalacion_id" })
+    // instalacion_id: number;
+
+    @Column({ type: "decimal", precision: 10, scale: 2 })
     monto: number;
 
-    @Column()
+    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     fecha_pago: Date;
 
     @Column({
@@ -46,20 +48,16 @@ export class Pago {
     })
     estado_pago: estado_pago;
 
-    @Column({ name: "usuario_id", type: "int", nullable: true })
-    usuario_id?: number;
-
-    @Column({ nullable: true })
+    @Column({ type: "text", nullable: true })
     nota?: string;
-
-    @ManyToOne(() => User, (u) => u.pagos, {nullable: true})
-    @JoinColumn({ name: "usuario_id" })
-    usuario: User;
 
     @ManyToOne(() => Reserva, (r) => r.pagos) 
     @JoinColumn({ name: "reserva_id" })
     reserva: Reserva;
-}
 
+    // @ManyToOne(() => Instalacion)
+    // @JoinColumn({ name: "instalacion_id" })
+    // instalacion: Instalacion;
+}
 
 

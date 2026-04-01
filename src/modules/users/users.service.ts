@@ -69,10 +69,14 @@ export class UsersService {
     await this.userRepository.delete(usuario_id);
   }
 
-  //Metodo para encontrar un usuario por su email
+  //findbyemail para login , devuelve el usuario con el password incluido para poder comparar el hash
+  //pq en la entity del user no se deja seleccionar el pwd por defecto
   async findByEmail(email: string) {
-    return this.userRepository.findOne({ where: { email } });
-  }
+  return await this.userRepository.createQueryBuilder("user")
+    .where("user.email = :email", { email })
+    .addSelect("user.password")
+    .getOne();
+ }
 
   //Metodo para actualizar la fecha del ultimo login
   async updateLastLogin(usuario_id: number) {

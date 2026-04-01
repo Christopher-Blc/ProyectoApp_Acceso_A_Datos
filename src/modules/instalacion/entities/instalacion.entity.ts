@@ -23,9 +23,6 @@ export class Instalacion {
   @Column()
   email: string;
 
-  @Column({type: "int"})
-  capacidad_max: number;
-
   @Column()
   descripcion: string;
 
@@ -33,23 +30,14 @@ export class Instalacion {
   fecha_creacion: Date;
 
   @Column({
-      type: "enum",
-      enum: estado_instalacion,
-      default: estado_instalacion.INACTIVA, // valor por defecto
-    })
-    estado: estado_instalacion;
+    type: "enum",
+    enum: estado_instalacion,
+    default: estado_instalacion.INACTIVA, // valor por defecto
+  })
+  estado: estado_instalacion;
 
   @OneToMany(() => Pista, (pi) => pi.instalacion)
   pistas: Pista[];
-
-  @Column({type: "time"})
-  horario_apertura: Date;
-
-  @Column({type: "time"})
-  horario_cierre: Date;
-
-  @OneToMany(() => Pista, (pi) => pi.instalacion)
-  pista: Pista[];
 
 }
 
