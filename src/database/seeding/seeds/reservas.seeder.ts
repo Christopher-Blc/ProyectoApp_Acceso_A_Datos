@@ -14,58 +14,57 @@ export class ReservaSeeder implements Seeder {
     const reservaEntries: Reserva[] = [];
 
     for (const item of reservaData) {
+      // Nota: Como quitamos 'codigo_reserva' de la entidad, 
+      // validamos por combinacion de usuario, pista y fecha para evitar duplicados en el seed
       const existing = await reservaRepository.findOne({
-        where: { codigo_reserva: item.codigo_reserva },
+        where: { 
+          usuario_id: Number(item.usuario_id),
+          pista_id: Number(item.pista_id),
+          fecha_reserva: item.fecha_reserva 
+        },
       });
+      
       if (existing) {
         continue;
       }
 
       const reservaEntry = new Reserva();
       reservaEntry.fecha_reserva = item.fecha_reserva;
-      reservaEntry.fecha_inicio = item.fecha_inicio;
-      reservaEntry.fecha_fin = item.fecha_fin;
+      reservaEntry.hora_inicio = item.hora_inicio; 
+      reservaEntry.hora_fin = item.hora_fin; 
       reservaEntry.estado = item.estado;
-      reservaEntry.precio_total = item.precio_final;
-      reservaEntry.fecha_creacion = item.fecha_creacion;
-      reservaEntry.codigo_reserva = item.codigo_reserva;
       reservaEntry.nota = item.nota;
 
+      // Busqueda de Usuario
       if (item.usuario_id) {
         const user = await userRepository.findOneBy({ usuario_id: Number(item.usuario_id) });
         if (user) {
-          reservaEntry.usuario = user;
-          reservaEntry.usuario_id = Number(item.usuario_id);
+          reservaEntry.usuario_id = user.usuario_id;
         }
       }
 
+      // Busqueda de Pista
       if (item.pista_id) {
         const pista = await pistaRepository.findOneBy({ pista_id: Number(item.pista_id) });
         if (pista) {
-          reservaEntry.pista = pista;
-          reservaEntry.pista_id = Number(item.pista_id);
+          reservaEntry.pista_id = pista.pista_id;
         }
       }
 
+      // Fallback: Si no hay IDs validos, asignamos los primeros que encontremos (para que el seed no falle)
       if (!reservaEntry.pista_id) {
-        const anyPistas = await pistaRepository.find({ take: 1 });
-        const anyPista = anyPistas && anyPistas.length ? anyPistas[0] : null;
-        if (anyPista) {
-          reservaEntry.pista = anyPista;
-          reservaEntry.pista_id = anyPista.pista_id;
-        }
+        const anyPista = await pistaRepository.findOne({ where: {} });
+        if (anyPista) reservaEntry.pista_id = anyPista.pista_id;
       }
 
       if (!reservaEntry.usuario_id) {
-        const anyUsers = await userRepository.find({ take: 1 });
-        const anyUser = anyUsers && anyUsers.length ? anyUsers[0] : null;
-        if (anyUser) {
-          reservaEntry.usuario = anyUser;
-          reservaEntry.usuario_id = anyUser.usuario_id;
-        }
+        const anyUser = await userRepository.findOne({ where: {} });
+        if (anyUser) reservaEntry.usuario_id = anyUser.usuario_id;
       }
 
-      reservaEntries.push(reservaEntry);
+      if (reservaEntry.usuario_id && reservaEntry.pista_id) {
+        reservaEntries.push(reservaEntry);
+      }
     }
 
     if (reservaEntries.length > 0) {
@@ -75,6 +74,3 @@ export class ReservaSeeder implements Seeder {
     console.log('Reserva seeding completado!');
   }
 }
-     
-
-

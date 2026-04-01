@@ -1,49 +1,43 @@
-import { IsString, IsEnum, IsOptional, IsDateString, IsNumber, Length } from 'class-validator';
-import {estadoReserva} from '../entities/reserva.entity'; // Importamos el enum estadoReserva desde reserva.entity
+import { IsString, IsEnum, IsOptional, IsDateString, IsNumber, Length, Matches } from 'class-validator';
+import { estadoReserva } from '../entities/reserva.entity'; 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateReservaDto {
-    @IsNumber()
-    @ApiProperty({
-        description: 'ID of the reservation',
-        example: 1,
-    })
-    reserva_id: number;
+export class CreateReservaDto { 
+    //user id se pilla del jwt del header
 
     @IsNumber()
     @ApiProperty({
-        description: 'ID of the user',
+        description: 'ID of the pista being reserved',
         example: 1,
     })
-    usuario_id: number;
-
-    @IsNumber()
-    @ApiProperty({
-        description: 'ID of the pista',
-        example: 1,
-    })
-    pista_id: number;
+    pista_id: number; 
     
     @IsDateString()
     @ApiProperty({
         description: 'Date of the reservation',
-        example: '1990-01-01',
+        example: '2026-04-01',
     })
-    fecha_reserva: string;
+    fecha_reserva: string; 
 
-    @IsDateString()
+    @IsString()
+    @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
+        message: 'Start time must be in HH:mm format (e.g., 09:00)',
+    })
     @ApiProperty({
-        description: 'Start date of the reservation',
-        example: '1990-01-01',
+        description: 'Start time of the reservation',
+        example: '09:00',
     })
-    fecha_inicio: string; 
+    hora_inicio: string; 
 
-    @IsDateString()
-    @ApiProperty({  
-        description: 'End date of the reservation',
-        example: '1990-01-01',
+    @IsString()
+    @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
+        message: 'End time must be in HH:mm format (e.g., 10:30)',
     })
-    fecha_fin: string;
+    @ApiProperty({  
+        description: 'End time of the reservation',
+        example: '10:30',
+    })
+    hora_fin: string;  
 
     @IsOptional()
     @IsEnum(estadoReserva)
@@ -52,90 +46,71 @@ export class CreateReservaDto {
         enum: estadoReserva,
         example: estadoReserva.PENDIENTE,
     })
-    estado: estadoReserva;
-
-    @IsNumber()
-    @ApiProperty({
-        description: 'Total price of the reservation',
-        example: 10.50,
-    })
-    precio_total: number;
-
-    @IsDateString()
-    @ApiProperty({
-        description: 'Creation date of the reservation',
-        example: '1990-01-01T00:00:00Z',
-    })
-    fecha_creacion: Date;
-
-    @IsString()
-    @ApiProperty({
-        description: 'Reservation code',
-        example: 'ABC123',
-    })
-    codigo_reserva: string;
+    estado: estadoReserva; 
 
     @IsOptional()
     @IsString()
     @Length(0, 500)
     @ApiProperty({
         description: 'Note for the reservation',
+        example: 'Prefiero la pista cerca de la entrada',
     })
-    nota: string;
+    nota: string; 
 }
 
 export class UpdateReservaDto {
     @IsOptional()
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the pista being reserved',
+        example: 1,
+    })
+    pista_id: number;
+
+    @IsOptional()
     @IsDateString()
     @ApiProperty({
         description: 'Date of the reservation',
-        example: '1990-01-01',
+        example: '2026-04-01',
+        required: false,
     })
-    fecha_reserva?: Date;
+    fecha_reserva?: string;
 
     @IsOptional()
-    @IsDateString()
+    @IsString()
+    @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
     @ApiProperty({
-        description: 'Start date of the reservation',
-        example: '1990-01-01',
+        description: 'Start time of the reservation',
+        example: '11:00',
+        required: false,
     })
-    fecha_inicio?: Date;
+    hora_inicio?: string;
 
     @IsOptional()
-    @IsDateString()
+    @IsString()
+    @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
     @ApiProperty({
-        description: 'End date of the reservation',
-        example: '1990-01-01',
+        description: 'End time of the reservation',
+        example: '12:30',
+        required: false,
     })
-    fecha_fin?: Date;
+    hora_fin?: string;
 
-    // Estado de la reserva
     @IsOptional()
     @IsEnum(estadoReserva)
     @ApiProperty({
         description: 'State of the reservation',
         enum: estadoReserva,
-        example: estadoReserva.PENDIENTE,
+        required: false,
     })
     estado?: estadoReserva;
-
-    @IsOptional()
-    @IsNumber()
-    @ApiProperty({
-        description: 'Total price of the reservation',
-        example: 10.50,
-    })
-    precio_total?: number;
 
     @IsOptional()
     @IsString()
     @Length(0, 500)
     @ApiProperty({
         description: 'Note for the reservation',
+        required: false,
     })
     nota?: string;
 }
-
-
-
-
