@@ -17,7 +17,7 @@ export class User {
     @PrimaryGeneratedColumn({ name: "usuario_id", type: "int" })
     usuario_id: number;
 
-    @Column({name: "membresia_id", type: "int" })
+    @Column({name: "membresia_id", type: "int" , nullable: true})
     membresia_id: number;
 
     @Column({ name: "username", unique: true })
@@ -65,7 +65,7 @@ export class User {
     refresh_token_hash: string | null;
 
     @ManyToOne(() => Membresia, (m) => m.users)
-    @JoinColumn({ name: "membresia_id" })
+    @JoinColumn({ name: "membresia_id"})
     membresia: Membresia;
 
     @OneToMany(() => Reserva, (r) => r.usuario)

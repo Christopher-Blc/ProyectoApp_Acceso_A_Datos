@@ -10,7 +10,6 @@ import { ReservaModule } from './modules/reserva/reserva.module';
 import { ResenyaModule } from './modules/resenya/resenya.module';
 import { MembresiaModule } from './modules/membresia/membresia.module';
 import { InstalacionModule } from './modules/instalacion/instalacion.module';
-import { HorarioPistaModule } from './modules/horario_pista/horario_pista.module';
 import { PagoModule } from './modules/pago/pago.module';
 import { NotiModule } from './modules/noti/noti.module';
 import { PistaModule } from './modules/pista/pista.module';
@@ -59,7 +58,6 @@ import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
     ResenyaModule,
     MembresiaModule,
     InstalacionModule,
-    HorarioPistaModule,
     PagoModule,
     NotiModule,
     PistaModule,
