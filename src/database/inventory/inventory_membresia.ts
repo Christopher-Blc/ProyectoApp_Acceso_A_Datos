@@ -1,17 +1,23 @@
-import { estado_membresia } from "../../modules/membresia/entities/membresia.entity";
-
 export default [
-
     {
-        membresia_id: 1,
-        tipo: 'Premium',
-        fecha_inicio: new Date('2024-01-01T00:00:00'),
-        fecha_fin: new Date('2024-12-31T23:59:59'),
-        estado: estado_membresia.ACTIVA,
-        descuento: 15.00,
-        renovable: true,
-        fecha_renovacion: new Date('2024-12-31T23:59:59'),
+        rango: '1',
+        tipo: 'Bronce',
+        descuento: 0.00,
+        reservas_requeridas: 0,
+        beneficios: 'Rango inicial. Sin descuentos aplicados.'
     },
-]
-
-
+    {
+        rango: '2',
+        tipo: 'Plata',
+        descuento: 5.00,
+        reservas_requeridas: 10,
+        beneficios: '5% de descuento en el precio de la pista.'
+    },
+    {
+        rango: '3',
+        tipo: 'Oro',
+        descuento: 10.00,
+        reservas_requeridas: 20,
+        beneficios: '10% de descuento y prioridad en eventos.'
+    }
+];

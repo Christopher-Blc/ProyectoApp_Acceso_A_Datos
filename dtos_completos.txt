@@ -1,0 +1,1224 @@
+============================================================
+FILE: src/modules/auth/dto/login.dto.ts
+============================================================
+import { IsEmail, IsNotEmpty, IsString, Matches, Length } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { VALIDATION_LENGTHS, VALIDATION_PATTERNS } from '../../../common/constants/validation_patterns';
+
+export class LoginDto {
+  @IsEmail()
+  @Matches(VALIDATION_PATTERNS.email.pattern, {
+    message: VALIDATION_PATTERNS.email.message,
+  })
+  @IsNotEmpty()
+  @ApiProperty({ example: 'prueba@prueba.com' })
+  email: string;
+
+  @IsString()
+  @Length(VALIDATION_LENGTHS.password.min, VALIDATION_LENGTHS.password.max)
+  @Matches(VALIDATION_PATTERNS.password.pattern, {
+    message: VALIDATION_PATTERNS.password.message,
+  })
+  @IsNotEmpty()
+  @ApiProperty({ example: 'Abc@1234' })
+  password: string;
+}
+
+
+
+
+
+
+
+============================================================
+FILE: src/modules/auth/dto/refresh.dto.ts
+============================================================
+import { IsNotEmpty, IsString } from 'class-validator';
+
+export class RefreshDto {
+  @IsString()
+  @IsNotEmpty()
+  refresh_token: string;
+}
+
+
+
+
+
+
+
+============================================================
+FILE: src/modules/auth/dto/register.dto.ts
+============================================================
+import { IsString, IsEmail , IsPhoneNumber , IsOptional, IsDateString , Length, Matches, IsNotEmpty } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { VALIDATION_LENGTHS, VALIDATION_PATTERNS } from '../../../common/constants/validation_patterns';
+
+export class RegisterDto {
+
+  @IsString()
+  @IsNotEmpty()
+  @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
+  @ApiProperty({
+    description: 'Name of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'uniqueUsername',
+  })  
+  username: string;
+
+  //Nombre
+  @IsString()
+  @IsNotEmpty()
+  @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
+  @ApiProperty({
+    description: 'Name of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'Name_User',
+  })  
+  name: string;
+
+  //Apellido
+  @IsString()
+  @IsNotEmpty()
+  @Length(VALIDATION_LENGTHS.surname.min, VALIDATION_LENGTHS.surname.max)
+  @ApiProperty({
+    description: 'Surname of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'Surname_User',
+  })
+  surname: string;
+
+  //Correo electronico
+  @IsEmail()
+  @Matches(VALIDATION_PATTERNS.email.pattern, {
+    message: VALIDATION_PATTERNS.email.message,
+  })
+  @ApiProperty({
+    description: 'Email address of the user',
+    example: 'email@example.com',
+  })
+  email: string;
+
+  //Telefono
+  @IsPhoneNumber('ES')
+  @Matches(VALIDATION_PATTERNS.phone.pattern, {
+    message: VALIDATION_PATTERNS.phone.message,
+  })
+  @ApiProperty({
+    description: 'Phone number of the user',
+    example: 123456789,
+  })
+  phone: string;
+
+
+  //password tiene que tener por lo menos una mayuscula, una minuscula, un numero y un caracter especial
+  @ApiProperty({
+    description: 'Password of the user',
+    minLength: 8,
+    maxLength: 100,
+    example: 'StrongP@ssw0rd!',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Length(VALIDATION_LENGTHS.password.min, VALIDATION_LENGTHS.password.max)
+  @Matches(VALIDATION_PATTERNS.password.pattern, {
+    message: VALIDATION_PATTERNS.password.message,
+  })
+  password: string;
+
+
+  // Fechas
+  @IsDateString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Date of birth of the user',
+    example: '1990-01-01',
+  })
+  fecha_nacimiento: string;
+
+  //direccion
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Address of the user',
+    example: '123 Main St, City, Country',
+  })
+  direccion: string;
+}
+
+
+
+
+
+
+============================================================
+FILE: src/modules/instalacion/dto/instalacion.dto.ts
+============================================================
+import { IsString, IsEnum, IsOptional, IsDateString, IsBoolean, IsNumber } from 'class-validator';
+import { estado_instalacion } from '../entities/instalacion.entity' // Importamos el enum estadoReserva desde instalacion.entity
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateInstalacionDto {
+    // @IsNumber()
+    // instalacion_id: number;
+
+    @IsString()
+    @ApiProperty({
+        description: 'Name of the installation',
+        example: 'Gym Central',
+    })
+    nombre: string;
+
+    @IsString()
+    @ApiProperty({
+        description: 'Address of the installation',
+        example: '123 Main St',
+    })
+    direccion: string;
+
+    @IsString()
+    @ApiProperty({
+        description: 'Phone number of the installation',
+        example: 123456789,
+    })
+    telefono: string;
+
+    @IsString()
+    @ApiProperty({
+        description: 'Email of the installation',
+        example: 'contact@gymcentral.com',
+    })
+    email: string;
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'Maximum capacity of the installation',
+        example: 100,
+    })
+    capacidad_max: number;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        description: 'Description of the installation',
+        example: 'A well-equipped gym with modern facilities',
+    })
+    descripcion: string;
+
+    // @IsDateString()
+    // @ApiProperty({
+    //     description: 'Creation date of the installation',
+    //     example: '2023-01-01T00:00:00Z',
+    // })
+    // fecha_creacion: Date;
+
+    @IsOptional()
+    @IsEnum(estado_instalacion)
+    @ApiProperty({
+        description: 'State of the installation',
+        example: estado_instalacion.ACTIVA,
+    })
+    estado: estado_instalacion;
+
+    @IsDateString()
+    @ApiProperty({
+        description: 'Opening time of the installation',
+        example: '08:00:00',
+    })
+    horario_apertura: string;
+
+    @IsDateString()
+    @ApiProperty({
+        description: 'Closing time of the installation',
+        example: '22:00:00',
+    })
+    horario_cierre: string;
+}
+
+export class UpdateInstalacionDto {
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        description: 'Name of the installation',
+        example: 'Gym Central',
+    })
+    nombre?: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        description: 'Address of the installation',
+        example: '123 Main St',
+    })
+    direccion?: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        description: 'Phone number of the installation',
+        example: 123456789,
+    })
+    telefono?: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        description: 'Email of the installation',
+        example: 'contact@gymcentral.com',
+    })
+    email?: string;
+
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({
+        description: 'Maximum capacity of the installation',
+        example: 100,
+    })
+    capacidad_max?: number;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        description: 'Description of the installation',
+        example: 'A well-equipped gym with modern facilities',
+    })
+    descripcion?: string;
+
+    // Estado de la instalacion
+    @IsOptional()
+    @IsEnum(estado_instalacion)
+    @ApiProperty({
+        description: 'State of the installation',
+        example: estado_instalacion.ACTIVA,
+    })
+    estado?: estado_instalacion;
+
+    @IsOptional()
+    @IsDateString()
+    @ApiProperty({
+        description: 'Opening time of the installation',
+        example: '08:00:00',
+    })
+    horario_apertura?: string;
+
+    @IsOptional()
+    @IsDateString()
+    @ApiProperty({
+        description: 'Closing time of the installation',
+        example: '22:00:00',
+    })
+    horario_cierre?: string;
+}
+
+
+
+
+
+
+============================================================
+FILE: src/modules/membresia/dto/membresia.dto.ts
+============================================================
+import { IsString, IsEnum, IsOptional, IsDateString, IsBoolean, IsNumber } from 'class-validator';
+import { estado_membresia } from '../entities/membresia.entity' // Importamos el enum estadoReserva desde membresia.entity
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateMembresiaDto {
+    @IsNumber()
+    membresia_id: number;
+    
+    @IsString()
+    @ApiProperty({
+        description: 'Type of the membership',
+        example: 'Basic',
+    })
+    tipo: string;
+
+    @IsDateString()
+    @ApiProperty({
+        description: 'Start date of the membership',
+        example: '2024-01-01',
+    })
+    fecha_inicio: string; 
+
+    @IsDateString()
+    @ApiProperty({
+        description: 'End date of the membership',
+        example: '2024-12-31',
+    })
+    fecha_fin: string;
+
+    @IsOptional()
+    @IsEnum(estado_membresia)
+    @ApiProperty({
+        description: 'State of the membership',
+        enum: estado_membresia,
+        example: estado_membresia.ACTIVA,
+    })
+    estado: estado_membresia;
+
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({
+        description: 'Discount applied to the membership',
+        example: 10,
+    })
+    descuento: number;
+
+    @IsBoolean()
+    @ApiProperty({
+        description: 'Indicates if the membership is renewable',
+        example: true,
+    })
+    renovable: boolean;
+
+    @IsDateString()
+    @ApiProperty({
+        description: 'Renewal date of the membership',
+        example: '2024-12-31',
+    })
+    fecha_renovacion: string;
+}
+
+export class UpdateMembresiaDto {
+
+    @IsOptional()
+    @IsString()
+    tipo: string;
+
+    // @IsOptional()
+    // @IsDateString()
+    // fecha_inicio: Date; 
+
+    @IsOptional()
+    @IsDateString()
+    @ApiProperty({
+        description: 'End date of the membership',
+        example: '2024-12-31',
+    })
+    fecha_fin: string;
+
+    @IsOptional()
+    @IsEnum(estado_membresia)
+    @ApiProperty({
+        description: 'State of the membership',
+        enum: estado_membresia,
+        example: estado_membresia.ACTIVA,
+    })
+    estado: estado_membresia;
+
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({
+        description: 'Discount applied to the membership',
+        example: 10,
+    })
+    descuento: number;
+
+    @IsBoolean()
+    @ApiProperty({
+        description: 'Indicates if the membership is renewable',
+        example: true,
+    })
+    renovable: boolean;
+
+    @IsDateString()
+    @ApiProperty({
+        description: 'Renewal date of the membership',
+        example: '2024-12-31',
+    })
+    fecha_renovacion: string;
+}
+
+
+
+
+
+
+============================================================
+FILE: src/modules/noti/dto/noti.dto.ts
+============================================================
+import { ApiProperty } from "@nestjs/swagger";
+import { IsBoolean, IsDate, IsDateString, IsEnum, IsInt, IsNumber, IsOptional, IsString } from "class-validator";
+import { tipoNoti } from "../entities/noti.entity";
+
+export class NotiDto{
+
+    @IsInt()
+    noti_id: number;
+
+    @IsNumber()
+    @IsOptional()
+    usuario_id?: number;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty({ 
+        description: 'Message of the notification',
+        example: 'Your reservation is confirmed',
+     })
+    mensaje?: string;
+
+    @IsEnum(tipoNoti)
+    @ApiProperty({ 
+        description: 'Type of the notification',
+        example: tipoNoti.AVISO,
+     })
+    tipoNoti: tipoNoti;
+
+    @IsBoolean()
+    @IsOptional()
+    @ApiProperty({ 
+        description: 'Indicates if the notification has been read',
+        example: false,
+     })
+    leida?: boolean;
+
+    @IsDateString()
+    @ApiProperty({ 
+        description: 'Date of the notification',
+        example: '2024-01-01T10:00:00Z',
+     })
+    fecha: string;
+}
+
+export class UpdateNotiDto{
+
+    // @IsString()
+    // @IsOptional()
+    // mensaje?: string;
+
+    // @IsOptional()
+    // @IsEnum(tipoNoti)
+    // tipoNoti: tipoNoti;
+
+    // @IsOptional()
+    // @IsString()
+    // canal: string;
+
+    @IsBoolean()
+    @IsOptional()
+    @ApiProperty({ 
+        description: 'Indicates if the notification has been read',
+        example: false,
+     })
+    leida?: boolean;
+
+    // @IsOptional()
+    // @IsDateString()
+    // fecha: Date;
+}
+
+
+
+
+
+
+============================================================
+FILE: src/modules/pago/dto/pago.dto.ts
+============================================================
+import { ApiProperty } from "@nestjs/swagger";
+import { IsDateString, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { estado_pago, metodo_pago } from "../entities/pago.entity";
+
+
+export class CreatePagoDto {
+@IsNumber()
+@ApiProperty()
+pago_id: number;
+
+@IsNumber()
+@ApiProperty({
+    description: 'Amount of the payment',
+    example: 10.50,
+})
+monto: number;
+
+@IsDateString()
+@ApiProperty({
+    description: 'Date of the payment',
+    example: '2024-01-01T10:00:00Z',
+})
+fecha_pago: string;
+
+// Método de pago
+@IsEnum(metodo_pago)
+@ApiProperty({
+    description: 'Payment method',
+    example: metodo_pago.VISA,
+})
+metodo_pago: metodo_pago;
+
+// Estado del pago
+@IsEnum(estado_pago)
+@ApiProperty({
+    description: 'Payment status',
+    example: estado_pago.NO_PAGADO,
+})
+estado_pago: estado_pago;
+
+@IsString()
+@ApiProperty({
+    description: 'Additional notes about the payment',
+    example: 'Payment received in full',
+})
+nota: string;
+
+}
+
+export class UpdatePagoDto {
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({
+        description: 'Amount of the payment',
+        example: 10.50,
+    })
+    monto?: number;
+
+    // @IsOptional()
+    // @IsDateString()
+    // fecha_pago?: Date;
+
+    // Método de pago
+    @IsOptional()
+    @IsEnum(metodo_pago)
+    @ApiProperty({
+        description: 'Payment method',
+        example: metodo_pago.VISA,
+    })
+    metodo_pago?: metodo_pago;  
+
+    // Estado del pago
+    @IsOptional()
+    @IsEnum(estado_pago)
+    @ApiProperty({
+        description: 'Payment status',
+        example: estado_pago.NO_PAGADO,
+    })
+    estado_pago?: estado_pago;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        description: 'Additional notes about the payment',
+        example: 'Payment received in full',
+    })
+    nota?: string;
+}
+
+
+
+
+
+
+============================================================
+FILE: src/modules/pista/dto/pista.dto.ts
+============================================================
+import { ApiProperty } from "@nestjs/swagger";
+import { CoberturaPista, EstadoPista, tipo_pista } from "../entities/pista.entity";
+import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+
+export class PistaDto {
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the reservation',
+        example: 1,
+    })
+    reserva_id: number; // clave foranea reserva
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the installation',
+        example: 1,
+    })
+    instalacion_id: number; // clave foranea instalacion
+
+    @IsEnum(tipo_pista)
+    @ApiProperty({
+        description: 'Type of the court',
+        enum: tipo_pista,
+        example: tipo_pista.TENIS,
+    })
+    tipo_Pista: tipo_pista;
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'Capacity of the court',
+        example: 4,
+    })
+    capacidad: number;
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'Price per hour of the court',
+        example: 20.5,
+    })
+    precio_hora: number;
+    
+
+    @IsEnum(CoberturaPista)
+    @ApiProperty({
+        description: 'Coverage of the court',
+        enum: CoberturaPista,
+        example: CoberturaPista.CUBIERTA,
+    })
+    cobertura: CoberturaPista;
+
+    @IsBoolean()
+    @ApiProperty({
+        description: 'Indicates if the court has lighting',
+        example: true,
+    })
+    iluminacion: boolean;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty({
+        description: 'Description of the court',
+        example: 'Court with synthetic grass and night lighting',
+    })
+    descripcion: string;
+
+    @IsEnum(EstadoPista)
+    @ApiProperty({
+        description: 'State of the court',
+        enum: EstadoPista,
+        example: EstadoPista.DISPONIBLE,
+    })
+    estado: EstadoPista;
+    
+    @IsNumber()
+    @ApiProperty({
+        description: 'Number of the court',
+        example: 1,
+    })
+    numero: number;;
+
+}
+
+export class UpdatePistaDto {
+    @IsOptional()
+    @IsNumber()
+    instalacion_id: number; // clave foranea instalacion
+
+    @IsOptional()
+    @IsEnum(tipo_pista)
+    @ApiProperty({
+        description: 'Type of the court',
+        enum: tipo_pista,
+        example: tipo_pista.TENIS,
+    })
+    tipo_Pista: tipo_pista;
+
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({
+        description: 'Capacity of the court',
+        example: 4,
+    })
+    capacidad: number;
+
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({
+        description: 'Price per hour of the court',
+        example: 20.5,
+    })
+    precio_hora: number;
+    
+    @IsOptional()
+    @IsEnum(CoberturaPista)
+    @ApiProperty({
+        description: 'Coverage of the court',
+        enum: CoberturaPista,
+        example: CoberturaPista.CUBIERTA,
+    })
+    cobertura: CoberturaPista;
+
+    @IsOptional()
+    @IsBoolean()
+    @ApiProperty({
+        description: 'Indicates if the court has lighting',
+        example: true,
+    })
+    iluminacion: boolean;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty({
+        description: 'Description of the court',
+        example: 'Court with synthetic grass and night lighting',
+    })
+    descripcion: string;
+
+    @IsOptional()
+    @IsEnum(EstadoPista)
+    @ApiProperty({
+        description: 'State of the court',
+        enum: EstadoPista,
+        example: EstadoPista.DISPONIBLE,
+    })
+    estado: EstadoPista;
+    
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({
+        description: 'Number of the court',
+        example: 1,
+    })
+    numero: number;;
+
+}
+
+
+
+
+
+
+
+============================================================
+FILE: src/modules/resenya/dto/resenya.dto.ts
+============================================================
+import { IsString, IsOptional, IsDateString, IsBoolean, IsNumber } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+
+export class CreateResenyaDto { 
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the review',
+        example: 1,
+    })
+    resenya_id: number;
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the user',
+        example: 1,
+    })
+    usuario_id: number;
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the pista',
+        example: 1,
+    })
+    pista_id: number;
+
+    @IsString()
+    @ApiProperty({
+        description: 'Title of the resenya',
+        example: 'Great experience!',
+    })
+    titulo: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        description: 'Text of the comentario',
+        example: 'The court was in excellent condition and the staff was very friendly.',
+    })
+    texto: string;
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'Rating of the comentario',
+        example: 5,
+    })
+    calificacion: number;
+
+    @IsDateString()
+    @ApiProperty({
+        description: 'Date of the comentario',
+        example: '2023-12-31T23:59:59Z',
+    })
+    fecha_comentario: string;
+
+    @IsBoolean()
+    @ApiProperty({
+        description: 'Visibility of the comentario',
+        example: true,
+    })
+    visible: boolean;
+}
+
+export class UpdateResenyaDto {
+    
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        description: 'Title of the comentario',
+        example: 'Great experience!',
+    })
+    titulo: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        description: 'Text of the comentario',
+        example: 'The court was in excellent condition and the staff was very friendly.',
+    })
+    texto: string;
+
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({
+        description: 'Rating of the comentario',
+        example: 5,
+    })
+    calificacion: number;
+
+    // @IsOptional()
+    // @IsDateString()
+    // fecha_comentario: Date;
+
+    @IsOptional()
+    @IsBoolean()
+    @ApiProperty({
+        description: 'Visibility of the comentario',
+        example: true,
+    })
+    visible: boolean;
+}
+
+
+
+
+
+
+============================================================
+FILE: src/modules/reserva/dto/reserva.dto.ts
+============================================================
+import { IsString, IsEnum, IsOptional, IsDateString, IsNumber, Length, Matches } from 'class-validator';
+import { estadoReserva } from '../entities/reserva.entity'; 
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateReservaDto { 
+    //user id se pilla del jwt del header
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the pista being reserved',
+        example: 1,
+    })
+    pista_id: number; 
+    
+    @IsDateString()
+    @ApiProperty({
+        description: 'Date of the reservation',
+        example: '2026-04-01',
+    })
+    fecha_reserva: string; 
+
+    @IsString()
+    @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
+        message: 'Start time must be in HH:mm format (e.g., 09:00)',
+    })
+    @ApiProperty({
+        description: 'Start time of the reservation',
+        example: '09:00',
+    })
+    hora_inicio: string; 
+
+    @IsString()
+    @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
+        message: 'End time must be in HH:mm format (e.g., 10:30)',
+    })
+    @ApiProperty({  
+        description: 'End time of the reservation',
+        example: '10:30',
+    })
+    hora_fin: string;  
+
+    @IsOptional()
+    @IsEnum(estadoReserva)
+    @ApiProperty({
+        description: 'State of the reservation',
+        enum: estadoReserva,
+        example: estadoReserva.PENDIENTE,
+    })
+    estado: estadoReserva; 
+
+    @IsOptional()
+    @IsString()
+    @Length(0, 500)
+    @ApiProperty({
+        description: 'Note for the reservation',
+        example: 'Prefiero la pista cerca de la entrada',
+    })
+    nota: string; 
+}
+
+export class UpdateReservaDto {
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the pista being reserved',
+        example: 1,
+    })
+    pista_id: number;
+
+    @IsOptional()
+    @IsDateString()
+    @ApiProperty({
+        description: 'Date of the reservation',
+        example: '2026-04-01',
+        required: false,
+    })
+    fecha_reserva?: string;
+
+    @IsOptional()
+    @IsString()
+    @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
+    @ApiProperty({
+        description: 'Start time of the reservation',
+        example: '11:00',
+        required: false,
+    })
+    hora_inicio?: string;
+
+    @IsOptional()
+    @IsString()
+    @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
+    @ApiProperty({
+        description: 'End time of the reservation',
+        example: '12:30',
+        required: false,
+    })
+    hora_fin?: string;
+
+    @IsOptional()
+    @IsEnum(estadoReserva)
+    @ApiProperty({
+        description: 'State of the reservation',
+        enum: estadoReserva,
+        required: false,
+    })
+    estado?: estadoReserva;
+
+    @IsOptional()
+    @IsString()
+    @Length(0, 500)
+    @ApiProperty({
+        description: 'Note for the reservation',
+        required: false,
+    })
+    nota?: string;
+}
+
+============================================================
+FILE: src/modules/tipo_pista/dto/tipo_pista.dto.ts
+============================================================
+import { ApiProperty } from "@nestjs/swagger";
+import { IsString } from "class-validator";
+
+export class TipoPistaDto {
+    @IsString()
+    @ApiProperty({
+        description: 'Sport type name',
+        example: 'Tennis',
+    })
+    nombre: string;
+}
+
+
+
+============================================================
+FILE: src/modules/users/dto/users.dto.ts
+============================================================
+
+import { IsString, IsEmail, IsBoolean, IsPhoneNumber, IsEnum, IsOptional, IsDateString, IsNumber, Length, Matches, IsISO8601, IsInt } from 'class-validator';
+import { UserRole } from '../entities/user.entity'; // Importamos el enum UserRole desde user.entity
+import { ApiProperty } from '@nestjs/swagger';
+import { VALIDATION_LENGTHS, VALIDATION_PATTERNS } from '../../../common/constants/validation_patterns';
+
+export class CreateUserDto {
+
+  @IsString()
+  @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
+  @ApiProperty({
+    description: 'Unique username of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'Name_User',
+  })  
+  username: string;
+
+  @IsString()
+  @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
+  @ApiProperty({
+    description: 'Name of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'Name_User',
+  })  
+  name: string;
+
+  @IsString()
+  @Length(VALIDATION_LENGTHS.surname.min, VALIDATION_LENGTHS.surname.max)
+  @ApiProperty({
+    description: 'Surname of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'Surname_User',
+  })
+  surname: string;
+
+  @IsEmail()
+  @Matches(VALIDATION_PATTERNS.email.pattern, {
+    message: VALIDATION_PATTERNS.email.message,
+  })
+  @ApiProperty({
+    description: 'Email address of the user',
+    example: 'email@example.com',
+  })
+  email: string;
+
+  @IsPhoneNumber('ES')
+  @Matches(VALIDATION_PATTERNS.phone.pattern, {
+    message: VALIDATION_PATTERNS.phone.message,
+  })
+  @ApiProperty({
+    description: 'Phone number of the user',
+    example: 600123456,
+  })
+  phone: string;
+
+  @ApiProperty({
+    description: 'Password of the user',
+    minLength: 8,
+    maxLength: 100,
+    example: 'StrongP@ssw0rd!',
+  })
+  @IsString()
+  @Length(VALIDATION_LENGTHS.password.min, VALIDATION_LENGTHS.password.max)
+  @Matches(VALIDATION_PATTERNS.password.pattern, {
+    message: VALIDATION_PATTERNS.password.message,
+  })
+  password: string;
+
+  // Rol con enumeración
+  @IsEnum(UserRole)
+  @IsOptional()
+  @ApiProperty({
+    description: 'Role of the user',
+    enum: UserRole,
+    example: UserRole.CLIENTE,
+  })
+  role?: UserRole;
+
+  //Estado del usuario
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Indicates if the user is active',
+    example: true,
+  })
+  isActive?: boolean;
+
+  // Fechas
+  @IsISO8601({ strict: true }) // Valida formato YYYY-MM-DD
+  @ApiProperty({
+    description: 'Date of birth of the user',
+    example: '1990-01-01',
+  })
+  fecha_nacimiento: string;
+
+  @IsString()
+  @ApiProperty({
+    description: 'Address of the user',
+    example: '123 Main St, City, Country',
+  })
+  direccion: string;
+}
+
+export class UpdateUserDto {
+
+  @IsOptional()
+  @IsString()
+  @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
+  @ApiProperty({
+    description: 'Unique username of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'Name_User',
+  })  
+  username?: string;
+
+  
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    description: 'Name of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'Christopher',
+  })
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    description: 'Surname of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'Bolocan',
+  })
+  surname?: string;
+
+  @IsOptional()
+  @IsEmail()
+  @ApiProperty({
+    description: 'Email address of the user',
+    example: 'paco.martinez@example.com',
+  })
+  email?: string;
+
+  @IsOptional()
+  @IsPhoneNumber('ES')
+  @ApiProperty({
+    description: 'Phone number of the user',
+    example: '600123456',
+  })
+  phone?: string;
+
+  @IsOptional()
+  @IsString()
+  password?: string;
+
+  // Rol con enumeración
+  @IsEnum(UserRole)
+  @IsOptional()
+  role?: UserRole;
+
+  //Estado del usuario
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
+
+  // Fechas
+  @IsISO8601({ strict: true }) // Valida formato YYYY-MM-DD
+  @IsOptional()
+  @IsDateString()
+  fecha_nacimiento?: Date;
+
+  @IsOptional()
+  @IsString()
+  direccion?: string;
+
+  @IsOptional()
+  @IsInt()
+  @ApiProperty({
+    description: 'ID of the membership level (1: Bronze, 2: Silver, 3: Gold). Only editable by Admin.',
+    example: 2,
+    required: false,
+  })
+  membresia_id?: number;
+}
+
+
+
+

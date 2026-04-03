@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne, JoinColumn } from "typeorm";
 import { User } from "../../users/entities/user.entity";
-import { Instalacion } from "src/modules/instalacion/entities/instalacion.entity";
+import { Instalacion } from "../../instalacion/entities/instalacion.entity";
 
 @Entity()
 export class Resenya {

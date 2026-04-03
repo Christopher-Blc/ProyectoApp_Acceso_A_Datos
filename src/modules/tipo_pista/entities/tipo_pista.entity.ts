@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm";
-import { Pista } from "src/modules/pista/entities/pista.entity";
+import { Pista } from "../../pista/entities/pista.entity";
 
 
 @Entity('tipos_pista')
