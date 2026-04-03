@@ -88,9 +88,10 @@ export class ReservaService {
             const pista = await this.pistaRepo.findOneBy({ pista_id: id_pista });
             
             if (!pista) {
-                throw new NotFoundException(`La pista con ID ${id_pista} no existe.`);
+                throw new NotFoundException("'Esa pista no existe");    
             }
 
+            //cogemos los mins totales
             const [h1, m1] = h_inicio.split(':').map(Number);
             const [h2, m2] = h_fin.split(':').map(Number);
             
@@ -103,8 +104,6 @@ export class ReservaService {
             // Forzamos la asignación del precio calculado internamente 
             (dto as any).precio_total = Number((duracion * pista.precio_hora).toFixed(2));
         }
-
-        // 5. Aplicamos los cambios y retornamos la entidad fresca  
         await this.reservaRepo.update(reserva_id, dto);
         return this.findOne(reserva_id);
     }
