@@ -133,6 +133,10 @@ export class UsersService {
     await this.userRepository.update({ usuario_id }, { fecha_ultimo_login: new Date() });
   }
 
+  async findById(usuario_id: number): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { usuario_id } });
+  }
+
   async updateRefreshTokenHash(usuario_id: number, hash: string | null): Promise<void> {
     await this.userRepository.update({ usuario_id }, { refresh_token_hash: hash });
   }

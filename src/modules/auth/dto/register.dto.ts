@@ -4,6 +4,17 @@ import { VALIDATION_LENGTHS, VALIDATION_PATTERNS } from '../../../common/constan
 
 export class RegisterDto {
 
+  @IsString()
+  @IsNotEmpty()
+  @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
+  @ApiProperty({
+    description: 'Name of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'uniqueUsername',
+  })  
+  username: string;
+
   //Nombre
   @IsString()
   @IsNotEmpty()
