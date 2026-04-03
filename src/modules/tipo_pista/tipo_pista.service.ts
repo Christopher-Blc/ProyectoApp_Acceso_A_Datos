@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TipoPista } from './entities/tipo_pista.entity';
@@ -13,39 +13,43 @@ export class TipoPistaService {
 
   // Obtener todos los tipos de pista
   async findAll(): Promise<TipoPista[]> {
-    return await this.tipoPistaRepository.find({
-      order: { nombre: 'ASC' }, // Los devolvemos ordenados alfabéticamente
-    });
+    return await this.tipoPistaRepository.find({ relations: ['pistas'] });
   }
 
   // Obtener uno por ID
   async findOne(id: number): Promise<TipoPista> {
     const tipo = await this.tipoPistaRepository.findOneBy({ tipo_pista_id: id });
     if (!tipo) {
-      throw new NotFoundException(`El tipo de pista con ID ${id} no existe`);
+      throw new NotFoundException(`No se ha encontrado ese tipo de pista`);
     }
     return tipo;
   }
 
   // Crear un nuevo tipo
   async create(dto: TipoPistaDto): Promise<TipoPista> {
+    //mirar primero si ya existe un tipo con ese nombre
+    const existe = await this.tipoPistaRepository.findOne({ 
+      where: { nombre: dto.nombre } 
+    });
+
+    if (existe) {
+      throw new BadRequestException('Este tipo de pista ya está registrado');
+    }
+
     try {
       const nuevoTipo = this.tipoPistaRepository.create(dto);
       return await this.tipoPistaRepository.save(nuevoTipo);
     } catch (error) {
-      // Manejo por si el nombre es único y ya existe
-      if (error.code === '23505') {
-        throw new BadRequestException('Este tipo de pista ya está registrado');
-      }
-      throw error;
+      throw new InternalServerErrorException('Error al crear el tipo de pista');
     }
   }
 
-  // Actualizar (Put/Patch)
   async update(id: number, dto: TipoPistaDto): Promise<TipoPista> {
-    const tipo = await this.findOne(id); // Reutilizamos findOne para validar que existe
-    
-    // Fusionamos los cambios del DTO en la entidad encontrada
+    const tipo = await this.findOne(id); 
+
+    if (!tipo) {
+      throw new NotFoundException('No se ha encontrado ese tipo de pista');
+    }
     this.tipoPistaRepository.merge(tipo, dto);
     
     return await this.tipoPistaRepository.save(tipo);
