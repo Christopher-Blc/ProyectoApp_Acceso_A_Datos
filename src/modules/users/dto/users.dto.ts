@@ -1,13 +1,20 @@
 
-import { IsString, IsEmail, IsBoolean, IsPhoneNumber, IsEnum, IsOptional, IsDateString, IsNumber, Length, Matches } from 'class-validator';
+import { IsString, IsEmail, IsBoolean, IsPhoneNumber, IsEnum, IsOptional, IsDateString, IsNumber, Length, Matches, IsISO8601, IsInt } from 'class-validator';
 import { UserRole } from '../entities/user.entity'; // Importamos el enum UserRole desde user.entity
 import { ApiProperty } from '@nestjs/swagger';
 import { VALIDATION_LENGTHS, VALIDATION_PATTERNS } from '../../../common/constants/validation_patterns';
 
 export class CreateUserDto {
-  @IsOptional()
-  @IsNumber()
-  user_id: number;
+
+  @IsString()
+  @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
+  @ApiProperty({
+    description: 'Unique username of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'Name_User',
+  })  
+  username: string;
 
   @IsString()
   @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
@@ -45,7 +52,7 @@ export class CreateUserDto {
   })
   @ApiProperty({
     description: 'Phone number of the user',
-    example: 123456789,
+    example: 600123456,
   })
   phone: string;
 
@@ -82,7 +89,7 @@ export class CreateUserDto {
   isActive?: boolean;
 
   // Fechas
-  @IsDateString()
+  @IsISO8601({ strict: true }) // Valida formato YYYY-MM-DD
   @ApiProperty({
     description: 'Date of birth of the user',
     example: '1990-01-01',
@@ -98,13 +105,26 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto {
+
+  @IsOptional()
+  @IsString()
+  @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
+  @ApiProperty({
+    description: 'Unique username of the user',
+    minLength: 1,
+    maxLength: 40,
+    example: 'Name_User',
+  })  
+  username?: string;
+
+  
   @IsOptional()
   @IsString()
   @ApiProperty({
     description: 'Name of the user',
     minLength: 1,
     maxLength: 40,
-    example: 'Christtopher',
+    example: 'Christopher',
   })
   name?: string;
 
@@ -122,7 +142,7 @@ export class UpdateUserDto {
   @IsEmail()
   @ApiProperty({
     description: 'Email address of the user',
-    example: 'christtopher.bolocan@example.com',
+    example: 'paco.martinez@example.com',
   })
   email?: string;
 
@@ -130,7 +150,7 @@ export class UpdateUserDto {
   @IsPhoneNumber('ES')
   @ApiProperty({
     description: 'Phone number of the user',
-    example: '+34123456789',
+    example: '600123456',
   })
   phone?: string;
 
@@ -149,6 +169,7 @@ export class UpdateUserDto {
   isActive?: boolean;
 
   // Fechas
+  @IsISO8601({ strict: true }) // Valida formato YYYY-MM-DD
   @IsOptional()
   @IsDateString()
   fecha_nacimiento?: Date;
@@ -156,8 +177,15 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   direccion?: string;
+
+  @IsOptional()
+  @IsInt()
+  @ApiProperty({
+    description: 'ID of the membership level (1: Bronze, 2: Silver, 3: Gold). Only editable by Admin.',
+    example: 2,
+    required: false,
+  })
+  membresia_id?: number;
 }
-
-
 
 
