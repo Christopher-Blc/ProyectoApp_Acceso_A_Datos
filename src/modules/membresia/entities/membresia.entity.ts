@@ -7,6 +7,9 @@ export class Membresia {
   membresia_id: number;
 
   @Column({ unique: true })
+  rango: string; //tipo bronze es el as bajo osea rango 1 , plata rango 2 y oro rango 3
+
+  @Column({ unique: true })
   tipo: string; // Ej: "Bronce", "Plata", "Oro"
 
   @Column({ 

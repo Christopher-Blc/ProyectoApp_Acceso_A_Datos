@@ -5,6 +5,7 @@ import { estadoReserva, Reserva } from './entities/reserva.entity';
 import { CreateReservaDto, UpdateReservaDto } from './dto/reserva.dto';
 import { UserRole } from '../users/entities/user.entity';
 import { Pista } from '../pista/entities/pista.entity';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class ReservaService {
@@ -14,10 +15,10 @@ export class ReservaService {
         //nos hace falta pista aqui para calcular el precio total 
         @InjectRepository(Pista)
         private readonly pistaRepo: Repository<Pista>, 
+        private readonly userService: UsersService,
     ) {}
 
     async findAll(): Promise<Reserva[]> {
-        // Corregido: 'pagos' en lugar de 'pago' segun tu entity 
         return this.reservaRepo.find({ relations: ['usuario', 'pista', 'pagos'] });
     }
 
@@ -27,7 +28,7 @@ export class ReservaService {
             relations: ['usuario', 'pista', 'pagos'], // 
         });
         if (!reserva) {
-            throw new NotFoundException(`Reserva ${reserva_id} no encontrada`);
+            throw new NotFoundException('No se ha encontrado esa reserva.');
         }
         return reserva;
     }
@@ -47,8 +48,6 @@ export class ReservaService {
         }
         
         const duracionHoras = totalMinutos / 60;
-
-        // 3. Calculamos el precio total (Seguro, desde el servidor) 
         const precioCalculado = Number((duracionHoras * pista.precio_hora).toFixed(2));
 
         // 4. Creamos la reserva con estado PENDIENTE por defecto 
@@ -64,47 +63,49 @@ export class ReservaService {
     }
 
     async update(reserva_id: number, dto: UpdateReservaDto, user_id: number, user_role: UserRole): Promise<Reserva> {
-        // 1. Buscamos la reserva actual con sus relaciones 
         const reserva = await this.findOne(reserva_id);
 
-        // 2. Bloqueo de seguridad: Solo se edita si está PENDIENTE  
+        // Bloqueo de seguridad: Solo se edita si está PENDIENTE
         if (reserva.estado !== estadoReserva.PENDIENTE && user_role === UserRole.CLIENTE) {
             throw new ForbiddenException('No puedes modificar una reserva que ya ha sido procesada o pagada.');
         }
 
-        // 3. Verificamos permisos (Dueño o Admin) 
+        // Verificamos permisos
         const isAdmin = user_role === UserRole.SUPER_ADMIN || user_role === UserRole.ADMINISTRACION;
         if (reserva.usuario_id !== user_id && !isAdmin) {
             throw new ForbiddenException('No tienes permiso para editar esta reserva');
         }
 
-        // 4. Si se cambian horas o pista, recalculamos el precio  
+        // Si se cambian horas o pista, recalculamos el precio
         if (dto.pista_id || dto.hora_inicio || dto.hora_fin) {
             const id_pista = dto.pista_id || reserva.pista_id;
             const h_inicio = dto.hora_inicio || reserva.hora_inicio;
             const h_fin = dto.hora_fin || reserva.hora_fin;
 
-            // Buscamos la pista para asegurar que tenemos el precio_hora actualizado 
             const pista = await this.pistaRepo.findOneBy({ pista_id: id_pista });
-            
-            if (!pista) {
-                throw new NotFoundException("'Esa pista no existe");    
-            }
+            if (!pista) throw new NotFoundException('Esa pista no existe');
 
-            //cogemos los mins totales
             const [h1, m1] = h_inicio.split(':').map(Number);
             const [h2, m2] = h_fin.split(':').map(Number);
-            
             const totalMinutos = (h2 * 60 + m2) - (h1 * 60 + m1);
-            if (totalMinutos <= 0) {
-                throw new ForbiddenException('La hora de fin debe ser posterior a la de inicio');
-            }
+            if (totalMinutos <= 0) throw new ForbiddenException('La hora de fin debe ser posterior a la de inicio');
 
             const duracion = totalMinutos / 60;
-            // Forzamos la asignación del precio calculado internamente 
             (dto as any).precio_total = Number((duracion * pista.precio_hora).toFixed(2));
         }
+
+        // --- LÓGICA DE ACTUALIZACIÓN DE RANGO ---
+        // Si el estado cambia a FINALIZADA, disparamos el recálculo de rango del usuario
+        const estadoAnterior = reserva.estado;
+        const nuevoEstado = dto.estado;
+
         await this.reservaRepo.update(reserva_id, dto);
+
+        if (nuevoEstado === estadoReserva.FINALIZADA && estadoAnterior !== estadoReserva.FINALIZADA) {
+            // Llamamos al servicio de usuarios para actualizar su rango/membresía
+            await this.userService.updateUserRank(reserva.usuario_id);
+        }
+
         return this.findOne(reserva_id);
     }
 
