@@ -14,7 +14,7 @@ export class ReservaSeeder implements Seeder {
     const reservaEntries: Reserva[] = [];
 
     for (const item of reservaData) {
-      // 1. Buscamos el Usuario y la Pista
+      // 1. Verificamos que existan las relaciones obligatorias [cite: 207-208]
       const user = await userRepository.findOneBy({ usuario_id: Number(item.usuario_id) });
       const pista = await pistaRepository.findOneBy({ pista_id: Number(item.pista_id) });
 
@@ -23,7 +23,7 @@ export class ReservaSeeder implements Seeder {
         continue;
       }
 
-      // 2. Evitamos duplicados
+      // 2. Evitamos duplicados (User + Pista + Fecha + Hora Inicio)
       const existing = await reservaRepository.findOne({
         where: { 
           usuario_id: user.usuario_id,
@@ -35,7 +35,7 @@ export class ReservaSeeder implements Seeder {
       
       if (existing) continue;
 
-      //Calculamos el precio (Copiando la lógica del Service)
+      // 3. Cálculo de precio manual para el Seed (replicando el Service)
       const [hInicio, mInicio] = item.hora_inicio.split(':').map(Number);
       const [hFin, mFin] = item.hora_fin.split(':').map(Number);
       const totalMinutos = (hFin * 60 + mFin) - (hInicio * 60 + mInicio);
@@ -43,9 +43,11 @@ export class ReservaSeeder implements Seeder {
       let precioCalculado = 0;
       if (totalMinutos > 0) {
         const duracionHoras = totalMinutos / 60;
+        // Usamos el precio_hora de la pista encontrada 
         precioCalculado = Number((duracionHoras * pista.precio_hora).toFixed(2));
       }
 
+      // 4. Mapeo a Entity [cite: 200-206]
       const reservaEntry = new Reserva();
       reservaEntry.usuario_id = user.usuario_id;
       reservaEntry.pista_id = pista.pista_id;
@@ -54,7 +56,7 @@ export class ReservaSeeder implements Seeder {
       reservaEntry.hora_fin = item.hora_fin; 
       reservaEntry.estado = item.estado as estadoReserva;
       reservaEntry.nota = item.nota || 'Seed data';
-      reservaEntry.precio_total = precioCalculado; 
+      reservaEntry.precio_total = precioCalculado; // Campo obligatorio 
 
       reservaEntries.push(reservaEntry);
     }
@@ -63,5 +65,6 @@ export class ReservaSeeder implements Seeder {
       await reservaRepository.save(reservaEntries);
       console.log(`${reservaEntries.length} reservas creadas correctamente.`);
     }
+    console.log("Reserva seeding completado!");
   }
 }

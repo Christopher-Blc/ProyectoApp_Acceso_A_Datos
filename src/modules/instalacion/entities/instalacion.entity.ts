@@ -11,19 +11,19 @@ export class Instalacion {
   @PrimaryGeneratedColumn({ name: "instalacion_id", type: "int" })
   instalacion_id: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   nombre: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   direccion: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   telefono: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   email: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   descripcion: string;
 
   @Column({ type: "date", default: () => "CURRENT_DATE" })

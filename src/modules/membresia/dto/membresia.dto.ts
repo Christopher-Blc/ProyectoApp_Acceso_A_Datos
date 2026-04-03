@@ -1,5 +1,4 @@
 import { IsString, IsEnum, IsOptional, IsDateString, IsBoolean, IsNumber } from 'class-validator';
-import { estado_membresia } from '../entities/membresia.entity' // Importamos el enum estadoReserva desde membresia.entity
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMembresiaDto {
@@ -27,14 +26,14 @@ export class CreateMembresiaDto {
     })
     fecha_fin: string;
 
-    @IsOptional()
-    @IsEnum(estado_membresia)
-    @ApiProperty({
-        description: 'State of the membership',
-        enum: estado_membresia,
-        example: estado_membresia.ACTIVA,
-    })
-    estado: estado_membresia;
+    // @IsOptional()
+    // @IsEnum(estado_membresia)
+    // @ApiProperty({
+    //     description: 'State of the membership',
+    //     enum: estado_membresia,
+    //     example: estado_membresia.ACTIVA,
+    // })
+    // estado: estado_membresia;
 
     @IsOptional()
     @IsNumber()
@@ -77,14 +76,14 @@ export class UpdateMembresiaDto {
     })
     fecha_fin: string;
 
-    @IsOptional()
-    @IsEnum(estado_membresia)
-    @ApiProperty({
-        description: 'State of the membership',
-        enum: estado_membresia,
-        example: estado_membresia.ACTIVA,
-    })
-    estado: estado_membresia;
+    // @IsOptional()
+    // @IsEnum(estado_membresia)
+    // @ApiProperty({
+    //     description: 'State of the membership',
+    //     enum: estado_membresia,
+    //     example: estado_membresia.ACTIVA,
+    // })
+    // estado: estado_membresia;
 
     @IsOptional()
     @IsNumber()

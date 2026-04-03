@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn, Unique } from "typeorm";
 import { Reserva } from "../../reserva/entities/reserva.entity";  
 import { Instalacion } from "../../instalacion/entities/instalacion.entity";  
-import { TipoPista } from "src/modules/tipo_pista/entities/tipo_pista.entity";
+import { TipoPista } from "../../tipo_pista/entities/tipo_pista.entity";
 
 
 export enum EstadoPista {
@@ -35,7 +35,7 @@ export class Pista {
   @Column({name: "tipo_pista_id", type: "int"})
   tipo_pista_id: number;
 
-  @Column({type: "string"})
+  @Column({})
   nombre: string;
 
   @Column({type: "int"})
@@ -50,7 +50,7 @@ export class Pista {
   @Column({ type: "boolean", default: false })
   iluminacion: boolean;
 
-  @Column({ type: "text"})
+  @Column({})
   descripcion: string;
 
   @Column({
