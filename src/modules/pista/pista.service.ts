@@ -9,18 +9,18 @@ export class PistaService {
 
     constructor(
         @InjectRepository(Pista)
-        private readonly pistaRepo: Repository<Pista>, // `userRepo` es el acceso a todas las operaciones de la tabla User
+        private readonly pistaRepo: Repository<Pista>, // `pistaRepo` es el acceso a todas las operaciones de la tabla Pista
       ) {}
 
       async findAll(): Promise<Pista[]>{
 
-        return this.pistaRepo.find({relations: ['reservas', 'comentarios', 'horarios_pista', 'instalacion']});
+        return this.pistaRepo.find({relations: ['reservas', 'resenya', 'horarios_pista', 'instalacion']});
       } 
 
       async findOne(pista_id: number ): Promise<Pista>{
 
         const pista = await this.pistaRepo.findOne({where: {pista_id: pista_id},
-                                            relations: ['reservas', 'comentarios', 'horarios_pista', 'instalacion']});
+                                            relations: ['reservas', 'resenya', 'horarios_pista', 'instalacion']});
         if (!pista){
             throw new NotFoundException(`Pista ${pista_id} no encontrada`); // Lanzamos un error si no se encuentra la pista
         }
