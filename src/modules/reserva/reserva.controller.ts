@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards , Request} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards , Request, Req} from '@nestjs/common';
 import { Reserva } from './entities/reserva.entity';
 import { CreateReservaDto, UpdateReservaDto } from './dto/reserva.dto';
 import { ReservaService } from './reserva.service';
@@ -32,6 +32,22 @@ export class ReservaController {
         }
       }
 
+      @Get('mis-reservas')
+      @ApiOperation({ summary: 'Get my reservations' })
+      @ApiResponse({ status: 200, description: 'Reservations retrieved successfully.' })
+      @ApiResponse({ status: 400, description: 'Invalid reservations ID.' })
+      @ApiResponse({ status: 401, description: 'Unauthorized.' })
+      @ApiResponse({ status: 404, description: 'Reservations not found.' })
+      @ApiParam({ name: 'id', example: 1 })
+      @UseGuards(AuthGuard)
+      async findMyReservations(@Req() req): Promise<Reserva[]> {
+        // NestJS (vía Passport) mete los datos del JWT decodificado en req.user
+        const userId = req.user.usuario_id; 
+        
+        // Luego llamas a un método en el servicio que filtre por ese ID
+        return this.reservaService.findByUserId(userId);
+      }
+
       @Get(':id')
       @ApiOperation({ summary: 'Get reserva by ID' })
       @ApiResponse({ status: 200, description: 'Reserva retrieved successfully.' })
@@ -49,6 +65,8 @@ export class ReservaController {
           );
         }
       }
+
+      
 
       @Post()
       @Roles(UserRole.CLIENTE, UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)

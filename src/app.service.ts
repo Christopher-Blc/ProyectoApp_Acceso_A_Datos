@@ -215,7 +215,7 @@ export class AppService {
                 Respi Project 2026 • NestJS • React Native • MariaDB • Dockerized
             </div>
             <div class="text-slate-500 text-xs tracking-wider">
-                @ Respi 2026 All rights reserved | Ontinyent, España
+                © Respi 2026 All rights reserved | Ontinyent, España
             </div>
         </footer>
 

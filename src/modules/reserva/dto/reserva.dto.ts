@@ -3,7 +3,6 @@ import { estadoReserva } from '../entities/reserva.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateReservaDto { 
-    //user id se pilla del jwt del header
 
     @IsNumber()
     @ApiProperty({

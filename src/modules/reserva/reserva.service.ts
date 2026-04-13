@@ -33,6 +33,17 @@ export class ReservaService {
         return reserva;
     }
 
+    async findByUserId(usuario_id: number): Promise<Reserva[]> {
+        const reservas = await this.reservaRepo.find({
+            where: { usuario_id: usuario_id },
+            relations: ['usuario', 'pista', 'pagos'], 
+        });
+        if (!reservas || reservas.length === 0) {
+            throw new NotFoundException('No se ha encontrado ninguna reserva para este usuario.');
+        }
+        return reservas;
+    }
+
     async create(dto: CreateReservaDto, usuario_id: number): Promise<Reserva> {
         // 1. Buscamos la pista para obtener su precio por hora real  
         const pista = await this.pistaRepo.findOneBy({ pista_id: dto.pista_id });
