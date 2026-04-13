@@ -34,7 +34,7 @@ import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
       {
         name: 'default',
         ttl: 900000,
-        limit: 100,
+        limit: 10000,
       },
       {
         name: 'auth',
