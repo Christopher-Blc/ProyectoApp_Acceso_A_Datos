@@ -48,9 +48,9 @@ const options: DataSourceOptions & SeederOptions = {
     TipoPistaSeeder,
     PistaSeeder,
     MembresiaSeeder,
-    ReservaSeeder,
     PagoSeeder,
     ResenyaSeeder,
+    ReservaSeeder,
     NotiSeeder
   ],
 };

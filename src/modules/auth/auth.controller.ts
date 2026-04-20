@@ -50,7 +50,6 @@ export class AuthController {
       },
     },
   })
-
   @ApiResponse({ status: 401, description: 'Credenciales incorrectas' })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);

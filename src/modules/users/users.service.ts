@@ -122,6 +122,12 @@ export class UsersService {
       .getOne();
   }
 
+  async findByPhone(phone: string): Promise<User | null> {
+    return await this.userRepository.createQueryBuilder("user")
+      .where("user.phone = :phone", { phone })
+      .getOne();
+  }
+
   async findByUserName(username: string): Promise<User | null> {
     return await this.userRepository.createQueryBuilder("user")
       .where("user.username = :username", { username })
