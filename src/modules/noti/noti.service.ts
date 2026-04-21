@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Noti } from './entities/noti.entity';
 import { Repository } from 'typeorm';
@@ -17,11 +17,17 @@ export class NotiService {
         });
     }
 
-    findOne(noti_id: number) {
-        return this.notiRepository.findOne({
+   
+
+    async findOne(noti_id: number): Promise<Noti> {
+        const noti = await this.notiRepository.findOne({
             where: { noti_id },
             relations: ['user'],
         });
+        if (!noti) {
+            throw new NotFoundException(`Noti ${noti_id} no encontrada`);
+        }
+        return noti;
     }
 
     async create(data: Partial<Noti>) {

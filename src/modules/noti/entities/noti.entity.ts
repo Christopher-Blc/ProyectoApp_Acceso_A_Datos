@@ -13,6 +13,9 @@ export class Noti {
   @PrimaryGeneratedColumn({name: "noti_id", type: "int"})
   noti_id: number;
 
+  @Column({ name: "user_id" , type: "int" })
+  user_id: number;
+
   @Column({ name: "mensaje" })
   mensaje: string;
 
@@ -24,16 +27,14 @@ export class Noti {
   })
   tipoNoti: tipoNoti;
 
-  @Column({ name: "usuario_id", type: "int", nullable: true })
-  usuario_id: number;
-
   @Column({ name: "leida", default: false })
   leida: boolean;
 
-  @Column()
+  @Column({ name: "fecha", type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fecha: Date;
 
-   @ManyToOne(() => User, user => user.notificaciones)
+  @ManyToOne(() => User, user => user.notificaciones)
+  @JoinColumn({ name: "user_id" })
   user: User;
 
 }

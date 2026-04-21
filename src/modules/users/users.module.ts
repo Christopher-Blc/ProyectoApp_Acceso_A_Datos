@@ -4,12 +4,13 @@ import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { AuthModule } from '../auth/auth.module';
+import { Membresia } from '../membresia/entities/membresia.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), forwardRef(() => AuthModule)],
+  imports: [TypeOrmModule.forFeature([User ,Membresia]), forwardRef(() => AuthModule)],
   providers: [UsersService],
   controllers: [UsersController],
-  exports: [UsersService]
+  exports: [UsersService, TypeOrmModule]
 })
 export class UsersModule {}
 

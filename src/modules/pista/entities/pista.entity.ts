@@ -1,22 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from "typeorm";
-import { Reserva } from "../../reserva/entities/reserva.entity"; // Importa la entidad Reserva
-import { Comentario } from "../../comentario/entities/comentario.entity"; // Importa la entidad Comentario
-import { Horario_Pista } from "../../horario_pista/entities/horario_pista.entity"; // Importa la entidad Horario_Pista
-import { Instalacion } from "../../instalacion/entities/instalacion.entity"; // Importa la entidad Instalacion
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn, Unique } from "typeorm";
+import { Reserva } from "../../reserva/entities/reserva.entity";  
+import { Instalacion } from "../../instalacion/entities/instalacion.entity";  
+import { TipoPista } from "../../tipo_pista/entities/tipo_pista.entity";
 
-export enum tipo_pista {
-  TENIS = 'TENNIS',
-  PADEL = 'PADEL',
-  FUTBOL_7 = 'FUTBOL_7',
-  FUTBOL_SALA = 'FUTBOL_SALA',
-  BALONCESTO = 'BALONCESTO',
-  OTRO = 'OTRO',
-}
-
-export enum CoberturaPista {
-  CUBIERTA = "CUBIERTA",
-  DESCUBIERTA = "DESCUBIERTA",
-}
 
 export enum EstadoPista {
   DISPONIBLE = "DISPONIBLE",
@@ -25,20 +11,32 @@ export enum EstadoPista {
   INACTIVA = 'INACTIVA',
 }
 
+export enum DiaSemana {
+  LUNES = "LUNES",
+  MARTES = "MARTES",
+  MIERCOLES = 'MIERCOLES',
+  JUEVES = 'JUEVES',
+  VIERNES = 'VIERNES',
+  SABADO = 'SABADO',
+  DOMINGO = 'DOMINGO',
+}
+//para que solo haya una pista con el mismo nombre en la misma instalacion y 
+// el mismo dia de la semana, pero puede haber pistas con el mismo nombre en
+//  diferentes instalaciones o en la misma instalación pero en días diferentes
+@Unique(["nombre", "instalacion", "dia_semana"])  
 @Entity("pista")
 export class Pista {
   @PrimaryGeneratedColumn({name: "pista_id", type: "int"})
   pista_id: number;
 
   @Column({name: "instalacion_id", type: "int"}) 
-  instalacion_id: number; // clave foranea instalacion
+  instalacion_id: number; 
 
-  @Column({
-      type: "enum",
-      enum: tipo_pista,
-      default: tipo_pista.OTRO, // valor por defecto
-    })
-    tipo_Pista: tipo_pista;
+  @Column({name: "tipo_pista_id", type: "int"})
+  tipo_pista_id: number;
+
+  @Column({})
+  nombre: string;
 
   @Column({type: "int"})
   capacidad: number;
@@ -46,16 +44,13 @@ export class Pista {
   @Column({type: "decimal", precision: 8, scale: 2})
   precio_hora: number;
 
-   @Column({
-    type: "enum",
-    enum: CoberturaPista,
-  })
-  cobertura: CoberturaPista;
+  @Column({type: "boolean", default: false})
+  cubierta: boolean;
 
-  @Column({ default: false })
+  @Column({ type: "boolean", default: false })
   iluminacion: boolean;
 
-  @Column({ type: "text"})
+  @Column({})
   descripcion: string;
 
   @Column({
@@ -65,22 +60,29 @@ export class Pista {
   })
   estado: EstadoPista;
 
-  @Column()
-  numero: number;
+  @Column({type: 'time'})
+  hora_apertura: string;
 
+  @Column({type: 'time'})
+  hora_cierre: string;
+
+  @Column({
+    type: "enum",
+    enum: DiaSemana,
+    default: DiaSemana.LUNES,
+  })
+  dia_semana: DiaSemana;
+  
   @ManyToOne(() => Instalacion, (i) => i.pistas)
   @JoinColumn({ name: "instalacion_id" })
   instalacion: Instalacion;
 
+  @ManyToOne(() => TipoPista , (tp) => tp.pistas)
+  @JoinColumn({ name: "tipo_pista_id" })
+  tipo_pista: TipoPista;
+
   @OneToMany(() => Reserva, (r) => r.pista)
   reservas: Reserva[];
-
-  @OneToMany(() => Comentario, (c) => c.pista)
-  comentarios: Comentario[];
-
-  @OneToMany(() => Horario_Pista, (hp) => hp.pista)
-  horarios_pista: Horario_Pista[];
-
 }
 
 

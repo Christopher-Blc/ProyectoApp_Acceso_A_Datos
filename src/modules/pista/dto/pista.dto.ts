@@ -1,8 +1,15 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { CoberturaPista, EstadoPista, tipo_pista } from "../entities/pista.entity";
+import {  EstadoPista} from "../entities/pista.entity";
 import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class PistaDto {
+
+    @IsNumber()
+    @ApiProperty({
+        description: 'ID of the reservation',
+        example: 1,
+    })
+    reserva_id: number; // clave foranea reserva
 
     @IsNumber()
     @ApiProperty({
@@ -11,13 +18,13 @@ export class PistaDto {
     })
     instalacion_id: number; // clave foranea instalacion
 
-    @IsEnum(tipo_pista)
-    @ApiProperty({
-        description: 'Type of the court',
-        enum: tipo_pista,
-        example: tipo_pista.TENIS,
-    })
-    tipo_Pista: tipo_pista;
+    // @IsEnum(tipo_pista)
+    // @ApiProperty({
+    //     description: 'Type of the court',
+    //     enum: tipo_pista,
+    //     example: tipo_pista.TENIS,
+    // })
+    // tipo_Pista: tipo_pista;
 
     @IsNumber()
     @ApiProperty({
@@ -34,13 +41,13 @@ export class PistaDto {
     precio_hora: number;
     
 
-    @IsEnum(CoberturaPista)
-    @ApiProperty({
-        description: 'Coverage of the court',
-        enum: CoberturaPista,
-        example: CoberturaPista.CUBIERTA,
-    })
-    cobertura: CoberturaPista;
+    // @IsEnum(CoberturaPista)
+    // @ApiProperty({
+    //     description: 'Coverage of the court',
+    //     enum: CoberturaPista,
+    //     example: CoberturaPista.CUBIERTA,
+    // })
+    // cobertura: CoberturaPista;
 
     @IsBoolean()
     @ApiProperty({
@@ -79,14 +86,14 @@ export class UpdatePistaDto {
     @IsNumber()
     instalacion_id: number; // clave foranea instalacion
 
-    @IsOptional()
-    @IsEnum(tipo_pista)
-    @ApiProperty({
-        description: 'Type of the court',
-        enum: tipo_pista,
-        example: tipo_pista.TENIS,
-    })
-    tipo_Pista: tipo_pista;
+    // @IsOptional()
+    // @IsEnum(tipo_pista)
+    // @ApiProperty({
+    //     description: 'Type of the court',
+    //     enum: tipo_pista,
+    //     example: tipo_pista.TENIS,
+    // })
+    // tipo_Pista: tipo_pista;
 
     @IsOptional()
     @IsNumber()
@@ -104,14 +111,14 @@ export class UpdatePistaDto {
     })
     precio_hora: number;
     
-    @IsOptional()
-    @IsEnum(CoberturaPista)
-    @ApiProperty({
-        description: 'Coverage of the court',
-        enum: CoberturaPista,
-        example: CoberturaPista.CUBIERTA,
-    })
-    cobertura: CoberturaPista;
+    // @IsOptional()
+    // @IsEnum(CoberturaPista)
+    // @ApiProperty({
+    //     description: 'Coverage of the court',
+    //     enum: CoberturaPista,
+    //     example: CoberturaPista.CUBIERTA,
+    // })
+    // cobertura: CoberturaPista;
 
     @IsOptional()
     @IsBoolean()
