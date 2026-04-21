@@ -123,12 +123,7 @@ export class UsersService {
       .addSelect("user.password")
       .getOne();
   }
-
-  async findByPhone(phone: string): Promise<User | null> {
-    return await this.userRepository.createQueryBuilder("user")
-      .where("user.phone = :phone", { phone })
-      .getOne();
-  }
+ 
 
   async findByUserName(username: string): Promise<User | null> {
     return await this.userRepository.createQueryBuilder("user")
@@ -140,8 +135,7 @@ export class UsersService {
   async findByPhone(phone: string): Promise<User | null> {
     return await this.userRepository.createQueryBuilder("user")
       .where("user.phone = :phone", { phone })
-      .addSelect("user.password")
-      .getOne();
+       .getOne();
   }
 
   async updateLastLogin(usuario_id: number): Promise<void> {
