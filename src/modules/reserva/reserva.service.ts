@@ -34,13 +34,11 @@ export class ReservaService {
     }
 
     async findByUserId(usuario_id: number): Promise<Reserva[]> {
+        if (!usuario_id) throw new ForbiddenException('No tienes permiso para ver estas reservas');
         const reservas = await this.reservaRepo.find({
             where: { usuario_id: usuario_id },
             relations: ['usuario', 'pista', 'pagos'], 
         });
-        if (!reservas || reservas.length === 0) {
-            throw new NotFoundException('No se ha encontrado ninguna reserva para este usuario.');
-        }
         return reservas;
     }
 

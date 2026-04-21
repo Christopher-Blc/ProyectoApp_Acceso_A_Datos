@@ -79,15 +79,16 @@ export class AuthService {
     return !!record && record.expires_at > now;
   }
 
-  async register(dto: RegisterDto) {
-    const existingEmail = await this.usersService.findByEmail(dto.email);
-    if (existingEmail) throw new ConflictException('Email ya registrado');
 
-    const existingPhone = await this.usersService.findByPhone(dto.phone);
-    if (existingPhone) throw new ConflictException('Nuimero de telefono ya registrado');
+  async register(dto: RegisterDto){
+    const duplicateEmail = await this.usersService.findByEmail(dto.email);
+    if (duplicateEmail) throw new ConflictException('Email ya registrado');
 
-    const existingUserName = await this.usersService.findByUserName(dto.username);
-    if (existingUserName) throw new ConflictException('Username ya registrado');
+    const duplicatePhone = await this.usersService.findByPhone(dto.phone);
+    if (duplicatePhone) throw new ConflictException('Teléfono ya registrado');
+
+    const duplicateUsername = await this.usersService.findByUserName(dto.username);
+    if (duplicateUsername) throw new ConflictException('Username ya registrado');
     
     const created = await this.usersService.create({
       ...dto,
@@ -98,7 +99,11 @@ export class AuthService {
       fecha_nacimiento: new Date(dto.fecha_nacimiento),
     });
 
-    return this.login({ email: dto.email, password: dto.password });
+    const { password, ...userSafe } = created;
+    return this.login({ email: dto.email, password: dto.password }).then(tokens => {
+      return { ...tokens, user: userSafe };
+    });
+    
   }
 
   async login(dto: LoginDto): Promise<{ access_token: string; refresh_token: string; user: any }> {

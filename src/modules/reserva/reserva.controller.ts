@@ -42,7 +42,7 @@ export class ReservaController {
       @UseGuards(AuthGuard)
       async findMyReservations(@Req() req): Promise<Reserva[]> {
         // NestJS (vía Passport) mete los datos del JWT decodificado en req.user
-        const userId = req.user.usuario_id; 
+        const userId = req.user.sub;
         
         // Luego llamas a un método en el servicio que filtre por ese ID
         return this.reservaService.findByUserId(userId);
