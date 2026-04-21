@@ -26,7 +26,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found.' })
   async getMyProfile(@Req() req: any) {
     try {
-      const userId = req.user.usuario_id;
+      const userId = req.req.user.sub;
       return await this.userService.findOne(userId);
     } catch (err) {
       throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
@@ -40,7 +40,7 @@ export class UsersController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async updateMyProfile(@Req() req: any, @Body() userDto: UpdateUserDto) {
     try {
-      const userId = req.user.usuario_id;
+      const userId = req.req.user.sub;
       return await this.userService.update(userId, userDto , true);
     } catch (err) {
       throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
@@ -53,7 +53,7 @@ export class UsersController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async deleteMyProfile(@Req() req: any) {
     try {
-      const userId = req.user.usuario_id;
+      const userId = req.req.user.sub;
       return await this.userService.remove(userId);
     } catch (err) {
       throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);

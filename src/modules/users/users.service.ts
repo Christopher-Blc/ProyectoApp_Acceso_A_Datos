@@ -92,7 +92,9 @@ export class UsersService {
       const user = this.userRepository.create(data);
       return await this.userRepository.save(user);
     } catch (error) {
-      if (error.code === '23505') throw new BadRequestException('Email/Username already exists');
+      if (error.code === '23505'){//controlamos duplicados aqui aunque en register ya se verifica
+        throw new BadRequestException('Email/Username/Phone already exists');
+      } 
       throw new InternalServerErrorException();
     }
   }
@@ -131,6 +133,13 @@ export class UsersService {
   async findByUserName(username: string): Promise<User | null> {
     return await this.userRepository.createQueryBuilder("user")
       .where("user.username = :username", { username })
+      .addSelect("user.password")
+      .getOne();
+  }
+
+  async findByPhone(phone: string): Promise<User | null> {
+    return await this.userRepository.createQueryBuilder("user")
+      .where("user.phone = :phone", { phone })
       .addSelect("user.password")
       .getOne();
   }

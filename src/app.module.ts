@@ -38,8 +38,8 @@ import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
       },
       {
         name: 'auth',
-        ttl: 3600000,
-        limit: 10,
+        ttl: 3600000,//  60 minutos
+        limit: 100,
       },
     ]),
 
