@@ -1,0 +1,523 @@
+============================================================
+FILE: src/modules/instalacion/entities/instalacion.entity.ts
+============================================================
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from "typeorm";
+import { Pista } from "../../pista/entities/pista.entity"; // Importa la entidad Pista
+
+export enum estado_instalacion {
+  ACTIVA = "activa", 
+  EN_MANTENIMIENTO = "en_mantenimiento",
+  INACTIVA = "inactiva"
+}
+@Entity()
+export class Instalacion {
+  @PrimaryGeneratedColumn({ name: "instalacion_id", type: "int" })
+  instalacion_id: number;
+
+  @Column()
+  nombre: string;
+
+  @Column()
+  direccion: string;
+
+  @Column()
+  telefono: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  descripcion: string;
+
+  @Column({ type: "date", default: () => "CURRENT_DATE" })
+  fecha_creacion: Date;
+
+  @Column({
+    type: "enum",
+    enum: estado_instalacion,
+    default: estado_instalacion.INACTIVA, // valor por defecto
+  })
+  estado: estado_instalacion;
+
+  @OneToMany(() => Pista, (pi) => pi.instalacion)
+  pistas: Pista[];
+
+}
+
+
+
+
+============================================================
+FILE: src/modules/membresia/entities/membresia.entity.ts
+============================================================
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { User } from "../../users/entities/user.entity";
+
+@Entity("membresia")
+export class Membresia {
+  @PrimaryGeneratedColumn({ name: "membresia_id" })
+  membresia_id: number;
+
+  @Column({ unique: true })
+  rango: string; //tipo bronze es el as bajo osea rango 1 , plata rango 2 y oro rango 3
+
+  @Column({ unique: true })
+  tipo: string; // Ej: "Bronce", "Plata", "Oro"
+
+  @Column({ 
+    type: "decimal", 
+    precision: 5, 
+    scale: 2, 
+    default: 0,
+    transformer: {
+        to: (value: number) => value,
+        from: (value: string) => parseFloat(value)
+    }
+  })
+  descuento: number; // Porcentaje de descuento (ej: 5.00 para 5%)
+
+  @Column({ type: "int", default: 0 })
+  reservas_requeridas: number; // Cuántas reservas necesita el user para este nivel
+
+  @Column({ type: "text", nullable: true })
+  beneficios: string; // Descripción breve de lo que incluye
+
+  // Relación: Una membresía (ej: Oro) la tienen muchos usuarios
+  @OneToMany(() => User, (u) => u.membresia)
+  users: User[];
+}
+
+============================================================
+FILE: src/modules/noti/entities/noti.entity.ts
+============================================================
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { User } from "../../users/entities/user.entity"; // Importa la entidad User
+
+export enum tipoNoti {
+  AVISO = 'Aviso',
+  RECORDATORIO = 'Recordatorio',
+  ALERTA = 'Alerta',
+  PROMOCION = 'Promocion',
+}
+
+@Entity({ name: "notificacion" })
+export class Noti {
+  @PrimaryGeneratedColumn({name: "noti_id", type: "int"})
+  noti_id: number;
+
+  @Column({ name: "user_id" , type: "int" })
+  user_id: number;
+
+  @Column({ name: "mensaje" })
+  mensaje: string;
+
+  @Column({
+    name: "tipoNoti",
+    type: "enum",
+    enum: tipoNoti,
+    default: tipoNoti.RECORDATORIO, // valor por defecto
+  })
+  tipoNoti: tipoNoti;
+
+  @Column({ name: "leida", default: false })
+  leida: boolean;
+
+  @Column({ name: "fecha", type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  fecha: Date;
+
+  @ManyToOne(() => User, user => user.notificaciones)
+  @JoinColumn({ name: "user_id" })
+  user: User;
+
+}
+
+
+
+
+============================================================
+FILE: src/modules/pago/entities/pago.entity.ts
+============================================================
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Reserva } from "../../reserva/entities/reserva.entity";
+
+export enum metodo_pago {
+    VISA = "Visa",
+    MASTERCARD = "MasterCard",
+    PAY_PAL = "PayPal",
+    BIZUM = "Bizum",
+    EFECTIVO = "Efectivo"
+}
+
+export enum estado_pago {
+    PAGADO = "Pagado",
+    NO_PAGADO = "No pagado",
+    EN_PROCESO = "En proceso",
+    REEMBOLSADO = "Reembolsado"
+}
+
+@Entity("pago")
+export class Pago {
+    @PrimaryGeneratedColumn({ name: "pago_id" })
+    pago_id: number;
+
+    @Column({ name: "reserva_id", type: "int" })
+    reserva_id: number;
+
+    // de momento como solo habra un poli no lo ponemos
+    // @Column({ name: "instalacion_id" })
+    // instalacion_id: number;
+
+    @Column({ type: "decimal", precision: 10, scale: 2 })
+    monto: number;
+
+    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+    fecha_pago: Date;
+
+    @Column({
+        type: "enum",
+        enum: metodo_pago,
+        default: metodo_pago.VISA,
+    })
+    metodo_pago: metodo_pago;
+
+    @Column({
+        type: "enum",
+        enum: estado_pago,
+        default: estado_pago.NO_PAGADO,
+    })
+    estado_pago: estado_pago;
+
+    @Column({ type: "text", nullable: true })
+    nota?: string;
+
+    @ManyToOne(() => Reserva, (r) => r.pagos) 
+    @JoinColumn({ name: "reserva_id" })
+    reserva: Reserva;
+
+    // @ManyToOne(() => Instalacion)
+    // @JoinColumn({ name: "instalacion_id" })
+    // instalacion: Instalacion;
+}
+
+
+
+
+============================================================
+FILE: src/modules/pista/entities/pista.entity.ts
+============================================================
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn, Unique } from "typeorm";
+import { Reserva } from "../../reserva/entities/reserva.entity";  
+import { Instalacion } from "../../instalacion/entities/instalacion.entity";  
+import { TipoPista } from "src/modules/tipo_pista/entities/tipo_pista.entity";
+
+
+export enum EstadoPista {
+  DISPONIBLE = "DISPONIBLE",
+  MANTENIMIENTO = "MANTENIMIENTO",
+  RESERVADA = 'RESERVADA',
+  INACTIVA = 'INACTIVA',
+}
+
+export enum DiaSemana {
+  LUNES = "LUNES",
+  MARTES = "MARTES",
+  MIERCOLES = 'MIERCOLES',
+  JUEVES = 'JUEVES',
+  VIERNES = 'VIERNES',
+  SABADO = 'SABADO',
+  DOMINGO = 'DOMINGO',
+}
+//para que solo haya una pista con el mismo nombre en la misma instalacion y 
+// el mismo dia de la semana, pero puede haber pistas con el mismo nombre en
+//  diferentes instalaciones o en la misma instalación pero en días diferentes
+@Unique(["nombre", "instalacion", "dia_semana"])  
+@Entity("pista")
+export class Pista {
+  @PrimaryGeneratedColumn({name: "pista_id", type: "int"})
+  pista_id: number;
+
+  @Column({name: "instalacion_id", type: "int"}) 
+  instalacion_id: number; 
+
+  @Column({name: "tipo_pista_id", type: "int"})
+  tipo_pista_id: number;
+
+  @Column({type: "string"})
+  nombre: string;
+
+  @Column({type: "int"})
+  capacidad: number;
+
+  @Column({type: "decimal", precision: 8, scale: 2})
+  precio_hora: number;
+
+  @Column({type: "boolean", default: false})
+  cubierta: boolean;
+
+  @Column({ type: "boolean", default: false })
+  iluminacion: boolean;
+
+  @Column({ type: "text"})
+  descripcion: string;
+
+  @Column({
+    type: "enum",
+    enum: EstadoPista,
+    default: EstadoPista.DISPONIBLE,
+  })
+  estado: EstadoPista;
+
+  @Column({type: 'time'})
+  hora_apertura: string;
+
+  @Column({type: 'time'})
+  hora_cierre: string;
+
+  @Column({
+    type: "enum",
+    enum: DiaSemana,
+    default: DiaSemana.LUNES,
+  })
+  dia_semana: DiaSemana;
+  
+  @ManyToOne(() => Instalacion, (i) => i.pistas)
+  @JoinColumn({ name: "instalacion_id" })
+  instalacion: Instalacion;
+
+  @ManyToOne(() => TipoPista , (tp) => tp.pistas)
+  @JoinColumn({ name: "tipo_pista_id" })
+  tipo_pista: TipoPista;
+
+  @OneToMany(() => Reserva, (r) => r.pista)
+  reservas: Reserva[];
+}
+
+
+
+
+============================================================
+FILE: src/modules/resenya/entities/resenya.entity.ts
+============================================================
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne, JoinColumn } from "typeorm";
+import { User } from "../../users/entities/user.entity";
+import { Instalacion } from "src/modules/instalacion/entities/instalacion.entity";
+
+@Entity()
+export class Resenya {
+  @PrimaryGeneratedColumn({name: "resenya_id", type: "int" })
+  resenya_id: number;
+
+  @Column({name: "instalacion_id", type: "int" }) 
+  instalacion_id: number;
+
+  @Column({name: "usuario_id", type: "int" }) // Clave FK hacia Usuario
+  usuario_id: number;
+
+  @Column()
+  titulo: string;
+
+  @Column()
+  texto: string;
+
+  @Column({type: "int"})
+  calificacion: number;
+
+  @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+  fecha_comentario: Date;
+
+  @Column()
+  visible: boolean;
+
+  @OneToOne(() => User, (u) => u.resenya)
+  @JoinColumn({ name: "usuario_id" })
+  user: User;
+
+  @ManyToOne(() => Instalacion, (i) => i.instalacion_id)
+  @JoinColumn({ name: "instalacion_id" })
+  instalacion: Instalacion;
+}
+
+
+
+
+
+============================================================
+FILE: src/modules/reserva/entities/reserva.entity.ts
+============================================================
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, OneToMany } from "typeorm";
+import { User } from "../../users/entities/user.entity";
+import { Pista } from "../../pista/entities/pista.entity";
+import { Pago } from "../../pago/entities/pago.entity";
+
+export enum estadoReserva {
+    PENDIENTE = "PENDIENTE",     // Se ha solicitado (ej: esperando pago)
+    CONFIRMADA = "CONFIRMADA",   // Todo ok, el hueco está ocupado
+    CANCELADA = "CANCELADA",     // El usuario o el admin la anularon (hueco libre)
+    FINALIZADA = "FINALIZADA",   // El evento ya pasó con éxito
+    NO_PRESENTADO = "NO_PRESENTADO" // El usuario no vino y no avisó (penalizable)
+}
+
+@Entity()
+export class Reserva {
+    @PrimaryGeneratedColumn({name: "reserva_id", type: "int" })
+    reserva_id: number;
+
+    @Column({name: "usuario_id", type: "int" }) 
+    usuario_id: number;
+
+    @Column({name: "pista_id", type: "int" }) 
+    pista_id: number;
+
+    @Column()
+    fecha_reserva: Date;
+
+    @Column({type: 'time'})
+    hora_inicio: string;
+
+    @Column({type: 'time'})
+    hora_fin: string;
+
+    @Column({
+        type: "enum",
+        enum: estadoReserva,
+        default: estadoReserva.PENDIENTE,
+    })
+    estado: estadoReserva;
+
+    @Column({ type: "decimal", precision: 10, scale: 2 })
+    precio_total: number;
+
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    fecha_creacion: Date;
+
+    @Column()
+    nota: string;
+
+    @ManyToOne(() => User, (u) => u.reservas)
+    @JoinColumn({ name: "usuario_id" })
+    usuario: User;
+
+    @ManyToOne(() => Pista, (pi) => pi.reservas)
+    @JoinColumn({ name: "pista_id" })
+    pista: Pista;
+
+    //reserva_Id estara en pago. he puesto onetomany aunque en teoria era onetoone
+    //porque si falla un pago queremos todos los registros de pagos asociados a la reserva
+    @OneToMany(() => Pago, (pago) => pago.reserva)
+    pagos: Pago[]; // Esto es virtual, no crea una columna "pago_id" en la tabla reserva
+
+}
+
+
+
+
+
+============================================================
+FILE: src/modules/tipo_pista/entities/tipo_pista.entity.ts
+============================================================
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm";
+import { Pista } from "src/modules/pista/entities/pista.entity";
+
+
+@Entity('tipos_pista')
+export class TipoPista {
+  @PrimaryGeneratedColumn()
+  tipo_pista_id: number;
+
+  @Column()
+  nombre: string;
+
+  @OneToMany(() => Pista, (pista) => pista.tipo_pista)
+  pistas: Pista[];
+}
+
+
+
+
+============================================================
+FILE: src/modules/users/entities/user.entity.ts
+============================================================
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn, Unique, OneToOne} from "typeorm";
+import { Noti } from "../../noti/entities/noti.entity";
+import { Resenya } from "../../resenya/entities/resenya.entity";
+import { Reserva } from "../../reserva/entities/reserva.entity";
+import { Membresia } from "../../membresia/entities/membresia.entity";
+
+
+export enum UserRole {
+    GESTOR_RESERVAS = "GESTOR_RESERVAS",
+    CLIENTE = "CLIENTE",
+    SUPER_ADMIN = "SUPER_ADMIN",
+    ADMINISTRACION = "ADMINISTRACION",
+}
+
+@Entity({ name: "user" })
+export class User {
+    @PrimaryGeneratedColumn({ name: "usuario_id", type: "int" })
+    usuario_id: number;
+
+    @Column({name: "membresia_id", type: "int" , nullable: true})
+    membresia_id: number;
+
+    @Column({ name: "username", unique: true })
+    username: string;
+
+    @Column({ name: "name" })
+    name: string;
+
+    @Column({ name: "surname" })
+    surname: string;
+
+    @Column({ name: "email"  , unique: true})
+    email: string;
+
+    @Column({ name: "phone" })
+    phone: string;
+
+    @Column({ name: "password", select: false })
+    password: string;
+
+    @Column({
+        name: "role",
+        type: "enum",
+        enum: UserRole,
+        default: UserRole.CLIENTE,
+    })
+    role: UserRole;
+
+    @Column({ name: "isActive", default: true })
+    isActive: boolean;
+
+    @Column({ name: "fecha_registro", type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    fecha_registro: Date;
+
+    @Column({ name: "fecha_ultimo_login", type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    fecha_ultimo_login: Date;
+
+    @Column({ name: "fecha_nacimiento", type: 'date' })
+    fecha_nacimiento: Date;
+
+    @Column({ name: "direccion" })
+    direccion: string;
+
+    @Column({ name: "refresh_token_hash", type: "text", nullable: true })
+    refresh_token_hash: string | null;
+
+    @ManyToOne(() => Membresia, (m) => m.users)
+    @JoinColumn({ name: "membresia_id"})
+    membresia: Membresia;
+
+    @OneToMany(() => Reserva, (r) => r.usuario)
+    reservas: Reserva[];
+
+    @OneToMany(() => Noti, (n) => n.user)
+    notificaciones: Noti[];
+
+    @OneToOne(() => Resenya, (r) => r.user)
+    resenya: Resenya;   
+}
+
+
+
+
+

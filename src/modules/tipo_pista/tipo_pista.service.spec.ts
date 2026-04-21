@@ -1,24 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HorarioPistaService } from './horario_pista.service';
+import { TipoPistaService } from './tipo_pista.service';
 
-describe('HorarioPistaService', () => {
-  let service: HorarioPistaService;
+describe('TipoPistaService', () => {
+  let service: TipoPistaService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [HorarioPistaService],
+      providers: [TipoPistaService],
     }).compile();
 
-    service = module.get<HorarioPistaService>(HorarioPistaService);
+    service = module.get<TipoPistaService>(TipoPistaService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 });
-
-
-
-
-
-

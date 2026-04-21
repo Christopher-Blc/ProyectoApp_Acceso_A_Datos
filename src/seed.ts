@@ -3,22 +3,22 @@ import { runSeeders, SeederOptions } from "typeorm-extension";
 import { User } from "./modules/users/entities/user.entity";
 import { UserSeeder } from "./database/seeding/seeds/users.seeder";
 import { Noti } from "./modules/noti/entities/noti.entity";
-import { Comentario } from "./modules/comentario/entities/comentario.entity";
+import { Resenya } from "./modules/resenya/entities/resenya.entity";
 import { Reserva } from "./modules/reserva/entities/reserva.entity";
 import { Membresia } from "./modules/membresia/entities/membresia.entity";
 import { Pago } from "./modules/pago/entities/pago.entity";
 import { Pista } from "./modules/pista/entities/pista.entity";
 import { Instalacion } from "./modules/instalacion/entities/instalacion.entity";
-import { Horario_Pista } from "./modules/horario_pista/entities/horario_pista.entity";
 import { ReservaSeeder } from "./database/seeding/seeds/reservas.seeder";
-import { pistaSeed } from "./database/seeding/seeds/pista.seeder";
+import { PistaSeeder } from "./database/seeding/seeds/pista.seeder";
 import { PagoSeeder } from "./database/seeding/seeds/pago.seeder";
 import { MembresiaSeeder } from "./database/seeding/seeds/membresia.seeder";
 import { InstalacionSeeder } from "./database/seeding/seeds/instalacion.seeder";
-import { ComentarioSeeder } from "./database/seeding/seeds/comentario.seeder";
-import { Horario_PistaSeeder } from "./database/seeding/seeds/horario_pista.seeder";
+import { ResenyaSeeder } from "./database/seeding/seeds/resenya.seeder";
 import { NotiSeeder } from "./database/seeding/seeds/noti.seeder";
 import { AuthTokenBlacklist } from "./modules/auth/blacklist/auth_token_blacklist.entity";
+import { TipoPista } from "./modules/tipo_pista/entities/tipo_pista.entity";
+import { TipoPistaSeeder } from "./database/seeding/seeds/tipo_pista.seeder";
 
 //para arrancar con docker: docker exec -it respi-webserver npm run seed
 const options: DataSourceOptions & SeederOptions = {
@@ -32,26 +32,25 @@ const options: DataSourceOptions & SeederOptions = {
   entities: [
     User,
     Noti,
-    Comentario,
+    Resenya,
     Reserva,
     Membresia,
     Pago,
-    Reserva,
     Instalacion,
+    TipoPista, 
     Pista,
-    Horario_Pista,
     AuthTokenBlacklist,
-
+    
   ],
   seeds: [
     UserSeeder,
     InstalacionSeeder,
-    pistaSeed,
+    TipoPistaSeeder,
+    PistaSeeder,
     MembresiaSeeder,
-    Horario_PistaSeeder,
-    ReservaSeeder,
     PagoSeeder,
-    ComentarioSeeder,
+    ResenyaSeeder,
+    ReservaSeeder,
     NotiSeeder
   ],
 };

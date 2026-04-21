@@ -1,51 +1,36 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { User } from "../../users/entities/user.entity";
 
-
-export enum estado_membresia {
-  FINALIZADA = "finalizada",
-  A_PAGAR = "a_pagar",
-  CONFIRMADA = "confirmada",
-  ACTIVA = "activa"
-}
-
-@Entity()
+@Entity("membresia")
 export class Membresia {
-  @PrimaryGeneratedColumn({name: "membresia_id", type: "int"})
+  @PrimaryGeneratedColumn({ name: "membresia_id" })
   membresia_id: number;
 
-  @Column({name: "usuario_id", type: "int"})
-  usuario_id: number;//llave secundairia que viene de la tabla usuario
+  @Column({ type: 'varchar', length: 100 , unique: true })
+  rango: string; //tipo bronze es el as bajo osea rango 1 , plata rango 2 y oro rango 3
 
-  @Column()
-  tipo: string;
+  @Column({ type: 'varchar', length: 100 , unique: true })
+  tipo: string; // Ej: "Bronce", "Plata", "Oro"
 
-  @Column()
-  fecha_inicio: Date;
-
-  @Column()
-  fecha_fin: Date;
-
-  @Column({
-    type: "enum",
-    enum: estado_membresia,
-    default: estado_membresia.FINALIZADA, // valor por defecto
+  @Column({ 
+    type: "decimal", 
+    precision: 5, 
+    scale: 2, 
+    default: 0,
+    transformer: {
+        to: (value: number) => value,
+        from: (value: string) => parseFloat(value)
+    }
   })
-  estado: estado_membresia;
+  descuento: number; // Porcentaje de descuento (ej: 5.00 para 5%)
 
-  @Column({type: "decimal", precision: 10, scale: 2})
-  descuento: number;
+  @Column({ type: "int", default: 0 })
+  reservas_requeridas: number; // Cuántas reservas necesita el user para este nivel
 
-  @Column()
-  renovable: boolean;
+  @Column({ type: "text", nullable: true })
+  beneficios: string; // Descripción breve de lo que incluye
 
-  @Column()
-  fecha_renovacion: Date;
-
-  @ManyToOne(() => User, (u) => u.membresia)
-  @JoinColumn({ name: "usuario_id" })
-  user: User;
-
+  // Relación: Una membresía (ej: Oro) la tienen muchos usuarios
+  @OneToMany(() => User, (u) => u.membresia)
+  users: User[];
 }
-
-

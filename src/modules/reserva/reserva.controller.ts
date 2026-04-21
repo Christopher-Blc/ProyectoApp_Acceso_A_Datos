@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards , Request, Req} from '@nestjs/common';
 import { Reserva } from './entities/reserva.entity';
 import { CreateReservaDto, UpdateReservaDto } from './dto/reserva.dto';
 import { ReservaService } from './reserva.service';
@@ -32,6 +32,22 @@ export class ReservaController {
         }
       }
 
+      @Get('mis-reservas')
+      @ApiOperation({ summary: 'Get my reservations' })
+      @ApiResponse({ status: 200, description: 'Reservations retrieved successfully.' })
+      @ApiResponse({ status: 400, description: 'Invalid reservations ID.' })
+      @ApiResponse({ status: 401, description: 'Unauthorized.' })
+      @ApiResponse({ status: 404, description: 'Reservations not found.' })
+      @ApiParam({ name: 'id', example: 1 })
+      @UseGuards(AuthGuard)
+      async findMyReservations(@Req() req): Promise<Reserva[]> {
+        // NestJS (vía Passport) mete los datos del JWT decodificado en req.user
+        const userId = req.user.sub;
+        
+        // Luego llamas a un método en el servicio que filtre por ese ID
+        return this.reservaService.findByUserId(userId);
+      }
+
       @Get(':id')
       @ApiOperation({ summary: 'Get reserva by ID' })
       @ApiResponse({ status: 200, description: 'Reserva retrieved successfully.' })
@@ -50,44 +66,44 @@ export class ReservaController {
         }
       }
 
+      
+
       @Post()
       @Roles(UserRole.CLIENTE, UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
       @ApiOperation({ summary: 'Create a new reserva' })
-      @ApiResponse({ status: 201, description: 'Reserva created successfully.' })
-      @ApiResponse({ status: 400, description: 'Bad request.' })
-      @ApiResponse({ status: 401, description: 'Unauthorized.' })
-      async create(@Body() reservaDto: CreateReservaDto): Promise<Reserva | null> {
+      async create(
+        @Body() reservaDto: CreateReservaDto,
+        @Request() req // <--- Accedemos a la request
+      ): Promise<Reserva | null> {
         try {
-          return this.reservaService.create(reservaDto);
+          // Extraemos el ID del usuario que el AuthGuard puso en req.user
+          const userId = req.user.sub; 
+          return this.reservaService.create(reservaDto, userId); 
         } catch (err) {
-          throw new HttpException(
-            err.message,
-            err.status || HttpStatus.BAD_REQUEST,
-          );
+          throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
         }
       }
 
       @Put(':id')
-      @Roles(UserRole.CLIENTE , UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+      @Roles(UserRole.CLIENTE, UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
       @ApiOperation({ summary: 'Update an existing reserva' })
-      @ApiResponse({ status: 200, description: 'Reserva updated successfully.' })
-      @ApiResponse({ status: 400, description: 'Invalid reserva ID.' })
-      @ApiResponse({ status: 401, description: 'Unauthorized.' })
-      @ApiResponse({ status: 404, description: 'Reserva not found.' })
-      @ApiParam({ name: 'id', example: 1 })
-      async update(@Param('id') id: number, @Body() reservaDto: UpdateReservaDto): Promise<Reserva | null> {
+      async update(
+        @Param('id') id: number, 
+        @Body() reservaDto: UpdateReservaDto,
+        @Request() req
+      ): Promise<Reserva | null> {
         try {
-          return this.reservaService.update(id, reservaDto);
+          // Opcional: Validar que el CLIENTE solo pueda editar sus propias reservas
+          const userId = req.user.sub;
+          const userRole = req.user.role;
+          return this.reservaService.update(id, reservaDto, userId , userRole);
         } catch (err) {
-          throw new HttpException(
-            err.message,
-            err.status || HttpStatus.BAD_REQUEST,
-          );
+          throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
         }
       }
 
       @Delete(':id')
-      @Roles(UserRole.CLIENTE , UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+      @Roles(UserRole.GESTOR_RESERVAS, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
       @ApiOperation({ summary: 'Delete reserva by ID' })
       @ApiResponse({ status: 200, description: 'Reserva deleted successfully.' })
       @ApiResponse({ status: 400, description: 'Invalid reserva ID.' })
