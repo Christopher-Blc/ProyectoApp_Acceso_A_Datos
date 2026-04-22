@@ -20,6 +20,7 @@ export class TipoPistaSeeder implements Seeder {
             const entry = new TipoPista();
             // Solo tiene id (auto) y nombre según tu Entity 
             entry.nombre = item.nombre;
+            entry.imagen = item.imagen;
 
             entries.push(entry);
         }
