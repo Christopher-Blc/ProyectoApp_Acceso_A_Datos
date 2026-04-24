@@ -103,15 +103,20 @@ export class ReservaService {
             (dto as any).precio_total = Number((duracion * pista.precio_hora).toFixed(2));
         }
 
-        // --- LÓGICA DE ACTUALIZACIÓN DE RANGO ---
-        // Si el estado cambia a FINALIZADA, disparamos el recálculo de rango del usuario
+        // Recalculamos membresia cuando la reserva entra o sale de FINALIZADA.
         const estadoAnterior = reserva.estado;
         const nuevoEstado = dto.estado;
 
         await this.reservaRepo.update(reserva_id, dto);
 
-        if (nuevoEstado === estadoReserva.FINALIZADA && estadoAnterior !== estadoReserva.FINALIZADA) {
-            // Llamamos al servicio de usuarios para actualizar su rango/membresía
+        const cambiaEstadoFinalizacion =
+            nuevoEstado !== undefined &&
+            (
+                (estadoAnterior !== estadoReserva.FINALIZADA && nuevoEstado === estadoReserva.FINALIZADA) ||
+                (estadoAnterior === estadoReserva.FINALIZADA && nuevoEstado !== estadoReserva.FINALIZADA)
+            );
+
+        if (cambiaEstadoFinalizacion) {
             await this.userService.updateUserRank(reserva.usuario_id);
         }
 
@@ -120,7 +125,13 @@ export class ReservaService {
 
     async remove(reserva_id: number): Promise<{ deleted: boolean }> {
         const reserva = await this.findOne(reserva_id);
+        const eraFinalizada = reserva.estado === estadoReserva.FINALIZADA;
         await this.reservaRepo.delete(reserva.reserva_id);
+
+        if (eraFinalizada) {
+            await this.userService.updateUserRank(reserva.usuario_id);
+        }
+
         return { deleted: true };
     }
 }
