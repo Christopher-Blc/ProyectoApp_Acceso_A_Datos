@@ -13,14 +13,14 @@ export class MembresiaService {
 
 
         async findAll(): Promise<Membresia[]> {
-            return this.Repo.find({ relations: ['user'] });
+            return this.Repo.find();
         }
 
         async findOne(membresia_id: number): Promise<Membresia> {
             
             const membresia = await this.Repo.findOne({
                 where: { membresia_id: membresia_id },
-                relations: ['user'],
+                
             });
             if (!membresia) {
                 throw new NotFoundException(`Membresia ${membresia_id} no encontrada`);
