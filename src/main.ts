@@ -1,11 +1,24 @@
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { join } from 'path/posix';
 
 async function bootstrap() {
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  const rootPath = process.cwd();
+  const publicPath = join(rootPath, 'public');
+
+  app.useStaticAssets(publicPath, {
+    prefix: '/public/',
+  });
+
+  console.log(`🚀 Rutas de Docker cargadas`);
+  console.log(`📂 Buscando imágenes en: ${publicPath}`);
+  
   //para que la app valide los dtos y de los mensajes de error que tocan 
   app.useGlobalPipes(
     new ValidationPipe({
