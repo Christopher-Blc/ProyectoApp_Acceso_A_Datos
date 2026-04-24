@@ -1,0 +1,106 @@
+name: CI/CD Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: CI (lint & test)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm' # Opcional pero recomendado para que vaya más rápido
+
+      - name: Verify npm
+        run: npm -v
+        working-directory: .
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: .
+
+      - name: Lint
+        run: |
+          set -o pipefail
+          npm run lint 2>&1 | tee lint_output.txt
+        working-directory: .
+
+      - name: Run tests
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee test_output.txt
+        working-directory: .
+
+  deploy:
+    name: Deploy to VPS
+    needs: ci
+    if: success()
+    runs-on: ubuntu-latest # OJO CON ESTO (lee abajo)
+    env:
+      ENFORCE_KNOWN_HOSTS: ${{ secrets.ENFORCE_KNOWN_HOSTS }}
+      VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+    steps:
+      - name: Enforce known hosts (optional)
+        if: ${{ env.ENFORCE_KNOWN_HOSTS == 'true' }}
+        run: |
+          if [ -z "${{ env.VPS_KNOWN_HOSTS }}" ]; then
+            echo "VPS_KNOWN_HOSTS is required when ENFORCE_KNOWN_HOSTS=true"
+            exit 1
+          fi
+          
+      - name: Prepare SSH key file (supports raw or base64)
+        run: |
+          set -euo pipefail
+          KEY_FILE=/tmp/deploy_key
+          if [ -n "${{ secrets.VPS_SSH_KEY }}" ]; then
+            printf '%s' "${{ secrets.VPS_SSH_KEY }}" > "$KEY_FILE"
+          elif [ -n "${{ secrets.VPS_SSH_KEY_B64 }}" ]; then
+            printf '%s' "${{ secrets.VPS_SSH_KEY_B64 }}" | base64 --decode > "$KEY_FILE"
+          else
+            echo "No VPS_SSH_KEY or VPS_SSH_KEY_B64 secret provided. Aborting deploy step." >&2
+            exit 1
+          fi
+          chmod 600 "$KEY_FILE"
+          if ! grep -qE 'BEGIN .*PRIVATE KEY' "$KEY_FILE"; then
+            TMP_CONTENT=$(cat "$KEY_FILE" | tr -d '\r' | sed -e 's/^\s\+//g' -e 's/\s\+$//g')
+            printf '%s\n%s\n%s\n' '-----BEGIN OPENSSH PRIVATE KEY-----' "$TMP_CONTENT" '-----END OPENSSH PRIVATE KEY-----' > "$KEY_FILE"
+            chmod 600 "$KEY_FILE"
+          fi
+
+      - name: Execute deploy commands on VPS via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key_path: /tmp/deploy_key
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            set -e
+            cd ${{ secrets.VPS_PROJECT_PATH }}
+            git fetch origin main
+            LOCAL=$(git rev-parse HEAD)
+            REMOTE=$(git rev-parse origin/main)
+            if [ "$LOCAL" = "$REMOTE" ]; then
+              echo "No changes detected on origin/main — skipping deploy."
+              exit 0
+            fi
+            git pull origin main
+
+            if ! command -v docker >/dev/null 2>&1; then
+              echo "docker not found on VPS; aborting deploy"
+              exit 1
+            fi
+            docker compose down || true
+            docker compose up -d --build
+            sleep 15
+            echo "==== backend logs ===="
+            docker compose logs --no-color --tail=200 backend || true
