@@ -10,8 +10,12 @@ export class TipoPista {
   @Column()
   nombre: string;
 
+  @Column({ })
+  imagen: string; // Aquí guardaremos algo como "pista-tenis.jpg"
+
   @OneToMany(() => Pista, (pista) => pista.tipo_pista)
   pistas: Pista[];
+ 
 }
 
 

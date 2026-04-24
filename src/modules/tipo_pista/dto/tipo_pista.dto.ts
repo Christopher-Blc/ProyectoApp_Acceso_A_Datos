@@ -8,5 +8,11 @@ export class TipoPistaDto {
         example: 'Tennis',
     })
     nombre: string;
+
+    @ApiProperty({
+        description: 'Sport type picture',
+        example: 'todavia no hay example porque no se pueden subir desde el front',
+    })
+    imagen: string;
 }
 
