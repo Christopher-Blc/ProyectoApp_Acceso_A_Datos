@@ -12,6 +12,7 @@ import { UsersModule } from '../users/users.module';
     UsersModule, 
   ],
   providers: [ReservaService], 
-  controllers: [ReservaController]
+  controllers: [ReservaController],
+  exports: [TypeOrmModule]
 })
 export class ReservaModule {}
