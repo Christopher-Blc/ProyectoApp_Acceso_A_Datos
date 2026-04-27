@@ -55,21 +55,33 @@ export class AuthService {
     if (!ok) throw new UnauthorizedException('Refresh token inválido');
 
     // Reconstruimos payload a partir de la entidad actual para evitar stale data.
-    const newPayload = {
-      sub: user.usuario_id,
+    // Tipamos como Record para claridad, aunque JwtService.signAsync tenga limitaciones
+    // en sus overloads que requieren `as any` en la llamada.
+    const newPayload: Record<string, string | number> = {
+      sub: String(user.usuario_id),
       email: user.email,
-      role: user.role,
+      role: String(user.role),
     };
 
-    const access_token = await this.jwtService.signAsync(newPayload, {
-      secret: process.env.JWT_ACCESS_SECRET as string,
-      expiresIn: process.env.JWT_EXPIRES_IN || '15m',
-    });
+    // NOTA: JwtService.signAsync tiene overloads que no capturan correctamente
+    // objetos Record<string, string | number>. Aunque los tipos son correctos
+    // en tiempo de ejecución, TypeScript los rechaza. Se usa `as any` aquí
+    // de forma localizada.
+    const access_token = await this.jwtService.signAsync(
+      newPayload as any,
+      {
+        secret: process.env.JWT_ACCESS_SECRET as string,
+        expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+      } as any,
+    );
 
-    const new_refresh_token = await this.jwtService.signAsync(newPayload, {
-      secret: process.env.JWT_REFRESH_SECRET as string,
-      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-    });
+    const new_refresh_token = await this.jwtService.signAsync(
+      newPayload as any,
+      {
+        secret: process.env.JWT_REFRESH_SECRET as string,
+        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+      } as any,
+    );
 
     // Rotación de refresh: guardamos hash del nuevo refresh token.
     const newHash = await bcrypt.hash(new_refresh_token, 10);
@@ -161,23 +173,33 @@ export class AuthService {
     await this.usersService.updateLastLogin(user.usuario_id);
 
     // Payload mínimo de identidad/autorización para el JWT.
-    const payload = {
-      sub: user.usuario_id,
+    // Tipamos como Record para claridad, aunque JwtService.signAsync tenga limitaciones
+    // en sus overloads que requieren `as any` en la llamada.
+    const payload: Record<string, string | number> = {
+      sub: String(user.usuario_id),
       email: user.email,
-      role: user.role,
+      role: String(user.role),
     };
 
-    // Emisión del access token de corta duración.
-    const access_token = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_ACCESS_SECRET as string,
-      expiresIn: process.env.JWT_EXPIRES_IN || '15m',
-    });
+    // NOTA: JwtService.signAsync tiene overloads que no capturan correctamente
+    // objetos Record<string, string | number>. Aunque los tipos son correctos
+    // en tiempo de ejecución, TypeScript los rechaza. Se usa `as any` aquí
+    // de forma localizada.
+    const access_token = await this.jwtService.signAsync(
+      payload as any,
+      {
+        secret: process.env.JWT_ACCESS_SECRET as string,
+        expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+      } as any,
+    );
 
-    // Emisión del refresh token de mayor duración.
-    const refresh_token = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_REFRESH_SECRET as string,
-      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-    });
+    const refresh_token = await this.jwtService.signAsync(
+      payload as any,
+      {
+        secret: process.env.JWT_REFRESH_SECRET as string,
+        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+      } as any,
+    );
 
     // Persistimos hash del refresh para validarlo en futuras renovaciones.
     const refreshHash = await bcrypt.hash(refresh_token, 10);

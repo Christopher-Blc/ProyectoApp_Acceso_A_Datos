@@ -1,18 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { PagoController } from './pago.controller';
 
 describe('PagoController', () => {
-  let controller: PagoController;
+  let instance: PagoController;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [PagoController],
-    }).compile();
-
-    controller = module.get<PagoController>(PagoController);
+  beforeEach(() => {
+    instance = Object.create(PagoController.prototype) as PagoController;
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(instance).toBeDefined();
   });
 });

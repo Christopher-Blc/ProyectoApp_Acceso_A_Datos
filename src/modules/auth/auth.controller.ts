@@ -19,7 +19,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { Throttle } from '../../common/decorators/throttle.decorator';
-import { AuthenticatedRequest } from './types/auth.types';
+import type { AuthenticatedRequest } from './types/auth.types';
 
 /**
  * Controlador HTTP de autenticación.

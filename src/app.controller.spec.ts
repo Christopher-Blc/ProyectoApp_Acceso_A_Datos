@@ -15,8 +15,10 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return landing page html', () => {
+      const html = appController.getHello();
+      expect(html).toContain('<!DOCTYPE html>');
+      expect(html).toContain('Respi');
     });
   });
 });

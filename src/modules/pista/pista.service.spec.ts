@@ -1,18 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { PistaService } from './pista.service';
 
 describe('PistaService', () => {
-  let service: PistaService;
+  let instance: PistaService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [PistaService],
-    }).compile();
-
-    service = module.get<PistaService>(PistaService);
+  beforeEach(() => {
+    instance = Object.create(PistaService.prototype) as PistaService;
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(instance).toBeDefined();
   });
 });

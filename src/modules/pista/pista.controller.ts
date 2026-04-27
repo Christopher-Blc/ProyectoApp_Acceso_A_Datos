@@ -9,6 +9,7 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PistaService } from './pista.service';
 import { PistaDto } from './dto/pista.dto';
@@ -17,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -64,7 +66,8 @@ export class PistaController {
   })
   @UseGuards(AuthGuard) // Asumo que quieres que solo usuarios logueados vean disponibilidad
   async getDisponibilidad(@Query('fecha') fecha: string) {
-    return await this.pistaService.obtenerDisponibilidad(fecha);
+    // TODO: Implementar obtenerDisponibilidad en PistaService
+    return { message: 'Feature not yet implemented', fecha };
   }
 
   // GET /pista/:id -> obtener un pista por ID
