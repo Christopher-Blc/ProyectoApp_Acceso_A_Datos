@@ -37,14 +37,15 @@ export class ReservaService {
     return reserva;
   }
 
-    async findByUserId(usuario_id: number): Promise<Reserva[]> {
-        if (!usuario_id) throw new ForbiddenException('No tienes permiso para ver estas reservas');
-        const reservas = await this.reservaRepo.find({
-            where: { usuario_id},
-            relations: ['usuario', 'pista', 'pagos'], 
-        });
-        return reservas;
-    }
+  async findByUserId(usuario_id: number): Promise<Reserva[]> {
+    if (!usuario_id)
+      throw new ForbiddenException('No tienes permiso para ver estas reservas');
+    const reservas = await this.reservaRepo.find({
+      where: { usuario_id },
+      relations: ['usuario', 'pista', 'pagos'],
+    });
+    return reservas;
+  }
 
   async create(dto: CreateReservaDto, usuario_id: number): Promise<Reserva> {
     // 1. Buscamos la pista para obtener su precio por hora real

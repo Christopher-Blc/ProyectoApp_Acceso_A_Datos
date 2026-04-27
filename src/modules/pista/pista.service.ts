@@ -1,32 +1,33 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DiaSemana, Pista } from './entities/pista.entity';
-import { Between,Raw, Repository } from 'typeorm';
+import { Between, Raw, Repository } from 'typeorm';
 import { PistaDto, UpdatePistaDto } from './dto/pista.dto';
 import { Reserva } from '../reserva/entities/reserva.entity';
 
 @Injectable()
 export class PistaService {
+  constructor(
+    @InjectRepository(Pista)
+    private readonly pistaRepo: Repository<Pista>, // `pistaRepo` es el acceso a todas las operaciones de la tabla Pista
+  ) {}
 
-    constructor(
-        @InjectRepository(Pista)
-        private readonly pistaRepo: Repository<Pista>, // `pistaRepo` es el acceso a todas las operaciones de la tabla Pista
-      ) {}
+  async findAll(): Promise<Pista[]> {
+    return this.pistaRepo.find({
+      relations: ['reservas', 'resenya', 'horarios_pista', 'instalacion'],
+    });
+  }
 
-      async findAll(): Promise<Pista[]>{
-
-        return this.pistaRepo.find({relations: ['reservas', 'resenya', 'horarios_pista', 'instalacion']});
-      } 
-
-      async findOne(pista_id: number ): Promise<Pista>{
-
-        const pista = await this.pistaRepo.findOne({where: {pista_id: pista_id},
-                                            relations: ['reservas', 'resenya', 'horarios_pista', 'instalacion']});
-        if (!pista){
-            throw new NotFoundException(`Pista ${pista_id} no encontrada`); // Lanzamos un error si no se encuentra la pista
-        }
-        return pista;
-      }
+  async findOne(pista_id: number): Promise<Pista> {
+    const pista = await this.pistaRepo.findOne({
+      where: { pista_id: pista_id },
+      relations: ['reservas', 'resenya', 'horarios_pista', 'instalacion'],
+    });
+    if (!pista) {
+      throw new NotFoundException(`Pista ${pista_id} no encontrada`); // Lanzamos un error si no se encuentra la pista
+    }
+    return pista;
+  }
 
   //crear una pista
   async create(info_pista: PistaDto): Promise<Pista> {
