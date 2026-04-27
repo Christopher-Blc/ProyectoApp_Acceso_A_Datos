@@ -24,43 +24,46 @@ export class PistaService {
 
 
     async obtenerDisponibilidad(fechaString: string) {
-      // 1. Convertir el string (2026-04-27) a objeto Date y sacar el día de la semana
-      const fecha = new Date(fechaString);
-      const dias = [
-        DiaSemana.DOMINGO, DiaSemana.LUNES, DiaSemana.MARTES, 
-        DiaSemana.MIERCOLES, DiaSemana.JUEVES, DiaSemana.VIERNES, DiaSemana.SABADO
-      ];
-      const nombreDia = dias[fecha.getDay()]; // Convierte el 0-6 de JS al Enum tuyo
+    // 1. Obtener el día de la semana (LUNES, MARTES...)
+    const fecha = new Date(fechaString);
+    const dias = [
+      DiaSemana.DOMINGO, DiaSemana.LUNES, DiaSemana.MARTES, 
+      DiaSemana.MIERCOLES, DiaSemana.JUEVES, DiaSemana.VIERNES, DiaSemana.SABADO
+    ];
+    const nombreDia = dias[fecha.getDay()];
 
-      // 2. Buscar las pistas que abren ese día de la semana
-      const pistas = await this.pistaRepo.find({
-        where: { dia_semana: nombreDia },
-        relations: ['tipo_pista'],
-      });
+    // 2. Buscar las pistas que abren ese día
+    const pistas = await this.pistaRepo.find({
+      where: { dia_semana: nombreDia },
+      relations: ['tipo_pista'],
+    });
 
-      // 3. Buscar las reservas reales para ese día calendario específico
-      const inicioDia = new Date(`${fechaString}T00:00:00.000Z`);
-      const finDia = new Date(`${fechaString}T23:59:59.999Z`);
+    // 3. Buscar reservas usando Raw para comparar solo el texto YYYY-MM-DD
+    // Esto evita problemas de zonas horarias y formatos DateTime
+    const reservasDelDia = await this.reservaRepo.find({
+      where: {
+        fecha_reserva: Raw((alias) => `DATE(${alias}) = :fecha`, { fecha: fechaString }),
+      },
+    });
 
-      const reservasDelDia = await this.reservaRepo.find({
-        where: { fecha_reserva: Between(inicioDia, finDia) }
-      });
+    // LOG DE CONTROL: Mira esto en tu terminal de NestJS
+    console.log(`[API] Fecha: ${fechaString} | Reservas encontradas: ${reservasDelDia.length}`);
 
-      // 4. Mapear resultados
-      return pistas.map(pista => {
-        const reservasPista = reservasDelDia
-          .filter(r => r.pista_id === pista.pista_id)
-          .map(r => ({
-            inicio: r.hora_inicio,
-            fin: r.hora_fin
-          }));
+    // 4. Mapear resultados para el Frontend
+    return pistas.map((pista) => {
+      const reservasPista = reservasDelDia
+        .filter((r) => r.pista_id === pista.pista_id)
+        .map((r) => ({
+          inicio: r.hora_inicio, // Formato "10:00:00"
+          fin: r.hora_fin,       // Formato "12:00:00"
+        }));
 
-        return {
-          ...pista,
-          reservas_actuales: reservasPista
-         };
-      });
-    }
+      return {
+        ...pista,
+        reservas_actuales: reservasPista,
+      };
+    });
+  }
 
 
       
