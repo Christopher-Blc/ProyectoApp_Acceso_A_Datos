@@ -18,7 +18,7 @@ export class PistaService {
 
     async findAll(): Promise<Pista[]>{
 
-      return this.pistaRepo.find({relations: ['reservas', 'resenya', 'horarios_pista', 'instalacion']});
+      return this.pistaRepo.find({relations: ['reservas', 'instalacion', 'tipo_pista']});
     } 
 
 
@@ -79,7 +79,7 @@ export class PistaService {
       async findOne(pista_id: number ): Promise<Pista>{
 
         const pista = await this.pistaRepo.findOne({where: {pista_id: pista_id},
-                                            relations: ['reservas', 'resenya', 'horarios_pista', 'instalacion']});
+                                            relations: ['reservas', 'instalacion', 'tipo_pista']});
         if (!pista){
             throw new NotFoundException(`Pista ${pista_id} no encontrada`); // Lanzamos un error si no se encuentra la pista
         }
