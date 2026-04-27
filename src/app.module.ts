@@ -15,7 +15,7 @@ import { NotiModule } from './modules/noti/noti.module';
 import { PistaModule } from './modules/pista/pista.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
-
+//comentario de prueba para ver si se sube a github y se despliega en la vps
 @Module({
   imports: [
     ConfigModule.forRoot({
