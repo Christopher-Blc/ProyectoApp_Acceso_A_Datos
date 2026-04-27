@@ -24,46 +24,49 @@ export class PistaService {
 
 
     async obtenerDisponibilidad(fechaString: string) {
-    // 1. Obtener el día de la semana (LUNES, MARTES...)
-    const fecha = new Date(fechaString);
-    const dias = [
-      DiaSemana.DOMINGO, DiaSemana.LUNES, DiaSemana.MARTES, 
-      DiaSemana.MIERCOLES, DiaSemana.JUEVES, DiaSemana.VIERNES, DiaSemana.SABADO
-    ];
-    const nombreDia = dias[fecha.getDay()];
+  // fechaString viene como "2026-04-27"
+  
+  const fecha = new Date(fechaString);
+  const dias = [
+    DiaSemana.DOMINGO, DiaSemana.LUNES, DiaSemana.MARTES, 
+    DiaSemana.MIERCOLES, DiaSemana.JUEVES, DiaSemana.VIERNES, DiaSemana.SABADO
+  ];
+  const nombreDia = dias[fecha.getDay()];
 
-    // 2. Buscar las pistas que abren ese día
-    const pistas = await this.pistaRepo.find({
-      where: { dia_semana: nombreDia },
-      relations: ['tipo_pista'],
-    });
+  const pistas = await this.pistaRepo.find({
+    where: { dia_semana: nombreDia },
+    relations: ['tipo_pista'],
+  });
 
-    // 3. Buscar reservas usando Raw para comparar solo el texto YYYY-MM-DD
-    // Esto evita problemas de zonas horarias y formatos DateTime
-    const reservasDelDia = await this.reservaRepo.find({
-      where: {
-        fecha_reserva: Raw((alias) => `DATE(${alias}) = :fecha`, { fecha: fechaString }),
-      },
-    });
+  // Intentamos la búsqueda con una comparación de string exacta
+  const reservasDelDia = await this.reservaRepo.find({
+    where: {
+      fecha_reserva: fechaString as any // Forzamos el cast para que no se queje TS
+    }
+  });
 
-    // LOG DE CONTROL: Mira esto en tu terminal de NestJS
-    console.log(`[API] Fecha: ${fechaString} | Reservas encontradas: ${reservasDelDia.length}`);
-
-    // 4. Mapear resultados para el Frontend
-    return pistas.map((pista) => {
-      const reservasPista = reservasDelDia
-        .filter((r) => r.pista_id === pista.pista_id)
-        .map((r) => ({
-          inicio: r.hora_inicio, // Formato "10:00:00"
-          fin: r.hora_fin,       // Formato "12:00:00"
-        }));
-
-      return {
-        ...pista,
-        reservas_actuales: reservasPista,
-      };
-    });
+  // LOG PARA DEPURAR (Mira esto en tu consola de NestJS)
+  console.log('--- DEPURACIÓN DISPONIBILIDAD ---');
+  console.log('Fecha recibida del Front:', fechaString);
+  console.log('Reservas encontradas en total:', reservasDelDia.length);
+  if (reservasDelDia.length > 0) {
+      console.log('Fecha de la primera reserva en DB:', reservasDelDia[0].fecha_reserva);
   }
+
+  return pistas.map(pista => {
+    const reservasPista = reservasDelDia
+      .filter(r => Number(r.pista_id) === Number(pista.pista_id))
+      .map(r => ({
+        inicio: r.hora_inicio,
+        fin: r.hora_fin
+      }));
+
+    return {
+      ...pista,
+      reservas_actuales: reservasPista
+    };
+  });
+}
 
 
       
