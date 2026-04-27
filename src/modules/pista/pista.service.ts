@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DiaSemana, Pista } from './entities/pista.entity';
-import { Between, Repository } from 'typeorm';
+import { Between,Raw, Repository } from 'typeorm';
 import { PistaDto, UpdatePistaDto } from './dto/pista.dto';
 import { Reserva } from '../reserva/entities/reserva.entity';
 
