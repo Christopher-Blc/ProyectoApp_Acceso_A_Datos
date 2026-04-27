@@ -1,26 +1,34 @@
 import type { Request } from 'express';
-import { UserRole } from '../../users/entities/user.entity';
 
 /**
- * Este archivo concentra los tipos de autenticación que antes se repetían
- * en varios puntos del proyecto.
+ * Tipo para el payload del JWT.
  *
- * Idea clave:
- * - El JWT se firma en AuthService con ciertos campos.
- * - AuthGuard valida el token y copia ese payload en req.user.
- * - Los controladores leen req.user con tipado fuerte, sin `any`.
+ * NOTA IMPORTANTE sobre @nestjs/jwt.signAsync():
+ * La librería @nestjs/jwt tiene un problema de tipado donde sus overloads de
+ * signAsync no capturan correctamente objetos Record<string, string | number>.
+ * Aunque los tipos son correctos en tiempo de ejecución, TypeScript rechaza
+ * la asignación. Por lo tanto, en AuthService usamos `as any` de forma localizada
+ * en las llamadas a signAsync.
  *
- * Beneficio principal:
- * - Evita errores de lint del tipo no-unsafe-member-access/no-unsafe-assignment.
- * - Hace explícito qué propiedades esperamos del usuario autenticado.
+ * Este tipo se mantiene como referencia conceptual, pero la implementación
+ * real usa Record<string, string | number> con cast a any.
+ *
+ * La alternativa sería monkeypatching o mantener versión antigua de @nestjs/jwt,
+ * pero ambas opciones son más invasivas que un cast localizado bien documentado.
  */
-export interface AuthUserPayload {
+export type JwtPayload = Record<string, string | number | boolean | undefined>;
+
+export interface AuthUserPayload extends Record<
+  string,
+  string | number | string[] | undefined
+> {
   /**
    * Subject del JWT.
    * En esta app representa el ID de usuario (usuario_id) que se guarda
    * en el token al hacer login/refresh.
+   * Tipado como string porque JWT spec usa strings para claims.
    */
-  sub: number;
+  sub: string | number;
 
   /**
    * Correo del usuario autenticado.
@@ -31,8 +39,9 @@ export interface AuthUserPayload {
   /**
    * Rol de negocio del usuario (CLIENTE, ADMINISTRACION, etc.).
    * Se usa para decisiones de autorización.
+   * Almacenado como string en el JWT.
    */
-  role?: UserRole;
+  role?: string;
 
   /**
    * Expiration time (claim estándar JWT).

@@ -25,7 +25,7 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
-import { AuthenticatedRequest } from '../auth/types/auth.types';
+import type { AuthenticatedRequest } from '../auth/types/auth.types';
 import { normalizeError } from '../../common/utils/error.util';
 
 /**
@@ -74,10 +74,10 @@ export class ReservaController {
     @Req() req: AuthenticatedRequest,
   ): Promise<Reserva[]> {
     // El AuthGuard ya validó token y dejó el payload en req.user.
-    const userId = req.user.sub;
-
-    // Se filtra por el id del usuario autenticado, no por parámetro externo.
-    return this.reservaService.findByUserId(userId);
+    const userId = req.user?.sub;
+    if (!userId)
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    return this.reservaService.findByUserId(Number(userId));
   }
 
   @Get(':id')
@@ -110,8 +110,10 @@ export class ReservaController {
   ): Promise<Reserva | null> {
     try {
       // Vinculamos la reserva al usuario del token para evitar suplantación.
-      const userId = req.user.sub;
-      return this.reservaService.create(reservaDto, userId);
+      const userId = req.user?.sub;
+      if (!userId)
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      return this.reservaService.create(reservaDto, Number(userId));
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
@@ -133,9 +135,16 @@ export class ReservaController {
   ): Promise<Reserva | null> {
     try {
       // El servicio decide permisos combinando id y rol del usuario autenticado.
-      const userId = req.user.sub;
-      const userRole = req.user.role;
-      return this.reservaService.update(id, reservaDto, userId, userRole);
+      const userId = req.user?.sub;
+      const userRole = req.user?.role ?? UserRole.CLIENTE;
+      if (!userId)
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      return this.reservaService.update(
+        id,
+        reservaDto,
+        Number(userId),
+        userRole as any,
+      );
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);

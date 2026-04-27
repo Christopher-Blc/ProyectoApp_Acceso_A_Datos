@@ -24,7 +24,7 @@ import {
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { AuthenticatedRequest } from '../auth/types/auth.types';
+import type { AuthenticatedRequest } from '../auth/types/auth.types';
 import { normalizeError } from '../../common/utils/error.util';
 
 /**
@@ -51,8 +51,10 @@ export class UsersController {
   async getMyProfile(@Req() req: AuthenticatedRequest) {
     try {
       // Usuario autenticado tomado del JWT validado por AuthGuard.
-      const userId = req.user.sub;
-      return await this.userService.findOne(userId);
+      const userId = req.user?.sub;
+      if (!userId)
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      return await this.userService.findOne(Number(userId));
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
@@ -70,8 +72,10 @@ export class UsersController {
   ) {
     try {
       // El id de edición se toma del token (no del body) para proteger perfil propio.
-      const userId = req.user.sub;
-      return await this.userService.update(userId, userDto, true);
+      const userId = req.user?.sub;
+      if (!userId)
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      return await this.userService.update(Number(userId), userDto, true);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
@@ -85,8 +89,10 @@ export class UsersController {
   async deleteMyProfile(@Req() req: AuthenticatedRequest) {
     try {
       // Eliminación de cuenta siempre asociada al usuario autenticado.
-      const userId = req.user.sub;
-      return await this.userService.remove(userId);
+      const userId = req.user?.sub;
+      if (!userId)
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      return await this.userService.remove(Number(userId));
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);

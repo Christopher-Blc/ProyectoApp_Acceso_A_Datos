@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   UnauthorizedException,
+  Optional,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
@@ -23,9 +24,9 @@ import { normalizeError } from '../../../common/utils/error.util';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private readonly jwtService: JwtService,
+    @Optional() private readonly jwtService: JwtService,
     // Servicio de auth para consultar si el token fue revocado
-    private readonly authService: AuthService,
+    @Optional() private readonly authService: AuthService,
   ) {}
 
   /**

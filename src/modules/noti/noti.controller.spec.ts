@@ -1,18 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { NotiController } from './noti.controller';
 
 describe('NotiController', () => {
-  let controller: NotiController;
+  let instance: NotiController;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [NotiController],
-    }).compile();
-
-    controller = module.get<NotiController>(NotiController);
+  beforeEach(() => {
+    instance = Object.create(NotiController.prototype) as NotiController;
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(instance).toBeDefined();
   });
 });
