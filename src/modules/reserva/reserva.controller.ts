@@ -40,22 +40,24 @@ import { normalizeError } from '../../common/utils/error.util';
 @ApiBearerAuth()
 @Controller('reserva')
 export class ReservaController {
-  constructor(private readonly reservaService: ReservaService) {}
-
-  @Get()
-  @ApiOperation({ summary: 'Get all reservas' })
-  @ApiResponse({ status: 200, description: 'Reservas retrieved successfully.' })
-  @ApiResponse({ status: 204, description: 'No content.' })
-  @ApiResponse({ status: 400, description: 'Bad request.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async findAll(): Promise<Reserva[]> {
-    try {
-      return this.reservaService.findAll();
-    } catch (err) {
-      const { message, status } = normalizeError(err);
-      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
-    }
-  }
+      constructor(private readonly reservaService: ReservaService) {}
+    
+      @Get()
+      @ApiOperation({ summary: 'Get all reservas' })
+      @ApiResponse({ status: 200, description: 'Reservas retrieved successfully.' })
+      @ApiResponse({ status: 204, description: 'No content.' })
+      @ApiResponse({ status: 400, description: 'Bad request.' })
+      @ApiResponse({ status: 401, description: 'Unauthorized.' })
+      async findAll(): Promise<Reserva[]> {
+        try {
+          return this.reservaService.findAll();
+        } catch (err) {
+          throw new HttpException(
+            err.message,
+            err.status || HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
 
   @Get('mis-reservas')
   @ApiOperation({ summary: 'Get my reservations' })

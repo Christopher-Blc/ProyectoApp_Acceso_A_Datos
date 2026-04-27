@@ -1,25 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Body,
-  HttpException,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { PistaService } from './pista.service';
 import { PistaDto } from './dto/pista.dto';
 import { Pista } from './entities/pista.entity';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -32,7 +15,7 @@ import { UserRole } from '../users/entities/user.entity';
 export class PistaController {
   constructor(private readonly pistaService: PistaService) {}
 
-  // GET /pista -> obtener todos los pistas
+  // GET /pista -> obtener todas los pistas
   @Get()
   @ApiOperation({ summary: 'Get all courts' })
   @ApiResponse({ status: 200, description: 'List of all courts' })
@@ -48,6 +31,16 @@ export class PistaController {
         err.status || HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  @Get('disponibilidad')
+  @ApiOperation({ summary: 'Obtener disponibilidad de pistas por fecha' })
+  @ApiResponse({ status: 200, description: 'Disponibilidad calculada correctamente.' })
+  @ApiResponse({ status: 401, description: 'No autorizado.' })
+  @ApiQuery({ name: 'fecha', example: '2026-04-27', description: 'Fecha en formato YYYY-MM-DD' })
+  @UseGuards(AuthGuard) // Asumo que quieres que solo usuarios logueados vean disponibilidad
+  async getDisponibilidad(@Query('fecha') fecha: string) {
+      return await this.pistaService.obtenerDisponibilidad(fecha);
   }
 
   // GET /pista/:id -> obtener un pista por ID
