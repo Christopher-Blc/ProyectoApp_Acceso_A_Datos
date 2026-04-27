@@ -1,14 +1,21 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from "typeorm";
-import { Pista } from "../../pista/entities/pista.entity"; // Importa la entidad Pista
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
+import { Pista } from '../../pista/entities/pista.entity'; // Importa la entidad Pista
 
 export enum estado_instalacion {
-  ACTIVA = "activa", 
-  EN_MANTENIMIENTO = "en_mantenimiento",
-  INACTIVA = "inactiva"
+  ACTIVA = 'activa',
+  EN_MANTENIMIENTO = 'en_mantenimiento',
+  INACTIVA = 'inactiva',
 }
 @Entity()
 export class Instalacion {
-  @PrimaryGeneratedColumn({ name: "instalacion_id", type: "int" })
+  @PrimaryGeneratedColumn({ name: 'instalacion_id', type: 'int' })
   instalacion_id: number;
 
   @Column({ type: 'varchar', length: 100 })
@@ -26,11 +33,11 @@ export class Instalacion {
   @Column({ type: 'varchar', length: 100 })
   descripcion: string;
 
-  @Column({ type: "date", default: () => "CURRENT_DATE" })
+  @Column({ type: 'date', default: () => 'CURRENT_DATE' })
   fecha_creacion: Date;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: estado_instalacion,
     default: estado_instalacion.INACTIVA, // valor por defecto
   })
@@ -38,7 +45,4 @@ export class Instalacion {
 
   @OneToMany(() => Pista, (pi) => pi.instalacion)
   pistas: Pista[];
-
 }
-
-

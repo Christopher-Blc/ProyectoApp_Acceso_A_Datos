@@ -7,12 +7,6 @@ import { Pago } from './entities/pago.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Pago])],
   controllers: [PagoController],
-  providers: [PagoService]
+  providers: [PagoService],
 })
 export class PagoModule {}
-
-
-
-
-
-

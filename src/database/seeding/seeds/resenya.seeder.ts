@@ -1,45 +1,45 @@
-import { Resenya } from "../../../modules/resenya/entities/resenya.entity";
-import { DataSource } from "typeorm";
-import { Seeder } from "typeorm-extension";
-import comentarioData from "../../inventory/inventory_resenya";
+import { Resenya } from '../../../modules/resenya/entities/resenya.entity';
+import { DataSource } from 'typeorm';
+import { Seeder } from 'typeorm-extension';
+import comentarioData from '../../inventory/inventory_resenya';
 
 export class ResenyaSeeder implements Seeder {
-    public async run(dataSource: DataSource): Promise<any> {
-        const resenyaRepository = dataSource.getRepository(Resenya);
+  public async run(dataSource: DataSource): Promise<any> {
+    const resenyaRepository = dataSource.getRepository(Resenya);
 
-        const resenyaEntries: Resenya[] = [];
+    const resenyaEntries: Resenya[] = [];
 
-        for (const item of comentarioData) {
-            // Buscamos duplicados por usuario, instalación y fecha
-            const existing = await resenyaRepository.findOne({
-                where: {
-                    usuario_id: item.usuario_id,
-                    instalacion_id: item.instalacion_id, // Añadido para el filtro
-                    fecha_comentario: item.fecha_comentario,
-                },
-            });
-            
-            if (existing) {
-                continue;
-            }
+    for (const item of comentarioData) {
+      // Buscamos duplicados por usuario, instalación y fecha
+      const existing = await resenyaRepository.findOne({
+        where: {
+          usuario_id: item.usuario_id,
+          instalacion_id: item.instalacion_id, // Añadido para el filtro
+          fecha_comentario: item.fecha_comentario,
+        },
+      });
 
-            const resenyaEntry = new Resenya();
-            // Campos obligatorios según la Entity
-            resenyaEntry.instalacion_id = item.instalacion_id; // Campo corregido
-            resenyaEntry.usuario_id = item.usuario_id;
-            resenyaEntry.titulo = item.titulo;
-            resenyaEntry.texto = item.texto;
-            resenyaEntry.calificacion = item.calificacion;
-            resenyaEntry.fecha_comentario = item.fecha_comentario || new Date();
-            resenyaEntry.visible = item.visible ?? true;
+      if (existing) {
+        continue;
+      }
 
-            resenyaEntries.push(resenyaEntry);
-        }
+      const resenyaEntry = new Resenya();
+      // Campos obligatorios según la Entity
+      resenyaEntry.instalacion_id = item.instalacion_id; // Campo corregido
+      resenyaEntry.usuario_id = item.usuario_id;
+      resenyaEntry.titulo = item.titulo;
+      resenyaEntry.texto = item.texto;
+      resenyaEntry.calificacion = item.calificacion;
+      resenyaEntry.fecha_comentario = item.fecha_comentario || new Date();
+      resenyaEntry.visible = item.visible ?? true;
 
-        if (resenyaEntries.length > 0) {
-            await resenyaRepository.save(resenyaEntries);
-            console.log(`${resenyaEntries.length} reseñas creadas.`);
-        }
-        console.log("Reseña seeding completado!");
+      resenyaEntries.push(resenyaEntry);
     }
+
+    if (resenyaEntries.length > 0) {
+      await resenyaRepository.save(resenyaEntries);
+      console.log(`${resenyaEntries.length} reseñas creadas.`);
+    }
+    console.log('Reseña seeding completado!');
+  }
 }

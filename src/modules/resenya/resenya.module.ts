@@ -7,12 +7,6 @@ import { ResenyaService } from './resenya.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Resenya])],
   providers: [ResenyaService],
-  controllers: [ResenyaController]
+  controllers: [ResenyaController],
 })
 export class ResenyaModule {}
-
-
-
-
-
-

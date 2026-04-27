@@ -1,8 +1,25 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  HttpException,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { NotiService } from './noti.service';
 import { NotiDto } from './dto/noti.dto';
 import { Noti } from './entities/noti.entity';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -17,7 +34,10 @@ export class NotiController {
   // GET /noti -> obtener todas las noti
   @Get()
   @ApiOperation({ summary: 'Obtener todas las notificaciones' })
-  @ApiResponse({ status: 200, description: 'Lista de notificaciones obtenida correctamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de notificaciones obtenida correctamente.',
+  })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async findAll(): Promise<Noti[]> {
@@ -34,7 +54,10 @@ export class NotiController {
   // GET /noti/:id -> obtener una noti por ID
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una notificación por ID' })
-  @ApiResponse({ status: 200, description: 'Notificación obtenida correctamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Notificación obtenida correctamente.',
+  })
   @ApiResponse({ status: 404, description: 'Notificación no encontrada.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -53,7 +76,10 @@ export class NotiController {
   @Post()
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Crear una nueva notificación' })
-  @ApiResponse({ status: 201, description: 'Notificación creada correctamente.' })
+  @ApiResponse({
+    status: 201,
+    description: 'Notificación creada correctamente.',
+  })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(@Body() notiDto: NotiDto): Promise<Noti | null> {
@@ -76,11 +102,17 @@ export class NotiController {
   @Put(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Actualizar una notificación por ID' })
-  @ApiResponse({ status: 200, description: 'Notificación actualizada correctamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Notificación actualizada correctamente.',
+  })
   @ApiResponse({ status: 404, description: 'Notificación no encontrada.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async update(@Param('id') id: number, @Body() notiDto: NotiDto): Promise<Noti | null> {
+  async update(
+    @Param('id') id: number,
+    @Body() notiDto: NotiDto,
+  ): Promise<Noti | null> {
     try {
       return this.notiService.update(id, notiDto);
     } catch (err) {
@@ -95,7 +127,10 @@ export class NotiController {
   @Delete(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Eliminar una notificación por ID' })
-  @ApiResponse({ status: 200, description: 'Notificación eliminada correctamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Notificación eliminada correctamente.',
+  })
   @ApiResponse({ status: 404, description: 'Notificación no encontrada.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -109,12 +144,4 @@ export class NotiController {
       );
     }
   }
-
-  
 }
-
-
-
-
-
-

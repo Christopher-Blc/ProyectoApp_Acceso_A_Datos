@@ -6,7 +6,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path/posix';
 
 async function bootstrap() {
-
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   const rootPath = process.cwd();
@@ -18,17 +17,17 @@ async function bootstrap() {
 
   console.log(`🚀 Rutas de Docker cargadas`);
   console.log(`📂 Buscando imágenes en: ${publicPath}`);
-  
-  //para que la app valide los dtos y de los mensajes de error que tocan 
+
+  //para que la app valide los dtos y de los mensajes de error que tocan
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,            // borra campos que no están en el DTO
+      whitelist: true, // borra campos que no están en el DTO
       forbidNonWhitelisted: true, // si mandan campos extra, 400
-      transform: true,            // transforma tipos si usas class-transformer
+      transform: true, // transforma tipos si usas class-transformer
       transformOptions: { enableImplicitConversion: true },
     }),
   );
-  
+
   app.enableCors({
     //en produccion no se pondria * para restringir el acceso a las apis
     origin: '*',
@@ -56,4 +55,3 @@ async function bootstrap() {
   console.log(`✅ App ready at: ${process.env.APP_URL}`);
 }
 bootstrap();
-

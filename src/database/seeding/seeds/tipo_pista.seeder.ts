@@ -1,34 +1,34 @@
-import { TipoPista } from "../../../modules/tipo_pista/entities/tipo_pista.entity";
-import { DataSource } from "typeorm";
-import { Seeder } from "typeorm-extension";
-import tipoPistaData from "../../inventory/inventory_tipo_pista";
+import { TipoPista } from '../../../modules/tipo_pista/entities/tipo_pista.entity';
+import { DataSource } from 'typeorm';
+import { Seeder } from 'typeorm-extension';
+import tipoPistaData from '../../inventory/inventory_tipo_pista';
 
 export class TipoPistaSeeder implements Seeder {
-    public async run(dataSource: DataSource): Promise<any> {
-        const tipoPistaRepository = dataSource.getRepository(TipoPista);
+  public async run(dataSource: DataSource): Promise<any> {
+    const tipoPistaRepository = dataSource.getRepository(TipoPista);
 
-        const entries: TipoPista[] = [];
+    const entries: TipoPista[] = [];
 
-        for (const item of tipoPistaData) {
-            // Buscamos por nombre para evitar duplicados
-            const existing = await tipoPistaRepository.findOne({
-                where: { nombre: item.nombre },
-            });
-            
-            if (existing) continue;
+    for (const item of tipoPistaData) {
+      // Buscamos por nombre para evitar duplicados
+      const existing = await tipoPistaRepository.findOne({
+        where: { nombre: item.nombre },
+      });
 
-            const entry = new TipoPista();
-            // Solo tiene id (auto) y nombre según tu Entity 
-            entry.nombre = item.nombre;
-            entry.imagen = item.imagen;
+      if (existing) continue;
 
-            entries.push(entry);
-        }
+      const entry = new TipoPista();
+      // Solo tiene id (auto) y nombre según tu Entity
+      entry.nombre = item.nombre;
+      entry.imagen = item.imagen;
 
-        if (entries.length > 0) {
-            await tipoPistaRepository.save(entries);
-            console.log(`${entries.length} tipos de pista creados.`);
-        }
-        console.log("TipoPista seeding completado!");
+      entries.push(entry);
     }
+
+    if (entries.length > 0) {
+      await tipoPistaRepository.save(entries);
+      console.log(`${entries.length} tipos de pista creados.`);
+    }
+    console.log('TipoPista seeding completado!');
+  }
 }

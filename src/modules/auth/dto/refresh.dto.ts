@@ -5,8 +5,3 @@ export class RefreshDto {
   @IsNotEmpty()
   refresh_token: string;
 }
-
-
-
-
-

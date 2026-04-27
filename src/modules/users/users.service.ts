@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThanOrEqual } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -10,11 +15,10 @@ import { Reserva, estadoReserva } from '../reserva/entities/reserva.entity';
 
 @Injectable()
 export class UsersService {
-
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    //nos hace falta membresia pq aqui tendremos la logica que segun reservas 
+    //nos hace falta membresia pq aqui tendremos la logica que segun reservas
     //que haya realizado , le meteremos una mambresia u otra automaticamente
     @InjectRepository(Membresia)
     private readonly membresiaRepository: Repository<Membresia>,
@@ -40,26 +44,30 @@ export class UsersService {
     });
 
     // Buscamos en la tabla de membresías cuál le corresponde.
-    // Buscamos la membresía con el mayor número de 'reservas_requeridas' 
+    // Buscamos la membresía con el mayor número de 'reservas_requeridas'
     // que sea menor o igual a las que tiene el usuario.
     const mejorMembresia = await this.membresiaRepository.findOne({
       where: {
-        reservas_requeridas: LessThanOrEqual(totalFinalizadas)
+        reservas_requeridas: LessThanOrEqual(totalFinalizadas),
       },
       order: {
-        reservas_requeridas: 'DESC' // La que pida más reservas (la mejor) primero
-      }
+        reservas_requeridas: 'DESC', // La que pida más reservas (la mejor) primero
+      },
     });
 
     if (mejorMembresia && user.membresia_id !== mejorMembresia.membresia_id) {
-      await this.userRepository.update(usuario_id, { 
-        membresia_id: mejorMembresia.membresia_id 
+      await this.userRepository.update(usuario_id, {
+        membresia_id: mejorMembresia.membresia_id,
       });
     }
   }
 
   //update con proteccion de campos (Solo Admin cambia Role y Membresia)
-  async update(usuario_id: number, data: UpdateUserDto, isSelfUpdate: boolean = false): Promise<User> {
+  async update(
+    usuario_id: number,
+    data: UpdateUserDto,
+    isSelfUpdate: boolean = false,
+  ): Promise<User> {
     const user = await this.findOne(usuario_id);
 
     if (isSelfUpdate) {
@@ -78,8 +86,8 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find({ 
-      relations: ['reservas', 'membresia'] 
+    return await this.userRepository.find({
+      relations: ['reservas', 'membresia'],
     });
   }
 
@@ -100,9 +108,10 @@ export class UsersService {
       const user = this.userRepository.create(data);
       return await this.userRepository.save(user);
     } catch (error) {
-      if (error.code === '23505'){//controlamos duplicados aqui aunque en register ya se verifica
+      if (error.code === '23505') {
+        //controlamos duplicados aqui aunque en register ya se verifica
         throw new BadRequestException('Email/Username/Phone already exists');
-      } 
+      }
       throw new InternalServerErrorException();
     }
   }
@@ -116,7 +125,9 @@ export class UsersService {
     if (!user) throw new NotFoundException('User not found');
 
     const hoy = new Date();
-    const tienePendientes = user.reservas.some(r => new Date(r.fecha_reserva) >= hoy);
+    const tienePendientes = user.reservas.some(
+      (r) => new Date(r.fecha_reserva) >= hoy,
+    );
 
     if (tienePendientes) {
       throw new BadRequestException('You have pending reservations');
@@ -126,35 +137,46 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.createQueryBuilder("user")
-      .where("user.email = :email", { email })
-      .addSelect("user.password")
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email })
+      .addSelect('user.password')
       .getOne();
   }
- 
 
   async findByUserName(username: string): Promise<User | null> {
-    return await this.userRepository.createQueryBuilder("user")
-      .where("user.username = :username", { username })
-      .addSelect("user.password")
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.username = :username', { username })
+      .addSelect('user.password')
       .getOne();
   }
 
   async findByPhone(phone: string): Promise<User | null> {
-    return await this.userRepository.createQueryBuilder("user")
-      .where("user.phone = :phone", { phone })
-       .getOne();
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.phone = :phone', { phone })
+      .getOne();
   }
 
   async updateLastLogin(usuario_id: number): Promise<void> {
-    await this.userRepository.update({ usuario_id }, { fecha_ultimo_login: new Date() });
+    await this.userRepository.update(
+      { usuario_id },
+      { fecha_ultimo_login: new Date() },
+    );
   }
 
   async findById(usuario_id: number): Promise<User | null> {
     return await this.userRepository.findOne({ where: { usuario_id } });
   }
 
-  async updateRefreshTokenHash(usuario_id: number, hash: string | null): Promise<void> {
-    await this.userRepository.update({ usuario_id }, { refresh_token_hash: hash });
+  async updateRefreshTokenHash(
+    usuario_id: number,
+    hash: string | null,
+  ): Promise<void> {
+    await this.userRepository.update(
+      { usuario_id },
+      { refresh_token_hash: hash },
+    );
   }
 }
