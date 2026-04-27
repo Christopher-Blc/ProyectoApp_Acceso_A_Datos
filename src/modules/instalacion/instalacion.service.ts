@@ -45,7 +45,7 @@ export class InstalacionService {
   }
 
   async remove(instalacion_id: number): Promise<void> {
-    const instalacion = await this.findOne(instalacion_id);
+    await this.findOne(instalacion_id);
     await this.instalacionRepository.delete(instalacion_id);
   }
 }

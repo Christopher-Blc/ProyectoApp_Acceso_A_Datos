@@ -1,5 +1,3 @@
-import { estadoReserva } from '../../modules/reserva/entities/reserva.entity';
-
 export default [
   {
     instalacion_id: 1,

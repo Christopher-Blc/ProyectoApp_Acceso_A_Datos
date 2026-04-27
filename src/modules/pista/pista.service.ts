@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DiaSemana, Pista } from './entities/pista.entity';
-import { Between, Raw, Repository } from 'typeorm';
+import { Pista } from './entities/pista.entity';
+import { Repository } from 'typeorm';
 import { PistaDto, UpdatePistaDto } from './dto/pista.dto';
-import { Reserva } from '../reserva/entities/reserva.entity';
 
 @Injectable()
 export class PistaService {
@@ -46,7 +45,7 @@ export class PistaService {
   }
 
   async remove(pista_id: number): Promise<void> {
-    const pista = await this.findOne(pista_id);
+    await this.findOne(pista_id);
     await this.pistaRepo.delete(pista_id);
   }
 }

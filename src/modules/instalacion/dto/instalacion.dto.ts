@@ -3,7 +3,6 @@ import {
   IsEnum,
   IsOptional,
   IsDateString,
-  IsBoolean,
   IsNumber,
 } from 'class-validator';
 import { estado_instalacion } from '../entities/instalacion.entity'; // Importamos el enum estadoReserva desde instalacion.entity
