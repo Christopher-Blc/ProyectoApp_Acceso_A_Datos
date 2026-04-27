@@ -1,9 +1,20 @@
-import { IsString, IsEmail , IsPhoneNumber , IsOptional, IsDateString , Length, Matches, IsNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsPhoneNumber,
+  IsOptional,
+  IsDateString,
+  Length,
+  Matches,
+  IsNotEmpty,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { VALIDATION_LENGTHS, VALIDATION_PATTERNS } from '../../../common/constants/validation_patterns';
+import {
+  VALIDATION_LENGTHS,
+  VALIDATION_PATTERNS,
+} from '../../../common/constants/validation_patterns';
 
 export class RegisterDto {
-
   @IsString()
   @IsNotEmpty()
   @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
@@ -12,7 +23,7 @@ export class RegisterDto {
     minLength: 1,
     maxLength: 40,
     example: 'uniqueUsername',
-  })  
+  })
   username: string;
 
   //Nombre
@@ -24,7 +35,7 @@ export class RegisterDto {
     minLength: 1,
     maxLength: 40,
     example: 'Name_User',
-  })  
+  })
   name: string;
 
   //Apellido
@@ -61,7 +72,6 @@ export class RegisterDto {
   })
   phone: string;
 
-
   //password tiene que tener por lo menos una mayuscula, una minuscula, un numero y un caracter especial
   @ApiProperty({
     description: 'Password of the user',
@@ -76,7 +86,6 @@ export class RegisterDto {
     message: VALIDATION_PATTERNS.password.message,
   })
   password: string;
-
 
   // Fechas
   @IsDateString()
@@ -96,7 +105,3 @@ export class RegisterDto {
   })
   direccion: string;
 }
-
-
-
-

@@ -1,17 +1,34 @@
-import { Body, Controller, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import {
-  HttpCode,
-  HttpStatus,
+  Body,
+  Controller,
+  Post,
+  Req,
+  UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { RefreshDto } from "./dto/refresh.dto";
+import { RefreshDto } from './dto/refresh.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { Throttle } from '../../common/decorators/throttle.decorator';
+import { AuthenticatedRequest } from './types/auth.types';
 
-
+/**
+ * Controlador HTTP de autenticación.
+ *
+ * Este archivo consume los tipos del módulo auth para evitar `any` en `req`.
+ * La cadena es:
+ * AuthService (firma token) -> AuthGuard (verifica y setea req.user)
+ * -> AuthController (lee req.user con tipado fuerte).
+ */
 @ApiTags('auth')
 @ApiBearerAuth()
 @Controller('auth')
@@ -21,7 +38,10 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'Registrar nuevo usuario' })
   @ApiResponse({ status: 201, description: 'Usuario registrado exitosamente.' })
-  @ApiResponse({ status: 400, description: 'Validación fallida o usuario ya existe.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Validación fallida o usuario ya existe.',
+  })
   register(@Body() dto: RegisterDto) {
     // el rol no se decide desde el cliente
     // si alguien intenta colarlo, lo ideal es bloquearlo con ValidationPipe whitelist + forbidNonWhitelisted
@@ -55,7 +75,6 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
-
   @Post('refresh')
   @Throttle('auth')
   @HttpCode(HttpStatus.OK)
@@ -71,39 +90,42 @@ export class AuthController {
       },
     },
   })
-  @ApiResponse({ status: 400, description: 'Refresh token faltante o inválido' })
-  @ApiResponse({ status: 401, description: 'Refresh token expirado o no autorizado' })
+  @ApiResponse({
+    status: 400,
+    description: 'Refresh token faltante o inválido',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Refresh token expirado o no autorizado',
+  })
   refresh(@Body() dto: RefreshDto) {
     return this.authService.refresh(dto.refresh_token);
   }
 
   @UseGuards(AuthGuard)
   @Post('logout')
-  async logout(@Req() req: any) {
-    // esto depende de cómo tu guard mete el user en req
-    // normalmente req.user.sub
+  async logout(@Req() req: AuthenticatedRequest) {
+    // `sub` viene del payload JWT y representa el id del usuario autenticado.
     const userId = Number(req.user?.sub);
-    // Extraemos el access token del header Authorization
+
+    // Leemos token crudo del header para revocarlo en blacklist.
     const authHeader: string | undefined = req.headers?.authorization;
     const accessToken = authHeader?.startsWith('Bearer ')
       ? authHeader.slice('Bearer '.length)
       : undefined;
 
-    // Calculamos fecha de expiración usando el claim exp del JWT
+    // `exp` es claim estándar JWT en segundos UNIX.
+    // Se convierte a Date para guardar una expiración real en blacklist.
     const exp = req.user?.exp;
-    const expiresAt = typeof exp === 'number' ? new Date(exp * 1000) : new Date();
+    const expiresAt =
+      typeof exp === 'number' ? new Date(exp * 1000) : new Date();
 
+    // Si no hay token, no se puede ejecutar logout fuerte de forma segura.
     if (!accessToken) {
       throw new UnauthorizedException('Access token not found');
     }
 
+    // Delega en servicio: revoca access y limpia refresh hash.
     return this.authService.logout(userId, accessToken, expiresAt);
   }
-
 }
-
-
-
-
-
-

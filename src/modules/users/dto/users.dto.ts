@@ -1,11 +1,25 @@
-
-import { IsString, IsEmail, IsBoolean, IsPhoneNumber, IsEnum, IsOptional, IsDateString, IsNumber, Length, Matches, IsISO8601, IsInt } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsBoolean,
+  IsPhoneNumber,
+  IsEnum,
+  IsOptional,
+  IsDateString,
+  IsNumber,
+  Length,
+  Matches,
+  IsISO8601,
+  IsInt,
+} from 'class-validator';
 import { UserRole } from '../entities/user.entity'; // Importamos el enum UserRole desde user.entity
 import { ApiProperty } from '@nestjs/swagger';
-import { VALIDATION_LENGTHS, VALIDATION_PATTERNS } from '../../../common/constants/validation_patterns';
+import {
+  VALIDATION_LENGTHS,
+  VALIDATION_PATTERNS,
+} from '../../../common/constants/validation_patterns';
 
 export class CreateUserDto {
-
   @IsString()
   @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
   @ApiProperty({
@@ -13,7 +27,7 @@ export class CreateUserDto {
     minLength: 1,
     maxLength: 40,
     example: 'Name_User',
-  })  
+  })
   username: string;
 
   @IsString()
@@ -23,7 +37,7 @@ export class CreateUserDto {
     minLength: 1,
     maxLength: 40,
     example: 'Name_User',
-  })  
+  })
   name: string;
 
   @IsString()
@@ -105,7 +119,6 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto {
-
   @IsOptional()
   @IsString()
   @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
@@ -114,10 +127,9 @@ export class UpdateUserDto {
     minLength: 1,
     maxLength: 40,
     example: 'Name_User',
-  })  
+  })
   username?: string;
 
-  
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -181,11 +193,10 @@ export class UpdateUserDto {
   @IsOptional()
   @IsInt()
   @ApiProperty({
-    description: 'ID of the membership level (1: Bronze, 2: Silver, 3: Gold). Only editable by Admin.',
+    description:
+      'ID of the membership level (1: Bronze, 2: Silver, 3: Gold). Only editable by Admin.',
     example: 2,
     required: false,
   })
   membresia_id?: number;
 }
-
-

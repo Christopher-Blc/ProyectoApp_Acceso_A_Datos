@@ -53,5 +53,3 @@ export const VALIDATION_LIMITS = {
   porcentaje: { min: 0, max: 100 },
   precio: { min: 0 },
 };
-
-

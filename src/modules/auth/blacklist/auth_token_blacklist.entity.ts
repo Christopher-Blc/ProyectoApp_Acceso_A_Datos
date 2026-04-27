@@ -20,9 +20,10 @@ export class AuthTokenBlacklist {
   expires_at: Date;
 
   // Momento de creación del registro
-  @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   created_at: Date;
 }
-
-
-

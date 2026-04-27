@@ -6,45 +6,39 @@ import { CreateMembresiaDto, UpdateMembresiaDto } from './dto/membresia.dto';
 
 @Injectable()
 export class MembresiaService {
-    constructor(
-            @InjectRepository(Membresia)
-            private readonly Repo: Repository<Membresia>,
-        ) {}
+  constructor(
+    @InjectRepository(Membresia)
+    private readonly Repo: Repository<Membresia>,
+  ) {}
 
+  async findAll(): Promise<Membresia[]> {
+    return this.Repo.find();
+  }
 
-        async findAll(): Promise<Membresia[]> {
-            return this.Repo.find();
-        }
+  async findOne(membresia_id: number): Promise<Membresia> {
+    const membresia = await this.Repo.findOne({
+      where: { membresia_id: membresia_id },
+    });
+    if (!membresia) {
+      throw new NotFoundException(`Membresia ${membresia_id} no encontrada`);
+    }
+    return membresia;
+  }
 
-        async findOne(membresia_id: number): Promise<Membresia> {
-            
-            const membresia = await this.Repo.findOne({
-                where: { membresia_id: membresia_id },
-                
-            });
-            if (!membresia) {
-                throw new NotFoundException(`Membresia ${membresia_id} no encontrada`);
-            }
-            return membresia;
-        }
+  async create(info_membresia: CreateMembresiaDto) {
+    const newMembresia = this.Repo.create(info_membresia);
+    return this.Repo.save(newMembresia);
+  }
 
-        async create(info_membresia: CreateMembresiaDto){
-            const newMembresia = this.Repo.create(info_membresia)
-            return this.Repo.save(newMembresia);
-        }
+  async update(
+    membresia_id: number,
+    info_membresia: UpdateMembresiaDto,
+  ): Promise<Membresia> {
+    await this.Repo.update(membresia_id, info_membresia);
+    return this.findOne(membresia_id);
+  }
 
-        async update(membresia_id: number, info_membresia: UpdateMembresiaDto): Promise<Membresia>{
-            await this.Repo.update(membresia_id, info_membresia);
-            return this.findOne(membresia_id);
-        }
-
-        async remove(membresia_id: number): Promise<void>{
-            await this.Repo.delete(membresia_id);
-        }
+  async remove(membresia_id: number): Promise<void> {
+    await this.Repo.delete(membresia_id);
+  }
 }
-
-
-
-
-
-

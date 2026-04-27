@@ -1,15 +1,39 @@
-import { 
-  Controller, Get, Post, Put, Delete, Param, Body, HttpException, 
-  HttpStatus, UseGuards, Req 
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  HttpException,
+  HttpStatus,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
-import { User, UserRole } from './entities/user.entity';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UserRole } from './entities/user.entity';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { AuthenticatedRequest } from '../auth/types/auth.types';
+import { normalizeError } from '../../common/utils/error.util';
 
+/**
+ * Controlador de usuarios.
+ *
+ * Ajustes relevantes del refactor:
+ * - Rutas de perfil usan AuthenticatedRequest para leer req.user con contrato.
+ * - Todos los catch pasan por normalizeError para evitar acceso inseguro sobre unknown.
+ */
 @ApiTags('users')
 @ApiBearerAuth()
 @UseGuards(AuthGuard, RolesGuard)
@@ -24,12 +48,14 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Profile retrieved successfully.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  async getMyProfile(@Req() req: any) {
+  async getMyProfile(@Req() req: AuthenticatedRequest) {
     try {
+      // Usuario autenticado tomado del JWT validado por AuthGuard.
       const userId = req.user.sub;
       return await this.userService.findOne(userId);
     } catch (err) {
-      throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -38,12 +64,17 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Profile updated successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async updateMyProfile(@Req() req: any, @Body() userDto: UpdateUserDto) {
+  async updateMyProfile(
+    @Req() req: AuthenticatedRequest,
+    @Body() userDto: UpdateUserDto,
+  ) {
     try {
+      // El id de edición se toma del token (no del body) para proteger perfil propio.
       const userId = req.user.sub;
-      return await this.userService.update(userId, userDto , true);
+      return await this.userService.update(userId, userDto, true);
     } catch (err) {
-      throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -51,12 +82,14 @@ export class UsersController {
   @ApiOperation({ summary: 'Delete my own account' })
   @ApiResponse({ status: 200, description: 'Account deleted successfully.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async deleteMyProfile(@Req() req: any) {
+  async deleteMyProfile(@Req() req: AuthenticatedRequest) {
     try {
+      // Eliminación de cuenta siempre asociada al usuario autenticado.
       const userId = req.user.sub;
       return await this.userService.remove(userId);
     } catch (err) {
-      throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -67,12 +100,16 @@ export class UsersController {
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'Users retrieved successfully.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Insufficient permissions.' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Insufficient permissions.',
+  })
   async findAllUser() {
     try {
       return await this.userService.findAll();
     } catch (err) {
-      throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -87,7 +124,8 @@ export class UsersController {
     try {
       return await this.userService.findOne(id);
     } catch (err) {
-      throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -104,7 +142,8 @@ export class UsersController {
         fecha_nacimiento: new Date(userDto.fecha_nacimiento),
       });
     } catch (err) {
-      throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -120,7 +159,8 @@ export class UsersController {
     try {
       return await this.userService.update(id, userDto);
     } catch (err) {
-      throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -135,7 +175,8 @@ export class UsersController {
     try {
       return await this.userService.remove(id);
     } catch (err) {
-      throw new HttpException(err.message, err.status || HttpStatus.BAD_REQUEST);
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 }

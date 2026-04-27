@@ -16,9 +16,3 @@ describe('NotiController', () => {
     expect(controller).toBeDefined();
   });
 });
-
-
-
-
-
-

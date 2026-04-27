@@ -7,12 +7,6 @@ import { Membresia } from './entities/membresia.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Membresia])],
   controllers: [MembresiaController],
-  providers: [MembresiaService]
+  providers: [MembresiaService],
 })
 export class MembresiaModule {}
-
-
-
-
-
-

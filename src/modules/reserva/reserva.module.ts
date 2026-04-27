@@ -7,11 +7,8 @@ import { Pista } from '../pista/entities/pista.entity';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Reserva, Pista]), 
-    UsersModule, 
-  ],
-  providers: [ReservaService], 
-  controllers: [ReservaController]
+  imports: [TypeOrmModule.forFeature([Reserva, Pista]), UsersModule],
+  providers: [ReservaService],
+  controllers: [ReservaController],
 })
 export class ReservaModule {}

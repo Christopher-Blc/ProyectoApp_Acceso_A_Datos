@@ -6,51 +6,43 @@ import { UpdatePagoDto } from './dto/pago.dto';
 
 @Injectable()
 export class PagoService {
+  constructor(
+    @InjectRepository(Pago)
+    private readonly pagoRepository: Repository<Pago>,
+  ) {}
 
-    constructor(
-        @InjectRepository(Pago)
-        private readonly pagoRepository: Repository<Pago>,
-    ) {}
+  findAll() {
+    return this.pagoRepository.find({
+      relations: ['usuario', 'reserva'],
+    });
+  }
 
-    findAll() {
-        return this.pagoRepository.find({
-            relations: ['usuario', 'reserva'],
-        });
+  async findOne(pago_id: number): Promise<Pago> {
+    const pago = await this.pagoRepository.findOne({
+      where: { pago_id },
+      relations: ['usuario', 'reserva'],
+    });
+    if (!pago) {
+      throw new NotFoundException(`Pago ${pago_id} no encontrado`);
     }
+    return pago;
+  }
 
-    async findOne(pago_id: number): Promise<Pago> {
-        const pago = await this.pagoRepository.findOne({
-            where: { pago_id },
-            relations: ['usuario', 'reserva'],
-        });
-        if (!pago) {
-            throw new NotFoundException(`Pago ${pago_id} no encontrado`);
-        }
-        return pago;
-    }
+  async create(data: Partial<Pago>) {
+    const pago = this.pagoRepository.create(data);
+    return this.pagoRepository.save(pago);
+  }
 
-    async create(data: Partial<Pago>) {
-        const pago = this.pagoRepository.create(data);
-        return this.pagoRepository.save(pago);
-    }
+  async update(pago_id: number, data: UpdatePagoDto) {
+    await this.pagoRepository.update(pago_id, data);
+    return this.findOne(pago_id);
+  }
 
-    async update(pago_id: number, data: UpdatePagoDto) {
-        await this.pagoRepository.update(pago_id, data);
-        return this.findOne(pago_id);
+  async remove(pago_id: number): Promise<void> {
+    const pago = await this.findOne(pago_id);
+    if (!pago) {
+      throw new NotFoundException(`Pago ${pago_id} no encontrado`);
     }
-
-    async remove(pago_id: number): Promise<void> {
-        const pago = await this.findOne(pago_id);
-        if (!pago) {
-            throw new NotFoundException(`Pago ${pago_id} no encontrado`);
-        }
-        await this.pagoRepository.delete(pago_id);
-    }
-    
+    await this.pagoRepository.delete(pago_id);
+  }
 }
-
-
-
-
-
-

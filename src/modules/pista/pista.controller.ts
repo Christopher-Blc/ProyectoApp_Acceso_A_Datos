@@ -1,8 +1,25 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  HttpException,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { PistaService } from './pista.service';
 import { PistaDto } from './dto/pista.dto';
 import { Pista } from './entities/pista.entity';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -78,7 +95,10 @@ export class PistaController {
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Court not found.' })
-  async update(@Param('id') id: number, @Body() pistaDto: PistaDto): Promise<Pista> {
+  async update(
+    @Param('id') id: number,
+    @Body() pistaDto: PistaDto,
+  ): Promise<Pista> {
     try {
       return this.pistaService.update(id, pistaDto);
     } catch (err) {
@@ -108,9 +128,3 @@ export class PistaController {
     }
   }
 }
-
-
-
-
-
-

@@ -31,9 +31,3 @@ import { AuthGuard } from './guards/auth.guard';
   exports: [AuthService, AuthGuard],
 })
 export class AuthModule {}
-
-
-
-
-
-

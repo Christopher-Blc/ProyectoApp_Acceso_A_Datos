@@ -1,6 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm";
-import { Pista } from "../../pista/entities/pista.entity";
-
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Pista } from '../../pista/entities/pista.entity';
 
 @Entity('tipos_pista')
 export class TipoPista {
@@ -10,12 +9,9 @@ export class TipoPista {
   @Column()
   nombre: string;
 
-  @Column({ })
+  @Column({})
   imagen: string; // Aquí guardaremos algo como "pista-tenis.jpg"
 
   @OneToMany(() => Pista, (pista) => pista.tipo_pista)
   pistas: Pista[];
- 
 }
-
-

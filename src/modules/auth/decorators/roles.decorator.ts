@@ -7,9 +7,3 @@ export const ROLES_KEY = 'roles';
 //el decorador solo almacena los roles en los metadatos del controlador o metodo y no realiza ninguna logica de autorizacion
 //ROLES_KEY es la clave con la que se almacenan los roles en los metadatos y , roles es un array de roles permitidos
 export const Roles = (...roles: UserRole[]) => SetMetadata(ROLES_KEY, roles);
-
-
-
-
-
-

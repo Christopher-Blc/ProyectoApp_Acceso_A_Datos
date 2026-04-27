@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TipoPista } from './entities/tipo_pista.entity';
@@ -18,7 +23,9 @@ export class TipoPistaService {
 
   // Obtener uno por ID
   async findOne(id: number): Promise<TipoPista> {
-    const tipo = await this.tipoPistaRepository.findOneBy({ tipo_pista_id: id });
+    const tipo = await this.tipoPistaRepository.findOneBy({
+      tipo_pista_id: id,
+    });
     if (!tipo) {
       throw new NotFoundException(`No se ha encontrado ese tipo de pista`);
     }
@@ -28,8 +35,8 @@ export class TipoPistaService {
   // Crear un nuevo tipo
   async create(dto: TipoPistaDto): Promise<TipoPista> {
     //mirar primero si ya existe un tipo con ese nombre
-    const existe = await this.tipoPistaRepository.findOne({ 
-      where: { nombre: dto.nombre } 
+    const existe = await this.tipoPistaRepository.findOne({
+      where: { nombre: dto.nombre },
     });
 
     if (existe) {
@@ -45,20 +52,20 @@ export class TipoPistaService {
   }
 
   async update(id: number, dto: TipoPistaDto): Promise<TipoPista> {
-    const tipo = await this.findOne(id); 
+    const tipo = await this.findOne(id);
 
     if (!tipo) {
       throw new NotFoundException('No se ha encontrado ese tipo de pista');
     }
     this.tipoPistaRepository.merge(tipo, dto);
-    
+
     return await this.tipoPistaRepository.save(tipo);
   }
 
   // Eliminar
   async remove(id: number): Promise<{ deleted: boolean }> {
     const tipo = await this.findOne(id);
-    
+
     try {
       await this.tipoPistaRepository.remove(tipo);
       return { deleted: true };

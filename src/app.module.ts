@@ -1,11 +1,11 @@
-import { Module } from "@nestjs/common";
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from "@nestjs/typeorm";
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { UsersModule } from "./modules/users/users.module";
-import { AppService } from "./app.service";
-import { AppController } from "./app.controller";
+import { UsersModule } from './modules/users/users.module';
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
 import { ReservaModule } from './modules/reserva/reserva.module';
 import { ResenyaModule } from './modules/resenya/resenya.module';
 import { MembresiaModule } from './modules/membresia/membresia.module';
@@ -16,12 +16,9 @@ import { PistaModule } from './modules/pista/pista.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
 
-
-
 @Module({
-  
   imports: [
-     ConfigModule.forRoot({
+    ConfigModule.forRoot({
       isGlobal: true,
     }),
 
@@ -38,7 +35,7 @@ import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
       },
       {
         name: 'auth',
-        ttl: 3600000,//  60 minutos
+        ttl: 3600000, //  60 minutos
         limit: 100,
       },
     ]),
@@ -46,7 +43,7 @@ import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || 'database',
-      port: parseInt(process.env.DB_PORT!) || 3306,                             
+      port: parseInt(process.env.DB_PORT!) || 3306,
       username: process.env.DB_USER || 'root',
       password: process.env.DB_PASSWORD || 'my-secret',
       database: process.env.DB_DATABASE || 'test',
@@ -74,4 +71,3 @@ import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
   ],
 })
 export class AppModule {}
-

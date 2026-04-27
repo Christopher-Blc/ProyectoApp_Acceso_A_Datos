@@ -6,48 +6,40 @@ import { UpdateNotiDto } from './dto/noti.dto';
 
 @Injectable()
 export class NotiService {
-    constructor( 
-        @InjectRepository(Noti)
-        private readonly notiRepository: Repository<Noti>,
-    ){}
+  constructor(
+    @InjectRepository(Noti)
+    private readonly notiRepository: Repository<Noti>,
+  ) {}
 
-    findAll() {
-        return this.notiRepository.find({
-            relations: ['user'],
-        });
+  findAll() {
+    return this.notiRepository.find({
+      relations: ['user'],
+    });
+  }
+
+  async findOne(noti_id: number): Promise<Noti> {
+    const noti = await this.notiRepository.findOne({
+      where: { noti_id },
+      relations: ['user'],
+    });
+    if (!noti) {
+      throw new NotFoundException(`Noti ${noti_id} no encontrada`);
     }
+    return noti;
+  }
 
-   
+  async create(data: Partial<Noti>) {
+    const noti = this.notiRepository.create(data);
+    return this.notiRepository.save(noti);
+  }
 
-    async findOne(noti_id: number): Promise<Noti> {
-        const noti = await this.notiRepository.findOne({
-            where: { noti_id },
-            relations: ['user'],
-        });
-        if (!noti) {
-            throw new NotFoundException(`Noti ${noti_id} no encontrada`);
-        }
-        return noti;
-    }
+  async update(noti_id: number, data: UpdateNotiDto) {
+    await this.notiRepository.update(noti_id, data);
+    return this.findOne(noti_id);
+  }
 
-    async create(data: Partial<Noti>) {
-        const noti = this.notiRepository.create(data);
-        return this.notiRepository.save(noti);
-    }
-
-    async update(noti_id: number, data: UpdateNotiDto) {
-        await this.notiRepository.update(noti_id, data);
-        return this.findOne(noti_id);
-    }
-
-    async remove (id: number) {
-        await this.notiRepository.delete(id);
-        return { deleted: true };
-    }
+  async remove(id: number) {
+    await this.notiRepository.delete(id);
+    return { deleted: true };
+  }
 }
-
-
-
-
-
-

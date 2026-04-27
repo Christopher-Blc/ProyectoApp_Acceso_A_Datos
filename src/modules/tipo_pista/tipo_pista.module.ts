@@ -5,11 +5,9 @@ import { TipoPista } from './entities/tipo_pista.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([TipoPista]), 
-  ],
+  imports: [TypeOrmModule.forFeature([TipoPista])],
   controllers: [TipoPistaController],
   providers: [TipoPistaService],
-  exports: [TipoPistaService], 
+  exports: [TipoPistaService],
 })
 export class TipoPistaModule {}

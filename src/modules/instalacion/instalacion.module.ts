@@ -7,12 +7,6 @@ import { Instalacion } from './entities/instalacion.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Instalacion])],
   controllers: [InstalacionController],
-  providers: [InstalacionService]
+  providers: [InstalacionService],
 })
 export class InstalacionModule {}
-
-
-
-
-
-

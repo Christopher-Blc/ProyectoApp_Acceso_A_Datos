@@ -7,12 +7,6 @@ import { Pista } from './entities/pista.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Pista])],
   providers: [PistaService],
-  controllers: [PistaController]
+  controllers: [PistaController],
 })
 export class PistaModule {}
-
-
-
-
-
-
