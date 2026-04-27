@@ -24,38 +24,42 @@ export class PistaService {
 
 
     async obtenerDisponibilidad(fechaString: string) {
-  // fechaString viene como "2026-04-27"
-  
+  // 1. Convertimos a objeto Date para sacar el día de la semana
+  // Asegúrate de que fechaString sea "YYYY-MM-DD"
   const fecha = new Date(fechaString);
+  
   const dias = [
     DiaSemana.DOMINGO, DiaSemana.LUNES, DiaSemana.MARTES, 
     DiaSemana.MIERCOLES, DiaSemana.JUEVES, DiaSemana.VIERNES, DiaSemana.SABADO
   ];
   const nombreDia = dias[fecha.getDay()];
 
+  // 2. Buscamos pistas que abren ese día
   const pistas = await this.pistaRepo.find({
     where: { dia_semana: nombreDia },
     relations: ['tipo_pista'],
   });
 
-  // Intentamos la búsqueda con una comparación de string exacta
+  // 3. Buscamos reservas para ese día exacto
+  // Si en tu Entity fecha_reserva es tipo Date, TypeORM suele entenderse bien con el string "YYYY-MM-DD"
   const reservasDelDia = await this.reservaRepo.find({
     where: {
-      fecha_reserva: fechaString as any // Forzamos el cast para que no se queje TS
+      fecha_reserva: fechaString as any // Usamos el cast para evitar el error de TS que comentabas
     }
   });
 
-  // LOG PARA DEPURAR (Mira esto en tu consola de NestJS)
-  console.log('--- DEPURACIÓN DISPONIBILIDAD ---');
-  console.log('Fecha recibida del Front:', fechaString);
-  console.log('Reservas encontradas en total:', reservasDelDia.length);
-  if (reservasDelDia.length > 0) {
-      console.log('Fecha de la primera reserva en DB:', reservasDelDia[0].fecha_reserva);
-  }
+  // LOGS DE CONTROL
+  console.log(`[Disponibilidad] Fecha: ${fechaString} (${nombreDia})`);
+  console.log(`[Disponibilidad] Pistas encontradas: ${pistas.length}`);
+  console.log(`[Disponibilidad] Reservas encontradas: ${reservasDelDia.length}`);
 
+  // 4. Mapeamos las pistas y les inyectamos sus reservas
   return pistas.map(pista => {
     const reservasPista = reservasDelDia
-      .filter(r => Number(r.pista_id) === Number(pista.pista_id))
+      .filter(r => {
+        // Forzamos conversión a Number por si la DB devuelve strings en los IDs
+        return Number(r.pista_id) === Number(pista.pista_id);
+      })
       .map(r => ({
         inicio: r.hora_inicio,
         fin: r.hora_fin
@@ -63,6 +67,7 @@ export class PistaService {
 
     return {
       ...pista,
+      estado: "DISPONIBLE", // Opcional: podrías calcular si está llena aquí
       reservas_actuales: reservasPista
     };
   });
