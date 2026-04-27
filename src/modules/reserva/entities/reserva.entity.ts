@@ -23,7 +23,7 @@ export class Reserva {
     pista_id: number;
 
     @Column({ type: 'date' })
-    fecha_reserva: string;
+    fecha_reserva: Date;
 
     @Column({type: 'time'})
     hora_inicio: string;
