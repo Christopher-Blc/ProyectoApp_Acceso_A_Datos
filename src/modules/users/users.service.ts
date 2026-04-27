@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { User, UserRole } from './entities/user.entity';
 import { UpdateUserDto } from './dto/users.dto';
 import { Membresia } from '../membresia/entities/membresia.entity'; // Asegúrate de que la ruta sea correcta
+import { Reserva, estadoReserva } from '../reserva/entities/reserva.entity';
 
 @Injectable()
 export class UsersService {
@@ -17,19 +18,26 @@ export class UsersService {
     //que haya realizado , le meteremos una mambresia u otra automaticamente
     @InjectRepository(Membresia)
     private readonly membresiaRepository: Repository<Membresia>,
+    @InjectRepository(Reserva)
+    private readonly reservaRepository: Repository<Reserva>,
   ) {}
 
   //update automatico de membresia
   async updateUserRank(usuario_id: number): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { usuario_id },
-      relations: ['reservas', 'membresia'],
+      relations: ['membresia'],
     });
 
     if (!user) return;
 
-    // Contamos reservas finalizadas
-    const totalFinalizadas = user.reservas.filter(r => r.estado === 'FINALIZADA').length;
+    // Contamos en BD solo reservas finalizadas del usuario.
+    const totalFinalizadas = await this.reservaRepository.count({
+      where: {
+        usuario_id,
+        estado: estadoReserva.FINALIZADA,
+      },
+    });
 
     // Buscamos en la tabla de membresías cuál le corresponde.
     // Buscamos la membresía con el mayor número de 'reservas_requeridas' 
