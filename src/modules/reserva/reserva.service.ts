@@ -37,7 +37,7 @@ export class ReservaService {
         if (!usuario_id) throw new ForbiddenException('No tienes permiso para ver estas reservas');
         const reservas = await this.reservaRepo.find({
             where: { usuario_id},
-            relations: ['usuario', 'pista', 'pagos'], 
+           // relations: ['usuario', 'pista', 'pagos'], 
         });
         return reservas;
     }
