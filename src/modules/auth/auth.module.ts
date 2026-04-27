@@ -18,7 +18,7 @@ import { AuthGuard } from './guards/auth.guard';
       global: true,
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (_configService: ConfigService) => ({
+      useFactory: () => ({
         // Secret para firmar/verificar access tokens (configurado por ENV)
         secret: process.env.JWT_ACCESS_SECRET as string,
         // Duración por defecto del access token

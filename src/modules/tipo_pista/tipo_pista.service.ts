@@ -46,7 +46,7 @@ export class TipoPistaService {
     try {
       const nuevoTipo = this.tipoPistaRepository.create(dto);
       return await this.tipoPistaRepository.save(nuevoTipo);
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException('Error al crear el tipo de pista');
     }
   }
@@ -69,7 +69,7 @@ export class TipoPistaService {
     try {
       await this.tipoPistaRepository.remove(tipo);
       return { deleted: true };
-    } catch (error) {
+    } catch {
       // Si hay pistas vinculadas a este tipo, la base de datos dará error de FK
       throw new BadRequestException(
         'No se puede eliminar el tipo porque tiene pistas asociadas. Elimina primero las pistas.',

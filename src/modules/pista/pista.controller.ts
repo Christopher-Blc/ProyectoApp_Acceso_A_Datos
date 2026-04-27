@@ -17,7 +17,6 @@ import { Pista } from './entities/pista.entity';
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -65,7 +64,7 @@ export class PistaController {
     description: 'Fecha en formato YYYY-MM-DD',
   })
   @UseGuards(AuthGuard) // Asumo que quieres que solo usuarios logueados vean disponibilidad
-  async getDisponibilidad(@Query('fecha') fecha: string) {
+  getDisponibilidad(@Query('fecha') fecha: string) {
     // TODO: Implementar obtenerDisponibilidad en PistaService
     return { message: 'Feature not yet implemented', fecha };
   }
