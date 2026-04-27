@@ -36,10 +36,11 @@ services:
       - mariadb_data:/var/lib/mysql
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin:latest
+    platform: linux/arm64
     container_name: respi-phpmyadmin
     ports:
-      - "8082:80"
+      - "8081:80"
     environment:
       PMA_HOST: ${DB_HOST}
       PMA_PORT: ${DB_PORT}
