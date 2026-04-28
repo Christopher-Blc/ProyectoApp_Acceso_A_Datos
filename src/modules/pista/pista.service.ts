@@ -38,10 +38,10 @@ export class PistaService {
 
     //Buscamos reservas para ese día exacto ("YYYY-MM-DD")
     const reservasDelDia = await this.reservaRepo.find({
-      where: {
-        fecha_reserva: fechaString as any 
-      }
-    });
+    where: {
+      fecha_reserva: fechaString as any // Usamos el cast para evitar el error de TS que comentabas
+    }
+  });
 
     // Logs para comprobaciones
     // console.log(`[Disponibilidad] Fecha: ${fechaString} (${nombreDia})`);
