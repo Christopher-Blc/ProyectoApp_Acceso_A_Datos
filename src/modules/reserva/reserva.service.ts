@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { estadoReserva, Reserva } from './entities/reserva.entity';
 import { CreateReservaDto, UpdateReservaDto } from './dto/reserva.dto';
 import { UserRole } from '../users/entities/user.entity';
@@ -21,8 +21,22 @@ export class ReservaService {
     private readonly userService: UsersService,
   ) {}
 
-  async findAll(): Promise<Reserva[]> {
-    return this.reservaRepo.find({ relations: ['usuario', 'pista', 'pagos'] });
+  async findAll(pista_id?: number, fecha_desde?: string): Promise<Reserva[]> {
+    const where: any = {};
+
+    if (pista_id) {
+      where.pista_id = pista_id;
+    }
+
+    if (fecha_desde) {
+      where.fecha_reserva = MoreThanOrEqual(fecha_desde);
+    }
+
+    return this.reservaRepo.find({
+      where,
+      relations: ['usuario', 'pista', 'pagos'],
+      order: { fecha_reserva: 'ASC', hora_inicio: 'ASC' } 
+    });
   }
 
   async findOne(reserva_id: number): Promise<Reserva> {
