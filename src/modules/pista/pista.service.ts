@@ -1,14 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Pista } from './entities/pista.entity';
+import { DiaSemana, Pista } from './entities/pista.entity';
 import { Repository } from 'typeorm';
 import { PistaDto, UpdatePistaDto } from './dto/pista.dto';
+import { Reserva } from '../reserva/entities/reserva.entity';
 
 @Injectable()
 export class PistaService {
   constructor(
     @InjectRepository(Pista)
     private readonly pistaRepo: Repository<Pista>, // `pistaRepo` es el acceso a todas las operaciones de la tabla Pista
+    @InjectRepository(Pista)
+    private readonly reservaRepo: Repository<Reserva>,
   ) {}
 
   async findAll(): Promise<Pista[]> {
@@ -16,6 +19,70 @@ export class PistaService {
       relations: ['reservas', 'resenya', 'horarios_pista', 'instalacion'],
     });
   }
+
+  async obtenerDisponibilidad(fechaString: string) {
+    // 1. Convertimos a objeto Date para sacar el día de la semana
+    // Asegúrate de que fechaString sea "YYYY-MM-DD"
+    const fecha = new Date(fechaString);
+    
+    const dias = [
+      DiaSemana.DOMINGO, DiaSemana.LUNES, DiaSemana.MARTES, 
+      DiaSemana.MIERCOLES, DiaSemana.JUEVES, DiaSemana.VIERNES, DiaSemana.SABADO
+    ];
+    const nombreDia = dias[fecha.getDay()];
+
+    // 2. Buscamos pistas que abren ese día
+    const pistas = await this.pistaRepo.find({
+      where: { dia_semana: nombreDia },
+      relations: ['tipo_pista'],
+    });
+
+    // 3. Buscamos reservas para ese día exacto
+    // Si en tu Entity fecha_reserva es tipo Date, TypeORM suele entenderse bien con el string "YYYY-MM-DD"
+    const reservasDelDia = await this.reservaRepo.find({
+      where: {
+        fecha_reserva: fechaString as any // Usamos el cast para evitar el error de TS que comentabas
+      }
+    });
+
+    // LOGS DE CONTROL
+    console.log(`[Disponibilidad] Fecha: ${fechaString} (${nombreDia})`);
+    console.log(`[Disponibilidad] Pistas encontradas: ${pistas.length}`);
+    console.log(`[Disponibilidad] Reservas encontradas: ${reservasDelDia.length}`);
+
+    // 4. Mapeamos las pistas y les inyectamos sus reservas
+    return pistas.map(pista => {
+      const reservasPista = reservasDelDia
+        .filter(r => {
+          // Forzamos conversión a Number por si la DB devuelve strings en los IDs
+          return Number(r.pista_id) === Number(pista.pista_id);
+        })
+        .map(r => ({
+          inicio: r.hora_inicio,
+          fin: r.hora_fin
+        }));
+
+      return {
+        ...pista,
+        estado: "DISPONIBLE", // Opcional: podrías calcular si está llena aquí
+        reservas_actuales: reservasPista
+      };
+    });
+  }
+
+
+      
+      // --- Funciones auxiliares para manejar horas ---
+      private parseHora(hora: string): number {
+        const [h, m] = hora.split(':').map(Number);
+        return h + m / 60;
+      }
+
+      private formatHora(decimal: number): string {
+        const h = Math.floor(decimal);
+        const m = (decimal % 1) * 60;
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+      }
 
   async findOne(pista_id: number): Promise<Pista> {
     const pista = await this.pistaRepo.findOne({

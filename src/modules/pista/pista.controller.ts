@@ -51,23 +51,17 @@ export class PistaController {
     }
   }
 
+
   @Get('disponibilidad')
   @ApiOperation({ summary: 'Obtener disponibilidad de pistas por fecha' })
-  @ApiResponse({
-    status: 200,
-    description: 'Disponibilidad calculada correctamente.',
-  })
+  @ApiResponse({ status: 200, description: 'Disponibilidad calculada correctamente.' })
   @ApiResponse({ status: 401, description: 'No autorizado.' })
-  @ApiQuery({
-    name: 'fecha',
-    example: '2026-04-27',
-    description: 'Fecha en formato YYYY-MM-DD',
-  })
-  @UseGuards(AuthGuard) // Asumo que quieres que solo usuarios logueados vean disponibilidad
-  getDisponibilidad(@Query('fecha') fecha: string) {
-    // TODO: Implementar obtenerDisponibilidad en PistaService
-    return { message: 'Feature not yet implemented', fecha };
+  @ApiQuery({ name: 'fecha', example: '2026-04-27', description: 'Fecha en formato YYYY-MM-DD' })
+  @UseGuards(AuthGuard)  
+  async getDisponibilidad(@Query('fecha') fecha: string) {
+      return await this.pistaService.obtenerDisponibilidad(fecha);
   }
+    
 
   // GET /pista/:id -> obtener un pista por ID
   @Get(':id')
