@@ -16,7 +16,6 @@ export class ReservaService {
   constructor(
     @InjectRepository(Reserva)
     private readonly reservaRepo: Repository<Reserva>,
-    //nos hace falta pista aqui para calcular el precio total
     @InjectRepository(Pista)
     private readonly pistaRepo: Repository<Pista>,
     private readonly userService: UsersService,
@@ -28,47 +27,32 @@ export class ReservaService {
 
   async findOne(reserva_id: number): Promise<Reserva> {
     const reserva = await this.reservaRepo.findOne({
-      where: { reserva_id: reserva_id },
-      relations: ['usuario', 'pista', 'pagos'], //
+      where: { reserva_id },
+      relations: ['usuario', 'pista', 'pagos'],
     });
-    if (!reserva) {
-      throw new NotFoundException('No se ha encontrado esa reserva.');
-    }
+    if (!reserva) throw new NotFoundException('No se ha encontrado esa reserva.');
     return reserva;
   }
 
   async findByUserId(usuario_id: number): Promise<Reserva[]> {
-    if (!usuario_id)
-      throw new ForbiddenException('No tienes permiso para ver estas reservas');
-    const reservas = await this.reservaRepo.find({
+    if (!usuario_id) throw new ForbiddenException('No tienes permiso');
+    return this.reservaRepo.find({
       where: { usuario_id },
       relations: ['usuario', 'pista', 'pagos'],
     });
-    return reservas;
   }
 
   async create(dto: CreateReservaDto, usuario_id: number): Promise<Reserva> {
-    // 1. Buscamos la pista para obtener su precio por hora real
     const pista = await this.pistaRepo.findOneBy({ pista_id: dto.pista_id });
     if (!pista) throw new NotFoundException('Pista no encontrada');
 
-    // 2. Calculamos la duración exacta
-    const [hInicio, mInicio] = dto.hora_inicio.split(':').map(Number);
-    const [hFin, mFin] = dto.hora_fin.split(':').map(Number);
-    const totalMinutos = hFin * 60 + mFin - (hInicio * 60 + mInicio);
-
-    if (totalMinutos <= 0) {
-      throw new ForbiddenException(
-        'La hora de fin debe ser posterior a la de inicio',
-      );
-    }
-
-    const duracionHoras = totalMinutos / 60;
-    const precioCalculado = Number(
-      (duracionHoras * pista.precio_hora).toFixed(2),
+    //calculamos el precio final aqui para que no se hagan trampas desde el front
+    const precioCalculado = this.calcularPrecio(
+      Number(pista.precio_hora), 
+      dto.hora_inicio, 
+      dto.hora_fin
     );
 
-    // 4. Creamos la reserva con estado PENDIENTE por defecto
     const newReserva = this.reservaRepo.create({
       ...dto,
       usuario_id,
@@ -88,27 +72,19 @@ export class ReservaService {
   ): Promise<Reserva> {
     const reserva = await this.findOne(reserva_id);
 
-    // Bloqueo de seguridad: Solo se edita si está PENDIENTE
-    if (
-      reserva.estado !== estadoReserva.PENDIENTE &&
-      user_role === UserRole.CLIENTE
-    ) {
-      throw new ForbiddenException(
-        'No puedes modificar una reserva que ya ha sido procesada o pagada.',
-      );
-    }
-
-    // Verificamos permisos
-    const isAdmin =
-      user_role === UserRole.SUPER_ADMIN ||
-      user_role === UserRole.ADMINISTRACION;
+    // 1. Verificamos permisos de edición
+    const isAdmin = user_role === UserRole.SUPER_ADMIN || user_role === UserRole.ADMINISTRACION;
+    
     if (reserva.usuario_id !== user_id && !isAdmin) {
-      throw new ForbiddenException(
-        'No tienes permiso para editar esta reserva',
-      );
+      throw new ForbiddenException('No tienes permiso para editar esta reserva');
     }
 
-    // Si se cambian horas o pista, recalculamos el precio
+    // 2. Bloqueo: Clientes no tocan reservas pagadas/procesadas
+    if (reserva.estado !== estadoReserva.PENDIENTE && !isAdmin) {
+      throw new ForbiddenException('No puedes modificar una reserva ya procesada.');
+    }
+
+    // 3. Recálculo de precio (Solo si cambian datos clave y NO está pagada, o si es Admin)
     if (dto.pista_id || dto.hora_inicio || dto.hora_fin) {
       const id_pista = dto.pista_id || reserva.pista_id;
       const h_inicio = dto.hora_inicio || reserva.hora_inicio;
@@ -117,35 +93,25 @@ export class ReservaService {
       const pista = await this.pistaRepo.findOneBy({ pista_id: id_pista });
       if (!pista) throw new NotFoundException('Esa pista no existe');
 
-      const [h1, m1] = h_inicio.split(':').map(Number);
-      const [h2, m2] = h_fin.split(':').map(Number);
-      const totalMinutos = h2 * 60 + m2 - (h1 * 60 + m1);
-      if (totalMinutos <= 0)
-        throw new ForbiddenException(
-          'La hora de fin debe ser posterior a la de inicio',
-        );
-
-      const duracion = totalMinutos / 60;
-      (dto as any).precio_total = Number(
-        (duracion * pista.precio_hora).toFixed(2),
+      // Actualizamos el precio_total en el objeto que se va a guardar
+      (dto as any).precio_total = this.calcularPrecio(
+        Number(pista.precio_hora), 
+        h_inicio, 
+        h_fin
       );
     }
 
-    // Recalculamos membresia cuando la reserva entra o sale de FINALIZADA.
+    // 4. Lógica de Rango de Usuario (Membresía)
     const estadoAnterior = reserva.estado;
     const nuevoEstado = dto.estado;
 
     await this.reservaRepo.update(reserva_id, dto);
 
-    const cambiaEstadoFinalizacion =
-      nuevoEstado !== undefined &&
-      ((estadoAnterior !== estadoReserva.FINALIZADA &&
-        nuevoEstado === estadoReserva.FINALIZADA) ||
-        (estadoAnterior === estadoReserva.FINALIZADA &&
-          nuevoEstado !== estadoReserva.FINALIZADA));
-
-    if (cambiaEstadoFinalizacion) {
-      await this.userService.updateUserRank(reserva.usuario_id);
+    // Si el estado pasa a FINALIZADA (o deja de serlo), actualizamos el rango
+    if (nuevoEstado && nuevoEstado !== estadoAnterior) {
+        if (nuevoEstado === estadoReserva.FINALIZADA || estadoAnterior === estadoReserva.FINALIZADA) {
+            await this.userService.updateUserRank(reserva.usuario_id);
+        }
     }
 
     return this.findOne(reserva_id);
@@ -154,6 +120,7 @@ export class ReservaService {
   async remove(reserva_id: number): Promise<{ deleted: boolean }> {
     const reserva = await this.findOne(reserva_id);
     const eraFinalizada = reserva.estado === estadoReserva.FINALIZADA;
+    
     await this.reservaRepo.delete(reserva.reserva_id);
 
     if (eraFinalizada) {
@@ -161,5 +128,33 @@ export class ReservaService {
     }
 
     return { deleted: true };
+  }
+
+  //Funcion que calcula el precio total de la reserva segun la pista y las horas de inicio y fin
+  private calcularPrecio(pistaPrecio: number, inicio: string, fin: string): number {
+    const [hI, mI] = inicio.split(':').map(Number);
+    const [hF, mF] = fin.split(':').map(Number);
+    
+    const minutosInicio = hI * 60 + mI;
+    const minutosFin = hF * 60 + mF;
+    
+    // Calculamos la diferencia
+    let diferencia = minutosFin - minutosInicio;
+
+    // Si es negativa (ej: 23:00 a 01:00), es que saltó el día.
+    // Sumamos 1440 para sacar los minutos reales de diferencia.
+    if (diferencia < 0) {
+      diferencia += 1440; 
+    }
+
+    // Si es 0, es que han puesto la misma hora (error)
+    if (diferencia === 0) {
+      throw new ForbiddenException('La hora de inicio y fin no pueden ser iguales');
+    }
+
+    const duracionHoras = diferencia / 60;
+    
+    // Devolvemos el precio final bien calculado
+    return Number((duracionHoras * pistaPrecio).toFixed(2));
   }
 }
