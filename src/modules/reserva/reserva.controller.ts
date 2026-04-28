@@ -10,6 +10,7 @@ import {
   HttpStatus,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { Reserva } from './entities/reserva.entity';
 import { CreateReservaDto, UpdateReservaDto } from './dto/reserva.dto';
@@ -42,15 +43,16 @@ import { normalizeError } from '../../common/utils/error.util';
 export class ReservaController {
   constructor(private readonly reservaService: ReservaService) {}
 
+  //el get puede recibir OPCIONALMENTE pista id y fecha para filrar
   @Get()
   @ApiOperation({ summary: 'Get all reservas' })
   @ApiResponse({ status: 200, description: 'Reservas retrieved successfully.' })
   @ApiResponse({ status: 204, description: 'No content.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async findAll(): Promise<Reserva[]> {
+  async findAll( @Query('pista_id') pista_id?: number, @Query('fecha_desde') fecha_desde?: string,): Promise<Reserva[]> {
     try {
-      return this.reservaService.findAll();
+      return await this.reservaService.findAll(pista_id, fecha_desde);
     } catch (err) {
       throw new HttpException(
         err.message,
