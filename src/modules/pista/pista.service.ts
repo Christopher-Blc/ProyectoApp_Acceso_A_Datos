@@ -10,7 +10,7 @@ export class PistaService {
   constructor(
     @InjectRepository(Pista)
     private readonly pistaRepo: Repository<Pista>, // `pistaRepo` es el acceso a todas las operaciones de la tabla Pista
-    @InjectRepository(Pista)
+    @InjectRepository(Reserva)
     private readonly reservaRepo: Repository<Reserva>,
   ) {}
 
