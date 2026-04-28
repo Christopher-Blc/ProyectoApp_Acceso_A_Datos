@@ -10,5 +10,6 @@ import { UsersModule } from '../users/users.module';
   imports: [TypeOrmModule.forFeature([Reserva, Pista]), UsersModule],
   providers: [ReservaService],
   controllers: [ReservaController],
+  exports: [TypeOrmModule],
 })
 export class ReservaModule {}
