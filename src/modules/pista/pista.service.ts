@@ -16,7 +16,7 @@ export class PistaService {
 
   async findAll(): Promise<Pista[]> {
     return this.pistaRepo.find({
-      relations: ['reservas', 'resenya', 'horarios_pista', 'instalacion'],
+      relations: ['reservas', 'resenya', 'instalacion'],
     });
   }
 
