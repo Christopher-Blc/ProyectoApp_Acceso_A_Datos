@@ -21,8 +21,7 @@ export class PistaService {
   }
 
   async obtenerDisponibilidad(fechaString: string) {
-    // 1. Convertimos a objeto Date para sacar el día de la semana
-    // Asegúrate de que fechaString sea "YYYY-MM-DD"
+    //Convertimos a objeto Date para sacar el día de la semana
     const fecha = new Date(fechaString);
     
     const dias = [
@@ -37,20 +36,19 @@ export class PistaService {
       relations: ['tipo_pista'],
     });
 
-    // 3. Buscamos reservas para ese día exacto
-    // Si en tu Entity fecha_reserva es tipo Date, TypeORM suele entenderse bien con el string "YYYY-MM-DD"
+    //Buscamos reservas para ese día exacto ("YYYY-MM-DD")
     const reservasDelDia = await this.reservaRepo.find({
       where: {
-        fecha_reserva: fechaString as any // Usamos el cast para evitar el error de TS que comentabas
+        fecha_reserva: fechaString as any 
       }
     });
 
-    // LOGS DE CONTROL
-    console.log(`[Disponibilidad] Fecha: ${fechaString} (${nombreDia})`);
-    console.log(`[Disponibilidad] Pistas encontradas: ${pistas.length}`);
-    console.log(`[Disponibilidad] Reservas encontradas: ${reservasDelDia.length}`);
+    // Logs para comprobaciones
+    // console.log(`[Disponibilidad] Fecha: ${fechaString} (${nombreDia})`);
+    // console.log(`[Disponibilidad] Pistas encontradas: ${pistas.length}`);
+    // console.log(`[Disponibilidad] Reservas encontradas: ${reservasDelDia.length}`);
 
-    // 4. Mapeamos las pistas y les inyectamos sus reservas
+    //mapeamos las pistas y les inyectamos sus reservas
     return pistas.map(pista => {
       const reservasPista = reservasDelDia
         .filter(r => {
@@ -64,7 +62,7 @@ export class PistaService {
 
       return {
         ...pista,
-        estado: "DISPONIBLE", // Opcional: podrías calcular si está llena aquí
+        estado: "DISPONIBLE", //si se implementa lo de unirse a partidos , habraia que controlar aqui la disponibilidad real de la pista segun sus reservas
         reservas_actuales: reservasPista
       };
     });
