@@ -104,6 +104,20 @@ export class PistaService {
   }
 
   async remove(pista_id: number): Promise<void> {
+    const hoy = new Date().toISOString().split('T')[0];
+
+    // 1. Cancelamos lo pendiente antes de que el ID deje de existir
+    await this.reservaRepo.update(
+      { 
+        pista_id: pista_id, 
+        estado: In([estadoReserva.PENDIENTE, estadoReserva.CONFIRMADA]),
+        fecha_reserva: MoreThanOrEqual(hoy as any)
+      },
+      { 
+        estado: estadoReserva.CANCELADA,
+        nota: 'La pista ha sido eliminada del sistema.' 
+      }
+    );
     await this.pistaRepo.delete(pista_id);
   }
 }

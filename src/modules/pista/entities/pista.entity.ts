@@ -14,7 +14,6 @@ import { TipoPista } from '../../tipo_pista/entities/tipo_pista.entity';
 export enum EstadoPista {
   DISPONIBLE = 'DISPONIBLE',
   MANTENIMIENTO = 'MANTENIMIENTO',
-  RESERVADA = 'RESERVADA',
   INACTIVA = 'INACTIVA',
 }
 
