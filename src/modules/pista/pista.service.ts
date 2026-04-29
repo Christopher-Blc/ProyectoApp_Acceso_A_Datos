@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DiaSemana, Pista, EstadoPista } from './entities/pista.entity';
-import { Repository, In, MoreThanOrEqual } from 'typeorm';
+import { Repository, In, MoreThanOrEqual, Between } from 'typeorm';
 import { PistaDto, UpdatePistaDto } from './dto/pista.dto';
 import { Reserva, estadoReserva } from '../reserva/entities/reserva.entity';
 
@@ -86,6 +86,10 @@ export class PistaService {
     return this.pistaRepo.save(this.pistaRepo.create(data));
   }
 
+  //edita la pista con los datos que le pasemos y ademas tiene la logica para que al 
+  //meter una pista en mantenimiento o inactiva , cancele las reservas futuras relacionadas 
+  //con esa pista , ademas puede recibir fecha de inicio y fin para solo cancelar las reservas
+  //en este rango de fechas 
   async update(pista_id: number, info_pista: UpdatePistaDto): Promise<Pista> {
     const pistaActual = await this.findOne(pista_id);
     const dataNormalizada: any = { ...info_pista };
@@ -95,24 +99,34 @@ export class PistaService {
     if (info_pista.hora_cierre)
       dataNormalizada.hora_cierre = this.formatTime(info_pista.hora_cierre);
 
-    //si se pone la pista en mantenimiento o inactiva, cancelamos las reservas futuras automaticamente
+    // Lógica de mantenimiento selectivo
     if (
-      (info_pista.estado === EstadoPista.MANTENIMIENTO ||
-        info_pista.estado === EstadoPista.INACTIVA) &&
+      (info_pista.estado === EstadoPista.MANTENIMIENTO || info_pista.estado === EstadoPista.INACTIVA) &&
       pistaActual.estado !== info_pista.estado
     ) {
-      const motivo =
-        info_pista.estado === EstadoPista.INACTIVA
-          ? 'La pista ha sido eliminada del sistema.'
-          : 'Pista cerrada por mantenimiento.';
+      const motivo = info_pista.estado === EstadoPista.INACTIVA
+        ? 'La pista ha sido eliminada del sistema.'
+        : 'Pista cerrada por mantenimiento programado.';
+
+      // Definimos el filtro de fechas
+      let filtroFecha: any;
+
+      if (info_pista.mantenimiento_desde && info_pista.mantenimiento_hasta) {
+        // CASO QUIRÚRGICO: Solo entre estas dos fechas
+        filtroFecha = Between(
+          info_pista.mantenimiento_desde,
+          info_pista.mantenimiento_hasta
+        );
+      } else {
+        // CASO GENERAL: De hoy en adelante
+        filtroFecha = MoreThanOrEqual(new Date().toISOString().split('T')[0]);
+      }
 
       await this.reservaRepo.update(
         {
           pista_id: pista_id,
           estado: In([estadoReserva.PENDIENTE, estadoReserva.CONFIRMADA]),
-          fecha_reserva: MoreThanOrEqual(
-            new Date().toISOString().split('T')[0] as any,
-          ),
+          fecha_reserva: filtroFecha,
         },
         {
           estado: estadoReserva.CANCELADA,
