@@ -108,7 +108,7 @@ export class PistaController {
   // PUT /pista/:id -> actualizar un pista existente
   @Put(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
-  @ApiOperation({ summary: 'Update an existing court' })
+  @ApiOperation({ summary: 'Update court - Supports selective maintenance dates' })
   @ApiResponse({ status: 200, description: 'Court updated successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })

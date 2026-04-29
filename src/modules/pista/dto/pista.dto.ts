@@ -99,4 +99,9 @@ export class PistaDto {
 }
 
 // como todos los campos van a ser opcionales , lo ponemos asi
-export class UpdatePistaDto extends PartialType(PistaDto) {}
+export class UpdatePistaDto extends PartialType(PistaDto) {
+
+  // Formato YYYY-MM-DD
+  mantenimiento_desde?: string; 
+  mantenimiento_hasta?: string; 
+}
