@@ -12,7 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { PistaService } from './pista.service';
-import { PistaDto } from './dto/pista.dto';
+import { PistaDto, UpdatePistaDto } from './dto/pista.dto';
 import { Pista } from './entities/pista.entity';
 import {
   ApiBearerAuth,
@@ -115,7 +115,7 @@ export class PistaController {
   @ApiResponse({ status: 404, description: 'Court not found.' })
   async update(
     @Param('id') id: number,
-    @Body() pistaDto: PistaDto,
+    @Body() pistaDto: UpdatePistaDto,
   ): Promise<Pista> {
     try {
       return this.pistaService.update(id, pistaDto);

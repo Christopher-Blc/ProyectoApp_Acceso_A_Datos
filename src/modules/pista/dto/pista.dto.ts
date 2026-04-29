@@ -99,7 +99,7 @@ export class PistaDto {
 }
 
 // como todos los campos van a ser opcionales , lo ponemos asi
-export class UpdatePistaDto extends PartialType(PistaDto) {
+export class UpdatePistaDto {
 
   @IsOptional()
   @IsNumber()
