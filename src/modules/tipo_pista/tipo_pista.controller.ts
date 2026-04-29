@@ -25,7 +25,7 @@ import { TipoPista } from './entities/tipo_pista.entity';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 import { CreateReservaDto } from '../reserva/dto/reserva.dto';
-import { TipoPistaDto } from './dto/tipo_pista.dto';
+import { TipoPistaDto, UpdateTipoPistaDto } from './dto/tipo_pista.dto';
 
 @ApiTags('tipo_pista')
 @UseGuards(AuthGuard, RolesGuard)
@@ -102,7 +102,7 @@ export class TipoPistaController {
   @ApiParam({ name: 'id', example: 1 })
   async update(
     @Param('id') id: number,
-    @Body() tipoPistaDto: TipoPistaDto,
+    @Body() tipoPistaDto: UpdateTipoPistaDto,
   ): Promise<TipoPista | null> {
     try {
       return this.tipoPistaService.update(id, tipoPistaDto);
