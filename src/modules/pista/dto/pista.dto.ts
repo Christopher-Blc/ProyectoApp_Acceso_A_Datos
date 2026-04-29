@@ -102,6 +102,14 @@ export class PistaDto {
 export class UpdatePistaDto extends PartialType(PistaDto) {
 
   // Formato YYYY-MM-DD
+  @ApiProperty({
+    description: 'Start date for selective maintenance',
+    example: '2024-06-01',
+  })
   mantenimiento_desde?: string; 
+  @ApiProperty({
+    description: 'End date for selective maintenance',
+    example: '2024-06-10',
+  })
   mantenimiento_hasta?: string; 
 }
