@@ -33,7 +33,7 @@ export class TipoPistaService {
   }
 
   // Crear un nuevo tipo
-  async create(dto: TipoPistaDto): Promise<TipoPista> {
+  async create(dto: TipoPistaDto, imagenFilename?: string): Promise<TipoPista> {
     //mirar primero si ya existe un tipo con ese nombre
     const existe = await this.tipoPistaRepository.findOne({
       where: { nombre: dto.nombre },
@@ -44,20 +44,29 @@ export class TipoPistaService {
     }
 
     try {
-      const nuevoTipo = this.tipoPistaRepository.create(dto);
+      const nuevoTipo = this.tipoPistaRepository.create({
+        ...dto,
+        imagen: imagenFilename || dto.imagen,
+      });
       return await this.tipoPistaRepository.save(nuevoTipo);
     } catch {
       throw new InternalServerErrorException('Error al crear el tipo de pista');
     }
   }
 
-  async update(id: number, dto: UpdateTipoPistaDto): Promise<TipoPista> {
+  async update(id: number, dto: UpdateTipoPistaDto, imagenFilename?: string): Promise<TipoPista> {
     const tipo = await this.findOne(id);
 
     if (!tipo) {
       throw new NotFoundException('No se ha encontrado ese tipo de pista');
     }
-    this.tipoPistaRepository.merge(tipo, dto);
+
+    const updateData: UpdateTipoPistaDto = { ...dto };
+    if (imagenFilename) {
+      updateData.imagen = imagenFilename;
+    }
+
+    this.tipoPistaRepository.merge(tipo, updateData);
 
     return await this.tipoPistaRepository.save(tipo);
   }
