@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TipoPista } from './entities/tipo_pista.entity';
-import { TipoPistaDto } from './dto/tipo_pista.dto';
+import { TipoPistaDto, UpdateTipoPistaDto } from './dto/tipo_pista.dto';
 
 @Injectable()
 export class TipoPistaService {
@@ -51,7 +51,7 @@ export class TipoPistaService {
     }
   }
 
-  async update(id: number, dto: TipoPistaDto): Promise<TipoPista> {
+  async update(id: number, dto: UpdateTipoPistaDto): Promise<TipoPista> {
     const tipo = await this.findOne(id);
 
     if (!tipo) {
