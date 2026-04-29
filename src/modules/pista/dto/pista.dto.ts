@@ -102,14 +102,23 @@ export class PistaDto {
 export class UpdatePistaDto extends PartialType(PistaDto) {
 
   // Formato YYYY-MM-DD
+  @IsOptional()
+  @IsString()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'Formato de fecha debe ser YYYY-MM-DD' })
   @ApiProperty({
     description: 'Start date for selective maintenance',
-    example: '2024-06-01',
+    example: '2026-06-01',
+    required: false
   })
   mantenimiento_desde?: string; 
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'Formato de fecha debe ser YYYY-MM-DD' })
   @ApiProperty({
     description: 'End date for selective maintenance',
-    example: '2024-06-10',
+    example: '2026-06-10',
+    required: false
   })
   mantenimiento_hasta?: string; 
 }
