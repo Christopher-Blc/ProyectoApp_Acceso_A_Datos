@@ -37,6 +37,7 @@ export class PistaSeeder implements Seeder {
       pistaEntry.hora_apertura = item.hora_apertura;
       pistaEntry.hora_cierre = item.hora_cierre;
       pistaEntry.dia_semana = item.dia_semana;
+      pistaEntry.reservations_made = item.reservations_made;
 
       pistaEntries.push(pistaEntry);
     }
