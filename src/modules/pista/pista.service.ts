@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DiaSemana, Pista, EstadoPista } from './entities/pista.entity';
 import { Repository, In, MoreThanOrEqual } from 'typeorm';
@@ -36,10 +40,15 @@ export class PistaService {
   async obtenerDisponibilidad(fechaString: string) {
     const fecha = new Date(fechaString);
     const dias = [
-      DiaSemana.DOMINGO, DiaSemana.LUNES, DiaSemana.MARTES, 
-      DiaSemana.MIERCOLES, DiaSemana.JUEVES, DiaSemana.VIERNES, DiaSemana.SABADO
+      DiaSemana.DOMINGO,
+      DiaSemana.LUNES,
+      DiaSemana.MARTES,
+      DiaSemana.MIERCOLES,
+      DiaSemana.JUEVES,
+      DiaSemana.VIERNES,
+      DiaSemana.SABADO,
     ];
-    
+
     const fechaAyer = new Date(fecha);
     fechaAyer.setDate(fecha.getDate() - 1);
     const nombreDiaHoy = dias[fecha.getDay()];
@@ -51,20 +60,20 @@ export class PistaService {
       relations: ['tipo_pista'],
     });
 
-    const pistasValidas = pistas.filter(p => {
+    const pistasValidas = pistas.filter((p) => {
       if (p.dia_semana === nombreDiaHoy) return true;
       return p.hora_cierre < p.hora_apertura; // Solo si cruza medianoche
     });
 
     const reservasDelDia = await this.reservaRepo.find({
-      where: { fecha_reserva: fechaString as any }
+      where: { fecha_reserva: fechaString as any },
     });
 
-    return pistasValidas.map(pista => ({
+    return pistasValidas.map((pista) => ({
       ...pista,
       reservas_actuales: reservasDelDia
-        .filter(r => Number(r.pista_id) === Number(pista.pista_id))
-        .map(r => ({ inicio: r.hora_inicio, fin: r.hora_fin }))
+        .filter((r) => Number(r.pista_id) === Number(pista.pista_id))
+        .map((r) => ({ inicio: r.hora_inicio, fin: r.hora_fin })),
     }));
   }
 
@@ -81,21 +90,34 @@ export class PistaService {
     const pistaActual = await this.findOne(pista_id);
     const dataNormalizada: any = { ...info_pista };
 
-    if (info_pista.hora_apertura) dataNormalizada.hora_apertura = this.formatTime(info_pista.hora_apertura);
-    if (info_pista.hora_cierre) dataNormalizada.hora_cierre = this.formatTime(info_pista.hora_cierre);
+    if (info_pista.hora_apertura)
+      dataNormalizada.hora_apertura = this.formatTime(info_pista.hora_apertura);
+    if (info_pista.hora_cierre)
+      dataNormalizada.hora_cierre = this.formatTime(info_pista.hora_cierre);
 
-    // CANCELACIÓN MASIVA SI ENTRA EN MANTENIMIENTO
-    if (info_pista.estado === EstadoPista.MANTENIMIENTO && pistaActual.estado !== EstadoPista.MANTENIMIENTO) {
+    //si se pone la pista en mantenimiento o inactiva, cancelamos las reservas futuras automaticamente
+    if (
+      (info_pista.estado === EstadoPista.MANTENIMIENTO ||
+        info_pista.estado === EstadoPista.INACTIVA) &&
+      pistaActual.estado !== info_pista.estado
+    ) {
+      const motivo =
+        info_pista.estado === EstadoPista.INACTIVA
+          ? 'La pista ha sido eliminada del sistema.'
+          : 'Pista cerrada por mantenimiento.';
+
       await this.reservaRepo.update(
-        { 
-          pista_id: pista_id, 
+        {
+          pista_id: pista_id,
           estado: In([estadoReserva.PENDIENTE, estadoReserva.CONFIRMADA]),
-          fecha_reserva: MoreThanOrEqual(new Date().toISOString().split('T')[0] as any)
+          fecha_reserva: MoreThanOrEqual(
+            new Date().toISOString().split('T')[0] as any,
+          ),
         },
-        { 
+        {
           estado: estadoReserva.CANCELADA,
-          nota: 'Pista cerrada por mantenimiento (cancelación automática).' 
-        }
+          nota: motivo,
+        },
       );
     }
 
@@ -103,20 +125,41 @@ export class PistaService {
     return this.findOne(pista_id);
   }
 
+  async softDelete(pista_id: number): Promise<void> {
+    const hoy = new Date().toISOString().split('T')[0];
+
+    // 1. Cancelamos las reservas futuras primero
+    await this.reservaRepo.update(
+      {
+        pista_id: pista_id,
+        estado: In([estadoReserva.PENDIENTE, estadoReserva.CONFIRMADA]),
+        fecha_reserva: MoreThanOrEqual(hoy as any),
+      },
+      {
+        estado: estadoReserva.CANCELADA,
+        nota: 'La pista ha sido eliminada del sistema.',
+      },
+    );
+
+    await this.pistaRepo.update(pista_id, {
+      estado: EstadoPista.INACTIVA,
+    });
+  }
+
   async remove(pista_id: number): Promise<void> {
     const hoy = new Date().toISOString().split('T')[0];
 
     // 1. Cancelamos lo pendiente antes de que el ID deje de existir
     await this.reservaRepo.update(
-      { 
-        pista_id: pista_id, 
+      {
+        pista_id: pista_id,
         estado: In([estadoReserva.PENDIENTE, estadoReserva.CONFIRMADA]),
-        fecha_reserva: MoreThanOrEqual(hoy as any)
+        fecha_reserva: MoreThanOrEqual(hoy as any),
       },
-      { 
+      {
         estado: estadoReserva.CANCELADA,
-        nota: 'La pista ha sido eliminada del sistema.' 
-      }
+        nota: 'La pista ha sido eliminada del sistema.',
+      },
     );
     await this.pistaRepo.delete(pista_id);
   }

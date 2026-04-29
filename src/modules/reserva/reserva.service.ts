@@ -35,7 +35,7 @@ export class ReservaService {
     return this.reservaRepo.find({
       where,
       relations: ['usuario', 'pista', 'pagos'],
-      order: { fecha_reserva: 'ASC', hora_inicio: 'ASC' } 
+      order: { fecha_reserva: 'ASC', hora_inicio: 'ASC' },
     });
   }
 
@@ -44,7 +44,8 @@ export class ReservaService {
       where: { reserva_id },
       relations: ['usuario', 'pista', 'pagos'],
     });
-    if (!reserva) throw new NotFoundException('No se ha encontrado esa reserva.');
+    if (!reserva)
+      throw new NotFoundException('No se ha encontrado esa reserva.');
     return reserva;
   }
 
@@ -62,9 +63,9 @@ export class ReservaService {
 
     //calculamos el precio final aqui para que no se hagan trampas desde el front
     const precioCalculado = this.calcularPrecio(
-      Number(pista.precio_hora), 
-      dto.hora_inicio, 
-      dto.hora_fin
+      Number(pista.precio_hora),
+      dto.hora_inicio,
+      dto.hora_fin,
     );
 
     const newReserva = this.reservaRepo.create({
@@ -87,15 +88,21 @@ export class ReservaService {
     const reserva = await this.findOne(reserva_id);
 
     // 1. Verificamos permisos de edición
-    const isAdmin = user_role === UserRole.SUPER_ADMIN || user_role === UserRole.ADMINISTRACION;
-    
+    const isAdmin =
+      user_role === UserRole.SUPER_ADMIN ||
+      user_role === UserRole.ADMINISTRACION;
+
     if (reserva.usuario_id !== user_id && !isAdmin) {
-      throw new ForbiddenException('No tienes permiso para editar esta reserva');
+      throw new ForbiddenException(
+        'No tienes permiso para editar esta reserva',
+      );
     }
 
     // 2. Bloqueo: Clientes no tocan reservas pagadas/procesadas
     if (reserva.estado !== estadoReserva.PENDIENTE && !isAdmin) {
-      throw new ForbiddenException('No puedes modificar una reserva ya procesada.');
+      throw new ForbiddenException(
+        'No puedes modificar una reserva ya procesada.',
+      );
     }
 
     // 3. Recálculo de precio (Solo si cambian datos clave y NO está pagada, o si es Admin)
@@ -109,9 +116,9 @@ export class ReservaService {
 
       // Actualizamos el precio_total en el objeto que se va a guardar
       (dto as any).precio_total = this.calcularPrecio(
-        Number(pista.precio_hora), 
-        h_inicio, 
-        h_fin
+        Number(pista.precio_hora),
+        h_inicio,
+        h_fin,
       );
     }
 
@@ -123,9 +130,26 @@ export class ReservaService {
 
     // Si el estado pasa a FINALIZADA (o deja de serlo), actualizamos el rango
     if (nuevoEstado && nuevoEstado !== estadoAnterior) {
-        if (nuevoEstado === estadoReserva.FINALIZADA || estadoAnterior === estadoReserva.FINALIZADA) {
-            await this.userService.updateUserRank(reserva.usuario_id);
-        }
+      if (
+        nuevoEstado === estadoReserva.FINALIZADA ||
+        estadoAnterior === estadoReserva.FINALIZADA
+      ) {
+        await this.userService.updateUserRank(reserva.usuario_id);
+      }
+
+      //contador de pista si el estado cambia a finalizado sube
+      if (nuevoEstado === estadoReserva.FINALIZADA) {
+        await this.pistaRepo.increment(
+          { pista_id: reserva.pista_id },
+          'reservations_made',
+          1,
+        );
+      }
+
+      // eso es para restar el contador pero en teoria no se cambia el estado despues de finalizada
+      // if (estadoAnterior === estadoReserva.CONFIRMADA && nuevoEstado === estadoReserva.CANCELADA) {
+      //     await this.pistaRepo.decrement({ pista_id: reserva.pista_id }, 'reservations_made', 1);
+      // }
     }
 
     return this.findOne(reserva_id);
@@ -134,7 +158,7 @@ export class ReservaService {
   async remove(reserva_id: number): Promise<{ deleted: boolean }> {
     const reserva = await this.findOne(reserva_id);
     const eraFinalizada = reserva.estado === estadoReserva.FINALIZADA;
-    
+
     await this.reservaRepo.delete(reserva.reserva_id);
 
     if (eraFinalizada) {
@@ -145,29 +169,35 @@ export class ReservaService {
   }
 
   //Funcion que calcula el precio total de la reserva segun la pista y las horas de inicio y fin
-  private calcularPrecio(pistaPrecio: number, inicio: string, fin: string): number {
+  private calcularPrecio(
+    pistaPrecio: number,
+    inicio: string,
+    fin: string,
+  ): number {
     const [hI, mI] = inicio.split(':').map(Number);
     const [hF, mF] = fin.split(':').map(Number);
-    
+
     const minutosInicio = hI * 60 + mI;
     const minutosFin = hF * 60 + mF;
-    
+
     // Calculamos la diferencia
     let diferencia = minutosFin - minutosInicio;
 
     // Si es negativa (ej: 23:00 a 01:00), es que saltó el día.
     // Sumamos 1440 para sacar los minutos reales de diferencia.
     if (diferencia < 0) {
-      diferencia += 1440; 
+      diferencia += 1440;
     }
 
     // Si es 0, es que han puesto la misma hora (error)
     if (diferencia === 0) {
-      throw new ForbiddenException('La hora de inicio y fin no pueden ser iguales');
+      throw new ForbiddenException(
+        'La hora de inicio y fin no pueden ser iguales',
+      );
     }
 
     const duracionHoras = diferencia / 60;
-    
+
     // Devolvemos el precio final bien calculado
     return Number((duracionHoras * pistaPrecio).toFixed(2));
   }

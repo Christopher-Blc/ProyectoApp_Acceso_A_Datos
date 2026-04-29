@@ -9,14 +9,13 @@ import {
   Matches,
 } from 'class-validator';
 
-export class PistaDto { 
-  
+export class PistaDto {
   @IsNumber()
   @ApiProperty({
     description: 'ID of the installation',
     example: 1,
   })
-  instalacion_id: number; // clave foranea instalacion 
+  instalacion_id: number; // clave foranea instalacion
 
   @IsNumber()
   @ApiProperty({

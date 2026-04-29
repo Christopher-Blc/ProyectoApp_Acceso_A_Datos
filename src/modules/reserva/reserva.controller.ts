@@ -50,7 +50,10 @@ export class ReservaController {
   @ApiResponse({ status: 204, description: 'No content.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async findAll( @Query('pista_id') pista_id?: number, @Query('fecha_desde') fecha_desde?: string,): Promise<Reserva[]> {
+  async findAll(
+    @Query('pista_id') pista_id?: number,
+    @Query('fecha_desde') fecha_desde?: string,
+  ): Promise<Reserva[]> {
     try {
       return await this.reservaService.findAll(pista_id, fecha_desde);
     } catch (err) {

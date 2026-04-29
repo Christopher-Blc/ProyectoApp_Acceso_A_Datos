@@ -17,6 +17,7 @@ export default [
     hora_apertura: '08:00:00',
     hora_cierre: '22:00:00',
     dia_semana: DiaSemana.LUNES, // Campo obligatorio por el @Unique de la Entity
+    reservations_made: 5,
   },
   {
     instalacion_id: 1,
@@ -31,5 +32,6 @@ export default [
     hora_apertura: '08:00:00',
     hora_cierre: '22:00:00',
     dia_semana: DiaSemana.LUNES,
+    reservations_made: 5,
   },
 ];

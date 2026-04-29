@@ -79,6 +79,9 @@ export class Pista {
   })
   dia_semana: DiaSemana;
 
+  @Column({ type: 'int', default: 0 })
+  reservations_made: number;
+
   @ManyToOne(() => Instalacion, (i) => i.pistas)
   @JoinColumn({ name: 'instalacion_id' })
   instalacion: Instalacion;

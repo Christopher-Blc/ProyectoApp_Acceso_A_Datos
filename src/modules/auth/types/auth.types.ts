@@ -18,10 +18,8 @@ import type { Request } from 'express';
  */
 export type JwtPayload = Record<string, string | number | boolean | undefined>;
 
-export interface AuthUserPayload extends Record<
-  string,
-  string | number | string[] | undefined
-> {
+export interface AuthUserPayload
+  extends Record<string, string | number | string[] | undefined> {
   /**
    * Subject del JWT.
    * En esta app representa el ID de usuario (usuario_id) que se guarda
