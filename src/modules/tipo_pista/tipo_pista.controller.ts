@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,11 +9,18 @@ import {
   Param,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import { TipoPistaService } from './tipo_pista.service';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -20,11 +28,9 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Reserva } from '../reserva/entities/reserva.entity';
 import { TipoPista } from './entities/tipo_pista.entity';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
-import { CreateReservaDto } from '../reserva/dto/reserva.dto';
 import { TipoPistaDto, UpdateTipoPistaDto } from './dto/tipo_pista.dto';
 
 @ApiTags('tipo_pista')
@@ -77,13 +83,61 @@ export class TipoPistaController {
 
   @Post()
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
-  @ApiOperation({ summary: 'Create a new court type' })
+  @UseInterceptors(
+    FileInterceptor('imagen', {
+      storage: diskStorage({
+        destination: './public',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        const allowedMimes = [
+          'image/jpeg',
+          'image/png',
+          'image/webp',
+          'image/gif',
+        ];
+        if (allowedMimes.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(
+            new BadRequestException(
+              'Solo se permiten imágenes (jpg, png, webp, gif)',
+            ),
+            false,
+          );
+        }
+      },
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    }),
+  )
+  @ApiOperation({ summary: 'Create a new court type with image' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['nombre', 'imagen'],
+      properties: {
+        nombre: { type: 'string', example: 'Tenis' },
+        imagen: { type: 'string', format: 'binary' },
+      },
+    },
+  })
   @ApiResponse({ status: 201, description: 'Court type created successfully.' })
-  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 400, description: 'Bad request or invalid file.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async create(@Body() tipoPistaDto: TipoPistaDto): Promise<TipoPista | null> {
+  async create(
+    @Body() tipoPistaDto: TipoPistaDto,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<TipoPista | null> {
     try {
-      return this.tipoPistaService.create(tipoPistaDto);
+      if (!file) {
+        throw new BadRequestException('No se ha subido ningún archivo de imagen');
+      }
+      return this.tipoPistaService.create(tipoPistaDto, file.filename);
     } catch (err) {
       throw new HttpException(
         err.message,
@@ -94,7 +148,48 @@ export class TipoPistaController {
 
   @Put(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
-  @ApiOperation({ summary: 'Update an existing court type' })
+  @UseInterceptors(
+    FileInterceptor('imagen', {
+      storage: diskStorage({
+        destination: './public',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        const allowedMimes = [
+          'image/jpeg',
+          'image/png',
+          'image/webp',
+          'image/gif',
+        ];
+        if (allowedMimes.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(
+            new BadRequestException(
+              'Solo se permiten imágenes (jpg, png, webp, gif)',
+            ),
+            false,
+          );
+        }
+      },
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    }),
+  )
+  @ApiOperation({ summary: 'Update an existing court type (imagen optional)' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        nombre: { type: 'string', example: 'Tenis' },
+        imagen: { type: 'string', format: 'binary', description: 'Imagen opcional' },
+      },
+    },
+  })
   @ApiResponse({ status: 200, description: 'Court type updated successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid court type ID.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -103,9 +198,10 @@ export class TipoPistaController {
   async update(
     @Param('id') id: number,
     @Body() tipoPistaDto: UpdateTipoPistaDto,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<TipoPista | null> {
     try {
-      return this.tipoPistaService.update(id, tipoPistaDto);
+      return this.tipoPistaService.update(id, tipoPistaDto, file?.filename);
     } catch (err) {
       throw new HttpException(
         err.message,
