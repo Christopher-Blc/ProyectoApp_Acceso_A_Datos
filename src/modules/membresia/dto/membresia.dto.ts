@@ -1,114 +1,27 @@
-import {
-  IsString,
-  IsOptional,
-  IsDateString,
-  IsBoolean,
-  IsNumber,
-} from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsInt, IsNumber, IsOptional, Min, Max, Length } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
 
 export class CreateMembresiaDto {
-  @IsNumber()
-  membresia_id: number;
+  @IsString()
+  @Length(1, 100)
+  rango: string;
 
   @IsString()
-  @ApiProperty({
-    description: 'Type of the membership',
-    example: 'Basic',
-  })
+  @Length(1, 100)
   tipo: string;
 
-  @IsDateString()
-  @ApiProperty({
-    description: 'Start date of the membership',
-    example: '2024-01-01',
-  })
-  fecha_inicio: string;
-
-  @IsDateString()
-  @ApiProperty({
-    description: 'End date of the membership',
-    example: '2024-12-31',
-  })
-  fecha_fin: string;
-
-  // @IsOptional()
-  // @IsEnum(estado_membresia)
-  // @ApiProperty({
-  //     description: 'State of the membership',
-  //     enum: estado_membresia,
-  //     example: estado_membresia.ACTIVA,
-  // })
-  // estado: estado_membresia;
-
-  @IsOptional()
-  @IsNumber()
-  @ApiProperty({
-    description: 'Discount applied to the membership',
-    example: 10,
-  })
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  @Max(100)
   descuento: number;
 
-  @IsBoolean()
-  @ApiProperty({
-    description: 'Indicates if the membership is renewable',
-    example: true,
-  })
-  renovable: boolean;
+  @IsInt()
+  @Min(0)
+  reservas_requeridas: number;
 
-  @IsDateString()
-  @ApiProperty({
-    description: 'Renewal date of the membership',
-    example: '2024-12-31',
-  })
-  fecha_renovacion: string;
-}
-
-export class UpdateMembresiaDto {
-  @IsOptional()
   @IsString()
-  tipo: string;
-
-  // @IsOptional()
-  // @IsDateString()
-  // fecha_inicio: Date;
-
   @IsOptional()
-  @IsDateString()
-  @ApiProperty({
-    description: 'End date of the membership',
-    example: '2024-12-31',
-  })
-  fecha_fin: string;
-
-  // @IsOptional()
-  // @IsEnum(estado_membresia)
-  // @ApiProperty({
-  //     description: 'State of the membership',
-  //     enum: estado_membresia,
-  //     example: estado_membresia.ACTIVA,
-  // })
-  // estado: estado_membresia;
-
-  @IsOptional()
-  @IsNumber()
-  @ApiProperty({
-    description: 'Discount applied to the membership',
-    example: 10,
-  })
-  descuento: number;
-
-  @IsBoolean()
-  @ApiProperty({
-    description: 'Indicates if the membership is renewable',
-    example: true,
-  })
-  renovable: boolean;
-
-  @IsDateString()
-  @ApiProperty({
-    description: 'Renewal date of the membership',
-    example: '2024-12-31',
-  })
-  fecha_renovacion: string;
+  beneficios?: string;
 }
+
+export class UpdateMembresiaDto extends PartialType(CreateMembresiaDto) {}
