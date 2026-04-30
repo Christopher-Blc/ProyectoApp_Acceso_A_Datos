@@ -1,4 +1,4 @@
-import { estadoReserva } from '../../modules/reserva/entities/reserva.entity';
+import { estadoReserva } from '../../modules/reservation/entities/reservation.entity';
 
 export default [
   {
@@ -8,7 +8,7 @@ export default [
     hora_inicio: '10:00',
     hora_fin: '12:00',
     estado: estadoReserva.FINALIZADA,
-    nota: 'Reserva para historial (Bronce)',
+    nota: 'Reservation para historial (Bronce)',
   },
   {
     usuario_id: 1,
@@ -17,7 +17,7 @@ export default [
     hora_inicio: '11:00',
     hora_fin: '12:30',
     estado: estadoReserva.FINALIZADA,
-    nota: 'Segunda reserva para historial',
+    nota: 'Segunda Reservation para historial',
   },
   {
     usuario_id: 1,
@@ -26,7 +26,7 @@ export default [
     hora_inicio: '15:00',
     hora_fin: '16:30',
     estado: estadoReserva.CONFIRMADA,
-    nota: 'Reserva futura (bloqueo de borrado)',
+    nota: 'Reservation futura (bloqueo de borrado)',
   },
   {
     usuario_id: 2,
@@ -35,7 +35,7 @@ export default [
     hora_inicio: '09:00',
     hora_fin: '10:00',
     estado: estadoReserva.PENDIENTE,
-    nota: 'Reserva pendiente de pago usuario 2',
+    nota: 'Reservation pendiente de Payment usuario 2',
   },
   {
     usuario_id: 3,
@@ -44,7 +44,7 @@ export default [
     hora_inicio: '11:00',
     hora_fin: '12:30',
     estado: estadoReserva.FINALIZADA,
-    nota: 'Segunda reserva para historial',
+    nota: 'Segunda Reservation para historial',
   },
   {
     usuario_id: 3,
@@ -53,7 +53,7 @@ export default [
     hora_inicio: '15:00',
     hora_fin: '16:30',
     estado: estadoReserva.CONFIRMADA,
-    nota: 'Reserva futura (bloqueo de borrado)',
+    nota: 'Reservation futura (bloqueo de borrado)',
   },
   {
     usuario_id: 3,
@@ -62,7 +62,7 @@ export default [
     hora_inicio: '09:00',
     hora_fin: '10:00',
     estado: estadoReserva.PENDIENTE,
-    nota: 'Reserva pendiente de pago usuario 3',
+    nota: 'Reservation pendiente de Payment usuario 3',
   },
   {
     usuario_id: 3,
@@ -71,7 +71,7 @@ export default [
     hora_inicio: '15:00',
     hora_fin: '16:30',
     estado: estadoReserva.CONFIRMADA,
-    nota: 'Reserva futura (bloqueo de borrado)',
+    nota: 'Reservation futura (bloqueo de borrado)',
   },
   {
     usuario_id: 3,
@@ -80,7 +80,7 @@ export default [
     hora_inicio: '15:00',
     hora_fin: '16:30',
     estado: estadoReserva.CONFIRMADA,
-    nota: 'Reserva futura (bloqueo de borrado)',
+    nota: 'Reservation futura (bloqueo de borrado)',
   },
   {
     usuario_id: 3,
@@ -89,6 +89,9 @@ export default [
     hora_inicio: '15:00',
     hora_fin: '16:30',
     estado: estadoReserva.CONFIRMADA,
-    nota: 'Reserva futura (bloqueo de borrado)',
+    nota: 'Reservation futura (bloqueo de borrado)',
   },
 ];
+
+
+

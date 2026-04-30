@@ -135,7 +135,7 @@ export class TipoPistaController {
   ): Promise<TipoPista | null> {
     try {
       if (!file) {
-        throw new BadRequestException('No se ha subido ningún archivo de imagen');
+        throw new BadRequestException('No image file has been uploaded');
       }
       return this.tipoPistaService.create(tipoPistaDto, file.filename);
     } catch (err) {

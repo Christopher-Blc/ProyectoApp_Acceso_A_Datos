@@ -10,11 +10,11 @@ export class ResenyaSeeder implements Seeder {
     const resenyaEntries: Resenya[] = [];
 
     for (const item of comentarioData) {
-      // Buscamos duplicados por usuario, instalación y fecha
+      // We search for duplicates by user, facility and date
       const existing = await resenyaRepository.findOne({
         where: {
           usuario_id: item.usuario_id,
-          instalacion_id: item.instalacion_id, // Añadido para el filtro
+          instalacion_id: item.instalacion_id, // Added for filtering
           fecha_comentario: item.fecha_comentario,
         },
       });
@@ -24,8 +24,8 @@ export class ResenyaSeeder implements Seeder {
       }
 
       const resenyaEntry = new Resenya();
-      // Campos obligatorios según la Entity
-      resenyaEntry.instalacion_id = item.instalacion_id; // Campo corregido
+      // Mandatory fields according to the Entity
+      resenyaEntry.instalacion_id = item.instalacion_id; // Corrected field
       resenyaEntry.usuario_id = item.usuario_id;
       resenyaEntry.titulo = item.titulo;
       resenyaEntry.texto = item.texto;
@@ -38,8 +38,8 @@ export class ResenyaSeeder implements Seeder {
 
     if (resenyaEntries.length > 0) {
       await resenyaRepository.save(resenyaEntries);
-      console.log(`${resenyaEntries.length} reseñas creadas.`);
+      console.log(`${resenyaEntries.length} reviews created.`);
     }
-    console.log('Reseña seeding completado!');
+    console.log('Review seeding completed!');
   }
 }

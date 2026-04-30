@@ -4,12 +4,12 @@ import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { AuthModule } from '../auth/auth.module';
-import { Membresia } from '../membresia/entities/membresia.entity';
-import { Reserva } from '../reserva/entities/reserva.entity';
+import { Membership } from '../membership/entities/membership.entity';
+import { Reservation } from '../reservationtiontion/entities/reservation.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Membresia, Reserva]),
+    TypeOrmModule.forFeature([User, Membership, Reserva]),
     forwardRef(() => AuthModule),
   ],
   providers: [UsersService],
@@ -17,3 +17,6 @@ import { Reserva } from '../reserva/entities/reserva.entity';
   exports: [UsersService, TypeOrmModule],
 })
 export class UsersModule {}
+
+
+

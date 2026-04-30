@@ -17,23 +17,23 @@ import { AuthTokenBlacklist } from './blacklist/auth_token_blacklist.entity';
 import { AuthUserPayload } from './types/auth.types';
 
 /**
- * Servicio de autenticación.
+ * Authentication service.
  *
- * Responsabilidades principales:
- * - Login y Refresh de tokens JWT.
- * - Validación de credenciales.
- * - Blacklist de access tokens para logout fuerte.
- * - Sanitización de datos sensibles antes de responder.
+ * Main responsibilities:
+ * - Login and JWT token refresh.
+ * - Credential validation.
+ * - Access token blacklist for strong logout.
+ * - Sanitization of sensitive data before responding.
  */
 @Injectable()
 export class AuthService {
   /**
-   * Renueva el access token usando un refresh token válido.
+   * Renews the access token using a valid refresh token.
    */
   async refresh(
     refresh_token: string,
   ): Promise<{ access_token: string; refresh_token: string }> {
-    // Se tipa el payload explícitamente para no propagar `any`.
+    // The payload is explicitly typed to avoid propagating `any`.
     let payload: AuthUserPayload;
 
     try {
@@ -41,32 +41,31 @@ export class AuthService {
         secret: process.env.JWT_REFRESH_SECRET as string,
       });
     } catch {
-      throw new UnauthorizedException('Refresh token inválido o caducado');
+      throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
-    // `sub` representa el id lógico del usuario autenticado.
+    // `sub` represents the logical id of the authenticated user.
     const user = await this.usersService.findById(Number(payload.sub));
-    if (!user) throw new UnauthorizedException('Usuario no existe');
-    if (!user.isActive) throw new ForbiddenException('Usuario inactivo');
+    if (!user) throw new UnauthorizedException('User does not exist');
+    if (!user.isActive) throw new ForbiddenException('Inactive user');
     if (!user.refresh_token_hash)
-      throw new UnauthorizedException('No hay refresh guardado');
+      throw new UnauthorizedException('No refresh token saved');
 
     const ok = await bcrypt.compare(refresh_token, user.refresh_token_hash);
-    if (!ok) throw new UnauthorizedException('Refresh token inválido');
+    if (!ok) throw new UnauthorizedException('Invalid refresh token');
 
-    // Reconstruimos payload a partir de la entidad actual para evitar stale data.
-    // Tipamos como Record para claridad, aunque JwtService.signAsync tenga limitaciones
-    // en sus overloads que requieren `as any` en la llamada.
+    // We reconstruct the payload from the current entity to avoid stale data.
+    // We type as Record for clarity, although JwtService.signAsync has limitations
+    // in its overloads that require `as any` in the call.
     const newPayload: Record<string, string | number> = {
       sub: String(user.usuario_id),
       email: user.email,
       role: String(user.role),
     };
 
-    // NOTA: JwtService.signAsync tiene overloads que no capturan correctamente
-    // objetos Record<string, string | number>. Aunque los tipos son correctos
-    // en tiempo de ejecución, TypeScript los rechaza. Se usa `as any` aquí
-    // de forma localizada.
+    // NOTE: JwtService.signAsync has overloads that don't correctly capture
+    // Record<string, string | number> objects. Although the types are correct
+    // at runtime, TypeScript rejects them. `as any` is used here in a localized manner.
     const access_token = await this.jwtService.signAsync(
       newPayload as any,
       {
@@ -83,7 +82,7 @@ export class AuthService {
       } as any,
     );
 
-    // Rotación de refresh: guardamos hash del nuevo refresh token.
+    // Refresh rotation: we save hash of the new refresh token.
     const newHash = await bcrypt.hash(new_refresh_token, 10);
     await this.usersService.updateRefreshTokenHash(user.usuario_id, newHash);
 
@@ -93,20 +92,20 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    // Repositorio para persistir tokens revocados
+    // Repository to persist revoked tokens
     @InjectRepository(AuthTokenBlacklist)
     private readonly tokenBlacklistRepository: Repository<AuthTokenBlacklist>,
   ) {}
 
   /**
-   * Convierte token crudo en hash para no persistir secretos en texto plano.
+   * Converts raw token to hash to avoid persisting secrets in plain text.
    */
   private hashToken(token: string): string {
     return createHash('sha256').update(token).digest('hex');
   }
 
   /**
-   * Comprueba si el access token está en blacklist y no ha expirado.
+   * Checks if the access token is in the blacklist and has not expired.
    */
   async isAccessTokenBlacklisted(token: string): Promise<boolean> {
     const tokenHash = this.hashToken(token);
@@ -119,20 +118,20 @@ export class AuthService {
   }
 
   /**
-   * Registro de usuario cliente con validaciones de unicidad.
+   * Client user registration with uniqueness validations.
    */
   async register(dto: RegisterDto) {
     const duplicateEmail = await this.usersService.findByEmail(dto.email);
-    if (duplicateEmail) throw new ConflictException('Email ya registrado');
+    if (duplicateEmail) throw new ConflictException('Email already registered');
 
     const duplicatePhone = await this.usersService.findByPhone(dto.phone);
-    if (duplicatePhone) throw new ConflictException('Teléfono ya registrado');
+    if (duplicatePhone) throw new ConflictException('Phone already registered');
 
     const duplicateUsername = await this.usersService.findByUserName(
       dto.username,
     );
     if (duplicateUsername)
-      throw new ConflictException('Username ya registrado');
+      throw new ConflictException('Username already registered');
 
     const created = await this.usersService.create({
       ...dto,
@@ -143,7 +142,7 @@ export class AuthService {
       fecha_nacimiento: new Date(dto.fecha_nacimiento),
     });
 
-    // Eliminamos datos sensibles de la respuesta pública.
+    // We remove sensitive data from the public response.
     const userSafe: Record<string, unknown> = { ...created };
     delete userSafe.password;
     return this.login({ email: dto.email, password: dto.password }).then(
@@ -154,37 +153,36 @@ export class AuthService {
   }
 
   /**
-   * Login con emisión de access token + refresh token.
+   * Login with emission of access token + refresh token.
    */
   async login(dto: LoginDto): Promise<{
     access_token: string;
     refresh_token: string;
     user: Record<string, unknown>;
   }> {
-    // Busca usuario por email y valida estado de cuenta.
+    // Searches for user by email and validates account status.
     const user = await this.usersService.findByEmail(dto.email);
-    if (!user) throw new UnauthorizedException('Credenciales incorrectas');
-    if (!user.isActive) throw new ForbiddenException('Usuario inactivo');
+    if (!user) throw new UnauthorizedException('Incorrect credentials');
+    if (!user.isActive) throw new ForbiddenException('Inactive user');
 
-    // Contraste seguro de password hash.
+    // Safe password hash comparison.
     const ok = await bcrypt.compare(dto.password, user.password);
-    if (!ok) throw new UnauthorizedException('Credenciales incorrectas');
-    //actualizar ultimo login
+    if (!ok) throw new UnauthorizedException('Incorrect credentials');
+    // Update last login
     await this.usersService.updateLastLogin(user.usuario_id);
 
-    // Payload mínimo de identidad/autorización para el JWT.
-    // Tipamos como Record para claridad, aunque JwtService.signAsync tenga limitaciones
-    // en sus overloads que requieren `as any` en la llamada.
+    // Minimal identity/authorization payload for JWT.
+    // We type as Record for clarity, although JwtService.signAsync has limitations
+    // in its overloads that require `as any` in the call.
     const payload: Record<string, string | number> = {
       sub: String(user.usuario_id),
       email: user.email,
       role: String(user.role),
     };
 
-    // NOTA: JwtService.signAsync tiene overloads que no capturan correctamente
-    // objetos Record<string, string | number>. Aunque los tipos son correctos
-    // en tiempo de ejecución, TypeScript los rechaza. Se usa `as any` aquí
-    // de forma localizada.
+    // NOTE: JwtService.signAsync has overloads that don't correctly capture
+    // Record<string, string | number> objects. Although the types are correct
+    // at runtime, TypeScript rejects them. `as any` is used here in a localized manner.
     const access_token = await this.jwtService.signAsync(
       payload as any,
       {

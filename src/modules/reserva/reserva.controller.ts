@@ -30,11 +30,11 @@ import type { AuthenticatedRequest } from '../auth/types/auth.types';
 import { normalizeError } from '../../common/utils/error.util';
 
 /**
- * Controlador de reservas.
+ * Reservations controller.
  *
- * Ajustes relevantes del refactor:
- * - `@Req()` tipado como AuthenticatedRequest para usar `req.user` sin `any`.
- * - Manejo homogéneo de errores con normalizeError(err) en todos los catch.
+ * Relevant adjustments from the refactor:
+ * - `@Req()` typed as AuthenticatedRequest to use `req.user` without `any`.
+ * - Homogeneous error handling with normalizeError(err) in all catch blocks.
  */
 @ApiTags('reservas')
 @UseGuards(AuthGuard, RolesGuard)
@@ -43,7 +43,7 @@ import { normalizeError } from '../../common/utils/error.util';
 export class ReservaController {
   constructor(private readonly reservaService: ReservaService) {}
 
-  //el get puede recibir OPCIONALMENTE pista id y fecha para filrar
+  // The GET can optionally receive pista id and date to filter
   @Get()
   @ApiOperation({ summary: 'Get all reservas' })
   @ApiResponse({ status: 200, description: 'Reservas retrieved successfully.' })
@@ -78,7 +78,7 @@ export class ReservaController {
   async findMyReservations(
     @Req() req: AuthenticatedRequest,
   ): Promise<Reserva[]> {
-    // El AuthGuard ya validó token y dejó el payload en req.user.
+    // The AuthGuard already validated the token and left the payload in req.user.
     const userId = req.user?.sub;
     if (!userId)
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -114,7 +114,7 @@ export class ReservaController {
     @Req() req: AuthenticatedRequest,
   ): Promise<Reserva | null> {
     try {
-      // Vinculamos la reserva al usuario del token para evitar suplantación.
+      // We link the reservation to the user from the token to prevent impersonation.
       const userId = req.user?.sub;
       if (!userId)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -139,7 +139,7 @@ export class ReservaController {
     @Req() req: AuthenticatedRequest,
   ): Promise<Reserva | null> {
     try {
-      // El servicio decide permisos combinando id y rol del usuario autenticado.
+      // The service decides permissions by combining the user's id and role.
       const userId = req.user?.sub;
       const userRole = req.user?.role ?? UserRole.CLIENTE;
       if (!userId)

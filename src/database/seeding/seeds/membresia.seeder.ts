@@ -10,7 +10,7 @@ export class MembresiaSeeder implements Seeder {
     const membresiaEntries: Membresia[] = [];
 
     for (const item of membresiaData) {
-      // Buscamos por tipo (Bronce, Plata, Oro) para evitar duplicados exactos
+      // We search by type (Bronze, Silver, Gold) to avoid exact duplicates
       const existing = await membresiaRepository.findOne({
         where: { tipo: item.tipo },
       });
@@ -20,7 +20,7 @@ export class MembresiaSeeder implements Seeder {
       }
 
       const membresiaEntry = new Membresia();
-      // Mapeo directo a las columnas de la Entity
+      // Direct mapping to the Entity columns
       membresiaEntry.rango = item.rango;
       membresiaEntry.tipo = item.tipo;
       membresiaEntry.descuento = item.descuento;
@@ -32,8 +32,8 @@ export class MembresiaSeeder implements Seeder {
 
     if (membresiaEntries.length > 0) {
       await membresiaRepository.save(membresiaEntries);
-      console.log(`${membresiaEntries.length} rangos de membresía creados.`);
+      console.log(`${membresiaEntries.length} membership levels created.`);
     }
-    console.log('Membresia seeding completado!');
+    console.log('Membresia seeding completed!');
   }
 }

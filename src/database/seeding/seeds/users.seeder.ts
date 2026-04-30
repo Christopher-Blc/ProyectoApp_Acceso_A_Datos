@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
 import userData from '../../inventory/inventory_users';
 import { User } from '../../../modules/users/entities/user.entity';
-import { Membresia } from '../../../modules/membresia/entities/membresia.entity';
+import { Membership } from '../../../modules/membership/entities/membership.entity';
 import * as bcrypt from 'bcryptjs';
 
 export class UserSeeder implements Seeder {
@@ -10,7 +10,7 @@ export class UserSeeder implements Seeder {
     const userRepository = dataSource.getRepository(User);
     const membresiaRepository = dataSource.getRepository(Membresia);
 
-    // 1. Buscamos la membresía inicial (reservas_requeridas: 0) [cite: 158]
+    // 1. We search for the initial membership (reservas_requeridas: 0) [cite: 158]
     const membresiaInicial = await membresiaRepository.findOne({
       where: { reservas_requeridas: 0 },
       order: { membresia_id: 'ASC' },
@@ -19,7 +19,7 @@ export class UserSeeder implements Seeder {
     const userEntries: User[] = [];
 
     for (const item of userData) {
-      // Comprobamos si ya existe por email o por username para evitar duplicados
+      // We check if it already exists by email or username to avoid duplicates
       const existing = await userRepository.findOne({
         where: [{ email: item.email }, { username: item.username }],
       });
@@ -27,7 +27,7 @@ export class UserSeeder implements Seeder {
       if (existing) continue;
 
       const userEntry = new User();
-      // Mapeo directo a la Entity [cite: 216-224]
+      // Direct mapping to the Entity [cite: 216-224]
       userEntry.username = item.username;
       userEntry.name = item.name;
       userEntry.surname = item.surname;
@@ -37,15 +37,15 @@ export class UserSeeder implements Seeder {
       userEntry.role = item.role;
       userEntry.isActive = item.isActive ?? true;
 
-      // Encriptamos la contraseña para que el Login funcione después
+      // We encrypt the password so that Login works afterwards
       userEntry.password = await bcrypt.hash(item.password, 10);
 
-      // Asignación de membresía obligatoria para el sistema de rangos
+      // Mandatory membership assignment for the ranking system
       if (membresiaInicial) {
         userEntry.membresia_id = membresiaInicial.membresia_id;
       }
 
-      // Fechas (aseguramos objeto Date) [cite: 221-223]
+      // Dates (we ensure Date object) [cite: 221-223]
       userEntry.fecha_registro = item.fecha_registro || new Date();
       userEntry.fecha_ultimo_login = item.fecha_ultimo_login || new Date();
       userEntry.fecha_nacimiento = new Date(item.fecha_nacimiento);
@@ -55,8 +55,9 @@ export class UserSeeder implements Seeder {
 
     if (userEntries.length > 0) {
       await userRepository.save(userEntries);
-      console.log(`${userEntries.length} usuarios creados correctamente.`);
+      console.log(`${userEntries.length} users created successfully.`);
     }
-    console.log('User seeding completado!');
+    console.log('User seeding completed!');
   }
 }
+

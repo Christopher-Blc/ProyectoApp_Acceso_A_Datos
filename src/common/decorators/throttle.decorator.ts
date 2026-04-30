@@ -6,27 +6,27 @@ import {
 /**
  * @Throttle(name)
  *
- * Decorador para cambiar el perfil de rate limiting de un endpoint
+ * Decorator to change the rate limiting profile of an endpoint
  *
- * Perfiles disponibles:
- * - 'default': 100 requests / 15 minutos (endpoints generales)
- * - 'auth': 10 requests / 1 hora (endpoints de autenticación)
+ * Available profiles:
+ * - 'default': 100 requests / 15 minutes (general endpoints)
+ * - 'auth': 10 requests / 1 hour (authentication endpoints)
  *
- * @param name - Nombre del perfil de throttle a usar
+ * @param name - Name of the throttle profile to use
  *
  * @example
  * ```typescript
  * @Post('login')
- * @Throttle('auth')  // Más restrictivo
+ * @Throttle('auth')  // More restrictive
  * async login() { ... }
  * ```
  *
- * Sin este decorador, usa 'default'
+ * Without this decorator, uses 'default'
  *
- * Cómo funciona:
- * 1. SetMetadata guarda metadata en el endpoint
- * 2. ThrottlerGuard lee esta metadata en tiempo de ejecución
- * 3. Aplica los límites del perfil especificado
+ * How it works:
+ * 1. SetMetadata stores metadata on the endpoint
+ * 2. ThrottlerGuard reads this metadata at runtime
+ * 3. Applies the limits of the specified profile
  */
 export const Throttle = (name: 'default' | 'auth' | 'Auth') => {
   const profile = name === 'Auth' ? 'auth' : name;
@@ -36,23 +36,23 @@ export const Throttle = (name: 'default' | 'auth' | 'Auth') => {
 /**
  * @SkipThrottle()
  *
- * Decorador para saltar rate limiting completamente en un endpoint
+ * Decorator to completely skip rate limiting on an endpoint
  *
- * Úsalo SOLO cuando sea necesario (ej: /health, webhooks públicos)
+ * Use it ONLY when necessary (e.g.: /health, public webhooks)
  *
  * @example
  * ```typescript
  * @Get('health')
- * @SkipThrottle()  // Sin límite
+ * @SkipThrottle()  // No limit
  * async getHealth() { ... }
  * ```
  *
- * Cómo funciona:
- * 1. SetMetadata marca el endpoint como skipThrottle
- * 2. ThrottlerGuard verifica esta metadata
- * 3. Si está presente, THE GUARD NO APLICA LÍMITE
+ * How it works:
+ * 1. SetMetadata marks the endpoint as skipThrottle
+ * 2. ThrottlerGuard checks this metadata
+ * 3. If present, THE GUARD DOES NOT APPLY LIMIT
  *
- * ⚠️ Cuidado: úsalo solo para endpoints que deban ser accesibles
+ * ⚠️ Warning: use it only for endpoints that should be accessible
  */
 export const SkipThrottle = () =>
   NestSkipThrottle({ default: true, auth: true });

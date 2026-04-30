@@ -98,23 +98,23 @@ export class ReservaService {
       );
     }
 
-    // 2. Bloqueo: Clientes no tocan reservas pagadas/procesadas
+    // 2. Block: Clients don't touch paid/processed reservations
     if (reserva.estado !== estadoReserva.PENDIENTE && !isAdmin) {
       throw new ForbiddenException(
-        'No puedes modificar una reserva ya procesada.',
+        'You cannot modify an already processed reservation.',
       );
     }
 
-    // 3. Recálculo de precio (Solo si cambian datos clave y NO está pagada, o si es Admin)
+    // 3. Price recalculation (only if key data changes and NOT paid, or if Admin)
     if (dto.pista_id || dto.hora_inicio || dto.hora_fin) {
       const id_pista = dto.pista_id || reserva.pista_id;
       const h_inicio = dto.hora_inicio || reserva.hora_inicio;
       const h_fin = dto.hora_fin || reserva.hora_fin;
 
       const pista = await this.pistaRepo.findOneBy({ pista_id: id_pista });
-      if (!pista) throw new NotFoundException('Esa pista no existe');
+      if (!pista) throw new NotFoundException('That pista does not exist');
 
-      // Actualizamos el precio_total en el objeto que se va a guardar
+      // We update the precio_total in the object that will be saved
       (dto as any).precio_total = this.calcularPrecio(
         Number(pista.precio_hora),
         h_inicio,
@@ -122,13 +122,13 @@ export class ReservaService {
       );
     }
 
-    // 4. Lógica de Rango de Usuario (Membresía)
+    // 4. User Rank Logic (Membership)
     const estadoAnterior = reserva.estado;
     const nuevoEstado = dto.estado;
 
     await this.reservaRepo.update(reserva_id, dto);
 
-    // Si el estado pasa a FINALIZADA (o deja de serlo), actualizamos el rango
+    // If the status changes to FINALIZADA (or stops being), we update the rank
     if (nuevoEstado && nuevoEstado !== estadoAnterior) {
       if (
         nuevoEstado === estadoReserva.FINALIZADA ||
@@ -137,7 +137,7 @@ export class ReservaService {
         await this.userService.updateUserRank(reserva.usuario_id);
       }
 
-      //contador de pista si el estado cambia a finalizado sube
+      // Counter increases if the status changes to completed
       if (nuevoEstado === estadoReserva.FINALIZADA) {
         await this.pistaRepo.increment(
           { pista_id: reserva.pista_id },
@@ -146,7 +146,7 @@ export class ReservaService {
         );
       }
 
-      // eso es para restar el contador pero en teoria no se cambia el estado despues de finalizada
+      // This is to subtract the counter but in theory the status doesn't change after it's finalized
       // if (estadoAnterior === estadoReserva.CONFIRMADA && nuevoEstado === estadoReserva.CANCELADA) {
       //     await this.pistaRepo.decrement({ pista_id: reserva.pista_id }, 'reservations_made', 1);
       // }
@@ -168,7 +168,7 @@ export class ReservaService {
     return { deleted: true };
   }
 
-  //Funcion que calcula el precio total de la reserva segun la pista y las horas de inicio y fin
+  // Function that calculates the total price of the reservation according to the pista and start and end hours
   private calcularPrecio(
     pistaPrecio: number,
     inicio: string,
@@ -180,19 +180,19 @@ export class ReservaService {
     const minutosInicio = hI * 60 + mI;
     const minutosFin = hF * 60 + mF;
 
-    // Calculamos la diferencia
+    // We calculate the difference
     let diferencia = minutosFin - minutosInicio;
 
-    // Si es negativa (ej: 23:00 a 01:00), es que saltó el día.
-    // Sumamos 1440 para sacar los minutos reales de diferencia.
+    // If it's negative (e.g.: 23:00 to 01:00), it's because it went to the next day.
+    // We add 1440 to get the actual minutes difference.
     if (diferencia < 0) {
       diferencia += 1440;
     }
 
-    // Si es 0, es que han puesto la misma hora (error)
+    // If it's 0, they put the same time (error)
     if (diferencia === 0) {
       throw new ForbiddenException(
-        'La hora de inicio y fin no pueden ser iguales',
+        'Start time and end time cannot be the same',
       );
     }
 

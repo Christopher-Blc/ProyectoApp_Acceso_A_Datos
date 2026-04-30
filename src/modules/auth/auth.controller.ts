@@ -22,12 +22,12 @@ import { Throttle } from '../../common/decorators/throttle.decorator';
 import type { AuthenticatedRequest } from './types/auth.types';
 
 /**
- * Controlador HTTP de autenticación.
+ * HTTP authentication controller.
  *
- * Este archivo consume los tipos del módulo auth para evitar `any` en `req`.
- * La cadena es:
- * AuthService (firma token) -> AuthGuard (verifica y setea req.user)
- * -> AuthController (lee req.user con tipado fuerte).
+ * This file consumes the types from the auth module to avoid `any` in `req`.
+ * The chain is:
+ * AuthService (signs token) -> AuthGuard (verifies and sets req.user)
+ * -> AuthController (reads req.user with strong typing).
  */
 @ApiTags('auth')
 @ApiBearerAuth()
@@ -36,25 +36,25 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  @ApiOperation({ summary: 'Registrar nuevo usuario' })
-  @ApiResponse({ status: 201, description: 'Usuario registrado exitosamente.' })
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiResponse({ status: 201, description: 'User registered successfully.' })
   @ApiResponse({
     status: 400,
-    description: 'Validación fallida o usuario ya existe.',
+    description: 'Validation failed or user already exists.',
   })
   register(@Body() dto: RegisterDto) {
-    // el rol no se decide desde el cliente
-    // si alguien intenta colarlo, lo ideal es bloquearlo con ValidationPipe whitelist + forbidNonWhitelisted
+    // The role is not decided from the client
+    // If someone tries to send it, the ideal is to block it with ValidationPipe whitelist + forbidNonWhitelisted
     return this.authService.register(dto);
   }
 
   @Post('login')
   @Throttle('auth')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Iniciar sesión y obtener token JWT' })
+  @ApiOperation({ summary: 'Login and get JWT token' })
   @ApiResponse({
     status: 200,
-    description: 'Login exitoso. Retorna token y datos del usuario',
+    description: 'Successful login. Returns token and user data',
     schema: {
       type: 'object',
       properties: {
@@ -70,7 +70,7 @@ export class AuthController {
       },
     },
   })
-  @ApiResponse({ status: 401, description: 'Credenciales incorrectas' })
+  @ApiResponse({ status: 401, description: 'Incorrect credentials' })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
@@ -78,10 +78,10 @@ export class AuthController {
   @Post('refresh')
   @Throttle('auth')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Renovar access token usando refresh token' })
+  @ApiOperation({ summary: 'Renew access token using refresh token' })
   @ApiResponse({
     status: 200,
-    description: 'Token renovado correctamente',
+    description: 'Token renewed successfully',
     schema: {
       type: 'object',
       properties: {
@@ -92,11 +92,11 @@ export class AuthController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Refresh token faltante o inválido',
+    description: 'Refresh token missing or invalid',
   })
   @ApiResponse({
     status: 401,
-    description: 'Refresh token expirado o no autorizado',
+    description: 'Refresh token expired or unauthorized',
   })
   refresh(@Body() dto: RefreshDto) {
     return this.authService.refresh(dto.refresh_token);
@@ -105,22 +105,22 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Post('logout')
   async logout(@Req() req: AuthenticatedRequest) {
-    // `sub` viene del payload JWT y representa el id del usuario autenticado.
+    // `sub` comes from the JWT payload and represents the authenticated user's id.
     const userId = Number(req.user?.sub);
 
-    // Leemos token crudo del header para revocarlo en blacklist.
+    // Read the raw token from the header to revoke it in blacklist.
     const authHeader: string | undefined = req.headers?.authorization;
     const accessToken = authHeader?.startsWith('Bearer ')
       ? authHeader.slice('Bearer '.length)
       : undefined;
 
-    // `exp` es claim estándar JWT en segundos UNIX.
-    // Se convierte a Date para guardar una expiración real en blacklist.
+    // `exp` is a standard JWT claim in UNIX seconds.
+    // It's converted to Date to save a real expiration in the blacklist.
     const exp = req.user?.exp;
     const expiresAt =
       typeof exp === 'number' ? new Date(exp * 1000) : new Date();
 
-    // Si no hay token, no se puede ejecutar logout fuerte de forma segura.
+    // If there's no token, a strong logout cannot be executed safely.
     if (!accessToken) {
       throw new UnauthorizedException('Access token not found');
     }

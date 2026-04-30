@@ -12,11 +12,11 @@ import { Pista } from '../../pista/entities/pista.entity';
 import { Pago } from '../../pago/entities/pago.entity';
 
 export enum estadoReserva {
-  PENDIENTE = 'PENDIENTE', // Se ha solicitado (ej: esperando pago)
-  CONFIRMADA = 'CONFIRMADA', // Todo ok, el hueco está ocupado
-  CANCELADA = 'CANCELADA', // El usuario o el admin la anularon (hueco libre)
-  FINALIZADA = 'FINALIZADA', // El evento ya pasó con éxito
-  NO_PRESENTADO = 'NO_PRESENTADO', // El usuario no vino y no avisó (penalizable)
+  PENDIENTE = 'PENDIENTE', // Requested (e.g.: waiting for payment)
+  CONFIRMADA = 'CONFIRMADA', // All ok, the spot is taken
+  CANCELADA = 'CANCELADA', // User or admin cancelled it (spot free)
+  FINALIZADA = 'FINALIZADA', // The event passed successfully
+  NO_PRESENTADO = 'NO_PRESENTADO', // User didn't show up and didn't notify (penalizable)
 }
 
 @Entity()

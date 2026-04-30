@@ -10,7 +10,7 @@ export class TipoPistaSeeder implements Seeder {
     const entries: TipoPista[] = [];
 
     for (const item of tipoPistaData) {
-      // Buscamos por nombre para evitar duplicados
+      // We search by name to avoid duplicates
       const existing = await tipoPistaRepository.findOne({
         where: { nombre: item.nombre },
       });
@@ -18,7 +18,7 @@ export class TipoPistaSeeder implements Seeder {
       if (existing) continue;
 
       const entry = new TipoPista();
-      // Solo tiene id (auto) y nombre según tu Entity
+      // Only has id (auto) and name according to your Entity
       entry.nombre = item.nombre;
       entry.imagen = item.imagen;
 
@@ -27,8 +27,8 @@ export class TipoPistaSeeder implements Seeder {
 
     if (entries.length > 0) {
       await tipoPistaRepository.save(entries);
-      console.log(`${entries.length} tipos de pista creados.`);
+      console.log(`${entries.length} pista types created.`);
     }
-    console.log('TipoPista seeding completado!');
+    console.log('TipoPista seeding completed!');
   }
 }
