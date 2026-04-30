@@ -10,7 +10,7 @@ export class PistaSeeder implements Seeder {
     const pistaEntries: Pista[] = [];
 
     for (const item of pistaData) {
-      // Buscamos duplicados según la restricción @Unique de la Entity
+      // We search for duplicates according to the @Unique constraint of the Entity
       const existing = await pistaRepository.findOne({
         where: {
           nombre: item.nombre,
@@ -24,7 +24,7 @@ export class PistaSeeder implements Seeder {
       }
 
       const pistaEntry = new Pista();
-      // Asignación de campos según la Entity
+      // Field assignment according to the Entity
       pistaEntry.instalacion_id = item.instalacion_id;
       pistaEntry.tipo_pista_id = item.tipo_pista_id;
       pistaEntry.nombre = item.nombre;
@@ -44,8 +44,8 @@ export class PistaSeeder implements Seeder {
 
     if (pistaEntries.length > 0) {
       await pistaRepository.save(pistaEntries);
-      console.log(`${pistaEntries.length} pistas creadas.`);
+      console.log(`${pistaEntries.length} pistas created.`);
     }
-    console.log('Pista Seeding completed!');
+    console.log('Pista seeding completed!');
   }
 }

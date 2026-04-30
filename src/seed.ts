@@ -2,25 +2,25 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { runSeeders, SeederOptions } from 'typeorm-extension';
 import { User } from './modules/users/entities/user.entity';
 import { UserSeeder } from './database/seeding/seeds/users.seeder';
-import { Noti } from './modules/noti/entities/noti.entity';
-import { Resenya } from './modules/resenya/entities/resenya.entity';
-import { Reserva } from './modules/reserva/entities/reserva.entity';
-import { Membresia } from './modules/membresia/entities/membresia.entity';
-import { Pago } from './modules/pago/entities/pago.entity';
-import { Pista } from './modules/pista/entities/pista.entity';
-import { Instalacion } from './modules/instalacion/entities/instalacion.entity';
-import { ReservaSeeder } from './database/seeding/seeds/reservas.seeder';
-import { PistaSeeder } from './database/seeding/seeds/pista.seeder';
-import { PagoSeeder } from './database/seeding/seeds/pago.seeder';
-import { MembresiaSeeder } from './database/seeding/seeds/membresia.seeder';
-import { InstalacionSeeder } from './database/seeding/seeds/instalacion.seeder';
-import { ResenyaSeeder } from './database/seeding/seeds/resenya.seeder';
-import { NotiSeeder } from './database/seeding/seeds/noti.seeder';
+import { Notification } from './modules/notification/entities/notification.entity';
+import { Review } from './modules/review/entities/review.entity';
+import { Reservation } from './modules/reservation/entities/reservation.entity';
+import { Membership } from './modules/membership/entities/membership.entity';
+import { Payment } from './modules/payment/entities/payment.entity';
+import { Court } from './modules/court/entities/court.entity';
+import { Installation } from './modules/installation/entities/installation.entity';
+import { ReservationSeeder } from './database/seeding/seeds/reservations.seeder';
+import { CourtSeeder } from './database/seeding/seeds/court.seeder';
+import { PaymentSeeder } from './database/seeding/seeds/payment.seeder';
+import { MembershipSeeder } from './database/seeding/seeds/membership.seeder';
+import { InstallationSeeder } from './database/seeding/seeds/installation.seeder';
+import { ReviewSeeder } from './database/seeding/seeds/review.seeder';
+import { NotificationSeeder } from './database/seeding/seeds/notification.seeder';
 import { AuthTokenBlacklist } from './modules/auth/blacklist/auth_token_blacklist.entity';
-import { TipoPista } from './modules/tipo_pista/entities/tipo_pista.entity';
-import { TipoPistaSeeder } from './database/seeding/seeds/tipo_pista.seeder';
+import { CourtType } from './modules/court_type/entities/court_type.entity';
+import { CourtTypeSeeder } from './database/seeding/seeds/court_type.seeder';
 
-//para arrancar con docker: docker exec -it respi-webserver npm run seed
+// To start with docker: docker exec -it respi-webserver npm run seed
 const options: DataSourceOptions & SeederOptions = {
   type: 'mysql',
   host: process.env.DB_HOST,
@@ -31,26 +31,26 @@ const options: DataSourceOptions & SeederOptions = {
 
   entities: [
     User,
-    Noti,
-    Resenya,
-    Reserva,
-    Membresia,
-    Pago,
-    Instalacion,
-    TipoPista,
-    Pista,
+    Notification,
+    Review,
+    Reservation,
+    Membership,
+    Payment,
+    Installation,
+    CourtType,
+    Court,
     AuthTokenBlacklist,
   ],
   seeds: [
     UserSeeder,
-    InstalacionSeeder,
-    TipoPistaSeeder,
-    PistaSeeder,
-    MembresiaSeeder,
-    PagoSeeder,
-    ResenyaSeeder,
-    ReservaSeeder,
-    NotiSeeder,
+    InstallationSeeder,
+    CourtTypeSeeder,
+    CourtSeeder,
+    MembershipSeeder,
+    PaymentSeeder,
+    ReviewSeeder,
+    ReservationSeeder,
+    NotificationSeeder,
   ],
 };
 

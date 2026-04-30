@@ -12,19 +12,19 @@ export class PagoSeeder implements Seeder {
     const pagosEntries: Pago[] = [];
 
     for (const item of pagoData) {
-      // Buscamos la reserva para asegurar que existe la FK [cite: 169, 176]
+      // We search for the reservation to ensure that the FK exists [cite: 169, 176]
       const reserva = await reservaRepository.findOne({
         where: { reserva_id: Number(item.reserva_id) },
       });
 
       if (!reserva) {
         console.warn(
-          `Saltando pago: Reserva con id ${item.reserva_id} no encontrada`,
+          `Skipping payment: Reservation with id ${item.reserva_id} not found`,
         );
         continue;
       }
 
-      // Buscamos duplicados por reserva y monto
+      // We search for duplicates by reservation and amount
       const existing = await pagoRepository.findOne({
         where: {
           reserva_id: Number(item.reserva_id),
@@ -36,7 +36,7 @@ export class PagoSeeder implements Seeder {
       if (existing) continue;
 
       const pagoEntry = new Pago();
-      // Campos según tu Entity [cite: 169-175]
+      // Fields according to your Entity [cite: 169-175]
       pagoEntry.reserva_id = reserva.reserva_id;
       pagoEntry.monto = item.monto;
       pagoEntry.fecha_pago = item.fecha_pago || new Date();
@@ -49,8 +49,8 @@ export class PagoSeeder implements Seeder {
 
     if (pagosEntries.length > 0) {
       await pagoRepository.save(pagosEntries);
-      console.log(`${pagosEntries.length} pagos creados.`);
+      console.log(`${pagosEntries.length} payments created.`);
     }
-    console.log('Pago seeding completado!');
+    console.log('Payment seeding completed!');
   }
 }

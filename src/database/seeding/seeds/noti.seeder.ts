@@ -23,7 +23,7 @@ export class NotiSeeder implements Seeder {
       }
 
       const notiEntry = new Noti();
-      // Campos que existen en tu Entity [cite: 162-165]
+      // Fields that exist in your Entity [cite: 162-165]
       notiEntry.user_id = item.user_id;
       notiEntry.mensaje = item.mensaje;
       notiEntry.tipoNoti = item.tipoNoti;
@@ -35,7 +35,7 @@ export class NotiSeeder implements Seeder {
 
     if (notiEntries.length > 0) {
       await notiRepository.save(notiEntries);
-      console.log(`${notiEntries.length} notificaciones creadas.`);
+      console.log(`${notiEntries.length} notifications created.`);
     }
 
     console.log('Noti seeding completed!');

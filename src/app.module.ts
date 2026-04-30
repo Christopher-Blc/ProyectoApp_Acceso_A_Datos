@@ -6,16 +6,16 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { UsersModule } from './modules/users/users.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
-import { ReservaModule } from './modules/reserva/reserva.module';
-import { ResenyaModule } from './modules/resenya/resenya.module';
-import { MembresiaModule } from './modules/membresia/membresia.module';
-import { InstalacionModule } from './modules/instalacion/instalacion.module';
-import { PagoModule } from './modules/pago/pago.module';
-import { NotiModule } from './modules/noti/noti.module';
-import { PistaModule } from './modules/pista/pista.module';
+import { ReservationModule } from './modules/reservation/reservation.module';
+import { ReviewModule } from './modules/review/review.module';
+import { MembershipModule } from './modules/membership/membership.module';
+import { InstallationModule } from './modules/installation/installation.module';
+import { PaymentModule } from './modules/payment/payment.module';
+import { NotificationModule } from './modules/notification/notification.module';
+import { CourtModule } from './modules/court/court.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
-//comentario de prueba para ver si se sube a github y se despliega en la vps
+import { CourtTypeModule } from './modules/court_type/court_type.module';
+// Test comment to see if it's uploaded to github and deployed in vps
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,7 +25,7 @@ import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
     /**
      * ThrottlerModule.forRoot()
      *
-     * Configura rate limiting (protección contra abuso de API)
+     * Configure rate limiting (protection against API abuse)
      */
     ThrottlerModule.forRoot([
       {
@@ -35,7 +35,7 @@ import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
       },
       {
         name: 'auth',
-        ttl: 3600000, //  60 minutos
+        ttl: 3600000, // 60 minutes
         limit: 100,
       },
     ]),
@@ -51,15 +51,15 @@ import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
       synchronize: true,
     }),
     UsersModule,
-    ReservaModule,
-    ResenyaModule,
-    MembresiaModule,
-    InstalacionModule,
-    PagoModule,
-    NotiModule,
-    PistaModule,
+    ReservationModule,
+    ReviewModule,
+    MembershipModule,
+    InstallationModule,
+    PaymentModule,
+    NotificationModule,
+    CourtModule,
     AuthModule,
-    TipoPistaModule,
+    CourtTypeModule,
   ],
   controllers: [AppController],
   providers: [

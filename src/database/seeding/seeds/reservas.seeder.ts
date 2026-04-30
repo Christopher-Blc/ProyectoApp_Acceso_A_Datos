@@ -14,7 +14,7 @@ export class ReservaSeeder implements Seeder {
     const reservaEntries: Reserva[] = [];
 
     for (const item of reservaData) {
-      // 1. Verificamos que existan las relaciones obligatorias [cite: 207-208]
+      // 1. We verify that mandatory relationships exist [cite: 207-208]
       const user = await userRepository.findOneBy({
         usuario_id: Number(item.usuario_id),
       });
@@ -24,12 +24,12 @@ export class ReservaSeeder implements Seeder {
 
       if (!user || !pista) {
         console.warn(
-          `Saltando reserva: Usuario ${item.usuario_id} o Pista ${item.pista_id} no existen.`,
+          `Skipping reservation: User ${item.usuario_id} or Pista ${item.pista_id} don't exist.`,
         );
         continue;
       }
 
-      // 2. Evitamos duplicados (User + Pista + Fecha + Hora Inicio)
+      // 2. We avoid duplicates (User + Pista + Date + Start Time)
       const existing = await reservaRepository.findOne({
         where: {
           usuario_id: user.usuario_id,
@@ -41,7 +41,7 @@ export class ReservaSeeder implements Seeder {
 
       if (existing) continue;
 
-      // 3. Cálculo de precio manual para el Seed (replicando el Service)
+      // 3. Manual price calculation for Seed (replicating the Service)
       const [hInicio, mInicio] = item.hora_inicio.split(':').map(Number);
       const [hFin, mFin] = item.hora_fin.split(':').map(Number);
       const totalMinutos = hFin * 60 + mFin - (hInicio * 60 + mInicio);
@@ -49,13 +49,13 @@ export class ReservaSeeder implements Seeder {
       let precioCalculado = 0;
       if (totalMinutos > 0) {
         const duracionHoras = totalMinutos / 60;
-        // Usamos el precio_hora de la pista encontrada
+        // We use the precio_hora from the pista found
         precioCalculado = Number(
           (duracionHoras * pista.precio_hora).toFixed(2),
         );
       }
 
-      // 4. Mapeo a Entity [cite: 200-206]
+      // 4. Mapping to Entity [cite: 200-206]
       const reservaEntry = new Reserva();
       reservaEntry.usuario_id = user.usuario_id;
       reservaEntry.pista_id = pista.pista_id;
@@ -64,15 +64,15 @@ export class ReservaSeeder implements Seeder {
       reservaEntry.hora_fin = item.hora_fin;
       reservaEntry.estado = item.estado;
       reservaEntry.nota = item.nota || 'Seed data';
-      reservaEntry.precio_total = precioCalculado; // Campo obligatorio
+      reservaEntry.precio_total = precioCalculado; // Mandatory field
 
       reservaEntries.push(reservaEntry);
     }
 
     if (reservaEntries.length > 0) {
       await reservaRepository.save(reservaEntries);
-      console.log(`${reservaEntries.length} reservas creadas correctamente.`);
+      console.log(`${reservaEntries.length} reservations created successfully.`);
     }
-    console.log('Reserva seeding completado!');
+    console.log('Reserva seeding completed!');
   }
 }

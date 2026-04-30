@@ -1,13 +1,16 @@
-import { estado_instalacion } from '../../modules/instalacion/entities/instalacion.entity';
+import { estado_Installation } from '../../modules/installation/entities/installation.entity';
 
 export default [
   {
-    nombre: 'Instalacion Central',
+    nombre: 'Installation Central',
     direccion: 'Calle Principal 123, Ciudad',
     telefono: '123-456-7890',
     email: 'instalacion.central@example.com',
-    descripcion: 'Instalacion deportiva',
+    descripcion: 'Installation deportiva',
     fecha_creacion: new Date('2023-01-15T10:00:00'),
     estado: estado_instalacion.ACTIVA,
   },
 ];
+
+
+

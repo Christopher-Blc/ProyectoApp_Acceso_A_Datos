@@ -52,30 +52,30 @@ export class PistaController {
   }
 
   @Get('disponibilidad')
-  @ApiOperation({ summary: 'Obtener disponibilidad de pistas por fecha' })
+  @ApiOperation({ summary: 'Get court availability by date' })
   @ApiResponse({
     status: 200,
-    description: 'Disponibilidad calculada correctamente.',
+    description: 'Availability calculated successfully.',
   })
-  @ApiResponse({ status: 401, description: 'No autorizado.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiQuery({
     name: 'fecha',
     example: '2026-04-27',
-    description: 'Fecha en formato YYYY-MM-DD',
+    description: 'Date in YYYY-MM-DD format',
   })
   @UseGuards(AuthGuard)
   async getDisponibilidad(@Query('fecha') fecha: string) {
     return await this.pistaService.obtenerDisponibilidad(fecha);
   }
 
-  // GET /pista/:id -> obtener un pista por ID
+  // GET /pista/:id -> get a court by ID
   @Get(':id')
   @ApiOperation({ summary: 'Get a court by ID' })
   @ApiResponse({ status: 200, description: 'The court with the specified ID' })
   @ApiResponse({ status: 404, description: 'Court not found' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 500, description: 'Error en alguno de los datos.' })
+  @ApiResponse({ status: 500, description: 'Error in some of the data.' })
   async findOne(@Param('id') id: number): Promise<Pista> {
     try {
       return this.pistaService.findOne(id);
@@ -87,7 +87,7 @@ export class PistaController {
     }
   }
 
-  // POST /pista -> crear un nuevo pista
+  // POST /pista -> create a new court
   @Post()
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new court' })
@@ -105,7 +105,7 @@ export class PistaController {
     }
   }
 
-  // PUT /pista/:id -> actualizar un pista existente
+  // PUT /pista/:id -> update an existing court
   @Put(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update court - Supports selective maintenance dates' })

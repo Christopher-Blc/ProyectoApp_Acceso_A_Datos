@@ -27,13 +27,13 @@ export class PistaService {
       where: { pista_id },
       relations: ['instalacion'],
     });
-    if (!pista) throw new NotFoundException(`Pista ${pista_id} no encontrada`);
+    if (!pista) throw new NotFoundException(`Pista ${pista_id} not found`);
     return pista;
   }
 
   private formatTime(time: string): string {
     if (!time) return time;
-    // Forzamos HH:mm:00 cortando cualquier segundo que venga del front
+    // We force HH:mm:00 by cutting any seconds that come from the front-end
     return `${time.slice(0, 5)}:00`;
   }
 
@@ -54,7 +54,7 @@ export class PistaService {
     const nombreDiaHoy = dias[fecha.getDay()];
     const nombreDiaAyer = dias[fechaAyer.getDay()];
 
-    // Buscamos pistas de hoy y de ayer (por si alguna sigue abierta de madrugada)
+    // We search for pistas from today and yesterday (in case one is still open overnight)
     const pistas = await this.pistaRepo.find({
       where: [{ dia_semana: nombreDiaHoy }, { dia_semana: nombreDiaAyer }],
       relations: ['tipo_pista'],
@@ -62,7 +62,7 @@ export class PistaService {
 
     const pistasValidas = pistas.filter((p) => {
       if (p.dia_semana === nombreDiaHoy) return true;
-      return p.hora_cierre < p.hora_apertura; // Solo si cruza medianoche
+      return p.hora_cierre < p.hora_apertura; // Only if it crosses midnight
     });
 
     const reservasDelDia = await this.reservaRepo.find({
@@ -86,10 +86,10 @@ export class PistaService {
     return this.pistaRepo.save(this.pistaRepo.create(data));
   }
 
-  //edita la pista con los datos que le pasemos y ademas tiene la logica para que al 
-  //meter una pista en mantenimiento o inactiva , cancele las reservas futuras relacionadas 
-  //con esa pista , ademas puede recibir fecha de inicio y fin para solo cancelar las reservas
-  //en este rango de fechas 
+  // Edits the pista with the data passed to it and also has logic so that when
+  // putting a pista in maintenance or inactive, it cancels future reservations related
+  // to that pista. It can also receive a start and end date to only cancel reservations
+  // within this date range
   async update(pista_id: number, info_pista: UpdatePistaDto): Promise<Pista> {
     const pistaActual = await this.findOne(pista_id);
     const dataNormalizada: any = { ...info_pista };

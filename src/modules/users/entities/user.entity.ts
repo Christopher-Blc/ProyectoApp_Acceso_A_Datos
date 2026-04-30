@@ -8,10 +8,10 @@ import {
   Unique,
   OneToOne,
 } from 'typeorm';
-import { Noti } from '../../noti/entities/noti.entity';
-import { Resenya } from '../../resenya/entities/resenya.entity';
-import { Reserva } from '../../reserva/entities/reserva.entity';
-import { Membresia } from '../../membresia/entities/membresia.entity';
+import { Notification } from '../../noti/entities/notification.entity';
+import { Review } from '../../resenya/entities/review.entity';
+import { Reservation } from '../../reserva/entities/reservation.entity';
+import { Membership } from '../../membresia/entities/membership.entity';
 
 export enum UserRole {
   GESTOR_RESERVAS = 'GESTOR_RESERVAS',
@@ -80,16 +80,20 @@ export class User {
   @Column({ name: 'refresh_token_hash', type: 'text', nullable: true })
   refresh_token_hash: string | null;
 
-  @ManyToOne(() => Membresia, (m) => m.users)
+  @ManyToOne(() => Membership, (m) => m.users)
   @JoinColumn({ name: 'membresia_id' })
   membresia: Membresia;
 
-  @OneToMany(() => Reserva, (r) => r.usuario)
+  @OneToMany(() => Reservation, (r) => r.usuario)
   reservas: Reserva[];
 
-  @OneToMany(() => Noti, (n) => n.user)
-  notificaciones: Noti[];
+  @OneToMany(() => Notification, (n) => n.user)
+  notificaciones: Notification[];
 
-  @OneToOne(() => Resenya, (r) => r.user)
+  @OneToOne(() => Review, (r) => r.user)
   resenya: Resenya;
 }
+
+
+
+

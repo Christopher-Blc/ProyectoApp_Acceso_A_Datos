@@ -13,7 +13,7 @@ export class InstalacionSeeder implements Seeder {
     const instalacionEntries: Instalacion[] = [];
 
     for (const item of instalacionData) {
-      // Buscamos por email para evitar duplicados [cite: 151]
+      // We search by email to avoid duplicates [cite: 151]
       const existing = await instalacionRepository.findOne({
         where: { email: item.email },
       });
@@ -23,20 +23,20 @@ export class InstalacionSeeder implements Seeder {
       }
 
       const instalacionEntry = new Instalacion();
-      // Campos que existen en tu Entity [cite: 151]
+      // Fields that exist in your Entity [cite: 151]
       instalacionEntry.nombre = item.nombre;
       instalacionEntry.direccion = item.direccion;
       instalacionEntry.telefono = item.telefono;
       instalacionEntry.email = item.email;
       instalacionEntry.descripcion = item.descripcion;
 
-      // La fecha de creación tiene un default CURRENT_DATE,
-      // pero la asignamos si viene en el inventario
+      // Creation date has a default CURRENT_DATE,
+      // but we assign it if it comes from inventory
       instalacionEntry.fecha_creacion = item.fecha_creacion
         ? new Date(item.fecha_creacion)
         : new Date();
 
-      // El estado usa el enum estado_instalacion
+      // Status uses the estado_instalacion enum
       instalacionEntry.estado = item.estado || estado_instalacion.INACTIVA;
 
       instalacionEntries.push(instalacionEntry);
@@ -44,10 +44,10 @@ export class InstalacionSeeder implements Seeder {
 
     if (instalacionEntries.length > 0) {
       await instalacionRepository.save(instalacionEntries);
-      console.log(`${instalacionEntries.length} instalaciones creadas.`);
+      console.log(`${instalacionEntries.length} facilities created.`);
     } else {
-      console.log('No hay nuevas instalaciones para seedear.');
+      console.log('No new facilities to seed.');
     }
-    console.log('Instalacion seeding completado!');
+    console.log('Instalacion seeding completed!');
   }
 }
