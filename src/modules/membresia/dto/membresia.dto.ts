@@ -2,13 +2,14 @@ import { IsString, IsInt, IsNumber, IsOptional, Min, Max, Length } from 'class-v
 import { PartialType } from '@nestjs/mapped-types';
 
 export class CreateMembresiaDto {
-  @IsString()
-  @Length(1, 100)
-  rango: string;
+  @IsInt()
+  @Min(1)
+  @Max(10)
+  rango: number;
 
   @IsString()
   @Length(1, 100)
-  tipo: string;
+  nombre: string;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)

@@ -60,6 +60,8 @@ export class ReservaService {
   async create(dto: CreateReservaDto, usuario_id: number): Promise<Reserva> {
     const pista = await this.pistaRepo.findOneBy({ pista_id: dto.pista_id });
     if (!pista) throw new NotFoundException('Pista no encontrada');
+    const user = await this.userService.findById(usuario_id);
+    const descuento = user?.membresia.descuento || 0;
 
     //calculamos el precio final aqui para que no se hagan trampas desde el front
     const precioCalculado = this.calcularPrecio(
@@ -71,7 +73,7 @@ export class ReservaService {
     const newReserva = this.reservaRepo.create({
       ...dto,
       usuario_id,
-      precio_total: precioCalculado,
+      precio_total: precioCalculado * (1 - descuento / 100),
       estado: estadoReserva.PENDIENTE,
     });
 
@@ -115,11 +117,13 @@ export class ReservaService {
       if (!pista) throw new NotFoundException('Esa pista no existe');
 
       // Actualizamos el precio_total en el objeto que se va a guardar
+      const user = await this.userService.findById(reserva.usuario_id);
+      const descuento = user?.membresia.descuento || 0;
       (dto as any).precio_total = this.calcularPrecio(
         Number(pista.precio_hora),
         h_inicio,
         h_fin,
-      );
+      ) * (1 - descuento / 100);
     }
 
     // 4. Lógica de Rango de Usuario (Membresía)

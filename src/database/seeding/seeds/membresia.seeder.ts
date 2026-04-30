@@ -10,9 +10,9 @@ export class MembresiaSeeder implements Seeder {
     const membresiaEntries: Membresia[] = [];
 
     for (const item of membresiaData) {
-      // Buscamos por tipo (Bronce, Plata, Oro) para evitar duplicados exactos
+      // Buscamos por nombre (Bronce, Plata, Oro) para evitar duplicados exactos
       const existing = await membresiaRepository.findOne({
-        where: { tipo: item.tipo },
+        where: { nombre: item.nombre },
       });
 
       if (existing) {
@@ -22,7 +22,7 @@ export class MembresiaSeeder implements Seeder {
       const membresiaEntry = new Membresia();
       // Mapeo directo a las columnas de la Entity
       membresiaEntry.rango = item.rango;
-      membresiaEntry.tipo = item.tipo;
+      membresiaEntry.nombre = item.nombre;
       membresiaEntry.descuento = item.descuento;
       membresiaEntry.reservas_requeridas = item.reservas_requeridas;
       membresiaEntry.beneficios = item.beneficios;
