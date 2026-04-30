@@ -30,8 +30,8 @@ import { TipoPistaModule } from './modules/tipo_pista/tipo_pista.module';
     ThrottlerModule.forRoot([
       {
         name: 'default',
-        ttl: 100,
-        limit: 10000000,
+        ttl: 100,//
+        limit: 1000000000000,//
       },
       {
         name: 'auth',
