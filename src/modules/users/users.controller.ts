@@ -163,7 +163,7 @@ export class UsersController {
   @ApiParam({ name: 'id', example: 1 })
   async updateUser(@Param('id') id: number, @Body() userDto: UpdateUserDto) {
     try {
-      return await this.userService.update(id, userDto);
+      return await this.userService.update(id, userDto , false);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
