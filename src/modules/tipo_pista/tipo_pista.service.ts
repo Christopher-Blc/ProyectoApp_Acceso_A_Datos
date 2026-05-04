@@ -8,6 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TipoPista } from './entities/tipo_pista.entity';
 import { TipoPistaDto, UpdateTipoPistaDto } from './dto/tipo_pista.dto';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class TipoPistaService {
@@ -57,12 +59,19 @@ export class TipoPistaService {
   async update(id: number, dto: UpdateTipoPistaDto, imagenFilename?: string): Promise<TipoPista> {
     const tipo = await this.findOne(id);
 
-    if (!tipo) {
-      throw new NotFoundException('No se ha encontrado ese tipo de pista');
-    }
-
     const updateData: UpdateTipoPistaDto = { ...dto };
     if (imagenFilename) {
+      // Borrar imagen antigua si existe y se sube una nueva
+      if (tipo.imagen) {
+        const oldPath = path.resolve(process.cwd(), 'public', tipo.imagen);
+        if (fs.existsSync(oldPath)) {
+          try {
+            fs.unlinkSync(oldPath);
+          } catch {
+            console.warn(`No se pudo eliminar la imagen antigua: ${oldPath}`);
+          }
+        }
+      }
       updateData.imagen = imagenFilename;
     }
 
@@ -71,18 +80,30 @@ export class TipoPistaService {
     return await this.tipoPistaRepository.save(tipo);
   }
 
-  // Eliminar
   async remove(id: number): Promise<{ deleted: boolean }> {
     const tipo = await this.findOne(id);
 
     try {
       await this.tipoPistaRepository.remove(tipo);
-      return { deleted: true };
     } catch {
-      // Si hay pistas vinculadas a este tipo, la base de datos dará error de FK
       throw new BadRequestException(
         'No se puede eliminar el tipo porque tiene pistas asociadas. Elimina primero las pistas.',
       );
     }
+
+    // Solo borramos el archivo si la DB fue exitosa
+    if (tipo.imagen) {
+      const filePath = path.resolve(process.cwd(), 'public', tipo.imagen);
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch {
+          // Log but don't fail the request
+          console.warn(`No se pudo eliminar la imagen: ${filePath}`);
+        }
+      }
+    }
+
+    return { deleted: true };
   }
 }
