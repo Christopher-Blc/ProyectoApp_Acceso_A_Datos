@@ -16,7 +16,7 @@ export enum estadoReserva {
   CONFIRMADA = 'CONFIRMADA', // Todo ok, el hueco está ocupado
   CANCELADA = 'CANCELADA', // El usuario o el admin la anularon (hueco libre)
   FINALIZADA = 'FINALIZADA', // El evento ya pasó con éxito
-  NO_PRESENTADO = 'NO_PRESENTADO', // El usuario no vino y no avisó (penalizable)
+  NO_PRESENTADO = 'NO_PRESENTADO', // El usuario no vino y no avisó (no se gasta)
 }
 
 @Entity()
