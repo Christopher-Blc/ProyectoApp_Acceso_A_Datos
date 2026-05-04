@@ -9,6 +9,7 @@ export class TipoPistaDto {
   })
   nombre: string;
 
+  @IsString()
   @ApiProperty({
     description: 'Sport type picture',
     example: 'todavia no hay example porque no se pueden subir desde el front',
@@ -26,6 +27,7 @@ export class UpdateTipoPistaDto {
   nombre: string;
 
   @IsOptional()
+  @IsString()
   @ApiProperty({
     description: 'Sport type picture',
     example: 'todavia no hay example porque no se pueden subir desde el front',
