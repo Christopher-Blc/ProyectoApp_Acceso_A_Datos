@@ -10,7 +10,7 @@ import * as bcrypt from 'bcrypt';
 
 import { User, UserRole } from './entities/user.entity';
 import { UpdateUserDto } from './dto/users.dto';
-import { Membership } from '../membership/entities/membership.entity'; // Asegúrate de que la ruta sea correcta
+import { Membership } from '../membership/entities/membership.entity';
 import { Reservation, estadoReserva } from '../reservation/entities/reservation.entity';
 
 @Injectable()
@@ -18,15 +18,12 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    // Necesitamos Membership porque aquí aplicamos la lógica que, según las reservas hechas,
-    // asignará una membresía u otra automáticamente
     @InjectRepository(Membership)
     private readonly membresiaRepository: Repository<Membership>,
     @InjectRepository(Reservation)
     private readonly reservaRepository: Repository<Reservation>,
   ) {}
 
-  // Actualización automática de membresía
   async updateUserRank(usuario_id: number): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { usuario_id },
@@ -35,7 +32,6 @@ export class UsersService {
 
     if (!user) return;
 
-    // Contamos solo reservas finalizadas en BD para el usuario.
     const totalFinalizadas = await this.reservaRepository.count({
       where: {
         usuario_id,
@@ -43,15 +39,12 @@ export class UsersService {
       },
     });
 
-    // Buscamos en la tabla de membresías cuál le corresponde al usuario.
-    // Elegimos la membresía con mayor 'reservas_requeridas'
-    // que sea menor o igual a las reservas del usuario.
     const mejorMembership = await this.membresiaRepository.findOne({
       where: {
         reservas_requeridas: LessThanOrEqual(totalFinalizadas),
       },
       order: {
-        reservas_requeridas: 'DESC', // La que exige más reservas (la mejor), primero
+        reservas_requeridas: 'DESC',
       },
     });
 
@@ -62,18 +55,14 @@ export class UsersService {
     }
   }
 
-  // Actualización con protección de campos (solo Admin cambia Role y Membership)
   async update(
     usuario_id: number,
     data: UpdateUserDto,
     isSelfUpdate: boolean,
-    //isSelfUpdate: boolean = false,
   ): Promise<User> {
-    // Validamos existencia para devolver 404 si no existe
     await this.findOne(usuario_id);
 
     if (isSelfUpdate) {
-      // Bloqueamos que el usuario cambie estos campos por su cuenta
       delete data.role;
       delete data.Membership_id;
       delete data.isActive;
@@ -84,6 +73,15 @@ export class UsersService {
     }
 
     await this.userRepository.update(usuario_id, data);
+    return this.findOne(usuario_id);
+  }
+
+  async updatePushToken(
+    usuario_id: number,
+    expoPushToken: string,
+  ): Promise<User> {
+    await this.findOne(usuario_id);
+    await this.userRepository.update(usuario_id, { expoPushToken });
     return this.findOne(usuario_id);
   }
 
@@ -110,8 +108,9 @@ export class UsersService {
       const user = this.userRepository.create(data);
       return await this.userRepository.save(user);
     } catch (error) {
-      if (error.code === '23505') {
-        // Controlamos duplicados aquí, aunque register ya lo valida
+      const dbError = error as { code?: string };
+      if (dbError.code === '23505') {
+        // Controlamos duplicados aquí aunque en register ya se verifica
         throw new BadRequestException('Email/Username/Phone already exists');
       }
       throw new InternalServerErrorException();
@@ -182,8 +181,3 @@ export class UsersService {
     );
   }
 }
-
-
-
-
-

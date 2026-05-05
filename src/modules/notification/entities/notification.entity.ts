@@ -22,6 +22,9 @@ export class Notification {
   @Column({ name: 'user_id', type: 'int' })
   user_id: number;
 
+  @Column({ name: 'titulo', length: 100, nullable: true })
+  titulo: string;
+
   @Column({ name: 'mensaje' })
   mensaje: string;
 

@@ -24,7 +24,7 @@ export class RegisterDto {
     maxLength: 40,
     example: 'uniqueUsername',
   })
-  username: string;
+  username!: string;
 
   //Nombre
   @IsString()
@@ -36,7 +36,7 @@ export class RegisterDto {
     maxLength: 40,
     example: 'Name_User',
   })
-  name: string;
+  name!: string;
 
   //Apellido
   @IsString()
@@ -48,7 +48,7 @@ export class RegisterDto {
     maxLength: 40,
     example: 'Surname_User',
   })
-  surname: string;
+  surname!: string;
 
   //Correo electronico
   @IsEmail()
@@ -59,7 +59,7 @@ export class RegisterDto {
     description: 'Email address of the user',
     example: 'email@example.com',
   })
-  email: string;
+  email!: string;
 
   //Telefono
   @IsPhoneNumber('ES')
@@ -70,7 +70,7 @@ export class RegisterDto {
     description: 'Phone number of the user',
     example: 123456789,
   })
-  phone: string;
+  phone!: string;
 
   //password tiene que tener por lo menos una mayuscula, una minuscula, un numero y un caracter especial
   @ApiProperty({
@@ -85,7 +85,7 @@ export class RegisterDto {
   @Matches(VALIDATION_PATTERNS.password.pattern, {
     message: VALIDATION_PATTERNS.password.message,
   })
-  password: string;
+  password!: string;
 
   // Fechas
   @IsDateString()
@@ -94,7 +94,7 @@ export class RegisterDto {
     description: 'Date of birth of the user',
     example: '1990-01-01',
   })
-  fecha_nacimiento: string;
+  fecha_nacimiento!: string;
 
   //direccion
   @IsString()
@@ -103,5 +103,5 @@ export class RegisterDto {
     description: 'Address of the user',
     example: '123 Main St, City, Country',
   })
-  direccion: string;
+  direccion!: string;
 }

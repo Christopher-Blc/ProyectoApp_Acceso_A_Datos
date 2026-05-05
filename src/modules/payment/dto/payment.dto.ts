@@ -11,21 +11,21 @@ import { estado_pago, metodo_pago } from '../entities/payment.entity';
 export class CreatePaymentDto {
   @IsNumber()
   @ApiProperty()
-  Payment_id: number;
+  Payment_id!: number;
 
   @IsNumber()
   @ApiProperty({
     description: 'Amount of the payment',
     example: 10.5,
   })
-  monto: number;
+  monto!: number;
 
   @IsDateString()
   @ApiProperty({
     description: 'Date of the payment',
     example: '2024-01-01T10:00:00Z',
   })
-  fecha_Payment: string;
+  fecha_Payment!: string;
 
   // Método de Payment
   @IsEnum(metodo_pago)
@@ -33,7 +33,7 @@ export class CreatePaymentDto {
     description: 'Payment method',
     example: metodo_pago.VISA,
   })
-  metodo_pago: metodo_pago;
+  metodo_pago!: metodo_pago;
 
   // Estado del Payment
   @IsEnum(estado_pago)
@@ -41,14 +41,14 @@ export class CreatePaymentDto {
     description: 'Payment status',
     example: estado_pago.NO_PAGADO,
   })
-  estado_pago: estado_pago;
+  estado_pago!: estado_pago;
 
   @IsString()
   @ApiProperty({
     description: 'Additional notes about the payment',
     example: 'Payment received in full',
   })
-  nota: string;
+  nota!: string;
 }
 
 export class UpdatePaymentDto {

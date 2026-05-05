@@ -17,35 +17,35 @@ export class CreateInstallationDto {
     description: 'Name of the installation',
     example: 'Gym Central',
   })
-  nombre: string;
+  nombre!: string;
 
   @IsString()
   @ApiProperty({
     description: 'Address of the installation',
     example: '123 Main St',
   })
-  direccion: string;
+  direccion!: string;
 
   @IsString()
   @ApiProperty({
     description: 'Phone number of the installation',
     example: 123456789,
   })
-  telefono: string;
+  telefono!: string;
 
   @IsString()
   @ApiProperty({
     description: 'Email of the installation',
     example: 'contact@gymcentral.com',
   })
-  email: string;
+  email!: string;
 
   @IsNumber()
   @ApiProperty({
     description: 'Maximum capacity of the installation',
     example: 100,
   })
-  capacidad_max: number;
+  capacidad_max!: number;
 
   @IsOptional()
   @IsString()
@@ -53,7 +53,7 @@ export class CreateInstallationDto {
     description: 'Description of the installation',
     example: 'A well-equipped gym with modern facilities',
   })
-  descripcion: string;
+  descripcion?: string;
 
   // @IsDateString()
   // @ApiProperty({
@@ -68,21 +68,21 @@ export class CreateInstallationDto {
     description: 'State of the installation',
     example: estado_instalacion.ACTIVA,
   })
-  estado: estado_instalacion;
+  estado?: estado_instalacion;
 
   @IsDateString()
   @ApiProperty({
     description: 'Opening time of the installation',
     example: '08:00:00',
   })
-  horario_apertura: string;
+  horario_apertura!: string;
 
   @IsDateString()
   @ApiProperty({
     description: 'Closing time of the installation',
     example: '22:00:00',
   })
-  horario_cierre: string;
+  horario_cierre!: string;
 }
 
 export class UpdateInstallationDto {

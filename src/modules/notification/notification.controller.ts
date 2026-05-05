@@ -1,18 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
   Body,
+  Controller,
+  Delete,
+  Get,
   HttpException,
   HttpStatus,
+  Param,
+  Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
-import { NotificationService } from './notification.service';
-import { NotificationDto } from './dto/notification.dto';
-import { Notification } from './entities/notification.entity';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -25,14 +22,20 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 import { normalizeError } from '../../common/utils/error.util';
+import { NotificationService } from './notification.service';
+import {
+  CreateMassiveNotiDto,
+  NotificationDto,
+} from './dto/notification.dto';
+import { Notification } from './entities/notification.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
+@ApiTags('Notification')
 @Controller('Notification')
 export class NotificationController {
-  constructor(private readonly NotificationService: NotificationService) {}
+  constructor(private readonly notificationService: NotificationService) {}
 
-  // Ruta /Notification -> obtener todas las notificaciones
   @Get()
   @ApiOperation({ summary: 'Obtener todas las notificaciones' })
   @ApiResponse({
@@ -43,17 +46,13 @@ export class NotificationController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async findAll(): Promise<Notification[]> {
     try {
-      return this.NotificationService.findAll();
+      return this.notificationService.findAll();
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
-  // Ruta /Notification/:id -> obtener una notificación por ID
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una notificación por ID' })
   @ApiResponse({
@@ -63,19 +62,16 @@ export class NotificationController {
   @ApiResponse({ status: 404, description: 'Notificación no encontrada.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiParam({ name: 'id', example: 1 })
   async findOne(@Param('id') id: number): Promise<Notification | null> {
     try {
-      return this.NotificationService.findOne(id);
+      return this.notificationService.findOne(id);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
-  // Ruta /Notification (POST) -> crear una notificación nueva
   @Post()
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Crear una nueva notificación' })
@@ -85,24 +81,43 @@ export class NotificationController {
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async create(@Body() NotificationDto: NotificationDto): Promise<Notification | null> {
+  async create(
+    @Body() notificationDto: NotificationDto,
+  ): Promise<Notification | null> {
     try {
-      // Convertir 'fecha' de string a Date si viene presente
       const data = {
-        ...NotificationDto,
-        fecha: NotificationDto.fecha ? new Date(NotificationDto.fecha) : undefined,
+        ...notificationDto,
+        user_id: notificationDto.user_id ?? notificationDto.usuario_id,
+        fecha: notificationDto.fecha
+          ? new Date(notificationDto.fecha)
+          : undefined,
       };
-      return this.NotificationService.create(data);
+      return this.notificationService.create(data);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
-  // Ruta /Notification/:id (PUT) -> actualizar una notificación existente
+  @Post('massive')
+  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Crear notificación masiva y enviarla por push' })
+  @ApiResponse({
+    status: 201,
+    description: 'Notificación masiva creada y enviada correctamente.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  async createMassive(@Body() body: CreateMassiveNotiDto) {
+    try {
+      return await this.notificationService.createMassive(body);
+    } catch (err) {
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
   @Put(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Actualizar una notificación por ID' })
@@ -115,20 +130,16 @@ export class NotificationController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async update(
     @Param('id') id: number,
-    @Body() NotificationDto: NotificationDto,
+    @Body() notificationDto: NotificationDto,
   ): Promise<Notification | null> {
     try {
-      return this.NotificationService.update(id, NotificationDto);
+      return this.notificationService.update(id, notificationDto);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
-  // Ruta /Notification/:id (DELETE) -> eliminar una notificación
   @Delete(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Eliminar una notificación por ID' })
@@ -141,16 +152,10 @@ export class NotificationController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async remove(@Param('id') id: number): Promise<void | { deleted: boolean }> {
     try {
-      return this.NotificationService.remove(id);
+      return this.notificationService.remove(id);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 }
-
-
-

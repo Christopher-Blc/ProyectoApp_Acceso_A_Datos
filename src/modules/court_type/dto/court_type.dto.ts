@@ -7,14 +7,14 @@ export class TipoCourtDto {
     description: 'Sport type name',
     example: 'Tennis',
   })
-  nombre: string;
+  nombre!: string;
 
   @IsString()
   @ApiProperty({
     description: 'Sport type picture',
     example: 'todavia no hay example porque no se pueden subir desde el front',
   })
-  imagen: string;
+  imagen!: string;
 }
 
 export class UpdateTipoCourtDto {
@@ -24,7 +24,7 @@ export class UpdateTipoCourtDto {
     description: 'Sport type name',
     example: 'Tennis',
   })
-  nombre: string;
+  nombre?: string;
 
   @IsOptional()
   @IsString()
@@ -32,5 +32,5 @@ export class UpdateTipoCourtDto {
     description: 'Sport type picture',
     example: 'todavia no hay example porque no se pueden subir desde el front',
   })
-  imagen: string;
+  imagen?: string;
 }
