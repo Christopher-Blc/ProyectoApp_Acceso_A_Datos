@@ -9,7 +9,7 @@ import { Membership } from './modules/membership/entities/membership.entity';
 import { Payment } from './modules/payment/entities/payment.entity';
 import { Court } from './modules/court/entities/court.entity';
 import { Installation } from './modules/installation/entities/installation.entity';
-import { ReservationSeeder } from './database/seeding/seeds/reservations.seeder';
+import { ReservationsSeeder } from './database/seeding/seeds/reservations.seeder';
 import { CourtSeeder } from './database/seeding/seeds/court.seeder';
 import { PaymentSeeder } from './database/seeding/seeds/payment.seeder';
 import { MembershipSeeder } from './database/seeding/seeds/membership.seeder';
@@ -20,7 +20,7 @@ import { AuthTokenBlacklist } from './modules/auth/blacklist/auth_token_blacklis
 import { CourtType } from './modules/court_type/entities/court_type.entity';
 import { CourtTypeSeeder } from './database/seeding/seeds/court_type.seeder';
 
-// To start with docker: docker exec -it respi-webserver npm run seed
+// Para iniciar con docker: docker exec -it respi-webserver npm run seed
 const options: DataSourceOptions & SeederOptions = {
   type: 'mysql',
   host: process.env.DB_HOST,
@@ -49,7 +49,7 @@ const options: DataSourceOptions & SeederOptions = {
     MembershipSeeder,
     PaymentSeeder,
     ReviewSeeder,
-    ReservationSeeder,
+    ReservationsSeeder,
     NotificationSeeder,
   ],
 };
@@ -64,3 +64,4 @@ dataSource
     process.exit();
   })
   .catch((error) => console.log('Error initializing data source', error));
+

@@ -27,11 +27,11 @@ import { UserRole } from '../users/entities/user.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('noti')
+@Controller('Notification')
 export class NotificationController {
   constructor(private readonly NotificationService: NotificationService) {}
 
-  // GET /Notification -> obtener todas las noti
+  // Ruta /Notification -> obtener todas las notificaciones
   @Get()
   @ApiOperation({ summary: 'Obtener todas las notificaciones' })
   @ApiResponse({
@@ -51,7 +51,7 @@ export class NotificationController {
     }
   }
 
-  // GET /noti/:id -> obtener una Notification por ID
+  // Ruta /Notification/:id -> obtener una notificación por ID
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una notificación por ID' })
   @ApiResponse({
@@ -72,7 +72,7 @@ export class NotificationController {
     }
   }
 
-  // POST /Notification -> crear una nueva noti
+  // Ruta /Notification (POST) -> crear una notificación nueva
   @Post()
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Crear una nueva notificación' })
@@ -84,7 +84,7 @@ export class NotificationController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(@Body() NotificationDto: NotificationDto): Promise<Notification | null> {
     try {
-      // Convert 'fecha' from string to Date if present
+      // Convertir 'fecha' de string a Date si viene presente
       const data = {
         ...NotificationDto,
         fecha: NotificationDto.fecha ? new Date(NotificationDto.fecha) : undefined,
@@ -98,7 +98,7 @@ export class NotificationController {
     }
   }
 
-  // PUT /noti/:id -> actualizar un Notification existente
+  // Ruta /Notification/:id (PUT) -> actualizar una notificación existente
   @Put(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Actualizar una notificación por ID' })
@@ -123,7 +123,7 @@ export class NotificationController {
     }
   }
 
-  // DELETE /noti/:id -> eliminar un noti
+  // Ruta /Notification/:id (DELETE) -> eliminar una notificación
   @Delete(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Eliminar una notificación por ID' })
@@ -145,5 +145,6 @@ export class NotificationController {
     }
   }
 }
+
 
 

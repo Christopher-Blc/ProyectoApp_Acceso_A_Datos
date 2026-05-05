@@ -25,7 +25,7 @@ import { Review } from './entities/review.entity';
 @ApiTags('resenyas')
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('resenya')
+@Controller('Review')
 export class ReviewController {
   constructor(private readonly ReviewService: ReviewService) {}
 
@@ -84,5 +84,6 @@ export class ReviewController {
     return this.ReviewService.remove(id);
   }
 }
+
 
 

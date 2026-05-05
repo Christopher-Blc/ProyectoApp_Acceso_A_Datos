@@ -7,7 +7,7 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { estadoReservation } from '../entities/reservation.entity';
+import { estadoReserva } from '../entities/reservation.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateReservationDto {
@@ -23,7 +23,7 @@ export class CreateReservationDto {
     description: 'Date of the reservation',
     example: '2026-04-01',
   })
-  fecha_reserva: string;
+  fecha_Reservation: string;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
@@ -49,7 +49,7 @@ export class CreateReservationDto {
   @IsEnum(estadoReserva)
   @ApiProperty({
     description: 'State of the reservation',
-    enum: estadoReservation,
+    enum: estadoReserva,
     example: estadoReserva.PENDIENTE,
   })
   estado: estadoReserva;
@@ -80,7 +80,7 @@ export class UpdateReservationDto {
     example: '2026-04-01',
     required: false,
   })
-  fecha_reserva?: string;
+  fecha_Reservation?: string;
 
   @IsOptional()
   @IsString()
@@ -106,7 +106,7 @@ export class UpdateReservationDto {
   @IsEnum(estadoReserva)
   @ApiProperty({
     description: 'State of the reservation',
-    enum: estadoReservation,
+    enum: estadoReserva,
     required: false,
   })
   estado?: estadoReserva;
@@ -120,6 +120,8 @@ export class UpdateReservationDto {
   })
   nota?: string;
 }
+
+
 
 
 

@@ -8,10 +8,10 @@ import {
   Unique,
   OneToOne,
 } from 'typeorm';
-import { Notification } from '../../noti/entities/notification.entity';
-import { Review } from '../../resenya/entities/review.entity';
-import { Reservation } from '../../reserva/entities/reservation.entity';
-import { Membership } from '../../membresia/entities/membership.entity';
+import { Notification } from '../../notification/entities/notification.entity';
+import { Review } from '../../review/entities/review.entity';
+import { Reservation } from '../../reservation/entities/reservation.entity';
+import { Membership } from '../../membership/entities/membership.entity';
 
 export enum UserRole {
   GESTOR_RESERVAS = 'GESTOR_RESERVAS',
@@ -23,28 +23,28 @@ export enum UserRole {
 @Entity({ name: 'user' })
 export class User {
   @PrimaryGeneratedColumn({ name: 'usuario_id', type: 'int' })
-  usuario_id: number;
+  usuario_id!: number;
 
-  @Column({ name: 'membresia_id', type: 'int', nullable: true })
-  membresia_id: number;
+  @Column({ name: 'Membership_id', type: 'int', nullable: true })
+  Membership_id!: number;
 
   @Column({ name: 'username', unique: true })
-  username: string;
+  username!: string;
 
   @Column({ name: 'name' })
-  name: string;
+  name!: string;
 
   @Column({ name: 'surname' })
-  surname: string;
+  surname!: string;
 
   @Column({ name: 'email', unique: true })
-  email: string;
+  email!: string;
 
   @Column({ name: 'phone' })
-  phone: string;
+  phone!: string;
 
   @Column({ name: 'password', select: false })
-  password: string;
+  password!: string;
 
   @Column({
     name: 'role',
@@ -52,47 +52,49 @@ export class User {
     enum: UserRole,
     default: UserRole.CLIENTE,
   })
-  role: UserRole;
+  role!: UserRole;
 
   @Column({ name: 'isActive', default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({
     name: 'fecha_registro',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  fecha_registro: Date;
+  fecha_registro!: Date;
 
   @Column({
     name: 'fecha_ultimo_login',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  fecha_ultimo_login: Date;
+  fecha_ultimo_login!: Date;
 
   @Column({ name: 'fecha_nacimiento', type: 'date' })
-  fecha_nacimiento: Date;
+  fecha_nacimiento!: Date;
 
   @Column({ name: 'direccion' })
-  direccion: string;
+  direccion!: string;
 
   @Column({ name: 'refresh_token_hash', type: 'text', nullable: true })
-  refresh_token_hash: string | null;
+  refresh_token_hash!: string | null;
 
   @ManyToOne(() => Membership, (m) => m.users)
-  @JoinColumn({ name: 'membresia_id' })
-  membresia: Membresia;
+  @JoinColumn({ name: 'Membership_id' })
+  Membership!: Membership;
 
   @OneToMany(() => Reservation, (r) => r.usuario)
-  reservas: Reserva[];
+  reservas!: Reservation[];
 
   @OneToMany(() => Notification, (n) => n.user)
-  notificaciones: Notification[];
+  notificaciones!: Notification[];
 
   @OneToOne(() => Review, (r) => r.user)
-  resenya: Resenya;
+  Review!: Review;
 }
+
+
 
 
 

@@ -5,9 +5,9 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Reservation } from '../../reserva/entities/reservation.entity';
+import { Reservation } from '../../reservation/entities/reservation.entity';
 
-export enum metodo_Payment {
+export enum metodo_pago {
   VISA = 'Visa',
   MASTERCARD = 'MasterCard',
   PAY_PAL = 'PayPal',
@@ -15,17 +15,17 @@ export enum metodo_Payment {
   EFECTIVO = 'Efectivo',
 }
 
-export enum estado_Payment {
+export enum estado_pago {
   PAGADO = 'Pagado',
   NO_PAGADO = 'No pagado',
   EN_PROCESO = 'En proceso',
   REEMBOLSADO = 'Reembolsado',
 }
 
-@Entity('pago')
+@Entity('Payment')
 export class Payment {
-  @PrimaryGeneratedColumn({ name: 'pago_id' })
-  pago_id: number;
+  @PrimaryGeneratedColumn({ name: 'Payment_id' })
+  Payment_id: number;
 
   @Column({ name: 'reserva_id', type: 'int' })
   reserva_id: number;
@@ -38,18 +38,18 @@ export class Payment {
   monto: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  fecha_pago: Date;
+  fecha_Payment: Date;
 
   @Column({
     type: 'enum',
-    enum: metodo_Payment,
+    enum: metodo_pago,
     default: metodo_pago.VISA,
   })
   metodo_pago: metodo_pago;
 
   @Column({
     type: 'enum',
-    enum: estado_Payment,
+    enum: estado_pago,
     default: estado_pago.NO_PAGADO,
   })
   estado_pago: estado_pago;
@@ -59,12 +59,17 @@ export class Payment {
 
   @ManyToOne(() => Reservation, (r) => r.pagos)
   @JoinColumn({ name: 'reserva_id' })
-  reserva: Reserva;
+  Reservation: Reservation;
 
-  // @ManyToOne(() => Instalacion)
+  // @ManyToOne(() => Installation)
   // @JoinColumn({ name: "instalacion_id" })
-  // instalacion: Instalacion;
+  // Installation: Installation;
 }
+
+
+
+
+
 
 
 

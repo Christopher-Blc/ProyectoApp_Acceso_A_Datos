@@ -7,12 +7,12 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Installation } from '../../instalacion/entities/installation.entity';
+import { Installation } from '../../installation/entities/installation.entity';
 
 @Entity()
 export class Review {
-  @PrimaryGeneratedColumn({ name: 'resenya_id', type: 'int' })
-  resenya_id: number;
+  @PrimaryGeneratedColumn({ name: 'Review_id', type: 'int' })
+  Review_id: number;
 
   @Column({ name: 'instalacion_id', type: 'int' })
   instalacion_id: number;
@@ -35,12 +35,15 @@ export class Review {
   @Column()
   visible: boolean;
 
-  @OneToOne(() => User, (u) => u.resenya)
+  @OneToOne(() => User, (u) => u.Review)
   @JoinColumn({ name: 'usuario_id' })
   user: User;
 
   @ManyToOne(() => Installation, (i) => i.instalacion_id)
   @JoinColumn({ name: 'instalacion_id' })
-  instalacion: Instalacion;
+  Installation: Installation;
 }
+
+
+
 

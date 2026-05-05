@@ -15,7 +15,7 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { CourtModule } from './modules/court/court.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CourtTypeModule } from './modules/court_type/court_type.module';
-// Test comment to see if it's uploaded to github and deployed in vps
+// Comentario de prueba para verificar subida a GitHub y despliegue en VPS
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,7 +25,7 @@ import { CourtTypeModule } from './modules/court_type/court_type.module';
     /**
      * ThrottlerModule.forRoot()
      *
-     * Configure rate limiting (protection against API abuse)
+     * Configura límite de peticiones (protección contra abuso de la API)
      */
     ThrottlerModule.forRoot([
       {
@@ -71,3 +71,4 @@ import { CourtTypeModule } from './modules/court_type/court_type.module';
   ],
 })
 export class AppModule {}
+

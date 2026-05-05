@@ -5,9 +5,9 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { User } from '../../users/entities/user.entity'; // Importa la entidad User
+import { User } from '../../users/entities/user.entity'; // Importa la entidad de usuario
 
-export enum tipoNotification {
+export enum tipoNoti {
   AVISO = 'Aviso',
   RECORDATORIO = 'Recordatorio',
   ALERTA = 'Alerta',
@@ -16,8 +16,8 @@ export enum tipoNotification {
 
 @Entity({ name: 'notificacion' })
 export class Notification {
-  @PrimaryGeneratedColumn({ name: 'noti_id', type: 'int' })
-  noti_id: number;
+  @PrimaryGeneratedColumn({ name: 'Notification_id', type: 'int' })
+  Notification_id: number;
 
   @Column({ name: 'user_id', type: 'int' })
   user_id: number;
@@ -28,7 +28,7 @@ export class Notification {
   @Column({
     name: 'tipoNoti',
     type: 'enum',
-    enum: tipoNotification,
+    enum: tipoNoti,
     default: tipoNoti.RECORDATORIO, // valor por defecto
   })
   tipoNoti: tipoNoti;
@@ -47,4 +47,7 @@ export class Notification {
   @JoinColumn({ name: 'user_id' })
   user: User;
 }
+
+
+
 

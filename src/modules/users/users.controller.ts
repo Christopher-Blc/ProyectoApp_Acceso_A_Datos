@@ -41,7 +41,7 @@ import { normalizeError } from '../../common/utils/error.util';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  // Rutas de perfil (para cualquier user autenticado)
+  // Rutas de perfil (para cualquier usuario autenticado)
 
   @Get('profile/me')
   @ApiOperation({ summary: 'Get my own profile' })

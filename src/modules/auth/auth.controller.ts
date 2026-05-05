@@ -43,8 +43,8 @@ export class AuthController {
     description: 'Validation failed or user already exists.',
   })
   register(@Body() dto: RegisterDto) {
-    // The role is not decided from the client
-    // If someone tries to send it, the ideal is to block it with ValidationPipe whitelist + forbidNonWhitelisted
+    // El rol no se decide por el cliente
+    // Si alguien intenta enviarlo, lo ideal es bloquearlo con ValidationPipe whitelist + forbidNonWhitelisted
     return this.authService.register(dto);
   }
 
@@ -105,22 +105,22 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Post('logout')
   async logout(@Req() req: AuthenticatedRequest) {
-    // `sub` comes from the JWT payload and represents the authenticated user's id.
+    // `sub` viene del payload JWT y representa el id del usuario autenticado.
     const userId = Number(req.user?.sub);
 
-    // Read the raw token from the header to revoke it in blacklist.
+    // Leemos el token en bruto del header para revocarlo en blacklist.
     const authHeader: string | undefined = req.headers?.authorization;
     const accessToken = authHeader?.startsWith('Bearer ')
       ? authHeader.slice('Bearer '.length)
       : undefined;
 
-    // `exp` is a standard JWT claim in UNIX seconds.
-    // It's converted to Date to save a real expiration in the blacklist.
+    // `exp` es un claim estándar de JWT en segundos UNIX.
+    // Se convierte a Date para guardar una expiración real en blacklist.
     const exp = req.user?.exp;
     const expiresAt =
       typeof exp === 'number' ? new Date(exp * 1000) : new Date();
 
-    // If there's no token, a strong logout cannot be executed safely.
+    // Si no hay token, no se puede ejecutar un logout fuerte de forma segura.
     if (!accessToken) {
       throw new UnauthorizedException('Access token not found');
     }

@@ -5,11 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { AuthModule } from '../auth/auth.module';
 import { Membership } from '../membership/entities/membership.entity';
-import { Reservation } from '../reservationtiontion/entities/reservation.entity';
+import { Reservation } from '../reservation/entities/reservation.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Membership, Reserva]),
+    TypeOrmModule.forFeature([User, Membership, Reservation]),
     forwardRef(() => AuthModule),
   ],
   providers: [UsersService],
@@ -17,6 +17,7 @@ import { Reservation } from '../reservationtiontion/entities/reservation.entity'
   exports: [UsersService, TypeOrmModule],
 })
 export class UsersModule {}
+
 
 
 

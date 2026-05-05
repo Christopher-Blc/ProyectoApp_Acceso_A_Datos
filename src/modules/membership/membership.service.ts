@@ -7,40 +7,41 @@ import { CreateMembershipDto, UpdateMembershipDto } from './dto/membership.dto';
 @Injectable()
 export class MembershipService {
   constructor(
-    @InjectRepository(Membresia)
-    private readonly Repo: Repository<Membresia>,
+    @InjectRepository(Membership)
+    private readonly Repo: Repository<Membership>,
   ) {}
 
   async findAll(): Promise<Membership[]> {
     return this.Repo.find();
   }
 
-  async findOne(membresia_id: number): Promise<Membresia> {
+  async findOne(Membership_id: number): Promise<Membership> {
     const Membership = await this.Repo.findOne({
-      where: { membresia_id: membresia_id },
+      where: { Membership_id: Membership_id },
     });
-    if (!membresia) {
-      throw new NotFoundException(`Membership ${membresia_id} no encontrada`);
+    if (!Membership) {
+      throw new NotFoundException(`Membership ${Membership_id} no encontrada`);
     }
-    return membresia;
+    return Membership;
   }
 
-  async create(info_membresia: CreateMembershipDto) {
-    const newMembership = this.Repo.create(info_membresia);
-    return this.Repo.save(newMembresia);
+  async create(info_Membership: CreateMembershipDto) {
+    const newMembership = this.Repo.create(info_Membership);
+    return this.Repo.save(newMembership);
   }
 
   async update(
-    membresia_id: number,
-    info_membresia: UpdateMembershipDto,
-  ): Promise<Membresia> {
-    await this.Repo.update(membresia_id, info_membresia);
-    return this.findOne(membresia_id);
+    Membership_id: number,
+    info_Membership: UpdateMembershipDto,
+  ): Promise<Membership> {
+    await this.Repo.update(Membership_id, info_Membership);
+    return this.findOne(Membership_id);
   }
 
-  async remove(membresia_id: number): Promise<void> {
-    await this.Repo.delete(membresia_id);
+  async remove(Membership_id: number): Promise<void> {
+    await this.Repo.delete(Membership_id);
   }
 }
+
 
 

@@ -1,17 +1,17 @@
 import { Membership } from '../../../modules/membership/entities/membership.entity';
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
-import membresiaData from '../../inventory/inventory_membresia';
+import membershipData from '../../inventory/inventory_membership';
 
-export class MembresiaSeeder implements Seeder {
+export class MembershipSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
-    const membresiaRepository = dataSource.getRepository(Membresia);
+    const membershipRepository = dataSource.getRepository(Membership);
 
-    const membresiaEntries: Membership[] = [];
+    const membershipEntries: Membership[] = [];
 
-    for (const item of membresiaData) {
-      // We search by type (Bronze, Silver, Gold) to avoid exact duplicates
-      const existing = await membresiaRepository.findOne({
+    for (const item of membershipData) {
+      // Buscamos por tipo (Bronce, Plata, Oro) para evitar duplicados exactos
+      const existing = await membershipRepository.findOne({
         where: { tipo: item.tipo },
       });
 
@@ -19,20 +19,20 @@ export class MembresiaSeeder implements Seeder {
         continue;
       }
 
-      const membresiaEntry = new Membership();
-      // Direct mapping to the Entity columns
-      membresiaEntry.rango = item.rango;
-      membresiaEntry.tipo = item.tipo;
-      membresiaEntry.descuento = item.descuento;
-      membresiaEntry.reservas_requeridas = item.reservas_requeridas;
-      membresiaEntry.beneficios = item.beneficios;
+      const membershipEntry = new Membership();
+      // Mapeo directo a las columnas de la entidad
+      membershipEntry.rango = item.rango;
+      membershipEntry.tipo = item.tipo;
+      membershipEntry.descuento = item.descuento;
+      membershipEntry.reservas_requeridas = item.reservas_requeridas;
+      membershipEntry.beneficios = item.beneficios;
 
-      membresiaEntries.push(membresiaEntry);
+      membershipEntries.push(membershipEntry);
     }
 
-    if (membresiaEntries.length > 0) {
-      await membresiaRepository.save(membresiaEntries);
-      console.log(`${membresiaEntries.length} membership levels created.`);
+    if (membershipEntries.length > 0) {
+      await membershipRepository.save(membershipEntries);
+      console.log(`${membershipEntries.length} membership levels created.`);
     }
     console.log('Membership seeding completed!');
   }

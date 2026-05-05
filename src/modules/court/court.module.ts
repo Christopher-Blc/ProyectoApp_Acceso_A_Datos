@@ -3,14 +3,16 @@ import { CourtService } from './court.service';
 import { CourtController } from './court.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Court } from './entities/court.entity';
-import { ReservationModule } from '../reservationtiontion/reserva.module';
+import { ReservationModule } from '../reservation/reservation.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pista]), ReservationModule],
+  imports: [TypeOrmModule.forFeature([Court]), ReservationModule],
   providers: [CourtService],
   controllers: [CourtController],
 })
 export class CourtModule {}
+
+
 
 
 

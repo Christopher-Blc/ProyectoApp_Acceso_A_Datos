@@ -1,4 +1,4 @@
-import { ReservationService } from './reservationtiontion.service';
+import { ReservationService } from './reservation.service';
 
 describe('ReservationService', () => {
   let instance: ReservationService;
@@ -11,6 +11,7 @@ describe('ReservationService', () => {
     expect(instance).toBeDefined();
   });
 });
+
 
 
 

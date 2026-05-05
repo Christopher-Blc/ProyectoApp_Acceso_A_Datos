@@ -1,4 +1,4 @@
-import { tipoNotification } from '../../modules/notification/entities/notification.entity';
+import { tipoNoti } from '../../modules/notification/entities/notification.entity';
 
 export default [
   {
@@ -9,4 +9,5 @@ export default [
     fecha: new Date('2025-10-27T10:24:04'),
   },
 ];
+
 

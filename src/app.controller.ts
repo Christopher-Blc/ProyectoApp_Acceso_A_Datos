@@ -11,6 +11,6 @@ export class AppController {
   }
 }
 
-// Commands to start the program:
+// Comandos para iniciar el programa:
 // docker compose up -d
 // nest start run:dev

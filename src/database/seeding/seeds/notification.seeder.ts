@@ -1,16 +1,16 @@
 import { Notification } from '../../../modules/notification/entities/notification.entity';
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
-import notiData from '../../inventory/inventory_noti';
+import notificationData from '../../inventory/inventory_notification';
 
-export class NotiSeeder implements Seeder {
+export class NotificationSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
-    const notiRepository = dataSource.getRepository(Noti);
+    const notificationRepository = dataSource.getRepository(Notification);
 
-    const notiEntries: Notification[] = [];
+    const notificationEntries: Notification[] = [];
 
-    for (const item of notiData) {
-      const existing = await notiRepository.findOne({
+    for (const item of notificationData) {
+      const existing = await notificationRepository.findOne({
         where: {
           user_id: item.user_id,
           mensaje: item.mensaje,
@@ -22,20 +22,20 @@ export class NotiSeeder implements Seeder {
         continue;
       }
 
-      const notiEntry = new Notification();
-      // Fields that exist in your Entity [cite: 162-165]
-      notiEntry.user_id = item.user_id;
-      notiEntry.mensaje = item.mensaje;
-      notiEntry.tipoNotification = item.tipoNoti;
-      notiEntry.leida = item.leida ?? false;
-      notiEntry.fecha = item.fecha || new Date();
+      const notificationEntry = new Notification();
+      // Campos que existen en la entidad
+      notificationEntry.user_id = item.user_id;
+      notificationEntry.mensaje = item.mensaje;
+      notificationEntry.tipoNoti = item.tipoNoti;
+      notificationEntry.leida = item.leida ?? false;
+      notificationEntry.fecha = item.fecha || new Date();
 
-      notiEntries.push(notiEntry);
+      notificationEntries.push(notificationEntry);
     }
 
-    if (notiEntries.length > 0) {
-      await notiRepository.save(notiEntries);
-      console.log(`${notiEntries.length} notifications created.`);
+    if (notificationEntries.length > 0) {
+      await notificationRepository.save(notificationEntries);
+      console.log(`${notificationEntries.length} notifications created.`);
     }
 
     console.log('Notification seeding completed!');

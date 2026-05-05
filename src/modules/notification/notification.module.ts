@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Noti])],
+  imports: [TypeOrmModule.forFeature([Notification])],
   providers: [NotificationService],
   controllers: [NotificationController],
 })
 export class NotificationModule {}
+
 

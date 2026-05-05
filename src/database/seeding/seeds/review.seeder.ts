@@ -1,20 +1,20 @@
 import { Review } from '../../../modules/review/entities/review.entity';
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
-import comentarioData from '../../inventory/inventory_resenya';
+import comentarioData from '../../inventory/inventory_review';
 
-export class ResenyaSeeder implements Seeder {
+export class ReviewSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
-    const resenyaRepository = dataSource.getRepository(Resenya);
+    const reviewRepository = dataSource.getRepository(Review);
 
-    const resenyaEntries: Review[] = [];
+    const reviewEntries: Review[] = [];
 
     for (const item of comentarioData) {
-      // We search for duplicates by user, facility and date
-      const existing = await resenyaRepository.findOne({
+      // Buscamos duplicados por usuario, instalación y fecha
+      const existing = await reviewRepository.findOne({
         where: {
           usuario_id: item.usuario_id,
-          instalacion_id: item.instalacion_id, // Added for filtering
+          instalacion_id: item.instalacion_id, // Añadido para filtrar
           fecha_comentario: item.fecha_comentario,
         },
       });
@@ -23,22 +23,22 @@ export class ResenyaSeeder implements Seeder {
         continue;
       }
 
-      const resenyaEntry = new Review();
-      // Mandatory fields according to the Entity
-      resenyaEntry.instalacion_id = item.instalacion_id; // Corrected field
-      resenyaEntry.usuario_id = item.usuario_id;
-      resenyaEntry.titulo = item.titulo;
-      resenyaEntry.texto = item.texto;
-      resenyaEntry.calificacion = item.calificacion;
-      resenyaEntry.fecha_comentario = item.fecha_comentario || new Date();
-      resenyaEntry.visible = item.visible ?? true;
+      const reviewEntry = new Review();
+      // Campos obligatorios según la entidad
+      reviewEntry.instalacion_id = item.instalacion_id; // Campo corregido
+      reviewEntry.usuario_id = item.usuario_id;
+      reviewEntry.titulo = item.titulo;
+      reviewEntry.texto = item.texto;
+      reviewEntry.calificacion = item.calificacion;
+      reviewEntry.fecha_comentario = item.fecha_comentario || new Date();
+      reviewEntry.visible = item.visible ?? true;
 
-      resenyaEntries.push(resenyaEntry);
+      reviewEntries.push(reviewEntry);
     }
 
-    if (resenyaEntries.length > 0) {
-      await resenyaRepository.save(resenyaEntries);
-      console.log(`${resenyaEntries.length} reviews created.`);
+    if (reviewEntries.length > 0) {
+      await reviewRepository.save(reviewEntries);
+      console.log(`${reviewEntries.length} reviews created.`);
     }
     console.log('Review seeding completed!');
   }

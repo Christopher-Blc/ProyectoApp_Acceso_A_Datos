@@ -8,15 +8,15 @@ import {
   OneToMany,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Court } from '../../pista/entities/court.entity';
-import { Payment } from '../../pago/entities/payment.entity';
+import { Court } from '../../court/entities/court.entity';
+import { Payment } from '../../payment/entities/payment.entity';
 
 export enum estadoReserva {
-  PENDIENTE = 'PENDIENTE', // Requested (e.g.: waiting for payment)
-  CONFIRMADA = 'CONFIRMADA', // All ok, the spot is taken
-  CANCELADA = 'CANCELADA', // User or admin cancelled it (spot free)
-  FINALIZADA = 'FINALIZADA', // The event passed successfully
-  NO_PRESENTADO = 'NO_PRESENTADO', // User didn't show up and didn't notify (penalizable)
+  PENDIENTE = 'PENDIENTE', // Solicitada (ej.: esperando pago)
+  CONFIRMADA = 'CONFIRMADA', // Todo correcto, la plaza queda ocupada
+  CANCELADA = 'CANCELADA', // Cancelada por usuario o admin (libera plaza)
+  FINALIZADA = 'FINALIZADA', // El evento terminó correctamente
+  NO_PRESENTADO = 'NO_PRESENTADO', // El usuario no asistió y no avisó (penalizable)
 }
 
 @Entity()
@@ -31,7 +31,7 @@ export class Reservation {
   pista_id: number;
 
   @Column({ type: 'date' })
-  fecha_reserva: Date;
+  fecha_Reservation: Date;
 
   @Column({ type: 'time' })
   hora_inicio: string;
@@ -41,7 +41,7 @@ export class Reservation {
 
   @Column({
     type: 'enum',
-    enum: estadoReservation,
+    enum: estadoReserva,
     default: estadoReserva.PENDIENTE,
   })
   estado: estadoReserva;
@@ -61,13 +61,16 @@ export class Reservation {
 
   @ManyToOne(() => Court, (pi) => pi.reservas)
   @JoinColumn({ name: 'pista_id' })
-  pista: Pista;
+  Court: Court;
 
-  //reserva_Id estara en pago. he puesto onetomany aunque en teoria era onetoone
-  //porque si falla un Payment queremos todos los registros de pagos asociados a la reserva
-  @OneToMany(() => Payment, (pago) => pago.reserva)
-  pagos: Payment[]; // Esto es virtual, no crea una columna "pago_id" en la tabla reserva
+  //reserva_id estara en Payment. he puesto onetomany aunque en teoria era onetoone
+  //porque si falla un Payment queremos todos los registros de pagos asociados a la Reservation
+  @OneToMany(() => Payment, (Payment) => Payment.Reservation)
+  pagos: Payment[]; // Esto es virtual, no crea una columna "Payment_id" en la tabla Reservation
 }
+
+
+
 
 
 

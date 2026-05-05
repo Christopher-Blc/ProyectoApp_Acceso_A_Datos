@@ -25,7 +25,7 @@ import { UserRole } from '../users/entities/user.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('membresia')
+@Controller('Membership')
 export class MembershipController {
   constructor(private readonly MembershipService: MembershipService) {}
 
@@ -62,7 +62,7 @@ export class MembershipController {
   @ApiResponse({ status: 201, description: 'Membership created successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid membership data.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async create(@Body() MembershipDto: CreateMembershipDto): Promise<Membresia> {
+  async create(@Body() MembershipDto: CreateMembershipDto): Promise<Membership> {
     return this.MembershipService.create(MembershipDto);
   }
 
@@ -91,5 +91,6 @@ export class MembershipController {
     return this.MembershipService.remove(id);
   }
 }
+
 
 
