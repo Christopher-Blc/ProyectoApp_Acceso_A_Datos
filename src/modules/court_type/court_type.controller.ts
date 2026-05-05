@@ -37,7 +37,7 @@ import { normalizeError } from '../../common/utils/error.util';
 @ApiTags('tipo_Court')
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('tipo_Court')
+@Controller('court-types')
 export class CourtTypeController {
   constructor(private readonly CourtTypeService: CourtTypeService) {}
 

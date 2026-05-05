@@ -22,12 +22,12 @@ export class CourtService {
     return this.pistaRepo.find({ relations: ['Installation'] });
   }
 
-  async findOne(pista_id: number): Promise<Court> {
+  async findOne(court_id: number): Promise<Court> {
     const Court = await this.pistaRepo.findOne({
-      where: { pista_id },
+      where: { court_id },
       relations: ['Installation'],
     });
-    if (!Court) throw new NotFoundException(`Court ${pista_id} not found`);
+    if (!Court) throw new NotFoundException(`Court ${court_id} not found`);
     return Court;
   }
 
@@ -56,24 +56,24 @@ export class CourtService {
 
     // Buscamos pistas de hoy y ayer (por si alguna sigue abierta de madrugada)
     const pistas = await this.pistaRepo.find({
-      where: [{ dia_semana: nombreDiaHoy }, { dia_semana: nombreDiaAyer }],
-      relations: ['tipo_Court'],
+      where: [{ day_of_week: nombreDiaHoy }, { day_of_week: nombreDiaAyer }],
+      relations: ['courtType'],
     });
 
     const pistasValidas = pistas.filter((p) => {
-      if (p.dia_semana === nombreDiaHoy) return true;
-      return p.hora_cierre < p.hora_apertura; // Solo si cruza medianoche
+      if (p.day_of_week === nombreDiaHoy) return true;
+      return p.closing_time < p.opening_time; // Solo si cruza medianoche
     });
 
     const reservasDelDia = await this.reservaRepo.find({
-      where: { fecha_Reservation: fechaString as any },
+      where: { reservation_date: fechaString as any },
     });
 
     return pistasValidas.map((Court) => ({
       ...Court,
       reservas_actuales: reservasDelDia
-        .filter((r) => Number(r.pista_id) === Number(Court.pista_id))
-        .map((r) => ({ inicio: r.hora_inicio, fin: r.hora_fin })),
+        .filter((r) => Number(r.court_id) === Number(Court.court_id))
+        .map((r) => ({ inicio: r.start_time, fin: r.end_time })),
     }));
   }
 
@@ -89,8 +89,8 @@ export class CourtService {
   // Edita la pista con los datos recibidos y, cuando se pone en mantenimiento o inactiva,
   // cancela reservas futuras relacionadas. También puede recibir rango de fechas
   // para cancelar solo las reservas dentro de ese intervalo.
-  async update(pista_id: number, info_Court: UpdateCourtDto): Promise<Court> {
-    const pistaActual = await this.findOne(pista_id);
+  async update(court_id: number, info_Court: UpdateCourtDto): Promise<Court> {
+    const pistaActual = await this.findOne(court_id);
     const dataNormalizada: any = { ...info_Court };
 
     if (info_Court.hora_apertura)
@@ -101,7 +101,7 @@ export class CourtService {
     // Lógica de mantenimiento selectivo
     if (
       (info_Court.estado === EstadoCourt.MANTENIMIENTO || info_Court.estado === EstadoCourt.INACTIVA) &&
-      pistaActual.estado !== info_Court.estado
+      pistaActual.status !== info_Court.estado
     ) {
       const motivo = info_Court.estado === EstadoCourt.INACTIVA
         ? 'La Court ha sido eliminada del sistema.'
@@ -123,58 +123,58 @@ export class CourtService {
 
       await this.reservaRepo.update(
         {
-          pista_id: pista_id,
-          estado: In([estadoReserva.PENDIENTE, estadoReserva.CONFIRMADA]),
-          fecha_Reservation: filtroFecha,
+          court_id: court_id,
+          status: In([estadoReserva.PENDING, estadoReserva.CONFIRMED]),
+          reservation_date: filtroFecha,
         },
-        {
-          estado: estadoReserva.CANCELADA,
+          { 
+          status: estadoReserva.CANCELLED,
           nota: motivo,
         },
       );
     }
 
-    await this.pistaRepo.update(pista_id, dataNormalizada);
-    return this.findOne(pista_id);
+    await this.pistaRepo.update(court_id, dataNormalizada);
+    return this.findOne(court_id);
   }
 
-  async softDelete(pista_id: number): Promise<void> {
+  async softDelete(court_id: number): Promise<void> {
     const hoy = new Date().toISOString().split('T')[0];
 
     // 1. Cancelamos las reservas futuras primero
     await this.reservaRepo.update(
       {
-        pista_id: pista_id,
-        estado: In([estadoReserva.PENDIENTE, estadoReserva.CONFIRMADA]),
-        fecha_Reservation: MoreThanOrEqual(hoy as any),
+        court_id: court_id,
+        status: In([estadoReserva.PENDING, estadoReserva.CONFIRMED]),
+        reservation_date: MoreThanOrEqual(hoy as any),
       },
       {
-        estado: estadoReserva.CANCELADA,
+        status: estadoReserva.CANCELLED,
         nota: 'La Court ha sido eliminada del sistema.',
       },
     );
 
-    await this.pistaRepo.update(pista_id, {
-      estado: EstadoCourt.INACTIVA,
+    await this.pistaRepo.update(court_id, {
+      status: EstadoCourt.INACTIVA,
     });
   }
 
-  async remove(pista_id: number): Promise<void> {
+  async remove(court_id: number): Promise<void> {
     const hoy = new Date().toISOString().split('T')[0];
 
     // 1. Cancelamos lo pendiente antes de que el ID deje de existir
     await this.reservaRepo.update(
       {
-        pista_id: pista_id,
-        estado: In([estadoReserva.PENDIENTE, estadoReserva.CONFIRMADA]),
-        fecha_Reservation: MoreThanOrEqual(hoy as any),
+        court_id: court_id,
+        status: In([estadoReserva.PENDING, estadoReserva.CONFIRMED]),
+        reservation_date: MoreThanOrEqual(hoy as any),
       },
       {
-        estado: estadoReserva.CANCELADA,
+        status: estadoReserva.CANCELLED,
         nota: 'La Court ha sido eliminada del sistema.',
       },
     );
-    await this.pistaRepo.delete(pista_id);
+    await this.pistaRepo.delete(court_id);
   }
 }
 

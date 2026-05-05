@@ -6,42 +6,42 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { estado_pago, metodo_pago } from '../entities/payment.entity';
+import { PaymentMethod, PaymentStatus } from '../entities/payment.entity';
 
 export class CreatePaymentDto {
   @IsNumber()
   @ApiProperty()
-  Payment_id!: number;
+  payment_id!: number;
 
   @IsNumber()
   @ApiProperty({
     description: 'Amount of the payment',
     example: 10.5,
   })
-  monto!: number;
+  amount!: number;
 
   @IsDateString()
   @ApiProperty({
     description: 'Date of the payment',
     example: '2024-01-01T10:00:00Z',
   })
-  fecha_Payment!: string;
+  payment_date!: string;
 
   // Método de Payment
-  @IsEnum(metodo_pago)
+  @IsEnum(PaymentMethod)
   @ApiProperty({
     description: 'Payment method',
-    example: metodo_pago.VISA,
+    example: PaymentMethod.VISA,
   })
-  metodo_pago!: metodo_pago;
+  payment_method!: PaymentMethod;
 
   // Estado del Payment
-  @IsEnum(estado_pago)
+  @IsEnum(PaymentStatus)
   @ApiProperty({
     description: 'Payment status',
-    example: estado_pago.NO_PAGADO,
+    example: PaymentStatus.NO_PAGADO,
   })
-  estado_pago!: estado_pago;
+  payment_status!: PaymentStatus;
 
   @IsString()
   @ApiProperty({
@@ -58,7 +58,7 @@ export class UpdatePaymentDto {
     description: 'Amount of the payment',
     example: 10.5,
   })
-  monto?: number;
+  amount?: number;
 
   // @IsOptional()
   // @IsDateString()
@@ -66,21 +66,21 @@ export class UpdatePaymentDto {
 
   // Método de Payment
   @IsOptional()
-  @IsEnum(metodo_pago)
+  @IsEnum(PaymentMethod)
   @ApiProperty({
     description: 'Payment method',
-    example: metodo_pago.VISA,
+    example: PaymentMethod.VISA,
   })
-  metodo_pago?: metodo_pago;
+  payment_method?: PaymentMethod;
 
   // Estado del Payment
   @IsOptional()
-  @IsEnum(estado_pago)
+  @IsEnum(PaymentStatus)
   @ApiProperty({
     description: 'Payment status',
-    example: estado_pago.NO_PAGADO,
+    example: PaymentStatus.NO_PAGADO,
   })
-  estado_pago?: estado_pago;
+  payment_status?: PaymentStatus;
 
   @IsOptional()
   @IsString()

@@ -3,14 +3,14 @@ import { User } from '../../users/entities/user.entity';
 
 @Entity('Membership')
 export class Membership {
-  @PrimaryGeneratedColumn({ name: 'Membership_id' })
-  Membership_id: number;
+  @PrimaryGeneratedColumn({ name: 'membership_id' })
+  membership_id!: number;
 
   @Column({ type: 'int', unique: true })
-  rango: number; //tipo bronze es el as bajo osea rango 1 , plata rango 2 y oro rango 3
+  level!: number; //tipo bronze es el mas bajo osea level 1, silver level 2, gold level 3
 
   @Column({ type: 'varchar', length: 100, unique: true })
-  nombre: string; // Ej: "Bronce", "Plata", "Oro"
+  nombre!: string; // Ej: "Bronce", "Plata", "Oro"
 
   @Column({
     type: 'decimal',
@@ -22,15 +22,15 @@ export class Membership {
       from: (value: string) => parseFloat(value),
     },
   })
-  descuento: number; // Porcentaje de descuento (ej: 5.00 para 5%)
+  discount!: number; // Percentage discount (e.g. 5.00 for 5%)
 
   @Column({ type: 'int', default: 0 })
-  reservas_requeridas: number; // Cuántas reservas necesita el usuario para este nivel
+  required_reservations!: number; // How many reservations needed for this level
 
   @Column({ type: 'text', nullable: true })
-  beneficios: string; // Descripción breve de lo que incluye
+  benefits?: string; // Brief description of benefits
 
-  // Relación: Una membresía (ej: Oro) la tienen muchos usuarios
+  // Relationship: One membership (e.g. Gold) can have many users
   @OneToMany(() => User, (u) => u.Membership)
   users: User[];
 }

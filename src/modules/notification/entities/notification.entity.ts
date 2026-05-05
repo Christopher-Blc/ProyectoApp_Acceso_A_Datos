@@ -8,45 +8,47 @@ import {
 import { User } from '../../users/entities/user.entity'; // Importa la entidad de usuario
 
 export enum tipoNoti {
-  AVISO = 'Aviso',
-  RECORDATORIO = 'Recordatorio',
-  ALERTA = 'Alerta',
-  PROMOCION = 'Promocion',
+  ALERT = 'Aviso',
+  REMINDER = 'Recordatorio',
+  WARNING = 'Alerta',
+  PROMOTION = 'Promocion',
 }
+
+export type NotificationType = tipoNoti;
 
 @Entity({ name: 'notificacion' })
 export class Notification {
-  @PrimaryGeneratedColumn({ name: 'Notification_id', type: 'int' })
-  Notification_id: number;
+  @PrimaryGeneratedColumn({ name: 'notification_id', type: 'int' })
+  notification_id!: number;
 
   @Column({ name: 'user_id', type: 'int' })
-  user_id: number;
+  user_id!: number;
 
   @Column({ name: 'titulo', length: 100, nullable: true })
-  titulo: string;
+  title?: string;
 
   @Column({ name: 'mensaje' })
-  mensaje: string;
+  message!: string;
 
   @Column({
-    name: 'tipoNoti',
+    name: 'notification_type',
     type: 'enum',
     enum: tipoNoti,
-    default: tipoNoti.RECORDATORIO, // valor por defecto
+    default: tipoNoti.REMINDER, // valor por defecto
   })
-  tipoNoti: tipoNoti;
+  notification_type!: tipoNoti;
 
   @Column({ name: 'leida', default: false })
-  leida: boolean;
+  read!: boolean;
 
   @Column({
     name: 'fecha',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  fecha: Date;
+  fecha!: Date;
 
-  @ManyToOne(() => User, (user) => user.notificaciones)
+  @ManyToOne(() => User, (user) => user.notifications)
   @JoinColumn({ name: 'user_id' })
   user: User;
 }

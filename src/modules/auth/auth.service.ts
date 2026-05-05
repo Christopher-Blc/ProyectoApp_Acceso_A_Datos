@@ -138,8 +138,8 @@ export class AuthService {
       password: dto.password,
       role: UserRole.CLIENTE,
       isActive: true,
-      fecha_registro: new Date(),
-      fecha_nacimiento: new Date(dto.fecha_nacimiento),
+      registration_date: new Date(),
+      date_of_birth: new Date(dto.fecha_nacimiento),
     });
 
     // Eliminamos datos sensibles de la respuesta pública.

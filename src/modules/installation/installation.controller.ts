@@ -22,7 +22,7 @@ import { UserRole } from '../users/entities/user.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('Installation')
+@Controller('installations')
 export class InstallationController {
   constructor(private readonly InstallationService: InstallationService) {}
 

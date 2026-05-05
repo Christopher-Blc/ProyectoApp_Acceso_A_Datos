@@ -27,7 +27,7 @@ export class CourtTypeService {
   // Obtener uno por ID
   async findOne(id: number): Promise<CourtType> {
     const tipo = await this.tipoPistaRepository.findOneBy({
-      tipo_pista_id: id,
+      court_type_id: id,
     });
     if (!tipo) {
       throw new NotFoundException(`No se ha encontrado ese tipo de Court`);

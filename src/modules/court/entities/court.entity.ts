@@ -32,66 +32,66 @@ export enum DiaSemana {
 @Unique(['nombre', 'Installation', 'dia_semana'])
 @Entity('Court')
 export class Court {
-  @PrimaryGeneratedColumn({ name: 'pista_id', type: 'int' })
-  pista_id: number;
+  @PrimaryGeneratedColumn({ name: 'court_id', type: 'int' })
+  court_id!: number;
 
-  @Column({ name: 'instalacion_id', type: 'int' })
-  instalacion_id: number;
+  @Column({ name: 'installation_id', type: 'int' })
+  installation_id!: number;
 
-  @Column({ name: 'tipo_pista_id', type: 'int' })
-  tipo_pista_id: number;
+  @Column({ name: 'court_type_id', type: 'int' })
+  court_type_id!: number;
 
   @Column({})
-  nombre: string;
+  nombre!: string;
 
   @Column({ type: 'int' })
-  capacidad: number;
+  capacity!: number;
 
   @Column({ type: 'decimal', precision: 8, scale: 2 })
-  precio_hora: number;
+  price_per_hour!: number;
 
   @Column({ type: 'boolean', default: false })
-  cubierta: boolean;
+  covered!: boolean;
 
   @Column({ type: 'boolean', default: false })
-  iluminacion: boolean;
+  lighting!: boolean;
 
   @Column({})
-  descripcion: string;
+  description?: string;
 
   @Column({
     type: 'enum',
     enum: EstadoCourt,
     default: EstadoCourt.DISPONIBLE,
   })
-  estado: EstadoCourt;
+  status!: EstadoCourt;
 
   @Column({ type: 'time' })
-  hora_apertura: string;
+  opening_time!: string;
 
   @Column({ type: 'time' })
-  hora_cierre: string;
+  closing_time!: string;
 
   @Column({
     type: 'enum',
     enum: DiaSemana,
     default: DiaSemana.LUNES,
   })
-  dia_semana: DiaSemana;
+  day_of_week!: DiaSemana;
 
   @Column({ type: 'int', default: 0 })
   reservations_made: number;
 
-  @ManyToOne(() => Installation, (i) => i.pistas)
-  @JoinColumn({ name: 'instalacion_id' })
+  @ManyToOne(() => Installation, (i) => i.courts)
+  @JoinColumn({ name: 'installation_id' })
   Installation: Installation;
 
-  @ManyToOne(() => CourtType, (tp) => tp.pistas)
-  @JoinColumn({ name: 'tipo_pista_id' })
-  tipo_Court: CourtType;
+  @ManyToOne(() => CourtType, (tp) => tp.courts)
+  @JoinColumn({ name: 'court_type_id' })
+  courtType: CourtType;
 
-  @OneToMany(() => Reservation, (r) => r.Court)
-  reservas: Reservation[];
+  @OneToMany(() => Reservation, (r) => r.court)
+  reservations: Reservation[];
 }
 
 

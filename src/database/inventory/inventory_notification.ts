@@ -3,9 +3,9 @@ import { tipoNoti } from '../../modules/notification/entities/notification.entit
 export default [
   {
     user_id: 1,
-    mensaje: 'Tienes una partida hoy',
-    tipoNoti: tipoNoti.RECORDATORIO,
-    leida: true,
+    message: 'Tienes una partida hoy',
+    notification_type: tipoNoti.REMINDER,
+    read: true,
     fecha: new Date('2025-10-27T10:24:04'),
   },
 ];

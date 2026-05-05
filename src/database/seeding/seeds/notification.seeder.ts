@@ -13,7 +13,7 @@ export class NotificationSeeder implements Seeder {
       const existing = await notificationRepository.findOne({
         where: {
           user_id: item.user_id,
-          mensaje: item.mensaje,
+          message: item.message,
           fecha: item.fecha,
         },
       });
@@ -25,9 +25,9 @@ export class NotificationSeeder implements Seeder {
       const notificationEntry = new Notification();
       // Campos que existen en la entidad
       notificationEntry.user_id = item.user_id;
-      notificationEntry.mensaje = item.mensaje;
-      notificationEntry.tipoNoti = item.tipoNoti;
-      notificationEntry.leida = item.leida ?? false;
+      notificationEntry.message = item.message;
+      notificationEntry.notification_type = item.notification_type;
+      notificationEntry.read = item.read ?? false;
       notificationEntry.fecha = item.fecha || new Date();
 
       notificationEntries.push(notificationEntry);

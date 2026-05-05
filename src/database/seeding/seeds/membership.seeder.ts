@@ -21,11 +21,11 @@ export class MembershipSeeder implements Seeder {
 
       const membershipEntry = new Membership();
       // Mapeo directo a las columnas de la entidad
-      membershipEntry.rango = item.rango;
+      membershipEntry.level = item.level;
       membershipEntry.nombre = item.nombre;
-      membershipEntry.descuento = item.descuento;
-      membershipEntry.reservas_requeridas = item.reservas_requeridas;
-      membershipEntry.beneficios = item.beneficios;
+      membershipEntry.discount = item.discount;
+      membershipEntry.required_reservations = item.required_reservations;
+      membershipEntry.benefits = item.benefits;
 
       membershipEntries.push(membershipEntry);
     }

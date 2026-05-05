@@ -30,7 +30,7 @@ import { normalizeError } from '../../common/utils/error.util';
 @UseGuards(AuthGuard, RolesGuard)
 @ApiTags('pistas')
 @ApiBearerAuth()
-@Controller('Court')
+@Controller('courts')
 export class CourtController {
   constructor(private readonly CourtService: CourtService) {}
 

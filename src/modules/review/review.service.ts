@@ -18,7 +18,7 @@ export class ReviewService {
 
   async findOne(review_id: number): Promise<Review> {
     const review = await this.reviewRepository.findOne({
-      where: { Review_id: review_id },
+      where: { review_id: review_id },
       relations: ['user', 'installation'],
     });
     if (!review) {

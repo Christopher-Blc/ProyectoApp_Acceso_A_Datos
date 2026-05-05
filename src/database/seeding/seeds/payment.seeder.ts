@@ -14,12 +14,12 @@ export class PaymentSeeder implements Seeder {
     for (const item of paymentData) {
       // Buscamos la reserva para asegurar que exista la FK
       const reservation = await reservationRepository.findOne({
-        where: { reserva_id: Number(item.reserva_id) },
+        where: { reservation_id: Number(item.reservation_id) },
       });
 
       if (!reservation) {
         console.warn(
-          `Skipping payment: Reservation with id ${item.reserva_id} not found`,
+          `Skipping payment: Reservation with id ${item.reservation_id} not found`,
         );
         continue;
       }
@@ -27,9 +27,9 @@ export class PaymentSeeder implements Seeder {
       // Buscamos duplicados por reserva y monto
       const existing = await paymentRepository.findOne({
         where: {
-          reserva_id: Number(item.reserva_id),
-          monto: item.monto,
-          fecha_Payment: item.fecha_Payment,
+          reservation_id: Number(item.reservation_id),
+          amount: item.amount,
+          payment_date: item.payment_date,
         },
       });
 
@@ -37,11 +37,11 @@ export class PaymentSeeder implements Seeder {
 
       const paymentEntry = new Payment();
       // Campos según la entidad
-      paymentEntry.reserva_id = reservation.reserva_id;
-      paymentEntry.monto = item.monto;
-      paymentEntry.fecha_Payment = item.fecha_Payment || new Date();
-      paymentEntry.metodo_pago = item.metodo_pago;
-      paymentEntry.estado_pago = item.estado_pago;
+      paymentEntry.reservation_id = reservation.reservation_id;
+      paymentEntry.amount = item.amount;
+      paymentEntry.payment_date = item.payment_date || new Date();
+      paymentEntry.payment_method = item.payment_method;
+      paymentEntry.payment_status = item.payment_status;
       paymentEntry.nota = item.nota;
 
       paymentsEntries.push(paymentEntry);

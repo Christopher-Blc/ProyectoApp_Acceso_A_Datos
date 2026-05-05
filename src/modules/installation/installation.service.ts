@@ -15,17 +15,17 @@ export class InstallationService {
   ) {}
 
   async findAll(): Promise<Installation[]> {
-    return this.instalacionRepository.find({ relations: ['Court'] });
+    return this.instalacionRepository.find({ relations: ['courts'] });
   }
 
-  async findOne(instalacion_id: number): Promise<Installation> {
+  async findOne(installation_id: number): Promise<Installation> {
     const Installation = await this.instalacionRepository.findOne({
-      where: { instalacion_id: instalacion_id },
-      relations: ['Court'],
+      where: { installation_id: installation_id },
+      relations: ['courts'],
     });
     if (!Installation) {
       throw new NotFoundException(
-        `Installation ${instalacion_id} no encontrada`,
+        `Installation ${installation_id} no encontrada`,
       );
     }
     return Installation;
@@ -37,16 +37,16 @@ export class InstallationService {
   }
 
   async update(
-    instalacion_id: number,
+    installation_id: number,
     info_Installation: UpdateInstallationDto,
   ): Promise<Installation> {
-    await this.instalacionRepository.update(instalacion_id, info_Installation);
-    return this.findOne(instalacion_id);
+    await this.instalacionRepository.update(installation_id, info_Installation);
+    return this.findOne(installation_id);
   }
 
-  async remove(instalacion_id: number): Promise<void> {
-    await this.findOne(instalacion_id);
-    await this.instalacionRepository.delete(instalacion_id);
+  async remove(installation_id: number): Promise<void> {
+    await this.findOne(installation_id);
+    await this.instalacionRepository.delete(installation_id);
   }
 }
 
