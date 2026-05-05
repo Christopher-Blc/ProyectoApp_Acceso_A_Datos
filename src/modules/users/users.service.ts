@@ -66,7 +66,8 @@ export class UsersService {
   async update(
     usuario_id: number,
     data: UpdateUserDto,
-    isSelfUpdate: boolean = false,
+    isSelfUpdate: boolean,
+    //isSelfUpdate: boolean = false,
   ): Promise<User> {
     const user = await this.findOne(usuario_id);
 
@@ -82,7 +83,16 @@ export class UsersService {
     }
 
     this.userRepository.merge(user, data);
-    return await this.userRepository.save(user);
+    await this.userRepository.save(user);
+
+    // // Si nos pasan `membresia_id` explícitamente, forzamos update sobre la columna
+    // // para evitar casos donde la relación previa en memoria no refleje el cambio.
+    // if (typeof data.membresia_id !== 'undefined') {
+    //   await this.userRepository.update({ usuario_id }, { membresia_id: data.membresia_id });
+    // }
+
+    // Devolvemos el usuario recargado con relaciones actualizadas.
+    return await this.findOne(usuario_id);
   }
 
   async findAll(): Promise<User[]> {
