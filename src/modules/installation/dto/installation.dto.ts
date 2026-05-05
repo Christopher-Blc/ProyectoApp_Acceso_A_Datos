@@ -39,13 +39,7 @@ export class CreateInstallationDto {
     example: 'contact@gymcentral.com',
   })
   email!: string;
-
-  @IsNumber()
-  @ApiProperty({
-    description: 'Maximum capacity of the installation',
-    example: 100,
-  })
-  capacidad_max!: number;
+ 
 
   @IsOptional()
   @IsString()
@@ -118,13 +112,7 @@ export class UpdateInstallationDto {
   })
   email?: string;
 
-  @IsOptional()
-  @IsNumber()
-  @ApiProperty({
-    description: 'Maximum capacity of the installation',
-    example: 100,
-  })
-  capacidad_max?: number;
+   
 
   @IsOptional()
   @IsString()
