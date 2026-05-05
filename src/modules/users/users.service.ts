@@ -85,11 +85,14 @@ export class UsersService {
     this.userRepository.merge(user, data);
     await this.userRepository.save(user);
 
-    // // Si nos pasan `membresia_id` explícitamente, forzamos update sobre la columna
-    // // para evitar casos donde la relación previa en memoria no refleje el cambio.
-    // if (typeof data.membresia_id !== 'undefined') {
-    //   await this.userRepository.update({ usuario_id }, { membresia_id: data.membresia_id });
-    // }
+    // Si nos pasan `membresia_id` explícitamente, forzamos update sobre la columna
+    // para evitar casos donde la relación previa en memoria no refleje el cambio.
+    if (typeof data.membresia_id !== 'undefined') {
+      // Log temporal para depuración: tipo y valor recibido
+      // (elimina o cambia a Logger cuando confirmemos comportamiento)
+      console.debug('users.update: recibida membresia_id=', data.membresia_id, 'typeof=', typeof data.membresia_id);
+      await this.userRepository.update({ usuario_id }, { membresia_id: data.membresia_id });
+    }
 
     // Devolvemos el usuario recargado con relaciones actualizadas.
     return await this.findOne(usuario_id);
