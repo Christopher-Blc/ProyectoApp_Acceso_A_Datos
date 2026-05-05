@@ -69,7 +69,8 @@ export class UsersService {
     isSelfUpdate: boolean,
     //isSelfUpdate: boolean = false,
   ): Promise<User> {
-    const user = await this.findOne(usuario_id);
+    // Validamos existencia para devolver 404 si no existe
+    await this.findOne(usuario_id);
 
     if (isSelfUpdate) {
       // Bloqueamos que el usuario se cambie estas cosas a sí mismo
@@ -82,20 +83,8 @@ export class UsersService {
       data.password = await bcrypt.hash(data.password, 10);
     }
 
-    this.userRepository.merge(user, data);
-    await this.userRepository.save(user);
-
-    // Si nos pasan `membresia_id` explícitamente, forzamos update sobre la columna
-    // para evitar casos donde la relación previa en memoria no refleje el cambio.
-    if (typeof data.membresia_id !== 'undefined') {
-      // Log temporal para depuración: tipo y valor recibido
-      // (elimina o cambia a Logger cuando confirmemos comportamiento)
-      console.debug('users.update: recibida membresia_id=', data.membresia_id, 'typeof=', typeof data.membresia_id);
-      await this.userRepository.update({ usuario_id }, { membresia_id: data.membresia_id });
-    }
-
-    // Devolvemos el usuario recargado con relaciones actualizadas.
-    return await this.findOne(usuario_id);
+    await this.userRepository.update(usuario_id, data);
+    return this.findOne(usuario_id);
   }
 
   async findAll(): Promise<User[]> {
