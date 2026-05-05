@@ -153,6 +153,7 @@ export class UsersController {
     }
   }
 
+
   @Put(':id')
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRACION)
   @ApiOperation({ summary: 'Update user by ID' })
