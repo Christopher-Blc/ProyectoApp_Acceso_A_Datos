@@ -32,6 +32,7 @@ import { CourtType } from './entities/court_type.entity';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 import { TipoCourtDto, UpdateTipoCourtDto } from './dto/court_type.dto';
+import { normalizeError } from '../../common/utils/error.util';
 
 @ApiTags('tipo_Court')
 @UseGuards(AuthGuard, RolesGuard)
@@ -53,9 +54,10 @@ export class CourtTypeController {
     try {
       return this.CourtTypeService.findAll();
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -74,9 +76,10 @@ export class CourtTypeController {
     try {
       return this.CourtTypeService.findOne(id);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -139,9 +142,10 @@ export class CourtTypeController {
       }
       return this.CourtTypeService.create(tipoCourtDto, file.filename);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -203,9 +207,10 @@ export class CourtTypeController {
     try {
       return this.CourtTypeService.update(id, tipoCourtDto, file?.filename);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -222,9 +227,10 @@ export class CourtTypeController {
     try {
       return this.CourtTypeService.remove(id);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }

@@ -24,6 +24,7 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
+import { normalizeError } from '../../common/utils/error.util';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -44,9 +45,10 @@ export class NotificationController {
     try {
       return this.NotificationService.findAll();
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -65,9 +67,10 @@ export class NotificationController {
     try {
       return this.NotificationService.findOne(id);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -91,9 +94,10 @@ export class NotificationController {
       };
       return this.NotificationService.create(data);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -116,9 +120,10 @@ export class NotificationController {
     try {
       return this.NotificationService.update(id, NotificationDto);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -138,9 +143,10 @@ export class NotificationController {
     try {
       return this.NotificationService.remove(id);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }

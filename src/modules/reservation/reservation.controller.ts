@@ -60,9 +60,10 @@ export class ReservationController {
     try {
       return await this.ReservationService.findAll(pista_id, fecha_desde);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
