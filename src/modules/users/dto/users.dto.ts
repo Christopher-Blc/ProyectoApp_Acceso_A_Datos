@@ -200,3 +200,12 @@ export class UpdateUserDto {
   })
   membresia_id?: number;
 }
+
+export class UpdatePushTokenDto {
+  @IsString()
+  @ApiProperty({
+    description: 'Expo push token del dispositivo del usuario autenticado',
+    example: 'ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]',
+  })
+  expoPushToken!: string;
+}

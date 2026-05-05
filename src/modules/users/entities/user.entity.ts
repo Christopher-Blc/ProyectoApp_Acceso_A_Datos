@@ -80,6 +80,9 @@ export class User {
   @Column({ name: 'refresh_token_hash', type: 'text', nullable: true })
   refresh_token_hash: string | null;
 
+  @Column({ name: 'expo_push_token', type: 'text', nullable: true })
+  expoPushToken!: string | null;
+
   @ManyToOne(() => Membresia, (m) => m.users)
   @JoinColumn({ name: 'membresia_id' })
   membresia: Membresia;

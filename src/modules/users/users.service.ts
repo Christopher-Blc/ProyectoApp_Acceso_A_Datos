@@ -87,6 +87,15 @@ export class UsersService {
     return this.findOne(usuario_id);
   }
 
+  async updatePushToken(
+    usuario_id: number,
+    expoPushToken: string,
+  ): Promise<User> {
+    await this.findOne(usuario_id);
+    await this.userRepository.update(usuario_id, { expoPushToken });
+    return this.findOne(usuario_id);
+  }
+
   async findAll(): Promise<User[]> {
     return await this.userRepository.find({
       relations: ['reservas', 'membresia'],
@@ -110,7 +119,8 @@ export class UsersService {
       const user = this.userRepository.create(data);
       return await this.userRepository.save(user);
     } catch (error) {
-      if (error.code === '23505') {
+      const dbError = error as { code?: string };
+      if (dbError.code === '23505') {
         //controlamos duplicados aqui aunque en register ya se verifica
         throw new BadRequestException('Email/Username/Phone already exists');
       }
