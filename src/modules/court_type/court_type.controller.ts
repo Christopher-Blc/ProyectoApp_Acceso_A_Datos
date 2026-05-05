@@ -16,7 +16,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { CourtTypeService } from './tipo_court.service';
+import { CourtTypeService } from './court_type.service';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -28,16 +28,16 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { TipoCourt } from './entities/court_type.entity';
+import { CourtType } from './entities/court_type.entity';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
-import { TipoCourtDto, UpdateTipoCourtDto } from './dto/tipo_court.dto';
+import { TipoCourtDto, UpdateTipoCourtDto } from './dto/court_type.dto';
 
-@ApiTags('tipo_pista')
+@ApiTags('tipo_Court')
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('tipo_pista')
-export class TipoCourtController {
+@Controller('tipo_Court')
+export class CourtTypeController {
   constructor(private readonly CourtTypeService: CourtTypeService) {}
 
   @Get()
@@ -49,7 +49,7 @@ export class TipoCourtController {
   @ApiResponse({ status: 204, description: 'No content.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async findAll(): Promise<TipoCourt[]> {
+  async findAll(): Promise<CourtType[]> {
     try {
       return this.CourtTypeService.findAll();
     } catch (err) {
@@ -70,7 +70,7 @@ export class TipoCourtController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Court type not found.' })
   @ApiParam({ name: 'id', example: 1 })
-  async findOne(@Param('id') id: number): Promise<TipoCourt | null> {
+  async findOne(@Param('id') id: number): Promise<CourtType | null> {
     try {
       return this.CourtTypeService.findOne(id);
     } catch (err) {
@@ -132,7 +132,7 @@ export class TipoCourtController {
   async create(
     @Body() tipoCourtDto: TipoCourtDto,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<TipoCourt | null> {
+  ): Promise<CourtType | null> {
     try {
       if (!file) {
         throw new BadRequestException('No image file has been uploaded');
@@ -199,7 +199,7 @@ export class TipoCourtController {
     @Param('id') id: number,
     @Body() tipoCourtDto: UpdateTipoCourtDto,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<TipoCourt | null> {
+  ): Promise<CourtType | null> {
     try {
       return this.CourtTypeService.update(id, tipoCourtDto, file?.filename);
     } catch (err) {
@@ -229,5 +229,6 @@ export class TipoCourtController {
     }
   }
 }
+
 
 

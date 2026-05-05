@@ -15,7 +15,7 @@ export class CourtDto {
     description: 'ID of the installation',
     example: 1,
   })
-  instalacion_id: number; // clave foranea instalacion
+  instalacion_id: number; // clave foranea Installation
 
   @IsNumber()
   @ApiProperty({
@@ -71,9 +71,9 @@ export class CourtDto {
   @ApiProperty({
     description: 'State of the court',
     enum: EstadoCourt,
-    example: EstadoPista.DISPONIBLE,
+    example: EstadoCourt.DISPONIBLE,
   })
-  estado: EstadoPista;
+  estado: EstadoCourt;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$/, {
@@ -107,7 +107,7 @@ export class UpdateCourtDto {
     description: 'ID of the installation',
     example: 1,
   })
-  instalacion_id: number; // clave foranea instalacion
+  instalacion_id: number; // clave foranea Installation
 
   @IsOptional()
   @IsNumber()
@@ -170,9 +170,9 @@ export class UpdateCourtDto {
   @ApiProperty({
     description: 'State of the court',
     enum: EstadoCourt,
-    example: EstadoPista.DISPONIBLE,
+    example: EstadoCourt.DISPONIBLE,
   })
-  estado: EstadoPista;
+  estado: EstadoCourt;
 
   @IsOptional()
   @IsString()
@@ -220,6 +220,8 @@ export class UpdateCourtDto {
   })
   mantenimiento_hasta?: string; 
 }
+
+
 
 
 

@@ -5,9 +5,9 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { Court } from '../../pista/entities/court.entity'; // Importa la entidad Pista
+import { Court } from '../../court/entities/court.entity'; // Importa la entidad Court
 
-export enum estado_Installation {
+export enum estado_instalacion {
   ACTIVA = 'activa',
   EN_MANTENIMIENTO = 'en_mantenimiento',
   INACTIVA = 'inactiva',
@@ -37,14 +37,18 @@ export class Installation {
 
   @Column({
     type: 'enum',
-    enum: estado_Installation,
+    enum: estado_instalacion,
     default: estado_instalacion.INACTIVA, // valor por defecto
   })
   estado: estado_instalacion;
 
-  @OneToMany(() => Court, (pi) => pi.instalacion)
+  @OneToMany(() => Court, (pi) => pi.Installation)
   pistas: Court[];
 }
+
+
+
+
 
 
 

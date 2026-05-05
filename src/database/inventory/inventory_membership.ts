@@ -11,7 +11,7 @@ export default [
     tipo: 'Plata',
     descuento: 5.0,
     reservas_requeridas: 10,
-    beneficios: '5% de descuento en el precio de la pista.',
+    beneficios: '5% de descuento en el precio de la Court.',
   },
   {
     rango: '3',
@@ -21,3 +21,4 @@ export default [
     beneficios: '10% de descuento y prioridad en eventos.',
   },
 ];
+

@@ -7,43 +7,44 @@ import { UpdatePaymentDto } from './dto/payment.dto';
 @Injectable()
 export class PaymentService {
   constructor(
-    @InjectRepository(Pago)
-    private readonly pagoRepository: Repository<Pago>,
+    @InjectRepository(Payment)
+    private readonly pagoRepository: Repository<Payment>,
   ) {}
 
   findAll() {
     return this.pagoRepository.find({
-      relations: ['usuario', 'reserva'],
+      relations: ['usuario', 'Reservation'],
     });
   }
 
-  async findOne(pago_id: number): Promise<Pago> {
+  async findOne(Payment_id: number): Promise<Payment> {
     const Payment = await this.pagoRepository.findOne({
-      where: { pago_id },
-      relations: ['usuario', 'reserva'],
+      where: { Payment_id },
+      relations: ['usuario', 'Reservation'],
     });
-    if (!pago) {
-      throw new NotFoundException(`Payment ${pago_id} no encontrado`);
+    if (!Payment) {
+      throw new NotFoundException(`Payment ${Payment_id} no encontrado`);
     }
-    return pago;
+    return Payment;
   }
 
-  async create(data: Partial<Pago>) {
+  async create(data: Partial<Payment>) {
     const Payment = this.pagoRepository.create(data);
-    return this.pagoRepository.save(pago);
+    return this.pagoRepository.save(Payment);
   }
 
-  async update(pago_id: number, data: UpdatePaymentDto) {
-    await this.pagoRepository.update(pago_id, data);
-    return this.findOne(pago_id);
+  async update(Payment_id: number, data: UpdatePaymentDto) {
+    await this.pagoRepository.update(Payment_id, data);
+    return this.findOne(Payment_id);
   }
 
-  async remove(pago_id: number): Promise<void> {
-    const Payment = await this.findOne(pago_id);
-    if (!pago) {
-      throw new NotFoundException(`Payment ${pago_id} no encontrado`);
+  async remove(Payment_id: number): Promise<void> {
+    const Payment = await this.findOne(Payment_id);
+    if (!Payment) {
+      throw new NotFoundException(`Payment ${Payment_id} no encontrado`);
     }
-    await this.pagoRepository.delete(pago_id);
+    await this.pagoRepository.delete(Payment_id);
   }
 }
+
 

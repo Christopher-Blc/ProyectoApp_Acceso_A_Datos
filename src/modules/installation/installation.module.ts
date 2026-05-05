@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Installation } from './entities/installation.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Instalacion])],
+  imports: [TypeOrmModule.forFeature([Installation])],
   controllers: [InstallationController],
   providers: [InstallationService],
 })
 export class InstallationModule {}
+
 

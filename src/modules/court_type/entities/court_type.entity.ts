@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Court } from '../../court/entities/court.entity';
 
-@Entity('tipos_pista')
+@Entity('tipos_Court')
 export class CourtType {
   @PrimaryGeneratedColumn()
   tipo_pista_id: number;
@@ -10,10 +10,12 @@ export class CourtType {
   nombre: string;
 
   @Column({})
-  imagen: string; // Aquí guardaremos algo como "pista-tenis.jpg"
+  imagen: string; // Aquí guardaremos algo como "Court-tenis.jpg"
 
   @OneToMany(() => Court, (court) => court.tipo_Court)
   pistas: Court[];
 }
+
+
 
 

@@ -10,37 +10,37 @@ import {
 @Injectable()
 export class InstallationService {
   constructor(
-    @InjectRepository(Instalacion)
-    private readonly instalacionRepository: Repository<Instalacion>,
+    @InjectRepository(Installation)
+    private readonly instalacionRepository: Repository<Installation>,
   ) {}
 
   async findAll(): Promise<Installation[]> {
-    return this.instalacionRepository.find({ relations: ['pista'] });
+    return this.instalacionRepository.find({ relations: ['Court'] });
   }
 
-  async findOne(instalacion_id: number): Promise<Instalacion> {
+  async findOne(instalacion_id: number): Promise<Installation> {
     const Installation = await this.instalacionRepository.findOne({
       where: { instalacion_id: instalacion_id },
-      relations: ['pista'],
+      relations: ['Court'],
     });
-    if (!instalacion) {
+    if (!Installation) {
       throw new NotFoundException(
         `Installation ${instalacion_id} no encontrada`,
       );
     }
-    return instalacion;
+    return Installation;
   }
 
-  async create(info_instalacion: CreateInstallationDto) {
-    const newInstallation = this.instalacionRepository.create(info_instalacion);
-    return this.instalacionRepository.save(newInstalacion);
+  async create(info_Installation: CreateInstallationDto) {
+    const newInstallation = this.instalacionRepository.create(info_Installation);
+    return this.instalacionRepository.save(newInstallation);
   }
 
   async update(
     instalacion_id: number,
-    info_instalacion: UpdateInstallationDto,
-  ): Promise<Instalacion> {
-    await this.instalacionRepository.update(instalacion_id, info_instalacion);
+    info_Installation: UpdateInstallationDto,
+  ): Promise<Installation> {
+    await this.instalacionRepository.update(instalacion_id, info_Installation);
     return this.findOne(instalacion_id);
   }
 
@@ -49,5 +49,7 @@ export class InstallationService {
     await this.instalacionRepository.delete(instalacion_id);
   }
 }
+
+
 
 

@@ -27,14 +27,14 @@ import { UserRole } from '../users/entities/user.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('pago')
+@Controller('Payment')
 export class PaymentController {
   constructor(private readonly PaymentService: PaymentService) {}
 
   @Get()
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Get all payments' })
-  @ApiResponse({ status: 200, description: 'List of payments', type: [Pago] })
+  @ApiResponse({ status: 200, description: 'List of payments', type: [Payment] })
   @ApiResponse({ status: 204, description: 'No content.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -80,7 +80,7 @@ export class PaymentController {
     try {
       const pagoData = {
         ...CreatePaymentDto,
-        fecha_pago: new Date(CreatePaymentDto.fecha_pago),
+        fecha_Payment: new Date(CreatePaymentDto.fecha_Payment),
       };
       return this.PaymentService.create(pagoData);
     } catch (err) {
@@ -134,5 +134,6 @@ export class PaymentController {
     }
   }
 }
+
 
 

@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { Reservation } from './entities/reservation.entity';
 import { CreateReservationDto, UpdateReservationDto } from './dto/reservation.dto';
-import { ReservationService } from './reservationtiontion.service';
+import { ReservationService } from './reservation.service';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -30,20 +30,20 @@ import type { AuthenticatedRequest } from '../auth/types/auth.types';
 import { normalizeError } from '../../common/utils/error.util';
 
 /**
- * Reservations controller.
+ * Controlador de reservas.
  *
- * Relevant adjustments from the refactor:
- * - `@Req()` typed as AuthenticatedRequest to use `req.user` without `any`.
- * - Homogeneous error handling with normalizeError(err) in all catch blocks.
+ * Ajustes relevantes del refactor:
+ * - `@Req()` tipado como AuthenticatedRequest para usar `req.user` sin `any`.
+ * - Manejo homogéneo de errores con normalizeError(err) en todos los catch.
  */
 @ApiTags('reservas')
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('reserva')
+@Controller('Reservation')
 export class ReservationController {
   constructor(private readonly ReservationService: ReservationService) {}
 
-  // The GET can optionally receive Court id and date to filter
+  // El GET puede recibir opcionalmente id de pista y fecha para filtrar
   @Get()
   @ApiOperation({ summary: 'Get all reservas' })
   @ApiResponse({ status: 200, description: 'Reservas retrieved successfully.' })
@@ -53,7 +53,7 @@ export class ReservationController {
   async findAll(
     @Query('pista_id') pista_id?: number,
     @Query('fecha_desde') fecha_desde?: string,
-  ): Promise<Reserva[]> {
+  ): Promise<Reservation[]> {
     try {
       return await this.ReservationService.findAll(pista_id, fecha_desde);
     } catch (err) {
@@ -77,8 +77,8 @@ export class ReservationController {
   @UseGuards(AuthGuard)
   async findMyReservations(
     @Req() req: AuthenticatedRequest,
-  ): Promise<Reserva[]> {
-    // The AuthGuard already validated the token and left the payload in req.user.
+  ): Promise<Reservation[]> {
+    // AuthGuard ya validó el token y dejó el payload en req.user.
     const userId = req.user?.sub;
     if (!userId)
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -108,13 +108,13 @@ export class ReservationController {
     UserRole.ADMINISTRACION,
     UserRole.SUPER_ADMIN,
   )
-  @ApiOperation({ summary: 'Create a new reserva' })
+  @ApiOperation({ summary: 'Create a new Reservation' })
   async create(
     @Body() ReservationDto: CreateReservationDto,
     @Req() req: AuthenticatedRequest,
   ): Promise<Reservation | null> {
     try {
-      // We link the reservation to the user from the token to prevent impersonation.
+      // Vinculamos la reserva al usuario del token para evitar suplantaciones.
       const userId = req.user?.sub;
       if (!userId)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -132,14 +132,14 @@ export class ReservationController {
     UserRole.ADMINISTRACION,
     UserRole.SUPER_ADMIN,
   )
-  @ApiOperation({ summary: 'Update an existing reserva' })
+  @ApiOperation({ summary: 'Update an existing Reservation' })
   async update(
     @Param('id') id: number,
     @Body() ReservationDto: UpdateReservationDto,
     @Req() req: AuthenticatedRequest,
   ): Promise<Reservation | null> {
     try {
-      // The service decides permissions by combining the user's id and role.
+      // El servicio decide permisos combinando id y rol del usuario.
       const userId = req.user?.sub;
       const userRole = req.user?.role ?? UserRole.CLIENTE;
       if (!userId)
@@ -177,6 +177,9 @@ export class ReservationController {
     }
   }
 }
+
+
+
 
 
 

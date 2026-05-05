@@ -5,7 +5,7 @@ import {
   IsDateString,
   IsNumber,
 } from 'class-validator';
-import { estado_Installation } from '../entities/installation.entity'; // Importamos el enum estadoReservation desde installation.entity
+import { estado_instalacion } from '../entities/installation.entity'; // Importamos el enum estadoReservation desde installation.entity
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateInstallationDto {
@@ -57,7 +57,7 @@ export class CreateInstallationDto {
 
   // @IsDateString()
   // @ApiProperty({
-  //     description: 'Creation date of the installation',
+  //     description: 'Fecha de creación de la instalación',
   //     example: '2023-01-01T00:00:00Z',
   // })
   // fecha_creacion: Date;
@@ -134,7 +134,7 @@ export class UpdateInstallationDto {
   })
   descripcion?: string;
 
-  // Estado de la instalacion
+  // Estado de la Installation
   @IsOptional()
   @IsEnum(estado_instalacion)
   @ApiProperty({
@@ -159,6 +159,9 @@ export class UpdateInstallationDto {
   })
   horario_cierre?: string;
 }
+
+
+
 
 
 

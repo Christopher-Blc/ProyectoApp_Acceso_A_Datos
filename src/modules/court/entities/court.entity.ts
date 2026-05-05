@@ -7,9 +7,9 @@ import {
   JoinColumn,
   Unique,
 } from 'typeorm';
-import { Reservation } from '../../reserva/entities/reservation.entity';
-import { Installation } from '../../instalacion/entities/installation.entity';
-import { TipoCourt } from '../../tipo_pista/entities/court_type.entity';
+import { Reservation } from '../../reservation/entities/reservation.entity';
+import { Installation } from '../../installation/entities/installation.entity';
+import { CourtType } from '../../court_type/entities/court_type.entity';
 
 export enum EstadoCourt {
   DISPONIBLE = 'DISPONIBLE',
@@ -29,8 +29,8 @@ export enum DiaSemana {
 //para que solo haya una Court con el mismo nombre en la misma Installation y
 // el mismo dia de la semana, pero puede haber pistas con el mismo nombre en
 //  diferentes instalaciones o en la misma instalación pero en días diferentes
-@Unique(['nombre', 'instalacion', 'dia_semana'])
-@Entity('pista')
+@Unique(['nombre', 'Installation', 'dia_semana'])
+@Entity('Court')
 export class Court {
   @PrimaryGeneratedColumn({ name: 'pista_id', type: 'int' })
   pista_id: number;
@@ -62,9 +62,9 @@ export class Court {
   @Column({
     type: 'enum',
     enum: EstadoCourt,
-    default: EstadoPista.DISPONIBLE,
+    default: EstadoCourt.DISPONIBLE,
   })
-  estado: EstadoPista;
+  estado: EstadoCourt;
 
   @Column({ type: 'time' })
   hora_apertura: string;
@@ -84,15 +84,18 @@ export class Court {
 
   @ManyToOne(() => Installation, (i) => i.pistas)
   @JoinColumn({ name: 'instalacion_id' })
-  instalacion: Instalacion;
+  Installation: Installation;
 
-  @ManyToOne(() => TipoCourt, (tp) => tp.pistas)
+  @ManyToOne(() => CourtType, (tp) => tp.pistas)
   @JoinColumn({ name: 'tipo_pista_id' })
-  tipo_pista: TipoPista;
+  tipo_Court: CourtType;
 
   @OneToMany(() => Reservation, (r) => r.Court)
-  reservas: Reserva[];
+  reservas: Reservation[];
 }
+
+
+
 
 
 

@@ -25,15 +25,16 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
+import { normalizeError } from '../../common/utils/error.util';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiTags('pistas')
 @ApiBearerAuth()
-@Controller('pista')
+@Controller('Court')
 export class CourtController {
   constructor(private readonly CourtService: CourtService) {}
 
-  // GET /Court -> obtener todas los pistas
+  // Ruta /Court -> obtener todas las pistas
   @Get()
   @ApiOperation({ summary: 'Get all courts' })
   @ApiResponse({ status: 200, description: 'List of all courts' })
@@ -44,9 +45,10 @@ export class CourtController {
     try {
       return this.CourtService.findAll();
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -68,7 +70,7 @@ export class CourtController {
     return await this.CourtService.obtenerDisponibilidad(fecha);
   }
 
-  // GET /pista/:id -> get a court by ID
+  // Ruta /Court/:id -> obtener una pista por ID
   @Get(':id')
   @ApiOperation({ summary: 'Get a court by ID' })
   @ApiResponse({ status: 200, description: 'The court with the specified ID' })
@@ -80,14 +82,15 @@ export class CourtController {
     try {
       return this.CourtService.findOne(id);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
 
-  // POST /Court -> create a new court
+  // Ruta /Court (POST) -> crear una pista nueva
   @Post()
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new court' })
@@ -98,14 +101,15 @@ export class CourtController {
     try {
       return this.CourtService.create(CourtDto);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
 
-  // PUT /pista/:id -> update an existing court
+  // Ruta /Court/:id (PUT) -> actualizar una pista existente
   @Put(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update court - Supports selective maintenance dates' })
@@ -120,14 +124,15 @@ export class CourtController {
     try {
       return this.CourtService.update(id, CourtDto);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
 
-  // DELETE /pista/:id -> eliminar un pista
+  // Ruta /Court/:id (DELETE) -> eliminar una pista
   @Delete(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Delete a court' })
@@ -139,12 +144,14 @@ export class CourtController {
     try {
       return this.CourtService.remove(id);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
 }
+
 
 

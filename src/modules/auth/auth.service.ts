@@ -33,7 +33,7 @@ export class AuthService {
   async refresh(
     refresh_token: string,
   ): Promise<{ access_token: string; refresh_token: string }> {
-    // The payload is explicitly typed to avoid propagating `any`.
+    // El payload se escribe explícitamente para evitar propagar `any`.
     let payload: AuthUserPayload;
 
     try {
@@ -44,7 +44,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
-    // `sub` represents the logical id of the authenticated user.
+    // `sub` representa el id lógico del usuario autenticado.
     const user = await this.usersService.findById(Number(payload.sub));
     if (!user) throw new UnauthorizedException('User does not exist');
     if (!user.isActive) throw new ForbiddenException('Inactive user');
@@ -54,18 +54,18 @@ export class AuthService {
     const ok = await bcrypt.compare(refresh_token, user.refresh_token_hash);
     if (!ok) throw new UnauthorizedException('Invalid refresh token');
 
-    // We reconstruct the payload from the current entity to avoid stale data.
-    // We type as Record for clarity, although JwtService.signAsync has limitations
-    // in its overloads that require `as any` in the call.
+    // Reconstruimos el payload de la entidad actual para evitar datos obsoletos.
+    // Escribimos como Record para mayor claridad, aunque JwtService.signAsync tiene limitaciones
+    // en sus sobrecargas que requieren `as any` en la llamada.
     const newPayload: Record<string, string | number> = {
       sub: String(user.usuario_id),
       email: user.email,
       role: String(user.role),
     };
 
-    // NOTE: JwtService.signAsync has overloads that don't correctly capture
-    // Record<string, string | number> objects. Although the types are correct
-    // at runtime, TypeScript rejects them. `as any` is used here in a localized manner.
+    // NOTA: JwtService.signAsync tiene sobrecargas que no capturan correctamente
+    // objetos Record<string, string | number>. Aunque los tipos son correctos
+    // en tiempo de ejecución, TypeScript los rechaza. `as any` se usa aquí de manera localizada.
     const access_token = await this.jwtService.signAsync(
       newPayload as any,
       {
@@ -82,7 +82,7 @@ export class AuthService {
       } as any,
     );
 
-    // Refresh rotation: we save hash of the new refresh token.
+    // Rotación de token de refresco: guardamos el hash del nuevo token.
     const newHash = await bcrypt.hash(new_refresh_token, 10);
     await this.usersService.updateRefreshTokenHash(user.usuario_id, newHash);
 
@@ -92,20 +92,20 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    // Repository to persist revoked tokens
+    // Repositorio para persistir tokens revocados
     @InjectRepository(AuthTokenBlacklist)
     private readonly tokenBlacklistRepository: Repository<AuthTokenBlacklist>,
   ) {}
 
   /**
-   * Converts raw token to hash to avoid persisting secrets in plain text.
+    * Convierte el token en hash para no persistir secretos en texto plano.
    */
   private hashToken(token: string): string {
     return createHash('sha256').update(token).digest('hex');
   }
 
   /**
-   * Checks if the access token is in the blacklist and has not expired.
+    * Comprueba si el access token está en blacklist y no ha expirado.
    */
   async isAccessTokenBlacklisted(token: string): Promise<boolean> {
     const tokenHash = this.hashToken(token);
@@ -118,7 +118,7 @@ export class AuthService {
   }
 
   /**
-   * Client user registration with uniqueness validations.
+    * Registro de usuario cliente con validaciones de unicidad.
    */
   async register(dto: RegisterDto) {
     const duplicateEmail = await this.usersService.findByEmail(dto.email);
@@ -142,7 +142,7 @@ export class AuthService {
       fecha_nacimiento: new Date(dto.fecha_nacimiento),
     });
 
-    // We remove sensitive data from the public response.
+    // Eliminamos datos sensibles de la respuesta pública.
     const userSafe: Record<string, unknown> = { ...created };
     delete userSafe.password;
     return this.login({ email: dto.email, password: dto.password }).then(
@@ -153,36 +153,36 @@ export class AuthService {
   }
 
   /**
-   * Login with emission of access token + refresh token.
+    * Login con emisión de access token + refresh token.
    */
   async login(dto: LoginDto): Promise<{
     access_token: string;
     refresh_token: string;
     user: Record<string, unknown>;
   }> {
-    // Searches for user by email and validates account status.
+    // Busca usuario por email y valida estado de cuenta.
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) throw new UnauthorizedException('Incorrect credentials');
     if (!user.isActive) throw new ForbiddenException('Inactive user');
 
-    // Safe password hash comparison.
+    // Comparación segura de hash de contraseña.
     const ok = await bcrypt.compare(dto.password, user.password);
     if (!ok) throw new UnauthorizedException('Incorrect credentials');
-    // Update last login
+    // Actualiza último login
     await this.usersService.updateLastLogin(user.usuario_id);
 
-    // Minimal identity/authorization payload for JWT.
-    // We type as Record for clarity, although JwtService.signAsync has limitations
-    // in its overloads that require `as any` in the call.
+    // Payload mínimo de identidad/autorización para JWT.
+    // Escribimos como Record para mayor claridad, aunque JwtService.signAsync tiene limitaciones
+    // en sus sobrecargas que requieren `as any` en la llamada.
     const payload: Record<string, string | number> = {
       sub: String(user.usuario_id),
       email: user.email,
       role: String(user.role),
     };
 
-    // NOTE: JwtService.signAsync has overloads that don't correctly capture
-    // Record<string, string | number> objects. Although the types are correct
-    // at runtime, TypeScript rejects them. `as any` is used here in a localized manner.
+    // NOTA: JwtService.signAsync tiene sobrecargas que no capturan correctamente
+    // objetos Record<string, string | number>. Aunque los tipos son correctos
+    // en tiempo de ejecución, TypeScript los rechaza. `as any` se usa aquí de manera localizada.
     const access_token = await this.jwtService.signAsync(
       payload as any,
       {

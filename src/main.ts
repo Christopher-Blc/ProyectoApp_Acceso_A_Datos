@@ -18,18 +18,18 @@ async function bootstrap() {
   console.log(`🚀 Docker routes loaded`);
   console.log(`📂 Looking for images in: ${publicPath}`);
 
-  // So that the app validates DTOs and returns the appropriate error messages
+  // Para que la app valide DTOs y devuelva los mensajes de error adecuados
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // removes fields that are not in the DTO
-      forbidNonWhitelisted: true, // if extra fields are sent, 400
-      transform: true, // transforms types if using class-transformer
+      whitelist: true, // elimina campos que no están en el DTO
+      forbidNonWhitelisted: true, // si se envían campos extra, devuelve 400
+      transform: true, // transforma tipos si se usa class-transformer
       transformOptions: { enableImplicitConversion: true },
     }),
   );
 
   app.enableCors({
-    // in production, * would not be used to restrict access to APIs
+    // en producción, no se usaría * para restringir acceso a la API
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,

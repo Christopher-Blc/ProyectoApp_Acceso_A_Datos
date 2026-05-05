@@ -1,47 +1,46 @@
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
-import { Reservation } from '../../../modules/reservationtion/entities/reservation.entity';
-import reservaData from '../../inventory/inventory_reserva';
+import { Reservation } from '../../../modules/reservation/entities/reservation.entity';
+import reservationData from '../../inventory/inventory_reservation';
 import { User } from '../../../modules/users/entities/user.entity';
 import { Court } from '../../../modules/court/entities/court.entity';
 
-export class ReservaSeeder implements Seeder {
+export class ReservationsSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
-    const reservaRepository = dataSource.getRepository(Reserva);
+    const reservationRepository = dataSource.getRepository(Reservation);
     const userRepository = dataSource.getRepository(User);
-    const pistaRepository = dataSource.getRepository(Court);
+    const courtRepository = dataSource.getRepository(Court);
 
-    const reservaEntries: Reserva[] = [];
+    const reservationEntries: Reservation[] = [];
 
-    for (const item of reservaData) {
-      // 1. We verify that mandatory relationships exist [cite: 207-208]
+    for (const item of reservationData) {
+      // 1. Verificamos que existan relaciones obligatorias
       const user = await userRepository.findOneBy({
         usuario_id: Number(item.usuario_id),
       });
-      const Court = await pistaRepository.findOneBy({
+      const court = await courtRepository.findOneBy({
         pista_id: Number(item.pista_id),
       });
 
-      if (!user || !Court) {
+      if (!user || !court) {
         console.warn(
-          `Skipping reservation: User ${item.usuario_id} or Court ${item.pista_id} don't exist.`,
+          `Se omite reserva: usuario ${item.usuario_id} o pista ${item.pista_id} no existen.`,
         );
         continue;
       }
 
-      // 2. We avoid duplicates (User + Court + Date + Start Time)
-      const existing = await reservaRepository.findOne({
+      // 2. Evitamos duplicados (usuario + pista + fecha + hora inicio)
+      const existing = await reservationRepository.findOne({
         where: {
           usuario_id: user.usuario_id,
-          pista_id: pista.pista_id,
-          fecha_reserva: item.fecha_Reservation,
+          pista_id: item.pista_id,
           hora_inicio: item.hora_inicio,
         },
       });
 
       if (existing) continue;
 
-      // 3. Manual price calculation for Seed (replicating the Service)
+      // 3. Cálculo manual de precio para la carga inicial (replicando el servicio)
       const [hInicio, mInicio] = item.hora_inicio.split(':').map(Number);
       const [hFin, mFin] = item.hora_fin.split(':').map(Number);
       const totalMinutos = hFin * 60 + mFin - (hInicio * 60 + mInicio);
@@ -49,31 +48,31 @@ export class ReservaSeeder implements Seeder {
       let precioCalculado = 0;
       if (totalMinutos > 0) {
         const duracionHoras = totalMinutos / 60;
-        // We use the precio_hora from the Court found
+        // Usamos el precio_hora de la pista encontrada
         precioCalculado = Number(
-          (duracionHoras * pista.precio_hora).toFixed(2),
+          (duracionHoras * court.precio_hora).toFixed(2),
         );
       }
 
-      // 4. Mapping to Entity [cite: 200-206]
-      const reservaEntry = new Reserva();
-      reservaEntry.usuario_id = user.usuario_id;
-      reservaEntry.pista_id = pista.pista_id;
-      reservaEntry.fecha_Reservation = item.fecha_reserva;
-      reservaEntry.hora_inicio = item.hora_inicio;
-      reservaEntry.hora_fin = item.hora_fin;
-      reservaEntry.estado = item.estado;
-      reservaEntry.nota = item.nota || 'Seed data';
-      reservaEntry.precio_total = precioCalculado; // Mandatory field
+      // 4. Mapeo a la entidad
+      const reservationEntry = new Reservation();
+      reservationEntry.usuario_id = user.usuario_id;
+      reservationEntry.pista_id = court.pista_id;
+      reservationEntry.fecha_Reservation = item.fecha_Reservation;
+      reservationEntry.hora_inicio = item.hora_inicio;
+      reservationEntry.hora_fin = item.hora_fin;
+      reservationEntry.estado = item.estado;
+      reservationEntry.nota = item.nota || 'Datos de seed';
+      reservationEntry.precio_total = precioCalculado; // Campo obligatorio
 
-      reservaEntries.push(reservaEntry);
+      reservationEntries.push(reservationEntry);
     }
 
-    if (reservaEntries.length > 0) {
-      await reservaRepository.save(reservaEntries);
-      console.log(`${reservaEntries.length} reservations created successfully.`);
+    if (reservationEntries.length > 0) {
+      await reservationRepository.save(reservationEntries);
+      console.log(`${reservationEntries.length} reservas creadas correctamente.`);
     }
-    console.log('Reservation seeding completed!');
+    console.log('Seed de reservas completado.');
   }
 }
 

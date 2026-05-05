@@ -9,7 +9,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMembershipDto {
   @IsNumber()
-  membresia_id: number;
+  Membership_id: number;
 
   @IsString()
   @ApiProperty({
@@ -33,13 +33,13 @@ export class CreateMembershipDto {
   fecha_fin: string;
 
   // @IsOptional()
-  // @IsEnum(estado_membresia)
+  // @IsEnum(estado_Membership)
   // @ApiProperty({
-  //     description: 'State of the membership',
+  //     description: 'Estado de la membresía',
   //     enum: estado_Membership,
-  //     example: estado_membresia.ACTIVA,
+  //     example: estado_Membership.ACTIVA,
   // })
-  // estado: estado_membresia;
+  // estado: estado_Membership;
 
   @IsOptional()
   @IsNumber()
@@ -82,13 +82,13 @@ export class UpdateMembershipDto {
   fecha_fin: string;
 
   // @IsOptional()
-  // @IsEnum(estado_membresia)
+  // @IsEnum(estado_Membership)
   // @ApiProperty({
-  //     description: 'State of the membership',
+  //     description: 'Estado de la membresía',
   //     enum: estado_Membership,
-  //     example: estado_membresia.ACTIVA,
+  //     example: estado_Membership.ACTIVA,
   // })
-  // estado: estado_membresia;
+  // estado: estado_Membership;
 
   @IsOptional()
   @IsNumber()
@@ -112,4 +112,5 @@ export class UpdateMembershipDto {
   })
   fecha_renovacion: string;
 }
+
 

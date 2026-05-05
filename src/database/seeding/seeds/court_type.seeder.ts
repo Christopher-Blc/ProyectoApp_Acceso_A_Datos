@@ -1,24 +1,24 @@
-import { TipoCourt } from '../../../modules/court_type/entities/court_type.entity';
+import { CourtType } from '../../../modules/court_type/entities/court_type.entity';
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
-import tipoPistaData from '../../inventory/inventory_tipo_pista';
+import courtTypeData from '../../inventory/inventory_court_type';
 
-export class TipoPistaSeeder implements Seeder {
+export class CourtTypeSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
-    const tipoPistaRepository = dataSource.getRepository(TipoCourt);
+    const courtTypeRepository = dataSource.getRepository(CourtType);
 
-    const entries: TipoCourt[] = [];
+    const entries: CourtType[] = [];
 
-    for (const item of tipoPistaData) {
-      // We search by name to avoid duplicates
-      const existing = await tipoPistaRepository.findOne({
+    for (const item of courtTypeData) {
+      // Buscamos por nombre para evitar duplicados
+      const existing = await courtTypeRepository.findOne({
         where: { nombre: item.nombre },
       });
 
       if (existing) continue;
 
       const entry = new CourtType();
-      // Only has id (auto) and name according to your Entity
+      // Solo tiene id (auto), nombre e imagen según la entidad
       entry.nombre = item.nombre;
       entry.imagen = item.imagen;
 
@@ -26,10 +26,10 @@ export class TipoPistaSeeder implements Seeder {
     }
 
     if (entries.length > 0) {
-      await tipoPistaRepository.save(entries);
+      await courtTypeRepository.save(entries);
       console.log(`${entries.length} Court types created.`);
     }
-    console.log('TipoCourt seeding completed!');
+    console.log('CourtType seeding completed!');
   }
 }
 

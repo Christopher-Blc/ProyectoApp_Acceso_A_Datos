@@ -1,25 +1,25 @@
 /**
- * Normalizes runtime errors to a common contract `{ message, status }`.
+ * Normaliza errores de ejecución a un contrato común `{ message, status }`.
  *
- * Why does it exist?
- * - In many `catch` blocks the error arrives as `unknown`.
- * - Directly accessing `err.message` or `err.status` breaks type safety lint rules.
+ * ¿Por qué existe?
+ * - En muchos `catch` el error llega como `unknown`.
+ * - Acceder directamente a `err.message` o `err.status` rompe reglas de tipado.
  *
- * This function centralizes the narrowing:
- * 1) If it's an instance of Error => use its message.
- * 2) If it's a generic object => try to read message/status if they exist.
- * 3) If nothing can be inferred => return safe fallback.
+ * Esta función centraliza el narrowing:
+ * 1) Si es instancia de Error => usa su mensaje.
+ * 2) Si es un objeto genérico => intenta leer message/status si existen.
+ * 3) Si no se puede inferir nada => devuelve fallback seguro.
  */
 export function normalizeError(err: unknown): {
   message: string;
   status: number;
 } {
-  // Typical case of JS/TS exceptions (`throw new Error(...)`).
+  // Caso típico de excepciones JS/TS (`throw new Error(...)`).
   if (err instanceof Error) {
     return { message: err.message, status: 500 };
   }
 
-  // Case of errors thrown as plain objects with `message` and `status`.
+  // Caso de errores lanzados como objetos planos con `message` y `status`.
   if (typeof err === 'object' && err !== null) {
     const record = err as Record<string, unknown>;
     const message =
@@ -29,6 +29,6 @@ export function normalizeError(err: unknown): {
     return { message, status };
   }
 
-  // Last fallback for unforeseen cases (string, number, null, etc.).
+  // Último valor de respaldo para casos no previstos (string, number, null, etc.).
   return { message: 'Unexpected error', status: 500 };
 }

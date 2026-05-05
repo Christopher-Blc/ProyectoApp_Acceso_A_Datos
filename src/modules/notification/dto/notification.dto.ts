@@ -9,11 +9,11 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { tipoNotification } from '../entities/notification.entity';
+import { tipoNoti } from '../entities/notification.entity';
 
 export class NotificationDto {
   @IsInt()
-  noti_id: number;
+  Notification_id: number;
 
   @IsNumber()
   @IsOptional()
@@ -75,4 +75,7 @@ export class UpdateNotificationDto {
   // @IsDateString()
   // fecha: Date;
 }
+
+
+
 

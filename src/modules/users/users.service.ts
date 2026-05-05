@@ -11,31 +11,31 @@ import * as bcrypt from 'bcrypt';
 import { User, UserRole } from './entities/user.entity';
 import { UpdateUserDto } from './dto/users.dto';
 import { Membership } from '../membership/entities/membership.entity'; // Asegúrate de que la ruta sea correcta
-import { Reservation, estadoReservation } from '../reservationtiontion/entities/reservation.entity';
+import { Reservation, estadoReserva } from '../reservation/entities/reservation.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    // We need Membership because here we'll have the logic that according to reservations made,
-    // we'll assign one membership or another automatically
-    @InjectRepository(Membresia)
-    private readonly membresiaRepository: Repository<Membresia>,
-    @InjectRepository(Reserva)
-    private readonly reservaRepository: Repository<Reserva>,
+    // Necesitamos Membership porque aquí aplicamos la lógica que, según las reservas hechas,
+    // asignará una membresía u otra automáticamente
+    @InjectRepository(Membership)
+    private readonly membresiaRepository: Repository<Membership>,
+    @InjectRepository(Reservation)
+    private readonly reservaRepository: Repository<Reservation>,
   ) {}
 
-  // Automatic membership update
+  // Actualización automática de membresía
   async updateUserRank(usuario_id: number): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { usuario_id },
-      relations: ['membresia'],
+      relations: ['Membership'],
     });
 
     if (!user) return;
 
-    // We count only completed reservations in DB for the user.
+    // Contamos solo reservas finalizadas en BD para el usuario.
     const totalFinalizadas = await this.reservaRepository.count({
       where: {
         usuario_id,
@@ -43,26 +43,26 @@ export class UsersService {
       },
     });
 
-    // We search in the memberships table which one corresponds to the user.
-    // We search for the membership with the highest number of 'reservas_requeridas'
-    // that is less than or equal to the user's reservations.
+    // Buscamos en la tabla de membresías cuál le corresponde al usuario.
+    // Elegimos la membresía con mayor 'reservas_requeridas'
+    // que sea menor o igual a las reservas del usuario.
     const mejorMembership = await this.membresiaRepository.findOne({
       where: {
         reservas_requeridas: LessThanOrEqual(totalFinalizadas),
       },
       order: {
-        reservas_requeridas: 'DESC', // The one that requires more reservations (the best) first
+        reservas_requeridas: 'DESC', // La que exige más reservas (la mejor), primero
       },
     });
 
-    if (mejorMembership && user.membresia_id !== mejorMembresia.membresia_id) {
+    if (mejorMembership && user.Membership_id !== mejorMembership.Membership_id) {
       await this.userRepository.update(usuario_id, {
-        membresia_id: mejorMembresia.membresia_id,
+        Membership_id: mejorMembership.Membership_id,
       });
     }
   }
 
-  // Update with field protection (Only Admin changes Role and Membresia)
+  // Actualización con protección de campos (solo Admin cambia Role y Membership)
   async update(
     usuario_id: number,
     data: UpdateUserDto,
@@ -71,9 +71,9 @@ export class UsersService {
     const user = await this.findOne(usuario_id);
 
     if (isSelfUpdate) {
-      // We block the user from changing these things themselves
+      // Bloqueamos que el usuario cambie estos campos por su cuenta
       delete data.role;
-      delete data.membresia_id;
+      delete data.Membership_id;
       delete data.isActive;
     }
 
@@ -87,14 +87,14 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find({
-      relations: ['reservas', 'membresia'],
+      relations: ['reservas', 'Membership'],
     });
   }
 
   async findOne(usuario_id: number): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { usuario_id },
-      relations: ['reservas', 'membresia'],
+      relations: ['reservas', 'Membership'],
     });
     if (!user) throw new NotFoundException('user not found');
     return user;
@@ -109,7 +109,7 @@ export class UsersService {
       return await this.userRepository.save(user);
     } catch (error) {
       if (error.code === '23505') {
-        // We control duplicates here although register already verifies it
+        // Controlamos duplicados aquí, aunque register ya lo valida
         throw new BadRequestException('Email/Username/Phone already exists');
       }
       throw new InternalServerErrorException();
@@ -126,11 +126,11 @@ export class UsersService {
 
     const hoy = new Date();
     const tienePendientes = user.reservas.some(
-      (r) => new Date(r.fecha_reserva) >= hoy,
+      (r) => new Date(r.fecha_Reservation) >= hoy,
     );
 
     if (tienePendientes) {
-      throw new BadRequestException('You have pending reservations');
+      throw new BadRequestException('Tienes reservas pendientes');
     }
 
     await this.userRepository.remove(user);
@@ -180,6 +180,8 @@ export class UsersService {
     );
   }
 }
+
+
 
 
 

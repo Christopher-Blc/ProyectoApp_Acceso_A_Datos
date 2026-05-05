@@ -22,7 +22,7 @@ import { UserRole } from '../users/entities/user.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('instalacion')
+@Controller('Installation')
 export class InstallationController {
   constructor(private readonly InstallationService: InstallationService) {}
 
@@ -74,7 +74,7 @@ export class InstallationController {
   async update(
     @Param('id') id: number,
     @Body() InstallationDto: UpdateInstallationDto,
-  ): Promise<Instalacion> {
+  ): Promise<Installation> {
     return this.InstallationService.update(id, InstallationDto);
   }
 
@@ -90,5 +90,6 @@ export class InstallationController {
     return { deleted: true };
   }
 }
+
 
 

@@ -7,8 +7,8 @@ import { UpdateNotificationDto } from './dto/notification.dto';
 @Injectable()
 export class NotificationService {
   constructor(
-    @InjectRepository(Noti)
-    private readonly notiRepository: Repository<Noti>,
+    @InjectRepository(Notification)
+    private readonly notiRepository: Repository<Notification>,
   ) {}
 
   findAll() {
@@ -17,25 +17,25 @@ export class NotificationService {
     });
   }
 
-  async findOne(noti_id: number): Promise<Noti> {
+  async findOne(Notification_id: number): Promise<Notification> {
     const Notification = await this.notiRepository.findOne({
-      where: { noti_id },
+      where: { Notification_id },
       relations: ['user'],
     });
-    if (!noti) {
-      throw new NotFoundException(`Notification ${noti_id} no encontrada`);
+    if (!Notification) {
+      throw new NotFoundException(`Notification ${Notification_id} no encontrada`);
     }
-    return noti;
+    return Notification;
   }
 
-  async create(data: Partial<Noti>) {
+  async create(data: Partial<Notification>) {
     const Notification = this.notiRepository.create(data);
-    return this.notiRepository.save(noti);
+    return this.notiRepository.save(Notification);
   }
 
-  async update(noti_id: number, data: UpdateNotificationDto) {
-    await this.notiRepository.update(noti_id, data);
-    return this.findOne(noti_id);
+  async update(Notification_id: number, data: UpdateNotificationDto) {
+    await this.notiRepository.update(Notification_id, data);
+    return this.findOne(Notification_id);
   }
 
   async remove(id: number) {
@@ -43,4 +43,5 @@ export class NotificationService {
     return { deleted: true };
   }
 }
+
 

@@ -1,4 +1,4 @@
-import { ReservationController } from './reservationtiontion.controller';
+import { ReservationController } from './reservation.controller';
 
 describe('ReservationController', () => {
   let instance: ReservationController;
@@ -11,6 +11,7 @@ describe('ReservationController', () => {
     expect(instance).toBeDefined();
   });
 });
+
 
 
 

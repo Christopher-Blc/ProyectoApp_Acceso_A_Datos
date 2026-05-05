@@ -8,18 +8,18 @@ import * as bcrypt from 'bcryptjs';
 export class UserSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
     const userRepository = dataSource.getRepository(User);
-    const membresiaRepository = dataSource.getRepository(Membresia);
+    const membershipRepository = dataSource.getRepository(Membership);
 
-    // 1. We search for the initial membership (reservas_requeridas: 0) [cite: 158]
-    const membresiaInicial = await membresiaRepository.findOne({
+    // 1. Buscamos la membresía inicial (reservas_requeridas: 0)
+    const membershipInicial = await membershipRepository.findOne({
       where: { reservas_requeridas: 0 },
-      order: { membresia_id: 'ASC' },
+      order: { Membership_id: 'ASC' },
     });
 
     const userEntries: User[] = [];
 
     for (const item of userData) {
-      // We check if it already exists by email or username to avoid duplicates
+      // Verificamos si ya existe por email o username para evitar duplicados
       const existing = await userRepository.findOne({
         where: [{ email: item.email }, { username: item.username }],
       });
@@ -27,7 +27,7 @@ export class UserSeeder implements Seeder {
       if (existing) continue;
 
       const userEntry = new User();
-      // Direct mapping to the Entity [cite: 216-224]
+      // Mapeo directo a la entidad
       userEntry.username = item.username;
       userEntry.name = item.name;
       userEntry.surname = item.surname;
@@ -37,15 +37,15 @@ export class UserSeeder implements Seeder {
       userEntry.role = item.role;
       userEntry.isActive = item.isActive ?? true;
 
-      // We encrypt the password so that Login works afterwards
+      // Encriptamos la contraseña para que Login funcione después
       userEntry.password = await bcrypt.hash(item.password, 10);
 
-      // Mandatory membership assignment for the ranking system
-      if (membresiaInicial) {
-        userEntry.membresia_id = membresiaInicial.membresia_id;
+      // Asignación obligatoria de membresía para el sistema de ranking
+      if (membershipInicial) {
+        userEntry.Membership_id = membershipInicial.Membership_id;
       }
 
-      // Dates (we ensure Date object) [cite: 221-223]
+      // Fechas (aseguramos objeto Date)
       userEntry.fecha_registro = item.fecha_registro || new Date();
       userEntry.fecha_ultimo_login = item.fecha_ultimo_login || new Date();
       userEntry.fecha_nacimiento = new Date(item.fecha_nacimiento);

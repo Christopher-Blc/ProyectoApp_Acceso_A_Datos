@@ -198,5 +198,6 @@ export class UpdateUserDto {
     example: 2,
     required: false,
   })
-  membresia_id?: number;
+  Membership_id?: number;
 }
+

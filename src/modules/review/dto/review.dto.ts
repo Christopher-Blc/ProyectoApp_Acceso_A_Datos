@@ -13,7 +13,7 @@ export class CreateReviewDto {
     description: 'ID of the review',
     example: 1,
   })
-  resenya_id: number;
+  Review_id: number;
 
   @IsNumber()
   @ApiProperty({
@@ -24,14 +24,14 @@ export class CreateReviewDto {
 
   @IsNumber()
   @ApiProperty({
-    description: 'ID of the pista',
+    description: 'ID of the Court',
     example: 1,
   })
   pista_id: number;
 
   @IsString()
   @ApiProperty({
-    description: 'Title of the resenya',
+    description: 'Title of the Review',
     example: 'Great experience!',
   })
   titulo: string;
@@ -105,4 +105,6 @@ export class UpdateReviewDto {
   })
   visible: boolean;
 }
+
+
 

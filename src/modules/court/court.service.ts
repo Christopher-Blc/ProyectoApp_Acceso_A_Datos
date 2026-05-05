@@ -7,33 +7,33 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DiaSemana, Court, EstadoCourt } from './entities/court.entity';
 import { Repository, In, MoreThanOrEqual, Between } from 'typeorm';
 import { CourtDto, UpdateCourtDto } from './dto/court.dto';
-import { Reservation, estadoReservation } from '../reservationtiontion/entities/reservation.entity';
+import { Reservation, estadoReserva } from '../reservation/entities/reservation.entity';
 
 @Injectable()
 export class CourtService {
   constructor(
     @InjectRepository(Court)
     private readonly pistaRepo: Repository<Court>,
-    @InjectRepository(Reserva)
-    private readonly reservaRepo: Repository<Reserva>,
+    @InjectRepository(Reservation)
+    private readonly reservaRepo: Repository<Reservation>,
   ) {}
 
   async findAll(): Promise<Court[]> {
-    return this.pistaRepo.find({ relations: ['instalacion'] });
+    return this.pistaRepo.find({ relations: ['Installation'] });
   }
 
   async findOne(pista_id: number): Promise<Court> {
     const Court = await this.pistaRepo.findOne({
       where: { pista_id },
-      relations: ['instalacion'],
+      relations: ['Installation'],
     });
     if (!Court) throw new NotFoundException(`Court ${pista_id} not found`);
-    return pista;
+    return Court;
   }
 
   private formatTime(time: string): string {
     if (!time) return time;
-    // We force HH:mm:00 by cutting any seconds that come from the front-end
+    // Forzamos HH:mm:00 recortando segundos que lleguen del front-end
     return `${time.slice(0, 5)}:00`;
   }
 
@@ -54,68 +54,67 @@ export class CourtService {
     const nombreDiaHoy = dias[fecha.getDay()];
     const nombreDiaAyer = dias[fechaAyer.getDay()];
 
-    // We search for pistas from today and yesterday (in case one is still open overnight)
+    // Buscamos pistas de hoy y ayer (por si alguna sigue abierta de madrugada)
     const pistas = await this.pistaRepo.find({
       where: [{ dia_semana: nombreDiaHoy }, { dia_semana: nombreDiaAyer }],
-      relations: ['tipo_pista'],
+      relations: ['tipo_Court'],
     });
 
     const pistasValidas = pistas.filter((p) => {
       if (p.dia_semana === nombreDiaHoy) return true;
-      return p.hora_cierre < p.hora_apertura; // Only if it crosses midnight
+      return p.hora_cierre < p.hora_apertura; // Solo si cruza medianoche
     });
 
     const reservasDelDia = await this.reservaRepo.find({
-      where: { fecha_reserva: fechaString as any },
+      where: { fecha_Reservation: fechaString as any },
     });
 
     return pistasValidas.map((Court) => ({
       ...Court,
       reservas_actuales: reservasDelDia
-        .filter((r) => Number(r.pista_id) === Number(pista.pista_id))
+        .filter((r) => Number(r.pista_id) === Number(Court.pista_id))
         .map((r) => ({ inicio: r.hora_inicio, fin: r.hora_fin })),
     }));
   }
 
-  async create(info_pista: CourtDto): Promise<Court> {
+  async create(info_Court: CourtDto): Promise<Court> {
     const data = {
       ...info_Court,
-      hora_apertura: this.formatTime(info_pista.hora_apertura),
-      hora_cierre: this.formatTime(info_pista.hora_cierre),
+      hora_apertura: this.formatTime(info_Court.hora_apertura),
+      hora_cierre: this.formatTime(info_Court.hora_cierre),
     };
     return this.pistaRepo.save(this.pistaRepo.create(data));
   }
 
-  // Edits the Court with the data passed to it and also has logic so that when
-  // putting a Court in maintenance or inactive, it cancels future reservations related
-  // to that pista. It can also receive a start and end date to only cancel reservations
-  // within this date range
-  async update(pista_id: number, info_pista: UpdateCourtDto): Promise<Court> {
+  // Edita la pista con los datos recibidos y, cuando se pone en mantenimiento o inactiva,
+  // cancela reservas futuras relacionadas. También puede recibir rango de fechas
+  // para cancelar solo las reservas dentro de ese intervalo.
+  async update(pista_id: number, info_Court: UpdateCourtDto): Promise<Court> {
     const pistaActual = await this.findOne(pista_id);
     const dataNormalizada: any = { ...info_Court };
 
-    if (info_pista.hora_apertura)
-      dataNormalizada.hora_apertura = this.formatTime(info_pista.hora_apertura);
-    if (info_pista.hora_cierre)
-      dataNormalizada.hora_cierre = this.formatTime(info_pista.hora_cierre);
+    if (info_Court.hora_apertura)
+      dataNormalizada.hora_apertura = this.formatTime(info_Court.hora_apertura);
+    if (info_Court.hora_cierre)
+      dataNormalizada.hora_cierre = this.formatTime(info_Court.hora_cierre);
 
     // Lógica de mantenimiento selectivo
     if (
-      (info_pista.estado === EstadoPista.MANTENIMIENTO || info_pista.estado === EstadoPista.INACTIVA) &&
-      pistaActual.estado !== info_pista.estado
+      (info_Court.estado === EstadoCourt.MANTENIMIENTO || info_Court.estado === EstadoCourt.INACTIVA) &&
+      pistaActual.estado !== info_Court.estado
     ) {
-      const motivo = info_pista.estado === EstadoPista.INACTIVA
+      const motivo = info_Court.estado === EstadoCourt.INACTIVA
         ? 'La Court ha sido eliminada del sistema.'
         : 'Court cerrada por mantenimiento programado.';
 
       // Definimos el filtro de fechas
       let filtroFecha: any;
 
-      if (info_pista.mantenimiento_desde && info_pista.mantenimiento_hasta) {
+      if (info_Court.mantenimiento_desde && info_Court.mantenimiento_hasta) {
         // CASO QUIRÚRGICO: Solo entre estas dos fechas
         filtroFecha = Between(
-          info_pista.mantenimiento_desde,
-          info_pista.mantenimiento_hasta
+          info_Court.mantenimiento_desde,
+          info_Court.mantenimiento_hasta
         );
       } else {
         // CASO GENERAL: De hoy en adelante
@@ -126,7 +125,7 @@ export class CourtService {
         {
           pista_id: pista_id,
           estado: In([estadoReserva.PENDIENTE, estadoReserva.CONFIRMADA]),
-          fecha_reserva: filtroFecha,
+          fecha_Reservation: filtroFecha,
         },
         {
           estado: estadoReserva.CANCELADA,
@@ -147,7 +146,7 @@ export class CourtService {
       {
         pista_id: pista_id,
         estado: In([estadoReserva.PENDIENTE, estadoReserva.CONFIRMADA]),
-        fecha_reserva: MoreThanOrEqual(hoy as any),
+        fecha_Reservation: MoreThanOrEqual(hoy as any),
       },
       {
         estado: estadoReserva.CANCELADA,
@@ -156,7 +155,7 @@ export class CourtService {
     );
 
     await this.pistaRepo.update(pista_id, {
-      estado: EstadoPista.INACTIVA,
+      estado: EstadoCourt.INACTIVA,
     });
   }
 
@@ -168,7 +167,7 @@ export class CourtService {
       {
         pista_id: pista_id,
         estado: In([estadoReserva.PENDIENTE, estadoReserva.CONFIRMADA]),
-        fecha_reserva: MoreThanOrEqual(hoy as any),
+        fecha_Reservation: MoreThanOrEqual(hoy as any),
       },
       {
         estado: estadoReserva.CANCELADA,
@@ -178,6 +177,9 @@ export class CourtService {
     await this.pistaRepo.delete(pista_id);
   }
 }
+
+
+
 
 
 
