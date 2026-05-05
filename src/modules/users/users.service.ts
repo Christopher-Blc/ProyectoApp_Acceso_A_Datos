@@ -66,9 +66,11 @@ export class UsersService {
   async update(
     usuario_id: number,
     data: UpdateUserDto,
-    isSelfUpdate: boolean = false,
+    isSelfUpdate: boolean,
+    //isSelfUpdate: boolean = false,
   ): Promise<User> {
-    const user = await this.findOne(usuario_id);
+    // Validamos existencia para devolver 404 si no existe
+    await this.findOne(usuario_id);
 
     if (isSelfUpdate) {
       // Bloqueamos que el usuario cambie estos campos por su cuenta
@@ -81,8 +83,8 @@ export class UsersService {
       data.password = await bcrypt.hash(data.password, 10);
     }
 
-    this.userRepository.merge(user, data);
-    return await this.userRepository.save(user);
+    await this.userRepository.update(usuario_id, data);
+    return this.findOne(usuario_id);
   }
 
   async findAll(): Promise<User[]> {
