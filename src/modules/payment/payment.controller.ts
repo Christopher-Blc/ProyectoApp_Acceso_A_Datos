@@ -24,6 +24,8 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
+import { normalizeError } from '../../common/utils/error.util';
+
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -42,9 +44,10 @@ export class PaymentController {
     try {
       return this.PaymentService.findAll();
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -59,9 +62,10 @@ export class PaymentController {
     try {
       return this.PaymentService.findOne(id);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -84,9 +88,10 @@ export class PaymentController {
       };
       return this.PaymentService.create(pagoData);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -109,9 +114,10 @@ export class PaymentController {
     try {
       return this.PaymentService.update(id, UpdatePaymentDto);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -127,9 +133,10 @@ export class PaymentController {
     try {
       return this.PaymentService.remove(id);
     } catch (err) {
+      const { message, status } = normalizeError(err);
       throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
+        message,
+        status || HttpStatus.BAD_REQUEST,
       );
     }
   }
