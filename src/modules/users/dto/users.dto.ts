@@ -6,13 +6,12 @@ import {
   IsEnum,
   IsOptional,
   IsDateString,
-  IsNumber,
-  Length,
   Matches,
   IsISO8601,
   IsInt,
+  Length,
 } from 'class-validator';
-import { UserRole } from '../entities/user.entity'; // Importamos el enum UserRole desde user.entity
+import { UserRole } from '../entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   VALIDATION_LENGTHS,
@@ -28,7 +27,7 @@ export class CreateUserDto {
     maxLength: 40,
     example: 'Name_User',
   })
-  username: string;
+  username!: string;
 
   @IsString()
   @Length(VALIDATION_LENGTHS.name.min, VALIDATION_LENGTHS.name.max)
@@ -38,7 +37,7 @@ export class CreateUserDto {
     maxLength: 40,
     example: 'Name_User',
   })
-  name: string;
+  name!: string;
 
   @IsString()
   @Length(VALIDATION_LENGTHS.surname.min, VALIDATION_LENGTHS.surname.max)
@@ -48,7 +47,7 @@ export class CreateUserDto {
     maxLength: 40,
     example: 'Surname_User',
   })
-  surname: string;
+  surname!: string;
 
   @IsEmail()
   @Matches(VALIDATION_PATTERNS.email.pattern, {
@@ -58,7 +57,7 @@ export class CreateUserDto {
     description: 'Email address of the user',
     example: 'email@example.com',
   })
-  email: string;
+  email!: string;
 
   @IsPhoneNumber('ES')
   @Matches(VALIDATION_PATTERNS.phone.pattern, {
@@ -66,9 +65,9 @@ export class CreateUserDto {
   })
   @ApiProperty({
     description: 'Phone number of the user',
-    example: 600123456,
+    example: '600123456',
   })
-  phone: string;
+  phone!: string;
 
   @ApiProperty({
     description: 'Password of the user',
@@ -81,9 +80,8 @@ export class CreateUserDto {
   @Matches(VALIDATION_PATTERNS.password.pattern, {
     message: VALIDATION_PATTERNS.password.message,
   })
-  password: string;
+  password!: string;
 
-  // Rol con enumeración
   @IsEnum(UserRole)
   @IsOptional()
   @ApiProperty({
@@ -93,7 +91,6 @@ export class CreateUserDto {
   })
   role?: UserRole;
 
-  //Estado del usuario
   @IsBoolean()
   @IsOptional()
   @ApiProperty({
@@ -102,20 +99,19 @@ export class CreateUserDto {
   })
   isActive?: boolean;
 
-  // Fechas
-  @IsISO8601({ strict: true }) // Valida formato YYYY-MM-DD
+  @IsISO8601({ strict: true })
   @ApiProperty({
     description: 'Date of birth of the user',
     example: '1990-01-01',
   })
-  fecha_nacimiento: string;
+  fecha_nacimiento!: string;
 
   @IsString()
   @ApiProperty({
     description: 'Address of the user',
     example: '123 Main St, City, Country',
   })
-  direccion: string;
+  direccion!: string;
 }
 
 export class UpdateUserDto {
@@ -170,18 +166,15 @@ export class UpdateUserDto {
   @IsString()
   password?: string;
 
-  // Rol con enumeración
   @IsEnum(UserRole)
   @IsOptional()
   role?: UserRole;
 
-  //Estado del usuario
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;
 
-  // Fechas
-  @IsISO8601({ strict: true }) // Valida formato YYYY-MM-DD
+  @IsISO8601({ strict: true })
   @IsOptional()
   @IsDateString()
   fecha_nacimiento?: Date;
@@ -201,3 +194,11 @@ export class UpdateUserDto {
   Membership_id?: number;
 }
 
+export class UpdatePushTokenDto {
+  @IsString()
+  @ApiProperty({
+    description: 'Expo push token del dispositivo del usuario autenticado',
+    example: 'ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]',
+  })
+  expoPushToken!: string;
+}

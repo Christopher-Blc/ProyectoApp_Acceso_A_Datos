@@ -16,14 +16,14 @@ export class CreateReservationDto {
     description: 'ID of the Court being reserved',
     example: 1,
   })
-  pista_id: number;
+  pista_id!: number;
 
   @IsDateString()
   @ApiProperty({
     description: 'Date of the reservation',
     example: '2026-04-01',
   })
-  fecha_Reservation: string;
+  fecha_Reservation!: string;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
@@ -33,7 +33,7 @@ export class CreateReservationDto {
     description: 'Start time of the reservation',
     example: '09:00',
   })
-  hora_inicio: string;
+  hora_inicio!: string;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
@@ -43,7 +43,7 @@ export class CreateReservationDto {
     description: 'End time of the reservation',
     example: '10:30',
   })
-  hora_fin: string;
+  hora_fin!: string;
 
   @IsOptional()
   @IsEnum(estadoReserva)
@@ -52,7 +52,7 @@ export class CreateReservationDto {
     enum: estadoReserva,
     example: estadoReserva.PENDIENTE,
   })
-  estado: estadoReserva;
+  estado?: estadoReserva;
 
   @IsOptional()
   @IsString()
@@ -61,7 +61,7 @@ export class CreateReservationDto {
     description: 'Note for the reservation',
     example: 'Prefiero la Court cerca de la entrada',
   })
-  nota: string;
+  nota?: string;
 }
 
 export class UpdateReservationDto {
@@ -71,7 +71,7 @@ export class UpdateReservationDto {
     description: 'ID of the Court being reserved',
     example: 1,
   })
-  pista_id: number;
+  pista_id?: number;
 
   @IsOptional()
   @IsDateString()

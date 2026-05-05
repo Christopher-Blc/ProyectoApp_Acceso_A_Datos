@@ -3,9 +3,8 @@ import {
   Column,
   PrimaryGeneratedColumn,
   OneToMany,
-  ManyToOne,
   JoinColumn,
-  Unique,
+  ManyToOne,
   OneToOne,
 } from 'typeorm';
 import { Notification } from '../../notification/entities/notification.entity';
@@ -80,6 +79,9 @@ export class User {
   @Column({ name: 'refresh_token_hash', type: 'text', nullable: true })
   refresh_token_hash!: string | null;
 
+  @Column({ name: 'expo_push_token', type: 'text', nullable: true })
+  expoPushToken!: string | null;
+
   @ManyToOne(() => Membership, (m) => m.users)
   @JoinColumn({ name: 'Membership_id' })
   Membership!: Membership;
@@ -93,9 +95,3 @@ export class User {
   @OneToOne(() => Review, (r) => r.user)
   Review!: Review;
 }
-
-
-
-
-
-

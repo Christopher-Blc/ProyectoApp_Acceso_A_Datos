@@ -15,49 +15,49 @@ export class CourtDto {
     description: 'ID of the installation',
     example: 1,
   })
-  instalacion_id: number; // clave foranea Installation
+  instalacion_id!: number; // clave foranea Installation
 
   @IsNumber()
   @ApiProperty({
     description: 'ID of the court type',
     example: 1,
   })
-  tipo_pista_id: number;
+  tipo_pista_id!: number;
 
   @IsString()
   @ApiProperty({
     description: 'Unique name of the court',
     example: 'Central tennis court',
   })
-  nombre: string;
+  nombre!: string;
 
   @IsNumber()
   @ApiProperty({
     description: 'Capacity of the court',
     example: 4,
   })
-  capacidad: number;
+  capacidad!: number;
 
   @IsNumber()
   @ApiProperty({
     description: 'Price per hour of the court',
     example: 20.5,
   })
-  precio_hora: number;
+  precio_hora!: number;
 
   @IsBoolean()
   @ApiProperty({
     description: 'Indicates if the court is covered',
     example: true,
   })
-  cubierta: boolean;
+  cubierta!: boolean;
 
   @IsBoolean()
   @ApiProperty({
     description: 'Indicates if the court has lighting',
     example: true,
   })
-  iluminacion: boolean;
+  iluminacion!: boolean;
 
   @IsString()
   @IsOptional()
@@ -65,7 +65,7 @@ export class CourtDto {
     description: 'Description of the court',
     example: 'Court with synthetic grass and night lighting',
   })
-  descripcion: string;
+  descripcion?: string;
 
   @IsEnum(EstadoCourt)
   @ApiProperty({
@@ -73,21 +73,21 @@ export class CourtDto {
     enum: EstadoCourt,
     example: EstadoCourt.DISPONIBLE,
   })
-  estado: EstadoCourt;
+  estado!: EstadoCourt;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$/, {
     message: 'La hora debe tener formato HH:mm o HH:mm:ss',
   })
   @ApiProperty({ example: '09:00' })
-  hora_apertura: string;
+  hora_apertura!: string;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$/, {
     message: 'La hora debe tener formato HH:mm o HH:mm:ss',
   })
   @ApiProperty({ example: '18:00' })
-  hora_cierre: string;
+  hora_cierre!: string;
 
   @IsEnum(DiaSemana)
   @ApiProperty({
@@ -95,7 +95,7 @@ export class CourtDto {
     enum: DiaSemana,
     example: DiaSemana.LUNES,
   })
-  dia_semana: DiaSemana;
+  dia_semana!: DiaSemana;
 }
 
 // como todos los campos van a ser opcionales , lo ponemos asi
@@ -107,7 +107,7 @@ export class UpdateCourtDto {
     description: 'ID of the installation',
     example: 1,
   })
-  instalacion_id: number; // clave foranea Installation
+  instalacion_id?: number; // clave foranea Installation
 
   @IsOptional()
   @IsNumber()
@@ -115,7 +115,7 @@ export class UpdateCourtDto {
     description: 'ID of the court type',
     example: 1,
   })
-  tipo_pista_id: number;
+  tipo_pista_id?: number;
 
   @IsOptional()
   @IsString()
@@ -123,7 +123,7 @@ export class UpdateCourtDto {
     description: 'Unique name of the court',
     example: 'Central tennis court',
   })
-  nombre: string;
+  nombre?: string;
 
   @IsOptional()
   @IsNumber()
@@ -131,7 +131,7 @@ export class UpdateCourtDto {
     description: 'Capacity of the court',
     example: 4,
   })
-  capacidad: number;
+  capacidad?: number;
 
   @IsOptional()
   @IsNumber()
@@ -139,7 +139,7 @@ export class UpdateCourtDto {
     description: 'Price per hour of the court',
     example: 20.5,
   })
-  precio_hora: number;
+  precio_hora?: number;
 
   @IsOptional()
   @IsBoolean()
@@ -147,7 +147,7 @@ export class UpdateCourtDto {
     description: 'Indicates if the court is covered',
     example: true,
   })
-  cubierta: boolean;
+  cubierta?: boolean;
 
   @IsOptional()
   @IsBoolean()
@@ -155,7 +155,7 @@ export class UpdateCourtDto {
     description: 'Indicates if the court has lighting',
     example: true,
   })
-  iluminacion: boolean;
+  iluminacion?: boolean;
 
   @IsString()
   @IsOptional()
@@ -163,7 +163,7 @@ export class UpdateCourtDto {
     description: 'Description of the court',
     example: 'Court with synthetic grass and night lighting',
   })
-  descripcion: string;
+  descripcion?: string;
 
   @IsOptional()
   @IsEnum(EstadoCourt)
@@ -172,7 +172,7 @@ export class UpdateCourtDto {
     enum: EstadoCourt,
     example: EstadoCourt.DISPONIBLE,
   })
-  estado: EstadoCourt;
+  estado?: EstadoCourt;
 
   @IsOptional()
   @IsString()
@@ -180,7 +180,7 @@ export class UpdateCourtDto {
     message: 'La hora debe tener formato HH:mm o HH:mm:ss',
   })
   @ApiProperty({ example: '09:00' })
-  hora_apertura: string;
+  hora_apertura?: string;
 
   @IsOptional()
   @IsString()
@@ -188,7 +188,7 @@ export class UpdateCourtDto {
     message: 'La hora debe tener formato HH:mm o HH:mm:ss',
   })
   @ApiProperty({ example: '18:00' })
-  hora_cierre: string;
+  hora_cierre?: string;
 
   @IsOptional()
   @IsEnum(DiaSemana)
@@ -197,7 +197,7 @@ export class UpdateCourtDto {
     enum: DiaSemana,
     example: DiaSemana.LUNES,
   })
-  dia_semana: DiaSemana;
+  dia_semana?: DiaSemana;
 
   // Formato YYYY-MM-DD
   @IsOptional()

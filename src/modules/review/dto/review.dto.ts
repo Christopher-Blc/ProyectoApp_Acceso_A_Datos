@@ -13,28 +13,28 @@ export class CreateReviewDto {
     description: 'ID of the review',
     example: 1,
   })
-  Review_id: number;
+  Review_id!: number;
 
   @IsNumber()
   @ApiProperty({
     description: 'ID of the user',
     example: 1,
   })
-  usuario_id: number;
+  usuario_id!: number;
 
   @IsNumber()
   @ApiProperty({
     description: 'ID of the Court',
     example: 1,
   })
-  pista_id: number;
+  pista_id!: number;
 
   @IsString()
   @ApiProperty({
     description: 'Title of the Review',
     example: 'Great experience!',
   })
-  titulo: string;
+  titulo!: string;
 
   @IsOptional()
   @IsString()
@@ -43,28 +43,28 @@ export class CreateReviewDto {
     example:
       'The court was in excellent condition and the staff was very friendly.',
   })
-  texto: string;
+  texto?: string;
 
   @IsNumber()
   @ApiProperty({
     description: 'Rating of the comentario',
     example: 5,
   })
-  calificacion: number;
+  calificacion!: number;
 
   @IsDateString()
   @ApiProperty({
     description: 'Date of the comentario',
     example: '2023-12-31T23:59:59Z',
   })
-  fecha_comentario: string;
+  fecha_comentario!: string;
 
   @IsBoolean()
   @ApiProperty({
     description: 'Visibility of the comentario',
     example: true,
   })
-  visible: boolean;
+  visible!: boolean;
 }
 
 export class UpdateReviewDto {
@@ -74,7 +74,7 @@ export class UpdateReviewDto {
     description: 'Title of the comentario',
     example: 'Great experience!',
   })
-  titulo: string;
+  titulo?: string;
 
   @IsOptional()
   @IsString()
@@ -83,7 +83,7 @@ export class UpdateReviewDto {
     example:
       'The court was in excellent condition and the staff was very friendly.',
   })
-  texto: string;
+  texto?: string;
 
   @IsOptional()
   @IsNumber()
@@ -91,7 +91,7 @@ export class UpdateReviewDto {
     description: 'Rating of the comentario',
     example: 5,
   })
-  calificacion: number;
+  calificacion?: number;
 
   // @IsOptional()
   // @IsDateString()
@@ -103,7 +103,7 @@ export class UpdateReviewDto {
     description: 'Visibility of the comentario',
     example: true,
   })
-  visible: boolean;
+  visible?: boolean;
 }
 
 

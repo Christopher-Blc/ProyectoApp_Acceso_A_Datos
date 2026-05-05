@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Put,
   Delete,
   Param,
@@ -12,7 +13,11 @@ import {
   Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
+import {
+  CreateUserDto,
+  UpdatePushTokenDto,
+  UpdateUserDto,
+} from './dto/users.dto';
 import { UserRole } from './entities/user.entity';
 import {
   ApiBearerAuth,
@@ -76,6 +81,31 @@ export class UsersController {
       if (!userId)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
       return await this.userService.update(Number(userId), userDto, true);
+    } catch (err) {
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch('push-token')
+  @ApiOperation({ summary: 'Save expo push token for the authenticated user' })
+  @ApiResponse({ status: 200, description: 'Push token saved successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async updatePushToken(
+    @Req() req: AuthenticatedRequest,
+    @Body() body: UpdatePushTokenDto,
+  ) {
+    try {
+      const userId = req.user?.sub;
+      if (!userId) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+
+      return await this.userService.updatePushToken(
+        Number(userId),
+        body.expoPushToken,
+      );
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
