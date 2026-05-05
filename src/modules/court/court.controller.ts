@@ -102,6 +102,7 @@ export class CourtController {
       return this.CourtService.create(CourtDto);
     } catch (err) {
       const { message, status } = normalizeError(err);
+      console.error('Error creating court:', err);
       throw new HttpException(
         message,
         status || HttpStatus.BAD_REQUEST,
