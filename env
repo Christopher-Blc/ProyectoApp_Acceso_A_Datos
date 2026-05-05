@@ -1,10 +1,10 @@
 WEB_SERVER_PORT=8000
 DB_HOST=database
 DB_PORT=3306
-DB_ROOT_PASSWORD=my-secret
+DB_ROOT_PASSWORD=my-pwd
 DB_DATABASE=Database-Name
 DB_USER=database-user
-DB_PASSWORD=my-secret
+DB_PASSWORD=my-pwd
 JWT_ACCESS_SECRET=super_clave_larga_y_segura
 JWT_EXPIRES_IN=1m
 JWT_REFRESH_SECRET=super_clave_muy_larga_y_mas_segura

@@ -6,11 +6,11 @@ export class Membership {
   @PrimaryGeneratedColumn({ name: 'Membership_id' })
   Membership_id: number;
 
-  @Column({ type: 'varchar', length: 100, unique: true })
-  rango: string; //tipo bronze es el as bajo osea rango 1 , plata rango 2 y oro rango 3
+  @Column({ type: 'int', unique: true })
+  rango: number; //tipo bronze es el as bajo osea rango 1 , plata rango 2 y oro rango 3
 
   @Column({ type: 'varchar', length: 100, unique: true })
-  tipo: string; // Ej: "Bronce", "Plata", "Oro"
+  nombre: string; // Ej: "Bronce", "Plata", "Oro"
 
   @Column({
     type: 'decimal',

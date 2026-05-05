@@ -10,9 +10,9 @@ export class MembershipSeeder implements Seeder {
     const membershipEntries: Membership[] = [];
 
     for (const item of membershipData) {
-      // Buscamos por tipo (Bronce, Plata, Oro) para evitar duplicados exactos
+      // Buscamos por nombre (Bronce, Plata, Oro) para evitar duplicados exactos
       const existing = await membershipRepository.findOne({
-        where: { tipo: item.tipo },
+        where: { nombre: item.nombre },
       });
 
       if (existing) {
@@ -22,7 +22,7 @@ export class MembershipSeeder implements Seeder {
       const membershipEntry = new Membership();
       // Mapeo directo a las columnas de la entidad
       membershipEntry.rango = item.rango;
-      membershipEntry.tipo = item.tipo;
+      membershipEntry.nombre = item.nombre;
       membershipEntry.descuento = item.descuento;
       membershipEntry.reservas_requeridas = item.reservas_requeridas;
       membershipEntry.beneficios = item.beneficios;
@@ -32,9 +32,9 @@ export class MembershipSeeder implements Seeder {
 
     if (membershipEntries.length > 0) {
       await membershipRepository.save(membershipEntries);
-      console.log(`${membershipEntries.length} membership levels created.`);
+      console.log(`${membershipEntries.length} niveles de membresía creados.`);
     }
-    console.log('Membership seeding completed!');
+    console.log('Membresía seeding completado!');
   }
 }
 

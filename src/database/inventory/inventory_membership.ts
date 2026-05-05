@@ -1,21 +1,21 @@
 export default [
   {
-    rango: '1',
-    tipo: 'Bronce',
+    rango: 1,
+    nombre: 'Bronce',
     descuento: 0.0,
     reservas_requeridas: 0,
     beneficios: 'Rango inicial. Sin descuentos aplicados.',
   },
   {
-    rango: '2',
-    tipo: 'Plata',
+    rango: 2,
+    nombre: 'Plata',
     descuento: 5.0,
     reservas_requeridas: 10,
     beneficios: '5% de descuento en el precio de la Court.',
   },
   {
-    rango: '3',
-    tipo: 'Oro',
+    rango: 3,
+    nombre: 'Oro',
     descuento: 10.0,
     reservas_requeridas: 20,
     beneficios: '10% de descuento y prioridad en eventos.',

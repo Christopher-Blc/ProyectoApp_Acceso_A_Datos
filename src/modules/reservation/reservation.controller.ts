@@ -19,6 +19,7 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -50,6 +51,8 @@ export class ReservationController {
   @ApiResponse({ status: 204, description: 'No content.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiQuery({ name: 'pista_id', required: false, type: Number })
+  @ApiQuery({ name: 'fecha_desde', required: false, type: String })
   async findAll(
     @Query('pista_id') pista_id?: number,
     @Query('fecha_desde') fecha_desde?: string,
