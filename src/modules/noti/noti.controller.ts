@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { NotiService } from './noti.service';
-import { NotiDto } from './dto/noti.dto';
+import { CreateMassiveNotiDto, NotiDto } from './dto/noti.dto';
 import { Noti } from './entities/noti.entity';
 import {
   ApiBearerAuth,
@@ -24,6 +24,7 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
+import { normalizeError } from '../../common/utils/error.util';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -44,10 +45,8 @@ export class NotiController {
     try {
       return this.notiService.findAll();
     } catch (err) {
-      throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
-      );
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -65,10 +64,8 @@ export class NotiController {
     try {
       return this.notiService.findOne(id);
     } catch (err) {
-      throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
-      );
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -87,14 +84,32 @@ export class NotiController {
       // Convert 'fecha' from string to Date if present
       const data = {
         ...notiDto,
+        user_id: notiDto.user_id ?? notiDto.usuario_id,
         fecha: notiDto.fecha ? new Date(notiDto.fecha) : undefined,
       };
       return this.notiService.create(data);
     } catch (err) {
-      throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
-      );
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Post('massive')
+  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Crear notificación masiva y enviarla por push' })
+  @ApiResponse({
+    status: 201,
+    description: 'Notificación masiva creada y enviada correctamente.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  async createMassive(@Body() body: CreateMassiveNotiDto) {
+    try {
+      return await this.notiService.createMassive(body);
+    } catch (err) {
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -116,10 +131,8 @@ export class NotiController {
     try {
       return this.notiService.update(id, notiDto);
     } catch (err) {
-      throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
-      );
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -138,10 +151,8 @@ export class NotiController {
     try {
       return this.notiService.remove(id);
     } catch (err) {
-      throw new HttpException(
-        err.message,
-        err.status || HttpStatus.BAD_REQUEST,
-      );
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 }
