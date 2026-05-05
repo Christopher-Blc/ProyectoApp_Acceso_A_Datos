@@ -52,7 +52,7 @@ export class NotificationDto {
   @IsOptional()
   @ApiProperty({
     description: 'Tipo de notificación',
-    example: tipoNoti.AVISO,
+    example: tipoNoti.ALERT,
   })
   tipoNoti?: tipoNoti;
 
@@ -92,7 +92,7 @@ export class CreateMassiveNotiDto {
   @IsEnum(tipoNoti)
   @ApiProperty({
     description: 'Tipo de notificación',
-    example: tipoNoti.AVISO,
+    example: tipoNoti.ALERT,
   })
   tipoNoti!: tipoNoti;
 }

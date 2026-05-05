@@ -29,7 +29,7 @@ import { normalizeError } from '../../common/utils/error.util';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('Payment')
+@Controller('payments')
 export class PaymentController {
   constructor(private readonly PaymentService: PaymentService) {}
 
@@ -84,7 +84,7 @@ export class PaymentController {
     try {
       const pagoData = {
         ...CreatePaymentDto,
-        fecha_Payment: new Date(CreatePaymentDto.fecha_Payment),
+        payment_date: new Date(CreatePaymentDto.payment_date),
       };
       return this.PaymentService.create(pagoData);
     } catch (err) {

@@ -1,24 +1,24 @@
 export default [
   {
-    rango: 1,
+    level: 1,
     nombre: 'Bronce',
-    descuento: 0.0,
-    reservas_requeridas: 0,
-    beneficios: 'Rango inicial. Sin descuentos aplicados.',
+    discount: 0.0,
+    required_reservations: 0,
+    benefits: 'Rango inicial. Sin descuentos aplicados.',
   },
   {
-    rango: 2,
+    level: 2,
     nombre: 'Plata',
-    descuento: 5.0,
-    reservas_requeridas: 10,
-    beneficios: '5% de descuento en el precio de la Court.',
+    discount: 5.0,
+    required_reservations: 10,
+    benefits: '5% de descuento en el precio de la Court.',
   },
   {
-    rango: 3,
+    level: 3,
     nombre: 'Oro',
-    descuento: 10.0,
-    reservas_requeridas: 20,
-    beneficios: '10% de descuento y prioridad en eventos.',
+    discount: 10.0,
+    required_reservations: 20,
+    benefits: '10% de descuento y prioridad en eventos.',
   },
 ];
 

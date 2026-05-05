@@ -66,7 +66,7 @@ export class CreateInstallationDto {
   @IsEnum(estado_instalacion)
   @ApiProperty({
     description: 'State of the installation',
-    example: estado_instalacion.ACTIVA,
+    example: estado_instalacion.ACTIVE,
   })
   estado?: estado_instalacion;
 
@@ -139,7 +139,7 @@ export class UpdateInstallationDto {
   @IsEnum(estado_instalacion)
   @ApiProperty({
     description: 'State of the installation',
-    example: estado_instalacion.ACTIVA,
+    example: estado_instalacion.ACTIVE,
   })
   estado?: estado_instalacion;
 

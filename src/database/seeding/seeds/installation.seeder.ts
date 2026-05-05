@@ -24,20 +24,20 @@ export class InstallationSeeder implements Seeder {
 
       const installationEntry = new Installation();
       // Campos que existen en la entidad
-      installationEntry.nombre = item.nombre;
-      installationEntry.direccion = item.direccion;
-      installationEntry.telefono = item.telefono;
+      installationEntry.nombre = item.name;
+      installationEntry.address = item.address;
+      installationEntry.phone = item.phone;
       installationEntry.email = item.email;
-      installationEntry.descripcion = item.descripcion;
+      installationEntry.description = item.description;
 
       // La fecha de creación tiene CURRENT_DATE por defecto,
       // pero la asignamos si viene en el inventario
-      installationEntry.fecha_creacion = item.fecha_creacion
-        ? new Date(item.fecha_creacion)
+      installationEntry.creation_date = item.creation_date
+        ? new Date(item.creation_date)
         : new Date();
 
       // El estado usa el enum estado_instalacion
-      installationEntry.estado = item.estado || estado_instalacion.INACTIVA;
+      installationEntry.status = item.status || estado_instalacion.INACTIVE;
 
       installationEntries.push(installationEntry);
     }

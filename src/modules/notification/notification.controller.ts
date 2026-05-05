@@ -32,7 +32,7 @@ import { Notification } from './entities/notification.entity';
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
 @ApiTags('Notification')
-@Controller('Notification')
+@Controller('notifications')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 

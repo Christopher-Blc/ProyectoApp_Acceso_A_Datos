@@ -11,36 +11,36 @@ import { Installation } from '../../installation/entities/installation.entity';
 
 @Entity()
 export class Review {
-  @PrimaryGeneratedColumn({ name: 'Review_id', type: 'int' })
-  Review_id: number;
+  @PrimaryGeneratedColumn({ name: 'review_id', type: 'int' })
+  review_id!: number;
 
-  @Column({ name: 'instalacion_id', type: 'int' })
-  instalacion_id: number;
+  @Column({ name: 'installation_id', type: 'int' })
+  installation_id!: number;
 
-  @Column({ name: 'usuario_id', type: 'int' }) // Clave FK hacia Usuario
-  usuario_id: number;
-
-  @Column()
-  titulo: string;
+  @Column({ name: 'user_id', type: 'int' }) // Foreign key to User
+  user_id!: number;
 
   @Column()
-  texto: string;
+  title!: string;
+
+  @Column()
+  text!: string;
 
   @Column({ type: 'int' })
-  calificacion: number;
+  rating!: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  fecha_comentario: Date;
+  comment_date!: Date;
 
-  @Column()
-  visible: boolean;
+  @Column({ default: true })
+  visible!: boolean;
 
-  @OneToOne(() => User, (u) => u.Review)
-  @JoinColumn({ name: 'usuario_id' })
+  @OneToOne(() => User, (u) => u.review)
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Installation, (i) => i.instalacion_id)
-  @JoinColumn({ name: 'instalacion_id' })
+  @ManyToOne(() => Installation, (i) => i.reviews)
+  @JoinColumn({ name: 'installation_id' })
   Installation: Installation;
 }
 

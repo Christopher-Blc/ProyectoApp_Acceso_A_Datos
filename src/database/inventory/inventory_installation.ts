@@ -2,13 +2,13 @@ import { estado_instalacion } from '../../modules/installation/entities/installa
 
 export default [
   {
-    nombre: 'Installation Central',
-    direccion: 'Calle Principal 123, Ciudad',
-    telefono: '123-456-7890',
+    name: 'Installation Central',
+    address: 'Calle Principal 123, Ciudad',
+    phone: '123-456-7890',
     email: 'Installation.central@example.com',
-    descripcion: 'Installation deportiva',
-    fecha_creacion: new Date('2023-01-15T10:00:00'),
-    estado: estado_instalacion.ACTIVA,
+    description: 'Installation deportiva',
+    creation_date: new Date('2023-01-15T10:00:00'),
+    status: estado_instalacion.ACTIVE,
   },
 ];
 

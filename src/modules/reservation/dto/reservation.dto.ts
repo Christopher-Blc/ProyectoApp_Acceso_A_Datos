@@ -50,7 +50,7 @@ export class CreateReservationDto {
   @ApiProperty({
     description: 'State of the reservation',
     enum: estadoReserva,
-    example: estadoReserva.PENDIENTE,
+    example: estadoReserva.PENDING,
   })
   estado?: estadoReserva;
 

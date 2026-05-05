@@ -34,23 +34,23 @@ export class UsersService {
 
     const totalFinalizadas = await this.reservaRepository.count({
       where: {
-        usuario_id,
-        estado: estadoReserva.FINALIZADA,
+        user_id: usuario_id,
+        status: estadoReserva.COMPLETED,
       },
     });
 
     const mejorMembership = await this.membresiaRepository.findOne({
       where: {
-        reservas_requeridas: LessThanOrEqual(totalFinalizadas),
+        required_reservations: LessThanOrEqual(totalFinalizadas),
       },
       order: {
-        reservas_requeridas: 'DESC',
+        required_reservations: 'DESC',
       },
     });
 
-    if (mejorMembership && user.Membership_id !== mejorMembership.Membership_id) {
+    if (mejorMembership && user.Membership_id !== mejorMembership.membership_id) {
       await this.userRepository.update(usuario_id, {
-        Membership_id: mejorMembership.Membership_id,
+        Membership_id: mejorMembership.membership_id,
       });
     }
   }
@@ -126,8 +126,8 @@ export class UsersService {
     if (!user) throw new NotFoundException('User not found');
 
     const hoy = new Date();
-    const tienePendientes = user.reservas.some(
-      (r) => new Date(r.fecha_Reservation) >= hoy,
+    const tienePendientes = user.reservations.some(
+      (r) => new Date(r.reservation_date) >= hoy,
     );
 
     if (tienePendientes) {
@@ -163,7 +163,7 @@ export class UsersService {
   async updateLastLogin(usuario_id: number): Promise<void> {
     await this.userRepository.update(
       { usuario_id },
-      { fecha_ultimo_login: new Date() },
+      { last_login_date: new Date() },
     );
   }
 

@@ -47,7 +47,7 @@ export class NotificationService {
 
   async findOne(Notification_id: number): Promise<Notification> {
     const Notification = await this.notiRepository.findOne({
-      where: { Notification_id },
+      where: { notification_id: Notification_id },
       relations: ['user'],
     });
     if (!Notification) {
@@ -74,8 +74,8 @@ export class NotificationService {
     if (user.expoPushToken) {
       await this.sendExpoPush(
         user.expoPushToken,
-        savedNotification.titulo || 'Nueva notificación',
-        savedNotification.mensaje,
+        savedNotification.title || 'Nueva notificación',
+        savedNotification.message,
       );
     }
 
@@ -104,9 +104,9 @@ export class NotificationService {
     const notifications = recipients.map((u) =>
       this.notiRepository.create({
         user_id: u.usuario_id,
-        titulo: data.titulo,
-        mensaje: data.mensaje,
-        tipoNoti: data.tipoNoti,
+        title: data.titulo,
+        message: data.mensaje,
+        notification_type: data.tipoNoti,
       }),
     );
 
@@ -137,7 +137,9 @@ export class NotificationService {
   }
 
   async update(Notification_id: number, data: UpdateNotificationDto) {
-    await this.notiRepository.update(Notification_id, data);
+    await this.notiRepository.update(Notification_id, {
+      read: data.leida,
+    });
     return this.findOne(Notification_id);
   }
 

@@ -17,7 +17,7 @@ export class MembershipService {
 
   async findOne(Membership_id: number): Promise<Membership> {
     const Membership = await this.Repo.findOne({
-      where: { Membership_id: Membership_id },
+      where: { membership_id: Membership_id },
     });
     if (!Membership) {
       throw new NotFoundException(`Membership ${Membership_id} no encontrada`);

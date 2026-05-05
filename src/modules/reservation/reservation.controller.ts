@@ -40,7 +40,7 @@ import { normalizeError } from '../../common/utils/error.util';
 @ApiTags('reservas')
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('Reservation')
+@Controller('reservations')
 export class ReservationController {
   constructor(private readonly ReservationService: ReservationService) {}
 

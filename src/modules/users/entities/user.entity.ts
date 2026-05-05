@@ -21,7 +21,7 @@ export enum UserRole {
 
 @Entity({ name: 'user' })
 export class User {
-  @PrimaryGeneratedColumn({ name: 'usuario_id', type: 'int' })
+  @PrimaryGeneratedColumn({ name: 'user_id', type: 'int' })
   usuario_id!: number;
 
   @Column({ name: 'Membership_id', type: 'int', nullable: true })
@@ -57,24 +57,24 @@ export class User {
   isActive!: boolean;
 
   @Column({
-    name: 'fecha_registro',
+    name: 'registration_date',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  fecha_registro!: Date;
+  registration_date!: Date;
 
   @Column({
-    name: 'fecha_ultimo_login',
+    name: 'last_login_date',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  fecha_ultimo_login!: Date;
+  last_login_date!: Date;
 
-  @Column({ name: 'fecha_nacimiento', type: 'date' })
-  fecha_nacimiento!: Date;
+  @Column({ name: 'date_of_birth', type: 'date' })
+  date_of_birth!: Date;
 
-  @Column({ name: 'direccion' })
-  direccion!: string;
+  @Column({ name: 'address' })
+  address!: string;
 
   @Column({ name: 'refresh_token_hash', type: 'text', nullable: true })
   refresh_token_hash!: string | null;
@@ -87,11 +87,11 @@ export class User {
   Membership!: Membership;
 
   @OneToMany(() => Reservation, (r) => r.usuario)
-  reservas!: Reservation[];
+  reservations!: Reservation[];
 
   @OneToMany(() => Notification, (n) => n.user)
-  notificaciones!: Notification[];
+  notifications!: Notification[];
 
   @OneToOne(() => Review, (r) => r.user)
-  Review!: Review;
+  review!: Review;
 }

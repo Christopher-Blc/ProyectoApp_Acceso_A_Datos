@@ -25,7 +25,7 @@ import { UserRole } from '../users/entities/user.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller('Membership')
+@Controller('memberships')
 export class MembershipController {
   constructor(private readonly MembershipService: MembershipService) {}
 
