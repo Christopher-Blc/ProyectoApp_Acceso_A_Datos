@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { CourtTypeService } from './tipo_court.service';
+import { CourtTypeService } from './court_type.service';
 
 describe('CourtTypeService', () => {
   let instance: CourtTypeService;

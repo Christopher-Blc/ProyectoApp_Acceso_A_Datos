@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { TipoCourtController } from './tipo_court.controller';
+import { CourtTypeController } from './court_type.controller';
 
-describe('TipoCourtController', () => {
-  let instance: TipoCourtController;
+describe('CourtTypeController', () => {
+  let instance: CourtTypeController;
 
   beforeEach(() => {
     instance = Object.create(
-      TipoCourtController.prototype,
-    ) as TipoCourtController;
+      CourtTypeController.prototype,
+    ) as CourtTypeController;
   });
 
   it('should be defined', () => {
