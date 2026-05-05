@@ -15,13 +15,13 @@ export class InstallationService {
   ) {}
 
   async findAll(): Promise<Installation[]> {
-    return this.instalacionRepository.find({ relations: ['Court'] });
+    return this.instalacionRepository.find({ relations: ['pistas'] });
   }
 
   async findOne(instalacion_id: number): Promise<Installation> {
     const Installation = await this.instalacionRepository.findOne({
       where: { instalacion_id: instalacion_id },
-      relations: ['Court'],
+      relations: ['pistas'],
     });
     if (!Installation) {
       throw new NotFoundException(
