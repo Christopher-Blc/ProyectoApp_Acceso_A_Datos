@@ -35,8 +35,3 @@ export default [
     reservations_made: 5,
   },
 ];
-
-
-
-
-

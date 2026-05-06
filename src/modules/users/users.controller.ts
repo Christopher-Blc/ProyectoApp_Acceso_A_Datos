@@ -183,7 +183,6 @@ export class UsersController {
     }
   }
 
-
   @Put(':id')
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRACION)
   @ApiOperation({ summary: 'Update user by ID' })
@@ -194,7 +193,7 @@ export class UsersController {
   @ApiParam({ name: 'id', example: 1 })
   async updateUser(@Param('id') id: number, @Body() userDto: UpdateUserDto) {
     try {
-      return await this.userService.update(id, userDto , false);
+      return await this.userService.update(id, userDto, false);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);

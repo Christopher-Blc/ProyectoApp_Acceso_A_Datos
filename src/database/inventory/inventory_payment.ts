@@ -21,10 +21,3 @@ export default [
     nota: 'Payment pendiente de confirmación',
   },
 ];
-
-
-
-
-
-
-

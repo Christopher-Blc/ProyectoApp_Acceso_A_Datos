@@ -23,10 +23,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 import { normalizeError } from '../../common/utils/error.util';
 import { NotificationService } from './notification.service';
-import {
-  CreateMassiveNotiDto,
-  NotificationDto,
-} from './dto/notification.dto';
+import { CreateMassiveNotiDto, NotificationDto } from './dto/notification.dto';
 import { Notification } from './entities/notification.entity';
 
 @UseGuards(AuthGuard, RolesGuard)

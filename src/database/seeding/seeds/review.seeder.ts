@@ -43,5 +43,3 @@ export class ReviewSeeder implements Seeder {
     console.log('Review seeding completed!');
   }
 }
-
-

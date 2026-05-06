@@ -6,7 +6,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { estadoReserva, Reservation } from './entities/reservation.entity';
-import { CreateReservationDto, UpdateReservationDto } from './dto/reservation.dto';
+import {
+  CreateReservationDto,
+  UpdateReservationDto,
+} from './dto/reservation.dto';
 import { UserRole } from '../users/entities/user.entity';
 import { Court } from '../court/entities/court.entity';
 import { UsersService } from '../users/users.service';
@@ -21,18 +24,24 @@ export class ReservationService {
     private readonly userService: UsersService,
   ) {}
 
-  async findAll(pista_id?: number, fecha_desde?: string): Promise<Reservation[]> {
+  async findAll(
+    pista_id?: number,
+    fecha_desde?: string,
+  ): Promise<Reservation[]> {
     const where: any = {};
 
     if (pista_id) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       where.court_id = pista_id;
     }
 
     if (fecha_desde) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       where.reservation_date = MoreThanOrEqual(fecha_desde);
     }
 
     return this.reservaRepo.find({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       where,
       relations: ['usuario', 'court', 'payments'],
       order: { reservation_date: 'ASC', start_time: 'ASC' },
@@ -57,7 +66,10 @@ export class ReservationService {
     });
   }
 
-  async create(dto: CreateReservationDto, usuario_id: number): Promise<Reservation> {
+  async create(
+    dto: CreateReservationDto,
+    usuario_id: number,
+  ): Promise<Reservation> {
     const Court = await this.pistaRepo.findOneBy({ court_id: dto.pista_id });
     if (!Court) throw new NotFoundException('Court no encontrada');
 
@@ -115,7 +127,8 @@ export class ReservationService {
       if (!Court) throw new NotFoundException('That Court does not exist');
 
       // Actualizamos el precio_total en el objeto que se guardará
-      (dto as any).total_price = this.calcularPrecio(
+      const updatedDto = dto as Partial<Reservation>;
+      updatedDto.total_price = this.calcularPrecio(
         Number(Court.price_per_hour),
         h_inicio,
         h_fin,
@@ -202,11 +215,3 @@ export class ReservationService {
     return Number((duracionHoras * pistaPrecio).toFixed(2));
   }
 }
-
-
-
-
-
-
-
-

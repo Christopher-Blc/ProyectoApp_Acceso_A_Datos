@@ -41,5 +41,3 @@ export class NotificationSeeder implements Seeder {
     console.log('Notification seeding completed!');
   }
 }
-
-

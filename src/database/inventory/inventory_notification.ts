@@ -9,5 +9,3 @@ export default [
     fecha: new Date('2025-10-27T10:24:04'),
   },
 ];
-
-

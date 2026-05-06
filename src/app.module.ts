@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from './modules/users/users.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
@@ -23,6 +24,30 @@ import { CourtTypeModule } from './modules/court_type/court_type.module';
     }),
 
     /**
+     * JwtModule.register()
+     *
+     * Configuración global del JWT para toda la aplicación.
+     * El secret se lee de las variables de entorno (JWT_ACCESS_SECRET).
+     * La duración por defecto es configurable vía JWT_EXPIRES_IN.
+     *
+     * Por qué es necesario:
+     * - NestJS necesita saber con qué secret firmar/verificar tokens
+     * - Sin esta configuración, JwtService no funcionará en ningún módulo
+     * - register() lo hace global para toda la app
+     *
+     * Alternativas:
+     * - registerAsync(): Si necesitas inyectar ConfigService (más flexible pero más código)
+     * - register(): Configuración estática en tiempo de inicialización (más simple)
+     */
+    JwtModule.register({
+      secret: process.env.JWT_ACCESS_SECRET || 'your-secret-key',
+      signOptions: {
+        expiresIn: (process.env.JWT_EXPIRES_IN || '1h') as unknown as number,
+      },
+      global: true,
+    }),
+
+    /**
      * ThrottlerModule.forRoot()
      *
      * Configura límite de peticiones (protección contra abuso de la API)
@@ -30,8 +55,8 @@ import { CourtTypeModule } from './modules/court_type/court_type.module';
     ThrottlerModule.forRoot([
       {
         name: 'default',
-        ttl: 100,//
-        limit: 1000000000000,//
+        ttl: 100, //
+        limit: 1000000000000, //
       },
       {
         name: 'auth',
@@ -71,4 +96,3 @@ import { CourtTypeModule } from './modules/court_type/court_type.module';
   ],
 })
 export class AppModule {}
-

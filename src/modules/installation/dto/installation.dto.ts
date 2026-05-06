@@ -104,10 +104,3 @@ export class UpdateInstallationDto {
   })
   estado?: estado_instalacion;
 }
-
-
-
-
-
-
-

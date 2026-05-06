@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Court } from '../../court/entities/court.entity'; // Importa la entidad Court
 import { Review } from '../../review/entities/review.entity';
 
@@ -35,7 +29,11 @@ export class Installation {
   @Column({ type: 'varchar', length: 100 })
   description?: string;
 
-  @Column({ type: 'date', default: () => 'CURRENT_DATE', name: 'creation_date' })
+  @Column({
+    type: 'date',
+    default: () => 'CURRENT_DATE',
+    name: 'creation_date',
+  })
   creation_date!: Date;
 
   @Column({
@@ -55,15 +53,8 @@ export class Installation {
   closing_hours?: string;
 
   @OneToMany(() => Court, (c) => c.Installation)
-  courts: Court[];
+  courts!: Court[];
 
   @OneToMany(() => Review, (r) => r.Installation)
-  reviews: Review[];
+  reviews!: Review[];
 }
-
-
-
-
-
-
-

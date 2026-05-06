@@ -14,9 +14,8 @@ import { CreateMembershipDto, UpdateMembershipDto } from './dto/membership.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiParam,
   ApiResponse,
-  ApiTags,
+  ApiParam,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -62,7 +61,9 @@ export class MembershipController {
   @ApiResponse({ status: 201, description: 'Membership created successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid membership data.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async create(@Body() MembershipDto: CreateMembershipDto): Promise<Membership> {
+  async create(
+    @Body() MembershipDto: CreateMembershipDto,
+  ): Promise<Membership> {
     return this.MembershipService.create(MembershipDto);
   }
 
@@ -91,6 +92,3 @@ export class MembershipController {
     return this.MembershipService.remove(id);
   }
 }
-
-
-

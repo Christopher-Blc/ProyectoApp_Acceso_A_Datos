@@ -80,24 +80,16 @@ export class Court {
   day_of_week!: DiaSemana;
 
   @Column({ type: 'int', default: 0 })
-  reservations_made: number;
+  reservations_made!: number;
 
   @ManyToOne(() => Installation, (i) => i.courts)
   @JoinColumn({ name: 'installation_id' })
-  Installation: Installation;
+  Installation!: Installation;
 
   @ManyToOne(() => CourtType, (tp) => tp.courts)
   @JoinColumn({ name: 'court_type_id' })
-  courtType: CourtType;
+  courtType!: CourtType;
 
   @OneToMany(() => Reservation, (r) => r.court)
-  reservations: Reservation[];
+  reservations!: Reservation[];
 }
-
-
-
-
-
-
-
-

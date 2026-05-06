@@ -50,7 +50,7 @@ export class CourtTypeService {
       const nuevoTipo = this.tipoPistaRepository.create({
         ...dto,
         imagen: imagenFilename || dto.imagen,
-      }) as CourtType;
+      });
       return await this.tipoPistaRepository.save(nuevoTipo);
     } catch {
       throw new InternalServerErrorException('Error al crear el tipo de Court');
@@ -117,7 +117,3 @@ export class CourtTypeService {
     return { deleted: true };
   }
 }
-
-
-
-

@@ -25,5 +25,3 @@ export default [
     imagen: 'fondo-voleyball.png',
   },
 ];
-
-

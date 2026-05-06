@@ -50,9 +50,5 @@ export class Notification {
 
   @ManyToOne(() => User, (user) => user.notifications)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 }
-
-
-
-

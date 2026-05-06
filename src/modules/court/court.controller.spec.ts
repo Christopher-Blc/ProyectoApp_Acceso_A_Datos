@@ -12,4 +12,3 @@ describe('CourtController', () => {
     expect(instance).toBeDefined();
   });
 });
-

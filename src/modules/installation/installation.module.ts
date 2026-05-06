@@ -10,5 +10,3 @@ import { Installation } from './entities/installation.entity';
   providers: [InstallationService],
 })
 export class InstallationModule {}
-
-

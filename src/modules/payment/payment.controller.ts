@@ -13,19 +13,12 @@ import {
 import { PaymentService } from './payment.service';
 import { Payment } from './entities/payment.entity';
 import { CreatePaymentDto, UpdatePaymentDto } from './dto/payment.dto';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 import { normalizeError } from '../../common/utils/error.util';
-
 
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -36,7 +29,11 @@ export class PaymentController {
   @Get()
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Get all payments' })
-  @ApiResponse({ status: 200, description: 'List of payments', type: [Payment] })
+  @ApiResponse({
+    status: 200,
+    description: 'List of payments',
+    type: [Payment],
+  })
   @ApiResponse({ status: 204, description: 'No content.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -45,10 +42,7 @@ export class PaymentController {
       return this.PaymentService.findAll();
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -63,10 +57,7 @@ export class PaymentController {
       return this.PaymentService.findOne(id);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -80,7 +71,9 @@ export class PaymentController {
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async create(@Body() CreatePaymentDto: CreatePaymentDto): Promise<Payment | null> {
+  async create(
+    @Body() CreatePaymentDto: CreatePaymentDto,
+  ): Promise<Payment | null> {
     try {
       const pagoData = {
         ...CreatePaymentDto,
@@ -89,10 +82,7 @@ export class PaymentController {
       return this.PaymentService.create(pagoData);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -115,10 +105,7 @@ export class PaymentController {
       return this.PaymentService.update(id, UpdatePaymentDto);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -134,13 +121,7 @@ export class PaymentController {
       return this.PaymentService.remove(id);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 }
-
-
-

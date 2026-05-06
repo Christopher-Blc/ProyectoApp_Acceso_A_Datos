@@ -3,7 +3,6 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
-  OneToOne,
   JoinColumn,
   OneToMany,
 } from 'typeorm';
@@ -59,21 +58,14 @@ export class Reservation {
 
   @ManyToOne(() => User, (u) => u.reservations)
   @JoinColumn({ name: 'user_id' })
-  usuario: User;
+  usuario!: User;
 
   @ManyToOne(() => Court, (c) => c.reservations)
   @JoinColumn({ name: 'court_id' })
-  court: Court;
+  court!: Court;
 
   //reservation_id estara en Payment. he puesto onetomany aunque en teoria era onetoone
   //porque si falla un Payment queremos todos los registros de pagos asociados a la Reservation
   @OneToMany(() => Payment, (p) => p.Reservation)
-  payments: Payment[]; // Esto es virtual, no crea una columna "Payment_id" en la tabla Reservation
+  payments!: Payment[]; // Esto es virtual, no crea una columna "Payment_id" en la tabla Reservation
 }
-
-
-
-
-
-
-

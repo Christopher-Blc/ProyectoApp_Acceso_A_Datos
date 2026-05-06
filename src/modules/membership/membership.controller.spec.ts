@@ -14,4 +14,3 @@ describe('MembershipController', () => {
     expect(instance).toBeDefined();
   });
 });
-

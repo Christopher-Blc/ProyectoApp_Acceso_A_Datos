@@ -1,8 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { Repository } from 'typeorm';
-import { CreateMassiveNotiDto, UpdateNotificationDto } from './dto/notification.dto';
+import {
+  CreateMassiveNotiDto,
+  UpdateNotificationDto,
+} from './dto/notification.dto';
 import { User } from '../users/entities/user.entity';
 
 @Injectable()
@@ -51,7 +58,9 @@ export class NotificationService {
       relations: ['user'],
     });
     if (!Notification) {
-      throw new NotFoundException(`Notification ${Notification_id} no encontrada`);
+      throw new NotFoundException(
+        `Notification ${Notification_id} no encontrada`,
+      );
     }
     return Notification;
   }
@@ -148,5 +157,3 @@ export class NotificationService {
     return { deleted: true };
   }
 }
-
-

@@ -14,4 +14,3 @@ describe('InstallationService', () => {
     expect(instance).toBeDefined();
   });
 });
-

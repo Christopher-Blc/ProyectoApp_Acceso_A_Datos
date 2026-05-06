@@ -12,4 +12,3 @@ describe('PaymentController', () => {
     expect(instance).toBeDefined();
   });
 });
-

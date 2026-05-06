@@ -13,7 +13,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { Reservation } from './entities/reservation.entity';
-import { CreateReservationDto, UpdateReservationDto } from './dto/reservation.dto';
+import {
+  CreateReservationDto,
+  UpdateReservationDto,
+} from './dto/reservation.dto';
 import { ReservationService } from './reservation.service';
 import {
   ApiBearerAuth,
@@ -61,10 +64,7 @@ export class ReservationController {
       return await this.ReservationService.findAll(pista_id, fecha_desde);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -91,7 +91,10 @@ export class ReservationController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get Reservation by ID' })
-  @ApiResponse({ status: 200, description: 'Reservation retrieved successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Reservation retrieved successfully.',
+  })
   @ApiResponse({ status: 400, description: 'Invalid Reservation ID.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Reservation not found.' })
@@ -145,14 +148,15 @@ export class ReservationController {
     try {
       // El servicio decide permisos combinando id y rol del usuario.
       const userId = req.user?.sub;
-      const userRole = req.user?.role ?? UserRole.CLIENTE;
+      const userRole =
+        (req.user?.role as unknown as UserRole) ?? UserRole.CLIENTE;
       if (!userId)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
       return this.ReservationService.update(
         id,
         ReservationDto,
         Number(userId),
-        userRole as any,
+        userRole,
       );
     } catch (err) {
       const { message, status } = normalizeError(err);
@@ -167,7 +171,10 @@ export class ReservationController {
     UserRole.SUPER_ADMIN,
   )
   @ApiOperation({ summary: 'Delete Reservation by ID' })
-  @ApiResponse({ status: 200, description: 'Reservation deleted successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Reservation deleted successfully.',
+  })
   @ApiResponse({ status: 400, description: 'Invalid Reservation ID.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Reservation not found.' })
@@ -181,9 +188,3 @@ export class ReservationController {
     }
   }
 }
-
-
-
-
-
-

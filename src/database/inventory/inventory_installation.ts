@@ -11,8 +11,3 @@ export default [
     status: estado_instalacion.ACTIVE,
   },
 ];
-
-
-
-
-
