@@ -1,18 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DayOfWeek, Court, CourtStatus } from './entities/court.entity';
+import { DiaSemana, Court, EstadoCourt } from './entities/court.entity';
 import {
   Repository,
   In,
   MoreThanOrEqual,
   Between,
-  QueryDeepPartialEntity,
+  
 } from 'typeorm';
-import { CreateCourtDto, UpdateCourtDto } from './dto/court.dto';
+import { CourtDto, UpdateCourtDto } from './dto/court.dto';
 import {
   Reservation,
-  ReservationStatus,
+  estadoReserva,
 } from '../reservation/entities/reservation.entity';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
 @Injectable()
 export class CourtService {
@@ -24,16 +25,16 @@ export class CourtService {
   ) {}
 
   async findAll(): Promise<Court[]> {
-    return this.pistaRepo.find({ relations: ['installation'] });
+    return this.pistaRepo.find({ relations: ['Installation'] });
   }
 
-  async findOne(courtId: number): Promise<Court> {
-    const court = await this.pistaRepo.findOne({
-      where: { id: courtId },
-      relations: ['installation'],
+  async findOne(court_id: number): Promise<Court> {
+    const Court = await this.pistaRepo.findOne({
+      where: { court_id },
+      relations: ['Installation'],
     });
-    if (!court) throw new NotFoundException(`Court ${courtId} not found`);
-    return court;
+    if (!Court) throw new NotFoundException(`Court ${court_id} not found`);
+    return Court;
   }
 
   private formatTime(time: string): string {
@@ -45,13 +46,13 @@ export class CourtService {
   async obtenerDisponibilidad(fechaString: string) {
     const fecha = new Date(fechaString);
     const dias = [
-      DayOfWeek.SUNDAY,
-      DayOfWeek.MONDAY,
-      DayOfWeek.TUESDAY,
-      DayOfWeek.WEDNESDAY,
-      DayOfWeek.THURSDAY,
-      DayOfWeek.FRIDAY,
-      DayOfWeek.SATURDAY,
+      DiaSemana.DOMINGO,
+      DiaSemana.LUNES,
+      DiaSemana.MARTES,
+      DiaSemana.MIERCOLES,
+      DiaSemana.JUEVES,
+      DiaSemana.VIERNES,
+      DiaSemana.SABADO,
     ];
 
     const fechaAyer = new Date(fecha);
@@ -61,32 +62,32 @@ export class CourtService {
 
     // Buscamos pistas de hoy y ayer (por si alguna sigue abierta de madrugada)
     const pistas = await this.pistaRepo.find({
-      where: [{ dayOfWeek: nombreDiaHoy }, { dayOfWeek: nombreDiaAyer }],
+      where: [{ day_of_week: nombreDiaHoy }, { day_of_week: nombreDiaAyer }],
       relations: ['courtType'],
     });
 
     const pistasValidas = pistas.filter((p) => {
-      if (p.dayOfWeek === nombreDiaHoy) return true;
-      return p.closingTime < p.openingTime; // Solo si cruza medianoche
+      if (p.day_of_week === nombreDiaHoy) return true;
+      return p.closing_time < p.opening_time; // Solo si cruza medianoche
     });
 
     const reservasDelDia = await this.reservaRepo.find({
-      where: { reservationDate: new Date(fechaString) },
+      where: { reservation_date: new Date(fechaString) },
     });
 
-    return pistasValidas.map((court) => ({
-      ...court,
+    return pistasValidas.map((Court) => ({
+      ...Court,
       reservas_actuales: reservasDelDia
-        .filter((r) => Number(r.courtId) === Number(court.id))
-        .map((r) => ({ inicio: r.startTime, fin: r.endTime })),
+        .filter((r) => Number(r.court_id) === Number(Court.court_id))
+        .map((r) => ({ inicio: r.start_time, fin: r.end_time })),
     }));
   }
 
-  async create(infoCourt: CreateCourtDto): Promise<Court> {
+  async create(info_Court: CourtDto): Promise<Court> {
     const data = {
-      ...infoCourt,
-      openingTime: this.formatTime(infoCourt.openingTime),
-      closingTime: this.formatTime(infoCourt.closingTime),
+      ...info_Court,
+      opening_time: this.formatTime(info_Court.opening_time),
+      closing_time: this.formatTime(info_Court.closing_time),
     };
     return this.pistaRepo.save(this.pistaRepo.create(data));
   }
@@ -94,102 +95,102 @@ export class CourtService {
   // Edita la pista con los datos recibidos y, cuando se pone en mantenimiento o inactiva,
   // cancela reservas futuras relacionadas. También puede recibir rango de fechas
   // para cancelar solo las reservas dentro de ese intervalo.
-  async update(courtId: number, infoCourt: UpdateCourtDto): Promise<Court> {
-    const currentCourt = await this.findOne(courtId);
+  async update(court_id: number, info_Court: UpdateCourtDto): Promise<Court> {
+    const pistaActual = await this.findOne(court_id);
 
     let dataNormalizada: QueryDeepPartialEntity<Court> = {
-      ...infoCourt,
+      ...info_Court,
     } as QueryDeepPartialEntity<Court>;
 
-    const apertura = infoCourt.openingTime ?? undefined;
+    const apertura = info_Court.opening_time ?? undefined;
     if (apertura)
       dataNormalizada = {
         ...dataNormalizada,
-        openingTime: this.formatTime(apertura),
+        opening_time: this.formatTime(apertura),
       } as QueryDeepPartialEntity<Court>;
 
-    const cierre = infoCourt.closingTime ?? undefined;
+    const cierre = info_Court.closing_time ?? undefined;
     if (cierre)
       dataNormalizada = {
         ...dataNormalizada,
-        closingTime: this.formatTime(cierre),
+        closing_time: this.formatTime(cierre),
       } as QueryDeepPartialEntity<Court>;
 
     // Lógica de mantenimiento selectivo
     if (
-      (infoCourt.status === CourtStatus.MAINTENANCE ||
-        infoCourt.status === CourtStatus.INACTIVE) &&
-      currentCourt.status !== infoCourt.status
+      (info_Court.status === EstadoCourt.MANTENIMIENTO ||
+        info_Court.status === EstadoCourt.INACTIVA) &&
+      pistaActual.status !== info_Court.status
     ) {
       const motivo =
-        infoCourt.status === CourtStatus.INACTIVE
-          ? 'The court has been removed from the system.'
+        info_Court.status === EstadoCourt.INACTIVA
+          ? 'La Court ha sido eliminada del sistema.'
           : 'Court cerrada por mantenimiento programado.';
 
       // Definimos el filtro de fechas
       const filtroFecha =
-        infoCourt.maintenanceFrom && infoCourt.maintenanceUntil
+        info_Court.maintenance_start && info_Court.maintenance_end
           ? Between(
-              new Date(infoCourt.maintenanceFrom),
-              new Date(infoCourt.maintenanceUntil),
+              new Date(info_Court.maintenance_start),
+              new Date(info_Court.maintenance_end),
             )
           : MoreThanOrEqual(new Date(new Date().toISOString().split('T')[0]));
 
       await this.reservaRepo.update(
         {
-          courtId,
-          status: In([ReservationStatus.PENDING, ReservationStatus.CONFIRMED]),
-          reservationDate: filtroFecha,
+          court_id: court_id,
+          status: In([estadoReserva.PENDING, estadoReserva.CONFIRMED]),
+          reservation_date: filtroFecha,
         },
         {
-          status: ReservationStatus.CANCELLED,
-          note: motivo,
+          status: estadoReserva.CANCELLED,
+          nota: motivo,
         },
       );
     }
 
-    await this.pistaRepo.update(courtId, dataNormalizada);
-    return this.findOne(courtId);
+    await this.pistaRepo.update(court_id, dataNormalizada);
+    return this.findOne(court_id);
   }
 
-  async softDelete(courtId: number): Promise<void> {
+  async softDelete(court_id: number): Promise<void> {
     const hoy = new Date().toISOString().split('T')[0];
 
     // 1. Cancelamos las reservas futuras primero
     await this.reservaRepo.update(
       {
-        courtId,
-        status: In([ReservationStatus.PENDING, ReservationStatus.CONFIRMED]),
+        court_id: court_id,
+        status: In([estadoReserva.PENDING, estadoReserva.CONFIRMED]),
 
-        reservationDate: MoreThanOrEqual(new Date(hoy)),
+        reservation_date: MoreThanOrEqual(new Date(hoy)),
       },
       {
-        status: ReservationStatus.CANCELLED,
-        note: 'The court has been removed from the system.',
+        status: estadoReserva.CANCELLED,
+        nota: 'La Court ha sido eliminada del sistema.',
       },
     );
 
-    await this.pistaRepo.update(courtId, {
-      status: CourtStatus.INACTIVE,
+    await this.pistaRepo.update(court_id, {
+      status: EstadoCourt.INACTIVA,
     });
   }
 
-  async remove(courtId: number): Promise<void> {
+  async remove(court_id: number): Promise<void> {
     const hoy = new Date().toISOString().split('T')[0];
 
     // 1. Cancelamos lo pendiente antes de que el ID deje de existir
     await this.reservaRepo.update(
       {
-        courtId,
-        status: In([ReservationStatus.PENDING, ReservationStatus.CONFIRMED]),
+        court_id: court_id,
+        status: In([estadoReserva.PENDING, estadoReserva.CONFIRMED]),
 
-        reservationDate: MoreThanOrEqual(new Date(hoy)),
+        reservation_date: MoreThanOrEqual(new Date(hoy)),
       },
       {
-        status: ReservationStatus.CANCELLED,
-        note: 'The court has been removed from the system.',
+        status: estadoReserva.CANCELLED,
+        nota: 'La Court ha sido eliminada del sistema.',
       },
     );
-    await this.pistaRepo.delete(courtId);
+    await this.pistaRepo.delete(court_id);
   }
 }
