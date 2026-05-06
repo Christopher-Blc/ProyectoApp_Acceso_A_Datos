@@ -14,4 +14,3 @@ describe('CourtTypeController', () => {
     expect(instance).toBeDefined();
   });
 });
-

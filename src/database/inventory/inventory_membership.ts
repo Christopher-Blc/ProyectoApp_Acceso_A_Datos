@@ -21,4 +21,3 @@ export default [
     benefits: '10% de descuento y prioridad en eventos.',
   },
 ];
-

@@ -37,13 +37,9 @@ export class Review {
 
   @OneToOne(() => User, (u) => u.review)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @ManyToOne(() => Installation, (i) => i.reviews)
   @JoinColumn({ name: 'installation_id' })
-  Installation: Installation;
+  Installation!: Installation;
 }
-
-
-
-

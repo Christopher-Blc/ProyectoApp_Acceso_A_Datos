@@ -14,4 +14,3 @@ describe('InstallationController', () => {
     expect(instance).toBeDefined();
   });
 });
-

@@ -46,5 +46,3 @@ export class PaymentService {
     await this.pagoRepository.delete(Payment_id);
   }
 }
-
-

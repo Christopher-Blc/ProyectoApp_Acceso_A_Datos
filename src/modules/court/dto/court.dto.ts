@@ -1,4 +1,4 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { DiaSemana, EstadoCourt } from '../entities/court.entity';
 import {
   IsBoolean,
@@ -100,7 +100,6 @@ export class CourtDto {
 
 // como todos los campos van a ser opcionales , lo ponemos asi
 export class UpdateCourtDto {
-
   @IsOptional()
   @IsNumber()
   @ApiProperty({
@@ -202,26 +201,25 @@ export class UpdateCourtDto {
   // Formato YYYY-MM-DD
   @IsOptional()
   @IsString()
-  @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'Formato de fecha debe ser YYYY-MM-DD' })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'Formato de fecha debe ser YYYY-MM-DD',
+  })
   @ApiProperty({
     description: 'Start date for selective maintenance',
     example: '2026-06-01',
-    required: false
+    required: false,
   })
-  mantenimiento_desde?: string; 
+  mantenimiento_desde?: string;
 
   @IsOptional()
   @IsString()
-  @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'Formato de fecha debe ser YYYY-MM-DD' })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'Formato de fecha debe ser YYYY-MM-DD',
+  })
   @ApiProperty({
     description: 'End date for selective maintenance',
     example: '2026-06-10',
-    required: false
+    required: false,
   })
-  mantenimiento_hasta?: string; 
+  mantenimiento_hasta?: string;
 }
-
-
-
-
-

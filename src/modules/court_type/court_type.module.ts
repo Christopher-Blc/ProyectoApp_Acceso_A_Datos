@@ -11,4 +11,3 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   exports: [CourtTypeService],
 })
 export class CourtTypeModule {}
-

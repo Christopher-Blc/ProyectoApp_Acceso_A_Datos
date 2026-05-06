@@ -51,6 +51,3 @@ export class InstallationSeeder implements Seeder {
     console.log('Installation seeding completed!');
   }
 }
-
-
-

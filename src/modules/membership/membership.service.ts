@@ -42,6 +42,3 @@ export class MembershipService {
     await this.Repo.delete(Membership_id);
   }
 }
-
-
-

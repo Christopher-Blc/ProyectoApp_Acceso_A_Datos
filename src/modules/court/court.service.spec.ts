@@ -12,4 +12,3 @@ describe('CourtService', () => {
     expect(instance).toBeDefined();
   });
 });
-

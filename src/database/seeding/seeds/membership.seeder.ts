@@ -37,5 +37,3 @@ export class MembershipSeeder implements Seeder {
     console.log('Membresía seeding completado!');
   }
 }
-
-

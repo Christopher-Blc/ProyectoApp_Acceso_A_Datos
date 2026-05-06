@@ -1,13 +1,18 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DiaSemana, Court, EstadoCourt } from './entities/court.entity';
-import { Repository, In, MoreThanOrEqual, Between } from 'typeorm';
+import {
+  Repository,
+  In,
+  MoreThanOrEqual,
+  Between,
+  QueryDeepPartialEntity,
+} from 'typeorm';
 import { CourtDto, UpdateCourtDto } from './dto/court.dto';
-import { Reservation, estadoReserva } from '../reservation/entities/reservation.entity';
+import {
+  Reservation,
+  estadoReserva,
+} from '../reservation/entities/reservation.entity';
 
 @Injectable()
 export class CourtService {
@@ -66,7 +71,7 @@ export class CourtService {
     });
 
     const reservasDelDia = await this.reservaRepo.find({
-      where: { reservation_date: fechaString as any },
+      where: { reservation_date: new Date(fechaString) },
     });
 
     return pistasValidas.map((Court) => ({
@@ -91,35 +96,44 @@ export class CourtService {
   // para cancelar solo las reservas dentro de ese intervalo.
   async update(court_id: number, info_Court: UpdateCourtDto): Promise<Court> {
     const pistaActual = await this.findOne(court_id);
-    const dataNormalizada: any = { ...info_Court };
 
-    if (info_Court.hora_apertura)
-      dataNormalizada.hora_apertura = this.formatTime(info_Court.hora_apertura);
-    if (info_Court.hora_cierre)
-      dataNormalizada.hora_cierre = this.formatTime(info_Court.hora_cierre);
+    let dataNormalizada: QueryDeepPartialEntity<Court> = {
+      ...info_Court,
+    } as QueryDeepPartialEntity<Court>;
+
+    const apertura = info_Court.hora_apertura ?? undefined;
+    if (apertura)
+      dataNormalizada = {
+        ...dataNormalizada,
+        hora_apertura: this.formatTime(apertura),
+      } as QueryDeepPartialEntity<Court>;
+
+    const cierre = info_Court.hora_cierre ?? undefined;
+    if (cierre)
+      dataNormalizada = {
+        ...dataNormalizada,
+        hora_cierre: this.formatTime(cierre),
+      } as QueryDeepPartialEntity<Court>;
 
     // Lógica de mantenimiento selectivo
     if (
-      (info_Court.estado === EstadoCourt.MANTENIMIENTO || info_Court.estado === EstadoCourt.INACTIVA) &&
+      (info_Court.estado === EstadoCourt.MANTENIMIENTO ||
+        info_Court.estado === EstadoCourt.INACTIVA) &&
       pistaActual.status !== info_Court.estado
     ) {
-      const motivo = info_Court.estado === EstadoCourt.INACTIVA
-        ? 'La Court ha sido eliminada del sistema.'
-        : 'Court cerrada por mantenimiento programado.';
+      const motivo =
+        info_Court.estado === EstadoCourt.INACTIVA
+          ? 'La Court ha sido eliminada del sistema.'
+          : 'Court cerrada por mantenimiento programado.';
 
       // Definimos el filtro de fechas
-      let filtroFecha: any;
-
-      if (info_Court.mantenimiento_desde && info_Court.mantenimiento_hasta) {
-        // CASO QUIRÚRGICO: Solo entre estas dos fechas
-        filtroFecha = Between(
-          info_Court.mantenimiento_desde,
-          info_Court.mantenimiento_hasta
-        );
-      } else {
-        // CASO GENERAL: De hoy en adelante
-        filtroFecha = MoreThanOrEqual(new Date().toISOString().split('T')[0]);
-      }
+      const filtroFecha =
+        info_Court.mantenimiento_desde && info_Court.mantenimiento_hasta
+          ? Between(
+              new Date(info_Court.mantenimiento_desde),
+              new Date(info_Court.mantenimiento_hasta),
+            )
+          : MoreThanOrEqual(new Date(new Date().toISOString().split('T')[0]));
 
       await this.reservaRepo.update(
         {
@@ -127,7 +141,7 @@ export class CourtService {
           status: In([estadoReserva.PENDING, estadoReserva.CONFIRMED]),
           reservation_date: filtroFecha,
         },
-          { 
+        {
           status: estadoReserva.CANCELLED,
           nota: motivo,
         },
@@ -146,7 +160,8 @@ export class CourtService {
       {
         court_id: court_id,
         status: In([estadoReserva.PENDING, estadoReserva.CONFIRMED]),
-        reservation_date: MoreThanOrEqual(hoy as any),
+
+        reservation_date: MoreThanOrEqual(new Date(hoy)),
       },
       {
         status: estadoReserva.CANCELLED,
@@ -167,7 +182,8 @@ export class CourtService {
       {
         court_id: court_id,
         status: In([estadoReserva.PENDING, estadoReserva.CONFIRMED]),
-        reservation_date: MoreThanOrEqual(hoy as any),
+
+        reservation_date: MoreThanOrEqual(new Date(hoy)),
       },
       {
         status: estadoReserva.CANCELLED,
@@ -177,11 +193,3 @@ export class CourtService {
     await this.pistaRepo.delete(court_id);
   }
 }
-
-
-
-
-
-
-
-

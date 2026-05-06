@@ -70,12 +70,10 @@ export class ReservationsSeeder implements Seeder {
 
     if (reservationEntries.length > 0) {
       await reservationRepository.save(reservationEntries);
-      console.log(`${reservationEntries.length} reservas creadas correctamente.`);
+      console.log(
+        `${reservationEntries.length} reservas creadas correctamente.`,
+      );
     }
     console.log('Seed de reservas completado.');
   }
 }
-
-
-
-

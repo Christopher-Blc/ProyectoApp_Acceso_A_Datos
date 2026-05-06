@@ -8,10 +8,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThanOrEqual } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { User, UserRole } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/users.dto';
 import { Membership } from '../membership/entities/membership.entity';
-import { Reservation, estadoReserva } from '../reservation/entities/reservation.entity';
+import {
+  Reservation,
+  estadoReserva,
+} from '../reservation/entities/reservation.entity';
 
 @Injectable()
 export class UsersService {
@@ -48,7 +51,10 @@ export class UsersService {
       },
     });
 
-    if (mejorMembership && user.Membership_id !== mejorMembership.membership_id) {
+    if (
+      mejorMembership &&
+      user.Membership_id !== mejorMembership.membership_id
+    ) {
       await this.userRepository.update(usuario_id, {
         Membership_id: mejorMembership.membership_id,
       });

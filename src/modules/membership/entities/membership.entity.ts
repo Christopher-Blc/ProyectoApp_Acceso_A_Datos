@@ -32,7 +32,5 @@ export class Membership {
 
   // Relationship: One membership (e.g. Gold) can have many users
   @OneToMany(() => User, (u) => u.Membership)
-  users: User[];
+  users!: User[];
 }
-
-

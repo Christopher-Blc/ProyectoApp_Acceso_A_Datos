@@ -46,10 +46,7 @@ export class CourtController {
       return this.CourtService.findAll();
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -83,10 +80,7 @@ export class CourtController {
       return this.CourtService.findOne(id);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -103,17 +97,16 @@ export class CourtController {
     } catch (err) {
       const { message, status } = normalizeError(err);
       console.error('Error creating court:', err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
   // Ruta /Court/:id (PUT) -> actualizar una pista existente
   @Put(':id')
   @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
-  @ApiOperation({ summary: 'Update court - Supports selective maintenance dates' })
+  @ApiOperation({
+    summary: 'Update court - Supports selective maintenance dates',
+  })
   @ApiResponse({ status: 200, description: 'Court updated successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -126,10 +119,7 @@ export class CourtController {
       return this.CourtService.update(id, CourtDto);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -143,16 +133,10 @@ export class CourtController {
   @ApiResponse({ status: 404, description: 'Court not found.' })
   async remove(@Param('id') id: number): Promise<void> {
     try {
-      return this.CourtService.remove(id);
+      await this.CourtService.remove(id);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 }
-
-
-

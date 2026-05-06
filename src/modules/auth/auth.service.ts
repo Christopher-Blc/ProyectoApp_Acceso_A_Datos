@@ -66,21 +66,17 @@ export class AuthService {
     // NOTA: JwtService.signAsync tiene sobrecargas que no capturan correctamente
     // objetos Record<string, string | number>. Aunque los tipos son correctos
     // en tiempo de ejecución, TypeScript los rechaza. `as any` se usa aquí de manera localizada.
-    const access_token = await this.jwtService.signAsync(
-      newPayload as any,
-      {
-        secret: process.env.JWT_ACCESS_SECRET as string,
-        expiresIn: process.env.JWT_EXPIRES_IN || '15m',
-      } as any,
-    );
+    // @ts-expect-error - JwtService.signAsync overload mismatch with Record<string, string | number>
+    const access_token = await this.jwtService.signAsync(newPayload, {
+      secret: process.env.JWT_ACCESS_SECRET as string,
+      expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+    });
 
-    const new_refresh_token = await this.jwtService.signAsync(
-      newPayload as any,
-      {
-        secret: process.env.JWT_REFRESH_SECRET as string,
-        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-      } as any,
-    );
+    // @ts-expect-error - JwtService.signAsync overload mismatch with Record<string, string | number>
+    const new_refresh_token = await this.jwtService.signAsync(newPayload, {
+      secret: process.env.JWT_REFRESH_SECRET as string,
+      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+    });
 
     // Rotación de token de refresco: guardamos el hash del nuevo token.
     const newHash = await bcrypt.hash(new_refresh_token, 10);
@@ -98,14 +94,14 @@ export class AuthService {
   ) {}
 
   /**
-    * Convierte el token en hash para no persistir secretos en texto plano.
+   * Convierte el token en hash para no persistir secretos en texto plano.
    */
   private hashToken(token: string): string {
     return createHash('sha256').update(token).digest('hex');
   }
 
   /**
-    * Comprueba si el access token está en blacklist y no ha expirado.
+   * Comprueba si el access token está en blacklist y no ha expirado.
    */
   async isAccessTokenBlacklisted(token: string): Promise<boolean> {
     const tokenHash = this.hashToken(token);
@@ -118,7 +114,7 @@ export class AuthService {
   }
 
   /**
-    * Registro de usuario cliente con validaciones de unicidad.
+   * Registro de usuario cliente con validaciones de unicidad.
    */
   async register(dto: RegisterDto) {
     const duplicateEmail = await this.usersService.findByEmail(dto.email);
@@ -153,7 +149,7 @@ export class AuthService {
   }
 
   /**
-    * Login con emisión de access token + refresh token.
+   * Login con emisión de access token + refresh token.
    */
   async login(dto: LoginDto): Promise<{
     access_token: string;
@@ -183,21 +179,17 @@ export class AuthService {
     // NOTA: JwtService.signAsync tiene sobrecargas que no capturan correctamente
     // objetos Record<string, string | number>. Aunque los tipos son correctos
     // en tiempo de ejecución, TypeScript los rechaza. `as any` se usa aquí de manera localizada.
-    const access_token = await this.jwtService.signAsync(
-      payload as any,
-      {
-        secret: process.env.JWT_ACCESS_SECRET as string,
-        expiresIn: process.env.JWT_EXPIRES_IN || '15m',
-      } as any,
-    );
+    // @ts-expect-error - JwtService.signAsync overload mismatch with Record<string, string | number>
+    const access_token = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_ACCESS_SECRET as string,
+      expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+    });
 
-    const refresh_token = await this.jwtService.signAsync(
-      payload as any,
-      {
-        secret: process.env.JWT_REFRESH_SECRET as string,
-        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-      } as any,
-    );
+    // @ts-expect-error - JwtService.signAsync overload mismatch with Record<string, string | number>
+    const refresh_token = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_REFRESH_SECRET as string,
+      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+    });
 
     // Persistimos hash del refresh para validarlo en futuras renovaciones.
     const refreshHash = await bcrypt.hash(refresh_token, 10);

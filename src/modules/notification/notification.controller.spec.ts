@@ -5,11 +5,12 @@ describe('NotificationController', () => {
   let instance: NotificationController;
 
   beforeEach(() => {
-    instance = Object.create(NotificationController.prototype) as NotificationController;
+    instance = Object.create(
+      NotificationController.prototype,
+    ) as NotificationController;
   });
 
   it('should be defined', () => {
     expect(instance).toBeDefined();
   });
 });
-

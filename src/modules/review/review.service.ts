@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NotFoundError } from 'rxjs';
 import { Review } from './entities/review.entity';
 import { CreateReviewDto, UpdateReviewDto } from './dto/review.dto';
 
@@ -44,6 +43,3 @@ export class ReviewService {
     await this.reviewRepository.delete(review_id);
   }
 }
-
-
-

@@ -92,8 +92,3 @@ export default [
     nota: 'Reservation futura (bloqueo de borrado)',
   },
 ];
-
-
-
-
-

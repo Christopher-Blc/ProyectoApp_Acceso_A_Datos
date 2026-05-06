@@ -12,4 +12,3 @@ describe('MembershipService', () => {
     expect(instance).toBeDefined();
   });
 });
-

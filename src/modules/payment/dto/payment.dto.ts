@@ -90,10 +90,3 @@ export class UpdatePaymentDto {
   })
   nota?: string;
 }
-
-
-
-
-
-
-

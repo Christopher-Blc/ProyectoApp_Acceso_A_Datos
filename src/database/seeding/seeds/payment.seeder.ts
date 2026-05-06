@@ -54,8 +54,3 @@ export class PaymentSeeder implements Seeder {
     console.log('Payment seeding completed!');
   }
 }
-
-
-
-
-

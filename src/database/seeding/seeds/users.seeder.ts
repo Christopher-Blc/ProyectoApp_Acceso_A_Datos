@@ -60,4 +60,3 @@ export class UserSeeder implements Seeder {
     console.log('User seeding completed!');
   }
 }
-

@@ -32,5 +32,3 @@ export class CourtTypeSeeder implements Seeder {
     console.log('CourtType seeding completed!');
   }
 }
-
-

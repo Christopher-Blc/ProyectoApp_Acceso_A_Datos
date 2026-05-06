@@ -13,9 +13,5 @@ export class CourtType {
   imagen!: string; // Aquí guardaremos algo como "Court-tenis.jpg"
 
   @OneToMany(() => Court, (court) => court.courtType)
-  courts: Court[];
+  courts!: Court[];
 }
-
-
-
-

@@ -65,13 +65,3 @@ export class Payment {
   // @JoinColumn({ name: "instalacion_id" })
   // Installation: Installation;
 }
-
-
-
-
-
-
-
-
-
-

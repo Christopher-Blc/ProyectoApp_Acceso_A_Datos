@@ -11,8 +11,3 @@ import { ReservationModule } from '../reservation/reservation.module';
   controllers: [CourtController],
 })
 export class CourtModule {}
-
-
-
-
-

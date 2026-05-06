@@ -120,8 +120,3 @@ export class UpdateReservationDto {
   })
   nota?: string;
 }
-
-
-
-
-

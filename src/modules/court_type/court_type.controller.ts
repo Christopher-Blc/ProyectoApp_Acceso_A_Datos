@@ -55,10 +55,7 @@ export class CourtTypeController {
       return this.CourtTypeService.findAll();
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -77,10 +74,7 @@ export class CourtTypeController {
       return this.CourtTypeService.findOne(id);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -143,10 +137,7 @@ export class CourtTypeController {
       return this.CourtTypeService.create(tipoCourtDto, file.filename);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -190,7 +181,11 @@ export class CourtTypeController {
       type: 'object',
       properties: {
         nombre: { type: 'string', example: 'Tenis' },
-        imagen: { type: 'string', format: 'binary', description: 'Imagen opcional' },
+        imagen: {
+          type: 'string',
+          format: 'binary',
+          description: 'Imagen opcional',
+        },
       },
     },
   })
@@ -208,10 +203,7 @@ export class CourtTypeController {
       return this.CourtTypeService.update(id, tipoCourtDto, file?.filename);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -228,13 +220,7 @@ export class CourtTypeController {
       return this.CourtTypeService.remove(id);
     } catch (err) {
       const { message, status } = normalizeError(err);
-      throw new HttpException(
-        message,
-        status || HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 }
-
-
-

@@ -33,7 +33,7 @@ export class CourtSeeder implements Seeder {
       courtEntry.covered = item.covered; // booleano
       courtEntry.lighting = item.lighting;
       courtEntry.description = item.description;
-        courtEntry.status = item.status!;
+      courtEntry.status = item.status!;
       courtEntry.opening_time = item.opening_time!;
       courtEntry.closing_time = item.closing_time!;
       courtEntry.day_of_week = item.day_of_week!;
@@ -49,5 +49,3 @@ export class CourtSeeder implements Seeder {
     console.log('Court seeding completed!');
   }
 }
-
-
