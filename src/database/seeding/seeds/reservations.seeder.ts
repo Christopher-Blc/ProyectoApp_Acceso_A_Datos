@@ -16,15 +16,15 @@ export class ReservationsSeeder implements Seeder {
     for (const item of reservationData) {
       // 1. Verificamos que existan relaciones obligatorias
       const user = await userRepository.findOneBy({
-        id: Number(item.userId),
+        id: Number(item.user_id),
       });
       const court = await courtRepository.findOneBy({
-        id: Number(item.courtId),
+        id: Number(item.court_id),
       });
 
       if (!user || !court) {
         console.warn(
-          `Se omite reserva: usuario ${item.userId} o pista ${item.courtId} no existen.`,
+          `Se omite reserva: usuario ${item.user_id} o pista ${item.court_id} no existen.`,
         );
         continue;
       }
@@ -32,36 +32,36 @@ export class ReservationsSeeder implements Seeder {
       // 2. Evitamos duplicados (usuario + pista + fecha + hora inicio)
       const existing = await reservationRepository.findOne({
         where: {
-          userId: user.id,
-          courtId: item.courtId,
-          startTime: item.startTime,
+          user_id: user.id,
+          court_id: item.court_id,
+          start_time: item.start_time,
         },
       });
 
       if (existing) continue;
 
       // 3. Cálculo manual de precio para la carga inicial (replicando el servicio)
-      const [hInicio, mInicio] = item.startTime.split(':').map(Number);
-      const [hFin, mFin] = item.endTime.split(':').map(Number);
+      const [hInicio, mInicio] = item.start_time.split(':').map(Number);
+      const [hFin, mFin] = item.end_time.split(':').map(Number);
       const totalMinutos = hFin * 60 + mFin - (hInicio * 60 + mInicio);
 
       let precioCalculado = 0;
       if (totalMinutos > 0) {
         const duracionHoras = totalMinutos / 60;
-        // Usamos el pricePerHour de la pista encontrada
-        precioCalculado = Number((duracionHoras * court.pricePerHour).toFixed(2));
+        // Usamos el price_per_hour de la pista encontrada
+        precioCalculado = Number((duracionHoras * court.price_per_hour).toFixed(2));
       }
 
       // 4. Mapeo a la entidad
       const reservationEntry = new Reservation();
-      reservationEntry.userId = user.id;
-      reservationEntry.courtId = court.id;
-      reservationEntry.reservationDate = item.reservationDate;
-      reservationEntry.startTime = item.startTime;
-      reservationEntry.endTime = item.endTime;
+      reservationEntry.user_id = user.id;
+      reservationEntry.court_id = court.id;
+      reservationEntry.reservation_date = item.reservation_date;
+      reservationEntry.start_time = item.start_time;
+      reservationEntry.end_time = item.end_time;
       reservationEntry.status = item.status;
       reservationEntry.note = item.note || 'Datos de seed';
-      reservationEntry.totalPrice = precioCalculado; // Campo obligatorio
+      reservationEntry.total_price = precioCalculado; // Campo obligatorio
 
       reservationEntries.push(reservationEntry);
     }

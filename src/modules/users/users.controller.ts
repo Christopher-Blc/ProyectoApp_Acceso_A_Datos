@@ -175,7 +175,7 @@ export class UsersController {
     try {
       return await this.userService.create({
         ...userDto,
-        dateOfBirth: new Date(userDto.dateOfBirth),
+        date_of_birth: new Date(userDto.date_of_birth),
       });
     } catch (err) {
       const { message, status } = normalizeError(err);

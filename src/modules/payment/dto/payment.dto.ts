@@ -21,7 +21,7 @@ export class CreatePaymentDto {
     description: 'Date of the payment',
     example: '2024-01-01T10:00:00Z',
   })
-  paymentDate!: string;
+  payment_date!: string;
 
   // Método de Payment
   @IsEnum(PaymentMethod)
@@ -29,7 +29,7 @@ export class CreatePaymentDto {
     description: 'Payment method',
     example: PaymentMethod.VISA,
   })
-  paymentMethod!: PaymentMethod;
+  payment_method!: PaymentMethod;
 
   // Estado del Payment
   @IsEnum(PaymentStatus)
@@ -37,7 +37,7 @@ export class CreatePaymentDto {
     description: 'Payment status',
     example: PaymentStatus.UNPAID,
   })
-  paymentStatus!: PaymentStatus;
+  payment_status!: PaymentStatus;
 
   @IsString()
   @ApiProperty({
@@ -67,7 +67,7 @@ export class UpdatePaymentDto {
     description: 'Payment method',
     example: PaymentMethod.VISA,
   })
-  paymentMethod?: PaymentMethod;
+  payment_method?: PaymentMethod;
 
   // Estado del Payment
   @IsOptional()
@@ -76,7 +76,7 @@ export class UpdatePaymentDto {
     description: 'Payment status',
     example: PaymentStatus.UNPAID,
   })
-  paymentStatus?: PaymentStatus;
+  payment_status?: PaymentStatus;
 
   @IsOptional()
   @IsString()

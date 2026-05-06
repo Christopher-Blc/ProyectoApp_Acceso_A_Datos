@@ -12,27 +12,27 @@ export class Installation {
   @PrimaryGeneratedColumn({ name: 'installation_id', type: 'int' })
   id!: number;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ name: 'name', type: 'varchar', length: 100 })
   name!: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ name: 'address', type: 'varchar', length: 100 })
   address!: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ name: 'phone', type: 'varchar', length: 100 })
   phone!: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ name: 'email', type: 'varchar', length: 100 })
   email!: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ name: 'description', type: 'varchar', length: 100, nullable: true })
   description?: string;
 
   @Column({
     type: 'date',
     default: () => 'CURRENT_DATE',
-    name: 'creation_date',
+    name: 'created_at',
   })
-  createdAt!: Date;
+  created_at!: Date;
 
   @Column({
     type: 'enum',

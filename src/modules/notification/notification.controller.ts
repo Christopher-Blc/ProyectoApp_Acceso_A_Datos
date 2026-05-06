@@ -26,6 +26,7 @@ import { NotificationService } from './notification.service';
 import {
   CreateMassiveNotificationDto,
   CreateNotificationDto,
+  UpdateNotificationDto,
 } from './dto/notification.dto';
 import { Notification } from './entities/notification.entity';
 
@@ -87,9 +88,9 @@ export class NotificationController {
     try {
       const data = {
         ...notificationDto,
-        userId: notificationDto.userId,
-        createdAt: notificationDto.createdAt
-          ? new Date(notificationDto.createdAt)
+        user_id: notificationDto.user_id,
+        created_at: notificationDto.created_at
+          ? new Date(notificationDto.created_at)
           : undefined,
       };
       return this.notificationService.create(data);
@@ -130,7 +131,7 @@ export class NotificationController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async update(
     @Param('id') id: number,
-    @Body() notificationDto: CreateNotificationDto,
+    @Body() notificationDto: UpdateNotificationDto,
   ): Promise<Notification | null> {
     try {
       return this.notificationService.update(id, notificationDto);

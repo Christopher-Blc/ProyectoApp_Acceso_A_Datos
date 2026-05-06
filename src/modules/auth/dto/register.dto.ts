@@ -93,7 +93,7 @@ export class RegisterDto {
     description: 'Date of birth of the user',
     example: '1990-01-01',
   })
-  dateOfBirth!: string;
+  date_of_birth!: string;
 
   //direccion
   @IsString()

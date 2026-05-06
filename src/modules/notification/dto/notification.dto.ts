@@ -17,7 +17,7 @@ export class CreateNotificationDto {
     example: 10,
     required: false,
   })
-  userId?: number;
+  user_id?: number;
 
   @IsString()
   @IsOptional()
@@ -42,7 +42,7 @@ export class CreateNotificationDto {
     description: 'Notification type',
     example: NotificationType.ALERT,
   })
-  notificationType?: NotificationType;
+  notification_type?: NotificationType;
 
   @IsBoolean()
   @IsOptional()
@@ -50,7 +50,7 @@ export class CreateNotificationDto {
     description: 'Indicates whether the notification has been read',
     example: false,
   })
-  isRead?: boolean;
+  is_read?: boolean;
 
   @IsDateString()
   @IsOptional()
@@ -59,7 +59,7 @@ export class CreateNotificationDto {
     example: '2024-01-01T10:00:00Z',
     required: false,
   })
-  createdAt?: string;
+  created_at?: string;
 }
 
 export class CreateMassiveNotificationDto {
@@ -82,7 +82,7 @@ export class CreateMassiveNotificationDto {
     description: 'Notification type',
     example: NotificationType.ALERT,
   })
-  notificationType!: NotificationType;
+  notification_type!: NotificationType;
 }
 
 export class UpdateNotificationDto {
@@ -92,5 +92,5 @@ export class UpdateNotificationDto {
     description: 'Indicates whether the notification has been read',
     example: false,
   })
-  isRead?: boolean;
+  is_read?: boolean;
 }

@@ -15,25 +15,25 @@ export class Review {
   id!: number;
 
   @Column({ name: 'installation_id', type: 'int' })
-  installationId!: number;
+  installation_id!: number;
 
-  @Column({ name: 'user_id', type: 'int' }) // Foreign key to User
-  userId!: number;
+  @Column({ name: 'user_id', type: 'int' })
+  user_id!: number;
 
-  @Column()
+  @Column({ name: 'title' })
   title!: string;
 
-  @Column()
+  @Column({ name: 'text' })
   text!: string;
 
-  @Column({ type: 'int' })
+  @Column({ name: 'rating', type: 'int' })
   rating!: number;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  commentDate!: Date;
+  @Column({ name: 'comment_date', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  comment_date!: Date;
 
-  @Column({ default: true })
-  isVisible!: boolean;
+  @Column({ name: 'is_visible', default: true })
+  is_visible!: boolean;
 
   @OneToOne(() => User, (u) => u.review)
   @JoinColumn({ name: 'user_id' })

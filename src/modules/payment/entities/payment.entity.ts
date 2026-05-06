@@ -28,31 +28,33 @@ export class Payment {
   id!: number;
 
   @Column({ name: 'reservation_id', type: 'int' })
-  reservationId!: number;
+  reservation_id!: number;
 
   // de momento como solo habra un poli no lo ponemos
   // @Column({ name: "instalacion_id" })
   // instalacion_id: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ name: 'amount', type: 'decimal', precision: 10, scale: 2 })
   amount!: number;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  paymentDate!: Date;
+  @Column({ name: 'payment_date', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  payment_date!: Date;
 
   @Column({
+    name: 'payment_method',
     type: 'enum',
     enum: PaymentMethod,
     default: PaymentMethod.VISA,
   })
-  paymentMethod!: PaymentMethod;
+  payment_method!: PaymentMethod;
 
   @Column({
+    name: 'payment_status',
     type: 'enum',
     enum: PaymentStatus,
     default: PaymentStatus.UNPAID,
   })
-  paymentStatus!: PaymentStatus;
+  payment_status!: PaymentStatus;
 
   @Column({ type: 'text', nullable: true })
   note?: string;

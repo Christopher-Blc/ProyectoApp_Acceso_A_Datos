@@ -97,14 +97,14 @@ export class CreateUserDto {
     description: 'Indicates if the user is active',
     example: true,
   })
-  isActive?: boolean;
+  is_active?: boolean;
 
   @IsISO8601({ strict: true })
   @ApiProperty({
     description: 'Date of birth of the user',
     example: '1990-01-01',
   })
-  dateOfBirth!: string;
+  date_of_birth!: string;
 
   @IsString()
   @ApiProperty({
@@ -172,12 +172,12 @@ export class UpdateUserDto {
 
   @IsBoolean()
   @IsOptional()
-  isActive?: boolean;
+  is_active?: boolean;
 
   @IsISO8601({ strict: true })
   @IsOptional()
   @IsDateString()
-  dateOfBirth?: Date;
+  date_of_birth?: Date;
 
   @IsOptional()
   @IsString()
@@ -191,7 +191,7 @@ export class UpdateUserDto {
     example: 2,
     required: false,
   })
-  membershipId?: number;
+  membership_id?: number;
 }
 
 export class UpdatePushTokenDto {

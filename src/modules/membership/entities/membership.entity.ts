@@ -6,13 +6,14 @@ export class Membership {
   @PrimaryGeneratedColumn({ name: 'membership_id' })
   id!: number;
 
-  @Column({ type: 'int', unique: true })
-  level!: number; //tipo bronze es el mas bajo osea level 1, silver level 2, gold level 3
+  @Column({ name: 'level', type: 'int', unique: true })
+  level!: number;
 
-  @Column({ type: 'varchar', length: 100, unique: true })
-  name!: string; // Ej: "Bronce", "Plata", "Oro"
+  @Column({ name: 'name', type: 'varchar', length: 100, unique: true })
+  name!: string;
 
   @Column({
+    name: 'discount',
     type: 'decimal',
     precision: 5,
     scale: 2,
@@ -22,13 +23,13 @@ export class Membership {
       from: (value: string) => parseFloat(value),
     },
   })
-  discount!: number; // Percentage discount (e.g. 5.00 for 5%)
+  discount!: number;
 
-  @Column({ type: 'int', default: 0 })
-  requiredReservations!: number; // How many reservations needed for this level
+  @Column({ name: 'required_reservations', type: 'int', default: 0 })
+  required_reservations!: number;
 
-  @Column({ type: 'text', nullable: true })
-  benefits?: string; // Brief description of benefits
+  @Column({ name: 'benefits', type: 'text', nullable: true })
+  benefits?: string;
 
   // Relationship: One membership (e.g. Gold) can have many users
   @OneToMany(() => User, (u) => u.membership)

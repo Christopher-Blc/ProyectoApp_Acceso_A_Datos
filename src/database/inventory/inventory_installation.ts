@@ -7,7 +7,7 @@ export default [
     phone: '123-456-7890',
     email: 'Installation.central@example.com',
     description: 'Installation deportiva',
-    createdAt: new Date('2023-01-15T10:00:00'),
+    created_at: new Date('2023-01-15T10:00:00'),
     status: InstallationStatus.ACTIVE,
   },
 ];

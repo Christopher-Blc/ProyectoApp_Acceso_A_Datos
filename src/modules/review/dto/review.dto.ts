@@ -13,14 +13,14 @@ export class CreateReviewDto {
     description: 'ID of the user',
     example: 1,
   })
-  userId!: number;
+  user_id!: number;
 
   @IsNumber()
   @ApiProperty({
     description: 'ID of the Court',
     example: 1,
   })
-  installationId!: number;
+  installation_id!: number;
 
   @IsString()
   @ApiProperty({
@@ -50,14 +50,14 @@ export class CreateReviewDto {
     description: 'Date of the comentario',
     example: '2023-12-31T23:59:59Z',
   })
-  commentDate!: string;
+  comment_date!: string;
 
   @IsBoolean()
   @ApiProperty({
     description: 'Visibility of the comentario',
     example: true,
   })
-  isVisible!: boolean;
+  is_visible!: boolean;
 }
 
 export class UpdateReviewDto {
@@ -96,5 +96,5 @@ export class UpdateReviewDto {
     description: 'Visibility of the comentario',
     example: true,
   })
-  isVisible?: boolean;
+  is_visible?: boolean;
 }

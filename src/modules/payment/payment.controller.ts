@@ -77,7 +77,7 @@ export class PaymentController {
     try {
       const pagoData = {
         ...paymentDto,
-        paymentDate: new Date(paymentDto.paymentDate),
+        payment_date: new Date(paymentDto.payment_date),
       };
       return this.PaymentService.create(pagoData);
     } catch (err) {

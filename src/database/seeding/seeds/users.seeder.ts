@@ -10,9 +10,9 @@ export class UserSeeder implements Seeder {
     const userRepository = dataSource.getRepository(User);
     const membershipRepository = dataSource.getRepository(Membership);
 
-    // 1. Buscamos la membresía inicial (requiredReservations: 0)
+    // 1. Buscamos la membresía inicial (required_reservations: 0)
     const membershipInicial = await membershipRepository.findOne({
-      where: { requiredReservations: 0 },
+      where: { required_reservations: 0 },
       order: { id: 'ASC' },
     });
 
@@ -35,20 +35,20 @@ export class UserSeeder implements Seeder {
       userEntry.phone = item.phone;
       userEntry.address = item.address!;
       userEntry.role = item.role;
-      userEntry.isActive = item.isActive ?? true;
+      userEntry.is_active = item.is_active ?? true;
 
       // Encriptamos la contraseña para que Login funcione después
       userEntry.password = await bcrypt.hash(item.password, 10);
 
       // Asignación obligatoria de membresía para el sistema de ranking
       if (membershipInicial) {
-        userEntry.membershipId = membershipInicial.id;
+        userEntry.membership_id = membershipInicial.id;
       }
 
       // Fechas (aseguramos objeto Date)
-      userEntry.registrationDate = item.registrationDate || new Date();
-      userEntry.lastLoginDate = item.lastLoginDate || new Date();
-      userEntry.dateOfBirth = new Date(item.dateOfBirth!);
+      userEntry.registration_date = item.registration_date || new Date();
+      userEntry.last_login_date = item.last_login_date || new Date();
+      userEntry.date_of_birth = new Date(item.date_of_birth!);
 
       userEntries.push(userEntry);
     }

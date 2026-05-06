@@ -32,8 +32,8 @@ export class InstallationSeeder implements Seeder {
 
       // La fecha de creación tiene CURRENT_DATE por defecto,
       // pero la asignamos si viene en el inventario
-      installationEntry.createdAt = item.createdAt
-        ? new Date(item.createdAt)
+      installationEntry.created_at = item.created_at
+        ? new Date(item.created_at)
         : new Date();
 
       // El estado usa el enum InstallationStatus
