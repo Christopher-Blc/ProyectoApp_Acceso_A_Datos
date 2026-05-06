@@ -15,49 +15,49 @@ export class CourtDto {
     description: 'ID of the installation',
     example: 1,
   })
-  instalacion_id!: number; // clave foranea Installation
+  installation_id!: number; // clave foranea Installation
 
   @IsNumber()
   @ApiProperty({
     description: 'ID of the court type',
     example: 1,
   })
-  tipo_pista_id!: number;
+  court_type_id!: number;
 
   @IsString()
   @ApiProperty({
     description: 'Unique name of the court',
     example: 'Central tennis court',
   })
-  nombre!: string;
+  name!: string;
 
   @IsNumber()
   @ApiProperty({
     description: 'Capacity of the court',
     example: 4,
   })
-  capacidad!: number;
+  capacity!: number;
 
   @IsNumber()
   @ApiProperty({
     description: 'Price per hour of the court',
     example: 20.5,
   })
-  precio_hora!: number;
+  price_per_hour!: number;
 
   @IsBoolean()
   @ApiProperty({
     description: 'Indicates if the court is covered',
     example: true,
   })
-  cubierta!: boolean;
+  covered!: boolean;
 
   @IsBoolean()
   @ApiProperty({
     description: 'Indicates if the court has lighting',
     example: true,
   })
-  iluminacion!: boolean;
+  lighting!: boolean;
 
   @IsString()
   @IsOptional()
@@ -65,7 +65,7 @@ export class CourtDto {
     description: 'Description of the court',
     example: 'Court with synthetic grass and night lighting',
   })
-  descripcion?: string;
+  description?: string;
 
   @IsEnum(EstadoCourt)
   @ApiProperty({

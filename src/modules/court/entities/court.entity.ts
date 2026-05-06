@@ -29,7 +29,7 @@ export enum DiaSemana {
 //para que solo haya una Court con el mismo nombre en la misma Installation y
 // el mismo dia de la semana, pero puede haber pistas con el mismo nombre en
 //  diferentes instalaciones o en la misma instalación pero en días diferentes
-@Unique(['nombre', 'Installation', 'dia_semana'])
+@Unique(['name', 'Installation', 'day_of_week'])
 @Entity('Court')
 export class Court {
   @PrimaryGeneratedColumn({ name: 'court_id', type: 'int' })
@@ -42,7 +42,7 @@ export class Court {
   court_type_id!: number;
 
   @Column({})
-  nombre!: string;
+  name!: string;
 
   @Column({ type: 'int' })
   capacity!: number;
