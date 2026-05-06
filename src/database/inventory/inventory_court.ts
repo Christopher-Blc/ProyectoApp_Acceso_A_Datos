@@ -7,7 +7,7 @@ export default [
   {
     installation_id: 1,
     court_type_id: 1, // ID del CourtType (Tenis, etc.)
-    nombre: 'Court Central Tenis',
+    name: 'Court Central Tenis',
     capacity: 4,
     price_per_hour: 15.5,
     covered: true, // Cambiado de cobertura (enum) a covered (boolean)
@@ -22,7 +22,7 @@ export default [
   {
     installation_id: 1,
     court_type_id: 2,
-    nombre: 'Court Padel 1',
+    name: 'Court Padel 1',
     capacity: 4,
     price_per_hour: 10.0,
     covered: false,
