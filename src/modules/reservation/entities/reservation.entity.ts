@@ -24,19 +24,19 @@ export class Reservation {
   id!: number;
 
   @Column({ name: 'user_id', type: 'int' })
-  userId!: number;
+  user_id!: number;
 
   @Column({ name: 'court_id', type: 'int' })
-  courtId!: number;
+  court_id!: number;
 
-  @Column({ type: 'date' })
-  reservationDate!: Date;
+  @Column({ name: 'reservation_date', type: 'date' })
+  reservation_date!: Date;
 
-  @Column({ type: 'time' })
-  startTime!: string;
+  @Column({ name: 'start_time', type: 'time' })
+  start_time!: string;
 
-  @Column({ type: 'time' })
-  endTime!: string;
+  @Column({ name: 'end_time', type: 'time' })
+  end_time!: string;
 
   @Column({
     type: 'enum',
@@ -45,8 +45,8 @@ export class Reservation {
   })
   status!: ReservationStatus;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  totalPrice!: number;
+  @Column({ name: 'total_price', type: 'decimal', precision: 10, scale: 2 })
+  total_price!: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt!: Date;

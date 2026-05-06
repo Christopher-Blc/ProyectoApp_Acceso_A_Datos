@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { DiaSemana, EstadoCourt } from '../entities/court.entity';
+import { DayOfWeek, CourtStatus } from '../entities/court.entity';
 import {
   IsBoolean,
   IsEnum,
@@ -9,13 +9,13 @@ import {
   Matches,
 } from 'class-validator';
 
-export class CourtDto {
+export class CreateCourtDto {
   @IsNumber()
   @ApiProperty({
     description: 'ID of the installation',
     example: 1,
   })
-  installation_id!: number; // clave foranea Installation
+  installation_id!: number;
 
   @IsNumber()
   @ApiProperty({
@@ -50,14 +50,14 @@ export class CourtDto {
     description: 'Indicates if the court is covered',
     example: true,
   })
-  covered!: boolean;
+  is_covered!: boolean;
 
   @IsBoolean()
   @ApiProperty({
     description: 'Indicates if the court has lighting',
     example: true,
   })
-  lighting!: boolean;
+  has_lighting!: boolean;
 
   @IsString()
   @IsOptional()
@@ -67,13 +67,13 @@ export class CourtDto {
   })
   description?: string;
 
-  @IsEnum(EstadoCourt)
+  @IsEnum(CourtStatus)
   @ApiProperty({
     description: 'State of the court',
-    enum: EstadoCourt,
-    example: EstadoCourt.DISPONIBLE,
+    enum: CourtStatus,
+    example: CourtStatus.AVAILABLE,
   })
-  status!: EstadoCourt;
+  status!: CourtStatus;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$/, {
@@ -89,72 +89,71 @@ export class CourtDto {
   @ApiProperty({ example: '18:00' })
   closing_time!: string;
 
-  @IsEnum(DiaSemana)
+  @IsEnum(DayOfWeek)
   @ApiProperty({
     description: 'Day of the week for the court availability',
-    enum: DiaSemana,
-    example: DiaSemana.LUNES,
+    enum: DayOfWeek,
+    example: DayOfWeek.MONDAY,
   })
-  day_of_week!: DiaSemana;
+  day_of_week!: DayOfWeek;
 }
 
-// como todos los campos van a ser opcionales , lo ponemos asi
 export class UpdateCourtDto {
-  @IsOptional()
   @IsNumber()
+  @IsOptional()
   @ApiProperty({
     description: 'ID of the installation',
     example: 1,
   })
-  installation_id?: number; // clave foranea Installation
+  installation_id?: number;
 
-  @IsOptional()
   @IsNumber()
+  @IsOptional()
   @ApiProperty({
     description: 'ID of the court type',
     example: 1,
   })
   court_type_id?: number;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   @ApiProperty({
     description: 'Unique name of the court',
     example: 'Central tennis court',
   })
   name?: string;
 
-  @IsOptional()
   @IsNumber()
+  @IsOptional()
   @ApiProperty({
     description: 'Capacity of the court',
     example: 4,
   })
   capacity?: number;
 
-  @IsOptional()
   @IsNumber()
+  @IsOptional()
   @ApiProperty({
     description: 'Price per hour of the court',
     example: 20.5,
   })
   price_per_hour?: number;
 
-  @IsOptional()
   @IsBoolean()
+  @IsOptional()
   @ApiProperty({
     description: 'Indicates if the court is covered',
     example: true,
   })
-  covered?: boolean;
+  is_covered?: boolean;
 
-  @IsOptional()
   @IsBoolean()
+  @IsOptional()
   @ApiProperty({
     description: 'Indicates if the court has lighting',
     example: true,
   })
-  lighting?: boolean;
+  has_lighting?: boolean;
 
   @IsString()
   @IsOptional()
@@ -164,62 +163,37 @@ export class UpdateCourtDto {
   })
   description?: string;
 
+  @IsEnum(CourtStatus)
   @IsOptional()
-  @IsEnum(EstadoCourt)
   @ApiProperty({
     description: 'State of the court',
-    enum: EstadoCourt,
-    example: EstadoCourt.DISPONIBLE,
+    enum: CourtStatus,
+    example: CourtStatus.AVAILABLE,
   })
-  status?: EstadoCourt;
+  status?: CourtStatus;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$/, {
     message: 'La hora debe tener formato HH:mm o HH:mm:ss',
   })
   @ApiProperty({ example: '09:00' })
   opening_time?: string;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$/, {
     message: 'La hora debe tener formato HH:mm o HH:mm:ss',
   })
   @ApiProperty({ example: '18:00' })
   closing_time?: string;
 
+  @IsEnum(DayOfWeek)
   @IsOptional()
-  @IsEnum(DiaSemana)
   @ApiProperty({
     description: 'Day of the week for the court availability',
-    enum: DiaSemana,
-    example: DiaSemana.LUNES,
+    enum: DayOfWeek,
+    example: DayOfWeek.MONDAY,
   })
-  day_of_week?: DiaSemana;
-
-  // Formato YYYY-MM-DD
-  @IsOptional()
-  @IsString()
-  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
-    message: 'Formato de fecha debe ser YYYY-MM-DD',
-  })
-  @ApiProperty({
-    description: 'Start date for selective maintenance',
-    example: '2026-06-01',
-    required: false,
-  })
-  maintenance_start?: string;
-
-  @IsOptional()
-  @IsString()
-  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
-    message: 'Formato de fecha debe ser YYYY-MM-DD',
-  })
-  @ApiProperty({
-    description: 'End date for selective maintenance',
-    example: '2026-06-10',
-    required: false,
-  })
-  maintenance_end?: string;
+  day_of_week?: DayOfWeek;
 }

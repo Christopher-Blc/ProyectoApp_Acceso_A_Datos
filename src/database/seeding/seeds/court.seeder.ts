@@ -30,8 +30,8 @@ export class CourtSeeder implements Seeder {
       courtEntry.name = item.name;
       courtEntry.capacity = item.capacity;
       courtEntry.price_per_hour = item.price_per_hour;
-      courtEntry.covered = item.covered; // booleano
-      courtEntry.lighting = item.lighting;
+      courtEntry.is_covered = item.is_covered;
+      courtEntry.has_lighting = item.has_lighting;
       courtEntry.description = item.description;
       courtEntry.status = item.status!;
       courtEntry.opening_time = item.opening_time!;

@@ -24,7 +24,7 @@ export class MembershipSeeder implements Seeder {
       membershipEntry.level = item.level;
       membershipEntry.name = item.name;
       membershipEntry.discount = item.discount;
-      membershipEntry.requiredReservations = item.requiredReservations;
+      membershipEntry.required_reservations = item.required_reservations;
       membershipEntry.benefits = item.benefits;
 
       membershipEntries.push(membershipEntry);

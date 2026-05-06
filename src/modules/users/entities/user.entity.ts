@@ -25,7 +25,7 @@ export class User {
   id!: number;
 
   @Column({ name: 'membership_id', type: 'int', nullable: true })
-  membershipId!: number;
+  membership_id!: number;
 
   @Column({ name: 'username', unique: true })
   username!: string;
@@ -53,31 +53,31 @@ export class User {
   })
   role!: UserRole;
 
-  @Column({ name: 'isActive', default: true })
-  isActive!: boolean;
+  @Column({ name: 'is_active', default: true })
+  is_active!: boolean;
 
   @Column({
     name: 'registration_date',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  registrationDate!: Date;
+  registration_date!: Date;
 
   @Column({
     name: 'last_login_date',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  lastLoginDate!: Date;
+  last_login_date!: Date;
 
   @Column({ name: 'date_of_birth', type: 'date' })
-  dateOfBirth!: Date;
+  date_of_birth!: Date;
 
   @Column({ name: 'address' })
   address!: string;
 
   @Column({ name: 'refresh_token_hash', type: 'text', nullable: true })
-  refreshTokenHash!: string | null;
+  refresh_token_hash!: string | null;
 
   @Column({ name: 'expo_push_token', type: 'text', nullable: true })
   expoPushToken!: string | null;

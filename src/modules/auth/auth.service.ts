@@ -47,11 +47,11 @@ export class AuthService {
     // `sub` representa el id lógico del usuario autenticado.
     const user = await this.usersService.findById(Number(payload.sub));
     if (!user) throw new UnauthorizedException('User does not exist');
-    if (!user.isActive) throw new ForbiddenException('Inactive user');
-    if (!user.refreshTokenHash)
+    if (!user.is_active) throw new ForbiddenException('Inactive user');
+    if (!user.refresh_token_hash)
       throw new UnauthorizedException('No refresh token saved');
 
-    const ok = await bcrypt.compare(refresh_token, user.refreshTokenHash);
+    const ok = await bcrypt.compare(refresh_token, user.refresh_token_hash);
     if (!ok) throw new UnauthorizedException('Invalid refresh token');
 
     // Reconstruimos el payload de la entidad actual para evitar datos obsoletos.
@@ -133,9 +133,9 @@ export class AuthService {
       ...dto,
       password: dto.password,
       role: UserRole.CLIENT,
-      isActive: true,
-      registrationDate: new Date(),
-      dateOfBirth: new Date(dto.dateOfBirth),
+      is_active: true,
+      registration_date: new Date(),
+      date_of_birth: new Date(dto.date_of_birth),
     });
 
     // Eliminamos datos sensibles de la respuesta pública.
@@ -159,7 +159,7 @@ export class AuthService {
     // Busca usuario por email y valida estado de cuenta.
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) throw new UnauthorizedException('Incorrect credentials');
-    if (!user.isActive) throw new ForbiddenException('Inactive user');
+    if (!user.is_active) throw new ForbiddenException('Inactive user');
 
     // Comparación segura de hash de contraseña.
     const ok = await bcrypt.compare(dto.password, user.password);

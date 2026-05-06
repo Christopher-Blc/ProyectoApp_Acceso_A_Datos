@@ -64,15 +64,15 @@ export class NotificationService {
   }
 
   async create(data: Partial<Notification>) {
-    if (!data.userId) {
-      throw new BadRequestException('userId is required');
+    if (!data.user_id) {
+      throw new BadRequestException('user_id is required');
     }
 
     const user = await this.userRepository.findOne({
-      where: { id: data.userId },
+      where: { id: data.user_id },
     });
     if (!user) {
-      throw new NotFoundException(`User ${data.userId} not found`);
+      throw new NotFoundException(`User ${data.user_id} not found`);
     }
 
     const notification = this.notiRepository.create(data);
@@ -110,10 +110,10 @@ export class NotificationService {
 
     const notifications = recipients.map((u) =>
       this.notiRepository.create({
-        userId: u.id,
+        user_id: u.id,
         title: data.title,
         message: data.message,
-        notificationType: data.notificationType,
+        notification_type: data.notification_type,
       }),
     );
 
@@ -145,7 +145,7 @@ export class NotificationService {
 
   async update(notificationId: number, data: UpdateNotificationDto) {
     await this.notiRepository.update(notificationId, {
-      isRead: data.isRead,
+      is_read: data.is_read,
     });
     return this.findOne(notificationId);
   }

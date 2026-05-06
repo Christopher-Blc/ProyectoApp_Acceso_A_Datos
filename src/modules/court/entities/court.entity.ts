@@ -11,29 +11,29 @@ import { Reservation } from '../../reservation/entities/reservation.entity';
 import { Installation } from '../../installation/entities/installation.entity';
 import { CourtType } from '../../court_type/entities/court_type.entity';
 
-export enum EstadoCourt {
-  DISPONIBLE = 'DISPONIBLE',
-  MANTENIMIENTO = 'MANTENIMIENTO',
-  INACTIVA = 'INACTIVA',
+export enum CourtStatus {
+  AVAILABLE = 'DISPONIBLE',
+  MAINTENANCE = 'MANTENIMIENTO',
+  INACTIVE = 'INACTIVA',
 }
 
-export enum DiaSemana {
-  LUNES = 'LUNES',
-  MARTES = 'MARTES',
-  MIERCOLES = 'MIERCOLES',
-  JUEVES = 'JUEVES',
-  VIERNES = 'VIERNES',
-  SABADO = 'SABADO',
-  DOMINGO = 'DOMINGO',
+export enum DayOfWeek {
+  MONDAY = 'LUNES',
+  TUESDAY = 'MARTES',
+  WEDNESDAY = 'MIERCOLES',
+  THURSDAY = 'JUEVES',
+  FRIDAY = 'VIERNES',
+  SATURDAY = 'SABADO',
+  SUNDAY = 'DOMINGO',
 }
 //para que solo haya una Court con el mismo nombre en la misma Installation y
 // el mismo dia de la semana, pero puede haber pistas con el mismo nombre en
 //  diferentes instalaciones o en la misma instalación pero en días diferentes
-@Unique(['name', 'Installation', 'day_of_week'])
+@Unique(['name', 'installation', 'day_of_week'])
 @Entity('Court')
 export class Court {
   @PrimaryGeneratedColumn({ name: 'court_id', type: 'int' })
-  court_id!: number;
+  id!: number;
 
   @Column({ name: 'installation_id', type: 'int' })
   installation_id!: number;
@@ -50,21 +50,21 @@ export class Court {
   @Column({ type: 'decimal', precision: 8, scale: 2 })
   price_per_hour!: number;
 
-  @Column({ type: 'boolean', default: false })
-  covered!: boolean;
+  @Column({ name: 'is_covered', type: 'boolean', default: false })
+  is_covered!: boolean;
 
-  @Column({ type: 'boolean', default: false })
-  lighting!: boolean;
+  @Column({ name: 'has_lighting', type: 'boolean', default: false })
+  has_lighting!: boolean;
 
   @Column({})
   description?: string;
 
   @Column({
     type: 'enum',
-    enum: EstadoCourt,
-    default: EstadoCourt.DISPONIBLE,
+    enum: CourtStatus,
+    default: CourtStatus.AVAILABLE,
   })
-  status!: EstadoCourt;
+  status!: CourtStatus;
 
   @Column({ type: 'time' })
   opening_time!: string;
@@ -73,18 +73,19 @@ export class Court {
   closing_time!: string;
 
   @Column({
+    name: 'day_of_week',
     type: 'enum',
-    enum: DiaSemana,
-    default: DiaSemana.LUNES,
+    enum: DayOfWeek,
+    default: DayOfWeek.MONDAY,
   })
-  day_of_week!: DiaSemana;
+  day_of_week!: DayOfWeek;
 
   @Column({ type: 'int', default: 0 })
   reservations_made!: number;
 
   @ManyToOne(() => Installation, (i) => i.courts)
   @JoinColumn({ name: 'installation_id' })
-  Installation!: Installation;
+  installation!: Installation;
 
   @ManyToOne(() => CourtType, (tp) => tp.courts)
   @JoinColumn({ name: 'court_type_id' })

@@ -16,14 +16,14 @@ export class CreateReservationDto {
     description: 'ID of the Court being reserved',
     example: 1,
   })
-  courtId!: number;
+  court_id!: number;
 
   @IsDateString()
   @ApiProperty({
     description: 'Date of the reservation',
     example: '2026-04-01',
   })
-  reservationDate!: string;
+  reservation_date!: string;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
@@ -33,7 +33,7 @@ export class CreateReservationDto {
     description: 'Start time of the reservation',
     example: '09:00',
   })
-  startTime!: string;
+  start_time!: string;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
@@ -43,7 +43,7 @@ export class CreateReservationDto {
     description: 'End time of the reservation',
     example: '10:30',
   })
-  endTime!: string;
+  end_time!: string;
 
   @IsOptional()
   @IsEnum(ReservationStatus)
@@ -71,7 +71,7 @@ export class UpdateReservationDto {
     description: 'ID of the Court being reserved',
     example: 1,
   })
-  courtId?: number;
+  court_id?: number;
 
   @IsOptional()
   @IsDateString()
@@ -80,7 +80,7 @@ export class UpdateReservationDto {
     example: '2026-04-01',
     required: false,
   })
-  reservationDate?: string;
+  reservation_date?: string;
 
   @IsOptional()
   @IsString()
@@ -90,7 +90,7 @@ export class UpdateReservationDto {
     example: '11:00',
     required: false,
   })
-  startTime?: string;
+  start_time?: string;
 
   @IsOptional()
   @IsString()
@@ -100,7 +100,7 @@ export class UpdateReservationDto {
     example: '12:30',
     required: false,
   })
-  endTime?: string;
+  end_time?: string;
 
   @IsOptional()
   @IsEnum(ReservationStatus)

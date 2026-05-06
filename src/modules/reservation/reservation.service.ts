@@ -25,26 +25,26 @@ export class ReservationService {
   ) {}
 
   async findAll(
-    courtId?: number,
+    court_id?: number,
     fromDate?: string,
   ): Promise<Reservation[]> {
     const where: any = {};
 
-    if (courtId) {
+    if (court_id) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      where.courtId = courtId;
+      where.court_id = court_id;
     }
 
     if (fromDate) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      where.reservationDate = MoreThanOrEqual(fromDate);
+      where.reservation_date = MoreThanOrEqual(fromDate);
     }
 
     return this.reservaRepo.find({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       where,
       relations: ['user', 'court', 'payments'],
-      order: { reservationDate: 'ASC', startTime: 'ASC' },
+      order: { reservation_date: 'ASC', start_time: 'ASC' },
     });
   }
 
@@ -58,32 +58,32 @@ export class ReservationService {
     return reservation;
   }
 
-  async findByUserId(userId: number): Promise<Reservation[]> {
-    if (!userId) throw new ForbiddenException('No tienes permiso');
+  async findByUserId(user_id: number): Promise<Reservation[]> {
+    if (!user_id) throw new ForbiddenException('No tienes permiso');
     return this.reservaRepo.find({
-      where: { userId },
+      where: { user_id },
       relations: ['user', 'court', 'payments'],
     });
   }
 
   async create(
     dto: CreateReservationDto,
-    userId: number,
+    user_id: number,
   ): Promise<Reservation> {
-    const court = await this.pistaRepo.findOneBy({ id: dto.courtId });
+    const court = await this.pistaRepo.findOneBy({ id: dto.court_id });
     if (!court) throw new NotFoundException('Court no encontrada');
 
     //calculamos el precio final aqui para que no se hagan trampas desde el front
     const precioCalculado = this.calcularPrecio(
-      Number(court.pricePerHour),
-      dto.startTime,
-      dto.endTime,
+      Number(court.price_per_hour),
+      dto.start_time,
+      dto.end_time,
     );
 
     const newReservation = this.reservaRepo.create({
       ...dto,
-      userId,
-      totalPrice: precioCalculado,
+      user_id,
+      total_price: precioCalculado,
       status: ReservationStatus.PENDING,
     });
 
@@ -94,7 +94,7 @@ export class ReservationService {
   async update(
     reservationId: number,
     dto: UpdateReservationDto,
-    userId: number,
+    user_id: number,
     user_role: UserRole,
   ): Promise<Reservation> {
     const reservation = await this.findOne(reservationId);
@@ -104,7 +104,7 @@ export class ReservationService {
       user_role === UserRole.SUPER_ADMIN ||
       user_role === UserRole.ADMINISTRATION;
 
-    if (reservation.userId !== userId && !isAdmin) {
+    if (reservation.user_id !== user_id && !isAdmin) {
       throw new ForbiddenException(
         'No tienes permiso para editar esta Reservation',
       );
@@ -118,18 +118,18 @@ export class ReservationService {
     }
 
     // 3. Recalcular precio solo si cambian campos clave
-    if (dto.courtId || dto.startTime || dto.endTime) {
-      const id_Court = dto.courtId || reservation.courtId;
-      const h_inicio = dto.startTime || reservation.startTime;
-      const h_fin = dto.endTime || reservation.endTime;
+    if (dto.court_id || dto.start_time || dto.end_time) {
+      const id_Court = dto.court_id || reservation.court_id;
+      const h_inicio = dto.start_time || reservation.start_time;
+      const h_fin = dto.end_time || reservation.end_time;
 
       const court = await this.pistaRepo.findOneBy({ id: id_Court });
       if (!court) throw new NotFoundException('That Court does not exist');
 
       // Actualizamos el precio_total en el objeto que se guardará
       const updatedDto = dto as Partial<Reservation>;
-      updatedDto.totalPrice = this.calcularPrecio(
-        Number(court.pricePerHour),
+      updatedDto.total_price = this.calcularPrecio(
+        Number(court.price_per_hour),
         h_inicio,
         h_fin,
       );
@@ -147,13 +147,13 @@ export class ReservationService {
         nuevoEstado === ReservationStatus.COMPLETED ||
         estadoAnterior === ReservationStatus.COMPLETED
       ) {
-        await this.userService.updateUserRank(reservation.userId);
+        await this.userService.updateUserRank(reservation.user_id);
       }
 
       // El contador aumenta si pasa a finalizada
       if (nuevoEstado === ReservationStatus.COMPLETED) {
         await this.pistaRepo.increment(
-          { id: reservation.courtId },
+          { id: reservation.court_id },
           'reservations_made',
           1,
         );
@@ -175,7 +175,7 @@ export class ReservationService {
     await this.reservaRepo.delete(reservation.id);
 
     if (eraFinalizada) {
-      await this.userService.updateUserRank(reservation.userId);
+      await this.userService.updateUserRank(reservation.user_id);
     }
 
     return { deleted: true };

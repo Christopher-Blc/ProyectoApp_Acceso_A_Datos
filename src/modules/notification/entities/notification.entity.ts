@@ -20,31 +20,31 @@ export class Notification {
   id!: number;
 
   @Column({ name: 'user_id', type: 'int' })
-  userId!: number;
+  user_id!: number;
 
-  @Column({ name: 'titulo', length: 100, nullable: true })
+  @Column({ name: 'title', length: 100, nullable: true })
   title?: string;
 
-  @Column({ name: 'mensaje' })
+  @Column({ name: 'message' })
   message!: string;
 
   @Column({
     name: 'notification_type',
     type: 'enum',
     enum: NotificationType,
-    default: NotificationType.REMINDER, // valor por defecto
+    default: NotificationType.REMINDER,
   })
-  notificationType!: NotificationType;
+  notification_type!: NotificationType;
 
-  @Column({ name: 'leida', default: false })
-  isRead!: boolean;
+  @Column({ name: 'is_read', default: false })
+  is_read!: boolean;
 
   @Column({
-    name: 'fecha',
+    name: 'created_at',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createdAt!: Date;
+  created_at!: Date;
 
   @ManyToOne(() => User, (user) => user.notifications)
   @JoinColumn({ name: 'user_id' })

@@ -27,9 +27,9 @@ export class UsersService {
     private readonly reservaRepository: Repository<Reservation>,
   ) {}
 
-  async updateUserRank(userId: number): Promise<void> {
+  async updateUserRank(user_id: number): Promise<void> {
     const user = await this.userRepository.findOne({
-      where: { id: userId },
+      where: { id: user_id },
       relations: ['membership'],
     });
 
@@ -37,58 +37,58 @@ export class UsersService {
 
     const totalFinalizadas = await this.reservaRepository.count({
       where: {
-        userId,
+        user_id,
         status: ReservationStatus.COMPLETED,
       },
     });
 
     const mejorMembership = await this.membresiaRepository.findOne({
       where: {
-        requiredReservations: LessThanOrEqual(totalFinalizadas),
+        required_reservations: LessThanOrEqual(totalFinalizadas),
       },
       order: {
-        requiredReservations: 'DESC',
+        required_reservations: 'DESC',
       },
     });
 
     if (
       mejorMembership &&
-      user.membershipId !== mejorMembership.id
+      user.membership_id !== mejorMembership.id
     ) {
-      await this.userRepository.update(userId, {
-        membershipId: mejorMembership.id,
+      await this.userRepository.update(user_id, {
+        membership_id: mejorMembership.id,
       });
     }
   }
 
   async update(
-    userId: number,
+    user_id: number,
     data: UpdateUserDto,
     isSelfUpdate: boolean,
   ): Promise<User> {
-    await this.findOne(userId);
+    await this.findOne(user_id);
 
     if (isSelfUpdate) {
       delete data.role;
-      delete data.membershipId;
-      delete data.isActive;
+      delete data.membership_id;
+      delete data.is_active;
     }
 
     if (data.password) {
       data.password = await bcrypt.hash(data.password, 10);
     }
 
-    await this.userRepository.update(userId, data);
-    return this.findOne(userId);
+    await this.userRepository.update(user_id, data);
+    return this.findOne(user_id);
   }
 
   async updatePushToken(
-    userId: number,
+    user_id: number,
     expoPushToken: string,
   ): Promise<User> {
-    await this.findOne(userId);
-    await this.userRepository.update(userId, { expoPushToken });
-    return this.findOne(userId);
+    await this.findOne(user_id);
+    await this.userRepository.update(user_id, { expoPushToken });
+    return this.findOne(user_id);
   }
 
   async findAll(): Promise<User[]> {
@@ -97,9 +97,9 @@ export class UsersService {
     });
   }
 
-  async findOne(userId: number): Promise<User> {
+  async findOne(user_id: number): Promise<User> {
     const user = await this.userRepository.findOne({
-      where: { id: userId },
+      where: { id: user_id },
       relations: ['reservations', 'membership'],
     });
     if (!user) throw new NotFoundException('user not found');
@@ -123,9 +123,9 @@ export class UsersService {
     }
   }
 
-  async remove(userId: number): Promise<void> {
+  async remove(user_id: number): Promise<void> {
     const user = await this.userRepository.findOne({
-      where: { id: userId },
+      where: { id: user_id },
       relations: ['reservations'],
     });
 
@@ -133,7 +133,7 @@ export class UsersService {
 
     const hoy = new Date();
     const tienePendientes = user.reservations.some(
-      (r) => new Date(r.reservationDate) >= hoy,
+      (r) => new Date(r.reservation_date) >= hoy,
     );
 
     if (tienePendientes) {
@@ -166,24 +166,24 @@ export class UsersService {
       .getOne();
   }
 
-  async updateLastLogin(userId: number): Promise<void> {
+  async updateLastLogin(user_id: number): Promise<void> {
     await this.userRepository.update(
-      { id: userId },
-      { lastLoginDate: new Date() },
+      { id: user_id },
+      { last_login_date: new Date() },
     );
   }
 
-  async findById(userId: number): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { id: userId } });
+  async findById(user_id: number): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { id: user_id } });
   }
 
   async updateRefreshTokenHash(
-    userId: number,
+    user_id: number,
     hash: string | null,
   ): Promise<void> {
     await this.userRepository.update(
-      { id: userId },
-      { refreshTokenHash: hash },
+      { id: user_id },
+      { refresh_token_hash: hash },
     );
   }
 }
