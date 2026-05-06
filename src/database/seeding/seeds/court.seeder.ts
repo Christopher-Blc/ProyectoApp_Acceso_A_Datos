@@ -13,7 +13,7 @@ export class CourtSeeder implements Seeder {
       // Buscamos duplicados según la restricción @Unique de la entidad
       const existing = await courtRepository.findOne({
         where: {
-          nombre: item.nombre,
+          name: item.name,
           installation_id: item.installation_id,
           day_of_week: item.day_of_week,
         },
@@ -27,7 +27,7 @@ export class CourtSeeder implements Seeder {
       // Asignación de campos según la entidad
       courtEntry.installation_id = item.installation_id;
       courtEntry.court_type_id = item.court_type_id;
-      courtEntry.name = item.nombre;
+      courtEntry.name = item.name;
       courtEntry.capacity = item.capacity;
       courtEntry.price_per_hour = item.price_per_hour;
       courtEntry.covered = item.covered; // booleano
@@ -44,7 +44,7 @@ export class CourtSeeder implements Seeder {
 
     if (courtEntries.length > 0) {
       await courtRepository.save(courtEntries);
-      console.log(`${courtEntries.length} pistas created.`);
+      console.log(`${courtEntries.length} courts created.`);
     }
     console.log('Court seeding completed!');
   }
