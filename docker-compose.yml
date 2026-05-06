@@ -44,8 +44,8 @@ services:
     environment:
       PMA_HOST: ${DB_HOST}
       PMA_PORT: ${DB_PORT}
-      #PMA_USER: ${DB_USER}
-      #PMA_PASSWORD: ${DB_ROOT_PASSWORD}
+      PMA_USER: ${DB_USER}
+      PMA_PASSWORD: ${DB_ROOT_PASSWORD}
       PMA_ARBITRARY: 1
     depends_on:
       - database
