@@ -86,8 +86,8 @@ export class CourtService {
   async create(info_Court: CourtDto): Promise<Court> {
     const data = {
       ...info_Court,
-      hora_apertura: this.formatTime(info_Court.hora_apertura),
-      hora_cierre: this.formatTime(info_Court.hora_cierre),
+      opening_time: this.formatTime(info_Court.opening_time),
+      closing_time: this.formatTime(info_Court.closing_time),
     };
     return this.pistaRepo.save(this.pistaRepo.create(data));
   }
@@ -102,37 +102,37 @@ export class CourtService {
       ...info_Court,
     } as QueryDeepPartialEntity<Court>;
 
-    const apertura = info_Court.hora_apertura ?? undefined;
+    const apertura = info_Court.opening_time ?? undefined;
     if (apertura)
       dataNormalizada = {
         ...dataNormalizada,
-        hora_apertura: this.formatTime(apertura),
+        opening_time: this.formatTime(apertura),
       } as QueryDeepPartialEntity<Court>;
 
-    const cierre = info_Court.hora_cierre ?? undefined;
+    const cierre = info_Court.closing_time ?? undefined;
     if (cierre)
       dataNormalizada = {
         ...dataNormalizada,
-        hora_cierre: this.formatTime(cierre),
+        closing_time: this.formatTime(cierre),
       } as QueryDeepPartialEntity<Court>;
 
     // Lógica de mantenimiento selectivo
     if (
-      (info_Court.estado === EstadoCourt.MANTENIMIENTO ||
-        info_Court.estado === EstadoCourt.INACTIVA) &&
-      pistaActual.status !== info_Court.estado
+      (info_Court.status === EstadoCourt.MANTENIMIENTO ||
+        info_Court.status === EstadoCourt.INACTIVA) &&
+      pistaActual.status !== info_Court.status
     ) {
       const motivo =
-        info_Court.estado === EstadoCourt.INACTIVA
+        info_Court.status === EstadoCourt.INACTIVA
           ? 'La Court ha sido eliminada del sistema.'
           : 'Court cerrada por mantenimiento programado.';
 
       // Definimos el filtro de fechas
       const filtroFecha =
-        info_Court.mantenimiento_desde && info_Court.mantenimiento_hasta
+        info_Court.maintenance_start && info_Court.maintenance_end
           ? Between(
-              new Date(info_Court.mantenimiento_desde),
-              new Date(info_Court.mantenimiento_hasta),
+              new Date(info_Court.maintenance_start),
+              new Date(info_Court.maintenance_end),
             )
           : MoreThanOrEqual(new Date(new Date().toISOString().split('T')[0]));
 
