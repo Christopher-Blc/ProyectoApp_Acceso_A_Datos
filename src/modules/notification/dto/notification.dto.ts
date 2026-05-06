@@ -7,102 +7,90 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { tipoNoti } from '../entities/notification.entity';
+import { NotificationType } from '../entities/notification.entity';
 
-export class NotificationDto {
-  @IsOptional()
-  noti_id?: number;
-
+export class CreateNotificationDto {
   @IsInt()
   @IsOptional()
   @ApiProperty({
-    description: 'ID del usuario destinatario de la notificación',
+    description: 'Recipient user ID',
     example: 10,
     required: false,
   })
-  user_id?: number;
-
-  @IsInt()
-  @IsOptional()
-  @ApiProperty({
-    description: 'Alias legacy de user_id para compatibilidad',
-    example: 10,
-    required: false,
-  })
-  usuario_id?: number;
+  userId?: number;
 
   @IsString()
   @IsOptional()
   @ApiProperty({
-    description: 'Título de la notificación',
+    description: 'Notification title',
     example: 'Reserva confirmada',
     required: false,
   })
-  titulo?: string;
+  title?: string;
 
   @IsString()
   @IsOptional()
   @ApiProperty({
-    description: 'Mensaje de la notificación',
+    description: 'Notification message',
     example: 'Tu reserva ha sido confirmada',
   })
-  mensaje?: string;
+  message?: string;
 
-  @IsEnum(tipoNoti)
+  @IsEnum(NotificationType)
   @IsOptional()
   @ApiProperty({
-    description: 'Tipo de notificación',
-    example: tipoNoti.ALERT,
+    description: 'Notification type',
+    example: NotificationType.ALERT,
   })
-  tipoNoti?: tipoNoti;
+  notificationType?: NotificationType;
 
   @IsBoolean()
   @IsOptional()
   @ApiProperty({
-    description: 'Indica si la notificación ha sido leída',
+    description: 'Indicates whether the notification has been read',
     example: false,
   })
-  leida?: boolean;
+  isRead?: boolean;
 
   @IsDateString()
   @IsOptional()
   @ApiProperty({
-    description: 'Fecha de la notificación',
+    description: 'Notification date',
     example: '2024-01-01T10:00:00Z',
     required: false,
   })
-  fecha?: string;
+  createdAt?: string;
 }
 
-export class CreateMassiveNotiDto {
+export class CreateMassiveNotificationDto {
   @IsString()
   @ApiProperty({
-    description: 'Título de la notificación masiva',
+    description: 'Mass notification title',
     example: 'Mantenimiento programado',
   })
-  titulo!: string;
+  title!: string;
 
   @IsString()
   @ApiProperty({
-    description: 'Mensaje de la notificación masiva',
+    description: 'Mass notification message',
     example: 'Habrá mantenimiento esta noche a las 23:00.',
   })
-  mensaje!: string;
+  message!: string;
 
-  @IsEnum(tipoNoti)
+  @IsEnum(NotificationType)
   @ApiProperty({
-    description: 'Tipo de notificación',
-    example: tipoNoti.ALERT,
+    description: 'Notification type',
+    example: NotificationType.ALERT,
   })
-  tipoNoti!: tipoNoti;
+  notificationType!: NotificationType;
 }
 
 export class UpdateNotificationDto {
   @IsBoolean()
   @IsOptional()
   @ApiProperty({
-    description: 'Indica si la notificación ha sido leída',
+    description: 'Indicates whether the notification has been read',
     example: false,
   })
-  leida?: boolean;
+  isRead?: boolean;
 }

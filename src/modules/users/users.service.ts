@@ -13,7 +13,7 @@ import { UpdateUserDto } from './dto/users.dto';
 import { Membership } from '../membership/entities/membership.entity';
 import {
   Reservation,
-  estadoReserva,
+  ReservationStatus,
 } from '../reservation/entities/reservation.entity';
 
 @Injectable()
@@ -27,50 +27,50 @@ export class UsersService {
     private readonly reservaRepository: Repository<Reservation>,
   ) {}
 
-  async updateUserRank(usuario_id: number): Promise<void> {
+  async updateUserRank(userId: number): Promise<void> {
     const user = await this.userRepository.findOne({
-      where: { usuario_id },
-      relations: ['Membership'],
+      where: { id: userId },
+      relations: ['membership'],
     });
 
     if (!user) return;
 
     const totalFinalizadas = await this.reservaRepository.count({
       where: {
-        user_id: usuario_id,
-        status: estadoReserva.COMPLETED,
+        userId,
+        status: ReservationStatus.COMPLETED,
       },
     });
 
     const mejorMembership = await this.membresiaRepository.findOne({
       where: {
-        required_reservations: LessThanOrEqual(totalFinalizadas),
+        requiredReservations: LessThanOrEqual(totalFinalizadas),
       },
       order: {
-        required_reservations: 'DESC',
+        requiredReservations: 'DESC',
       },
     });
 
     if (
       mejorMembership &&
-      user.Membership_id !== mejorMembership.membership_id
+      user.membershipId !== mejorMembership.id
     ) {
-      await this.userRepository.update(usuario_id, {
-        Membership_id: mejorMembership.membership_id,
+      await this.userRepository.update(userId, {
+        membershipId: mejorMembership.id,
       });
     }
   }
 
   async update(
-    usuario_id: number,
+    userId: number,
     data: UpdateUserDto,
     isSelfUpdate: boolean,
   ): Promise<User> {
-    await this.findOne(usuario_id);
+    await this.findOne(userId);
 
     if (isSelfUpdate) {
       delete data.role;
-      delete data.Membership_id;
+      delete data.membershipId;
       delete data.isActive;
     }
 
@@ -78,29 +78,29 @@ export class UsersService {
       data.password = await bcrypt.hash(data.password, 10);
     }
 
-    await this.userRepository.update(usuario_id, data);
-    return this.findOne(usuario_id);
+    await this.userRepository.update(userId, data);
+    return this.findOne(userId);
   }
 
   async updatePushToken(
-    usuario_id: number,
+    userId: number,
     expoPushToken: string,
   ): Promise<User> {
-    await this.findOne(usuario_id);
-    await this.userRepository.update(usuario_id, { expoPushToken });
-    return this.findOne(usuario_id);
+    await this.findOne(userId);
+    await this.userRepository.update(userId, { expoPushToken });
+    return this.findOne(userId);
   }
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find({
-      relations: ['reservas', 'Membership'],
+      relations: ['reservations', 'membership'],
     });
   }
 
-  async findOne(usuario_id: number): Promise<User> {
+  async findOne(userId: number): Promise<User> {
     const user = await this.userRepository.findOne({
-      where: { usuario_id },
-      relations: ['reservas', 'Membership'],
+      where: { id: userId },
+      relations: ['reservations', 'membership'],
     });
     if (!user) throw new NotFoundException('user not found');
     return user;
@@ -123,17 +123,17 @@ export class UsersService {
     }
   }
 
-  async remove(usuario_id: number): Promise<void> {
+  async remove(userId: number): Promise<void> {
     const user = await this.userRepository.findOne({
-      where: { usuario_id },
-      relations: ['reservas'],
+      where: { id: userId },
+      relations: ['reservations'],
     });
 
     if (!user) throw new NotFoundException('User not found');
 
     const hoy = new Date();
     const tienePendientes = user.reservations.some(
-      (r) => new Date(r.reservation_date) >= hoy,
+      (r) => new Date(r.reservationDate) >= hoy,
     );
 
     if (tienePendientes) {
@@ -166,24 +166,24 @@ export class UsersService {
       .getOne();
   }
 
-  async updateLastLogin(usuario_id: number): Promise<void> {
+  async updateLastLogin(userId: number): Promise<void> {
     await this.userRepository.update(
-      { usuario_id },
-      { last_login_date: new Date() },
+      { id: userId },
+      { lastLoginDate: new Date() },
     );
   }
 
-  async findById(usuario_id: number): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { usuario_id } });
+  async findById(userId: number): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { id: userId } });
   }
 
   async updateRefreshTokenHash(
-    usuario_id: number,
+    userId: number,
     hash: string | null,
   ): Promise<void> {
     await this.userRepository.update(
-      { usuario_id },
-      { refresh_token_hash: hash },
+      { id: userId },
+      { refreshTokenHash: hash },
     );
   }
 }

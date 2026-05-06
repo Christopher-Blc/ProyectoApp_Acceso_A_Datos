@@ -1,4 +1,4 @@
-import { estado_instalacion } from '../../modules/installation/entities/installation.entity';
+import { InstallationStatus } from '../../modules/installation/entities/installation.entity';
 
 export default [
   {
@@ -7,7 +7,7 @@ export default [
     phone: '123-456-7890',
     email: 'Installation.central@example.com',
     description: 'Installation deportiva',
-    creation_date: new Date('2023-01-15T10:00:00'),
-    status: estado_instalacion.ACTIVE,
+    createdAt: new Date('2023-01-15T10:00:00'),
+    status: InstallationStatus.ACTIVE,
   },
 ];

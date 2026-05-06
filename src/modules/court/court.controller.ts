@@ -12,7 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CourtService } from './court.service';
-import { CourtDto, UpdateCourtDto } from './dto/court.dto';
+import { CreateCourtDto, UpdateCourtDto } from './dto/court.dto';
 import { Court } from './entities/court.entity';
 import {
   ApiBearerAuth,
@@ -28,7 +28,7 @@ import { UserRole } from '../users/entities/user.entity';
 import { normalizeError } from '../../common/utils/error.util';
 
 @UseGuards(AuthGuard, RolesGuard)
-@ApiTags('pistas')
+@ApiTags('courts')
 @ApiBearerAuth()
 @Controller('courts')
 export class CourtController {
@@ -58,13 +58,13 @@ export class CourtController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiQuery({
-    name: 'fecha',
+    name: 'date',
     example: '2026-04-27',
     description: 'Date in YYYY-MM-DD format',
   })
   @UseGuards(AuthGuard)
-  async getDisponibilidad(@Query('fecha') fecha: string) {
-    return await this.CourtService.obtenerDisponibilidad(fecha);
+  async getDisponibilidad(@Query('date') date: string) {
+    return await this.CourtService.obtenerDisponibilidad(date);
   }
 
   // Ruta /Court/:id -> obtener una pista por ID
@@ -86,14 +86,14 @@ export class CourtController {
 
   // Ruta /Court (POST) -> crear una pista nueva
   @Post()
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new court' })
   @ApiResponse({ status: 201, description: 'Court created successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async create(@Body() CourtDto: CourtDto): Promise<Court> {
+  async create(@Body() courtDto: CreateCourtDto): Promise<Court> {
     try {
-      return this.CourtService.create(CourtDto);
+      return this.CourtService.create(courtDto);
     } catch (err) {
       const { message, status } = normalizeError(err);
       console.error('Error creating court:', err);
@@ -103,7 +103,7 @@ export class CourtController {
 
   // Ruta /Court/:id (PUT) -> actualizar una pista existente
   @Put(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: 'Update court - Supports selective maintenance dates',
   })
@@ -113,10 +113,10 @@ export class CourtController {
   @ApiResponse({ status: 404, description: 'Court not found.' })
   async update(
     @Param('id') id: number,
-    @Body() CourtDto: UpdateCourtDto,
+    @Body() courtDto: UpdateCourtDto,
   ): Promise<Court> {
     try {
-      return this.CourtService.update(id, CourtDto);
+      return this.CourtService.update(id, courtDto);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
@@ -125,7 +125,7 @@ export class CourtController {
 
   // Ruta /Court/:id (DELETE) -> eliminar una pista
   @Delete(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Delete a court' })
   @ApiResponse({ status: 200, description: 'Court deleted successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })

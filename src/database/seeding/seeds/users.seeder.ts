@@ -10,10 +10,10 @@ export class UserSeeder implements Seeder {
     const userRepository = dataSource.getRepository(User);
     const membershipRepository = dataSource.getRepository(Membership);
 
-    // 1. Buscamos la membresía inicial (required_reservations: 0)
+    // 1. Buscamos la membresía inicial (requiredReservations: 0)
     const membershipInicial = await membershipRepository.findOne({
-      where: { required_reservations: 0 },
-      order: { membership_id: 'ASC' },
+      where: { requiredReservations: 0 },
+      order: { id: 'ASC' },
     });
 
     const userEntries: User[] = [];
@@ -42,13 +42,13 @@ export class UserSeeder implements Seeder {
 
       // Asignación obligatoria de membresía para el sistema de ranking
       if (membershipInicial) {
-        userEntry.Membership_id = membershipInicial.membership_id;
+        userEntry.membershipId = membershipInicial.id;
       }
 
       // Fechas (aseguramos objeto Date)
-      userEntry.registration_date = item.registration_date || new Date();
-      userEntry.last_login_date = item.last_login_date || new Date();
-      userEntry.date_of_birth = new Date(item.date_of_birth!);
+      userEntry.registrationDate = item.registrationDate || new Date();
+      userEntry.lastLoginDate = item.lastLoginDate || new Date();
+      userEntry.dateOfBirth = new Date(item.dateOfBirth!);
 
       userEntries.push(userEntry);
     }

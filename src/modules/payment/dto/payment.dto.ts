@@ -10,10 +10,6 @@ import { PaymentMethod, PaymentStatus } from '../entities/payment.entity';
 
 export class CreatePaymentDto {
   @IsNumber()
-  @ApiProperty()
-  payment_id!: number;
-
-  @IsNumber()
   @ApiProperty({
     description: 'Amount of the payment',
     example: 10.5,
@@ -25,7 +21,7 @@ export class CreatePaymentDto {
     description: 'Date of the payment',
     example: '2024-01-01T10:00:00Z',
   })
-  payment_date!: string;
+  paymentDate!: string;
 
   // Método de Payment
   @IsEnum(PaymentMethod)
@@ -33,22 +29,22 @@ export class CreatePaymentDto {
     description: 'Payment method',
     example: PaymentMethod.VISA,
   })
-  payment_method!: PaymentMethod;
+  paymentMethod!: PaymentMethod;
 
   // Estado del Payment
   @IsEnum(PaymentStatus)
   @ApiProperty({
     description: 'Payment status',
-    example: PaymentStatus.NO_PAGADO,
+    example: PaymentStatus.UNPAID,
   })
-  payment_status!: PaymentStatus;
+  paymentStatus!: PaymentStatus;
 
   @IsString()
   @ApiProperty({
     description: 'Additional notes about the payment',
     example: 'Payment received in full',
   })
-  nota!: string;
+  note!: string;
 }
 
 export class UpdatePaymentDto {
@@ -71,16 +67,16 @@ export class UpdatePaymentDto {
     description: 'Payment method',
     example: PaymentMethod.VISA,
   })
-  payment_method?: PaymentMethod;
+  paymentMethod?: PaymentMethod;
 
   // Estado del Payment
   @IsOptional()
   @IsEnum(PaymentStatus)
   @ApiProperty({
     description: 'Payment status',
-    example: PaymentStatus.NO_PAGADO,
+    example: PaymentStatus.UNPAID,
   })
-  payment_status?: PaymentStatus;
+  paymentStatus?: PaymentStatus;
 
   @IsOptional()
   @IsString()
@@ -88,5 +84,5 @@ export class UpdatePaymentDto {
     description: 'Additional notes about the payment',
     example: 'Payment received in full',
   })
-  nota?: string;
+  note?: string;
 }

@@ -12,15 +12,15 @@ export class CourtTypeSeeder implements Seeder {
     for (const item of courtTypeData) {
       // Buscamos por nombre para evitar duplicados
       const existing = await courtTypeRepository.findOne({
-        where: { nombre: item.nombre },
+        where: { name: item.name },
       });
 
       if (existing) continue;
 
       const entry = new CourtType();
       // Solo tiene id (auto), nombre e imagen según la entidad
-      entry.nombre = item.nombre;
-      entry.imagen = item.imagen;
+      entry.name = item.name;
+      entry.image = item.image;
 
       entries.push(entry);
     }

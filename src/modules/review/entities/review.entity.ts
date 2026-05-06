@@ -12,13 +12,13 @@ import { Installation } from '../../installation/entities/installation.entity';
 @Entity()
 export class Review {
   @PrimaryGeneratedColumn({ name: 'review_id', type: 'int' })
-  review_id!: number;
+  id!: number;
 
   @Column({ name: 'installation_id', type: 'int' })
-  installation_id!: number;
+  installationId!: number;
 
   @Column({ name: 'user_id', type: 'int' }) // Foreign key to User
-  user_id!: number;
+  userId!: number;
 
   @Column()
   title!: string;
@@ -30,10 +30,10 @@ export class Review {
   rating!: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  comment_date!: Date;
+  commentDate!: Date;
 
   @Column({ default: true })
-  visible!: boolean;
+  isVisible!: boolean;
 
   @OneToOne(() => User, (u) => u.review)
   @JoinColumn({ name: 'user_id' })
@@ -41,5 +41,5 @@ export class Review {
 
   @ManyToOne(() => Installation, (i) => i.reviews)
   @JoinColumn({ name: 'installation_id' })
-  Installation!: Installation;
+  installation!: Installation;
 }

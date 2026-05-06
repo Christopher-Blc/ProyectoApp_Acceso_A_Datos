@@ -13,9 +13,9 @@ export class ReviewSeeder implements Seeder {
       // Buscamos duplicados por usuario, instalación y fecha
       const existing = await reviewRepository.findOne({
         where: {
-          user_id: item.user_id,
-          installation_id: item.installation_id, // Añadido para filtrar
-          comment_date: item.comment_date,
+          userId: item.userId,
+          installationId: item.installationId, // Añadido para filtrar
+          commentDate: item.commentDate,
         },
       });
 
@@ -25,13 +25,13 @@ export class ReviewSeeder implements Seeder {
 
       const reviewEntry = new Review();
       // Campos obligatorios según la entidad
-      reviewEntry.installation_id = item.installation_id; // Campo corregido
-      reviewEntry.user_id = item.user_id;
+      reviewEntry.installationId = item.installationId; // Campo corregido
+      reviewEntry.userId = item.userId;
       reviewEntry.title = item.title;
       reviewEntry.text = item.text;
       reviewEntry.rating = item.rating;
-      reviewEntry.comment_date = item.comment_date || new Date();
-      reviewEntry.visible = item.visible ?? true;
+      reviewEntry.commentDate = item.commentDate || new Date();
+      reviewEntry.isVisible = item.isVisible ?? true;
 
       reviewEntries.push(reviewEntry);
     }

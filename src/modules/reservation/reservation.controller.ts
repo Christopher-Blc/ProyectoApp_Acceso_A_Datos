@@ -40,7 +40,7 @@ import { normalizeError } from '../../common/utils/error.util';
  * - `@Req()` tipado como AuthenticatedRequest para usar `req.user` sin `any`.
  * - Manejo homogéneo de errores con normalizeError(err) en todos los catch.
  */
-@ApiTags('reservas')
+@ApiTags('reservations')
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller('reservations')
@@ -54,21 +54,21 @@ export class ReservationController {
   @ApiResponse({ status: 204, description: 'No content.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiQuery({ name: 'pista_id', required: false, type: Number })
-  @ApiQuery({ name: 'fecha_desde', required: false, type: String })
+  @ApiQuery({ name: 'courtId', required: false, type: Number })
+  @ApiQuery({ name: 'fromDate', required: false, type: String })
   async findAll(
-    @Query('pista_id') pista_id?: number,
-    @Query('fecha_desde') fecha_desde?: string,
+    @Query('courtId') courtId?: number,
+    @Query('fromDate') fromDate?: string,
   ): Promise<Reservation[]> {
     try {
-      return await this.ReservationService.findAll(pista_id, fecha_desde);
+      return await this.ReservationService.findAll(courtId, fromDate);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
 
-  @Get('mis-reservas')
+  @Get('my-reservations')
   @ApiOperation({ summary: 'Get my reservations' })
   @ApiResponse({
     status: 200,
@@ -110,14 +110,14 @@ export class ReservationController {
 
   @Post()
   @Roles(
-    UserRole.CLIENTE,
-    UserRole.GESTOR_RESERVAS,
-    UserRole.ADMINISTRACION,
+    UserRole.CLIENT,
+    UserRole.RESERVATION_MANAGER,
+    UserRole.ADMINISTRATION,
     UserRole.SUPER_ADMIN,
   )
   @ApiOperation({ summary: 'Create a new Reservation' })
   async create(
-    @Body() ReservationDto: CreateReservationDto,
+    @Body() reservationDto: CreateReservationDto,
     @Req() req: AuthenticatedRequest,
   ): Promise<Reservation | null> {
     try {
@@ -125,7 +125,7 @@ export class ReservationController {
       const userId = req.user?.sub;
       if (!userId)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-      return this.ReservationService.create(ReservationDto, Number(userId));
+      return this.ReservationService.create(reservationDto, Number(userId));
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
@@ -134,27 +134,27 @@ export class ReservationController {
 
   @Put(':id')
   @Roles(
-    UserRole.CLIENTE,
-    UserRole.GESTOR_RESERVAS,
-    UserRole.ADMINISTRACION,
+    UserRole.CLIENT,
+    UserRole.RESERVATION_MANAGER,
+    UserRole.ADMINISTRATION,
     UserRole.SUPER_ADMIN,
   )
   @ApiOperation({ summary: 'Update an existing Reservation' })
   async update(
     @Param('id') id: number,
-    @Body() ReservationDto: UpdateReservationDto,
+    @Body() reservationDto: UpdateReservationDto,
     @Req() req: AuthenticatedRequest,
   ): Promise<Reservation | null> {
     try {
       // El servicio decide permisos combinando id y rol del usuario.
       const userId = req.user?.sub;
       const userRole =
-        (req.user?.role as unknown as UserRole) ?? UserRole.CLIENTE;
+        (req.user?.role as unknown as UserRole) ?? UserRole.CLIENT;
       if (!userId)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
       return this.ReservationService.update(
         id,
-        ReservationDto,
+        reservationDto,
         Number(userId),
         userRole,
       );
@@ -166,8 +166,8 @@ export class ReservationController {
 
   @Delete(':id')
   @Roles(
-    UserRole.GESTOR_RESERVAS,
-    UserRole.ADMINISTRACION,
+    UserRole.RESERVATION_MANAGER,
+    UserRole.ADMINISTRATION,
     UserRole.SUPER_ADMIN,
   )
   @ApiOperation({ summary: 'Delete Reservation by ID' })

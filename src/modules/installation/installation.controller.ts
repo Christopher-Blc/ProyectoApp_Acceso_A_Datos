@@ -27,10 +27,10 @@ export class InstallationController {
   constructor(private readonly InstallationService: InstallationService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all memberships' })
+  @ApiOperation({ summary: 'Get all installations' })
   @ApiResponse({
     status: 200,
-    description: 'Memberships retrieved successfully.',
+    description: 'Installations retrieved successfully.',
   })
   @ApiResponse({ status: 204, description: 'No content.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
@@ -40,51 +40,51 @@ export class InstallationController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a membership by ID' })
+  @ApiOperation({ summary: 'Get an installation by ID' })
   @ApiResponse({
     status: 200,
-    description: 'Membership retrieved successfully.',
+    description: 'Installation retrieved successfully.',
   })
-  @ApiResponse({ status: 400, description: 'Invalid membership ID.' })
+  @ApiResponse({ status: 400, description: 'Invalid installation ID.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 404, description: 'Membership not found.' })
+  @ApiResponse({ status: 404, description: 'Installation not found.' })
   async findOne(@Param('id') id: number): Promise<Installation | null> {
     return this.InstallationService.findOne(id);
   }
 
   @Post()
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
-  @ApiOperation({ summary: 'Create a new membership' })
-  @ApiResponse({ status: 201, description: 'Membership created successfully.' })
-  @ApiResponse({ status: 400, description: 'Invalid membership data.' })
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Create a new installation' })
+  @ApiResponse({ status: 201, description: 'Installation created successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid installation data.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(
-    @Body() InstallationDto: CreateInstallationDto,
+    @Body() installationDto: CreateInstallationDto,
   ): Promise<Installation | null> {
-    return this.InstallationService.create(InstallationDto);
+    return this.InstallationService.create(installationDto);
   }
 
   @Put(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
-  @ApiOperation({ summary: 'Update a membership by ID' })
-  @ApiResponse({ status: 200, description: 'Membership updated successfully.' })
-  @ApiResponse({ status: 400, description: 'Invalid membership data.' })
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Update an installation by ID' })
+  @ApiResponse({ status: 200, description: 'Installation updated successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid installation data.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 404, description: 'Membership not found.' })
+  @ApiResponse({ status: 404, description: 'Installation not found.' })
   async update(
     @Param('id') id: number,
-    @Body() InstallationDto: UpdateInstallationDto,
+    @Body() installationDto: UpdateInstallationDto,
   ): Promise<Installation> {
-    return this.InstallationService.update(id, InstallationDto);
+    return this.InstallationService.update(id, installationDto);
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
-  @ApiOperation({ summary: 'Delete a membership by ID' })
-  @ApiResponse({ status: 200, description: 'Membership deleted successfully.' })
-  @ApiResponse({ status: 400, description: 'Invalid membership ID.' })
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Delete an installation by ID' })
+  @ApiResponse({ status: 200, description: 'Installation deleted successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid installation ID.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 404, description: 'Membership not found.' })
+  @ApiResponse({ status: 404, description: 'Installation not found.' })
   async remove(@Param('id') id: number) {
     await this.InstallationService.remove(id);
     return { deleted: true };

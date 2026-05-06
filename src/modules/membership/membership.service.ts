@@ -15,12 +15,12 @@ export class MembershipService {
     return this.Repo.find();
   }
 
-  async findOne(Membership_id: number): Promise<Membership> {
+  async findOne(membershipId: number): Promise<Membership> {
     const Membership = await this.Repo.findOne({
-      where: { membership_id: Membership_id },
+      where: { id: membershipId },
     });
     if (!Membership) {
-      throw new NotFoundException(`Membership ${Membership_id} no encontrada`);
+      throw new NotFoundException(`Membership ${membershipId} not found`);
     }
     return Membership;
   }
@@ -31,14 +31,14 @@ export class MembershipService {
   }
 
   async update(
-    Membership_id: number,
-    info_Membership: UpdateMembershipDto,
+    membershipId: number,
+    infoMembership: UpdateMembershipDto,
   ): Promise<Membership> {
-    await this.Repo.update(Membership_id, info_Membership);
-    return this.findOne(Membership_id);
+    await this.Repo.update(membershipId, infoMembership);
+    return this.findOne(membershipId);
   }
 
-  async remove(Membership_id: number): Promise<void> {
-    await this.Repo.delete(Membership_id);
+  async remove(membershipId: number): Promise<void> {
+    await this.Repo.delete(membershipId);
   }
 }

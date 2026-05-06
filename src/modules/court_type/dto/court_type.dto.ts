@@ -1,30 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 
-export class TipoCourtDto {
+export class CreateCourtTypeDto {
   @IsString()
   @ApiProperty({
     description: 'Sport type name',
     example: 'Tennis',
   })
-  nombre!: string;
+  name!: string;
 
   @IsString()
   @ApiProperty({
     description: 'Sport type picture',
     example: 'todavia no hay example porque no se pueden subir desde el front',
   })
-  imagen!: string;
+  image!: string;
 }
 
-export class UpdateTipoCourtDto {
+export class UpdateCourtTypeDto {
   @IsOptional()
   @IsString()
   @ApiProperty({
     description: 'Sport type name',
     example: 'Tennis',
   })
-  nombre?: string;
+  name?: string;
 
   @IsOptional()
   @IsString()
@@ -32,5 +32,5 @@ export class UpdateTipoCourtDto {
     description: 'Sport type picture',
     example: 'todavia no hay example porque no se pueden subir desde el front',
   })
-  imagen?: string;
+  image?: string;
 }

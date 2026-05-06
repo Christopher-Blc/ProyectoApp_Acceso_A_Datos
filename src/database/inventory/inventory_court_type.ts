@@ -1,27 +1,22 @@
 export default [
   {
-    tipo_pista_id: 1,
-    nombre: 'Tenis',
-    imagen: 'fondo-tennis.png',
+    name: 'Tenis',
+    image: 'fondo-tennis.png',
   },
   {
-    tipo_pista_id: 2,
-    nombre: 'Pádel',
-    imagen: 'fondo-padel.png',
+    name: 'Pádel',
+    image: 'fondo-padel.png',
   },
   {
-    tipo_pista_id: 3,
-    nombre: 'Fútbol',
-    imagen: 'fondo-futbol.png',
+    name: 'Fútbol',
+    image: 'fondo-futbol.png',
   },
   {
-    tipo_pista_id: 4,
-    nombre: 'Baloncesto',
-    imagen: 'fondo-basket.png',
+    name: 'Baloncesto',
+    image: 'fondo-basket.png',
   },
   {
-    tipo_pista_id: 5,
-    nombre: 'Voleibol',
-    imagen: 'fondo-voleyball.png',
+    name: 'Voleibol',
+    image: 'fondo-voleyball.png',
   },
 ];

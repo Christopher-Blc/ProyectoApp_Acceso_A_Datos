@@ -31,10 +31,13 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { CourtType } from './entities/court_type.entity';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
-import { TipoCourtDto, UpdateTipoCourtDto } from './dto/court_type.dto';
+import {
+  CreateCourtTypeDto,
+  UpdateCourtTypeDto,
+} from './dto/court_type.dto';
 import { normalizeError } from '../../common/utils/error.util';
 
-@ApiTags('tipo_Court')
+@ApiTags('court-types')
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller('court-types')
@@ -79,9 +82,9 @@ export class CourtTypeController {
   }
 
   @Post()
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @UseInterceptors(
-    FileInterceptor('imagen', {
+    FileInterceptor('image', {
       storage: diskStorage({
         destination: './public',
         filename: (req, file, cb) => {
@@ -116,10 +119,10 @@ export class CourtTypeController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['nombre', 'imagen'],
+      required: ['name', 'image'],
       properties: {
-        nombre: { type: 'string', example: 'Tenis' },
-        imagen: { type: 'string', format: 'binary' },
+        name: { type: 'string', example: 'Tennis' },
+        image: { type: 'string', format: 'binary' },
       },
     },
   })
@@ -127,14 +130,14 @@ export class CourtTypeController {
   @ApiResponse({ status: 400, description: 'Bad request or invalid file.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(
-    @Body() tipoCourtDto: TipoCourtDto,
+    @Body() courtTypeDto: CreateCourtTypeDto,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<CourtType | null> {
     try {
       if (!file) {
         throw new BadRequestException('No image file has been uploaded');
       }
-      return this.CourtTypeService.create(tipoCourtDto, file.filename);
+      return this.CourtTypeService.create(courtTypeDto, file.filename);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
@@ -142,7 +145,7 @@ export class CourtTypeController {
   }
 
   @Put(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @UseInterceptors(
     FileInterceptor('imagen', {
       storage: diskStorage({
@@ -174,17 +177,17 @@ export class CourtTypeController {
       limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
     }),
   )
-  @ApiOperation({ summary: 'Update an existing court type (imagen optional)' })
+  @ApiOperation({ summary: 'Update an existing court type (image optional)' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
-        nombre: { type: 'string', example: 'Tenis' },
-        imagen: {
+        name: { type: 'string', example: 'Tennis' },
+        image: {
           type: 'string',
           format: 'binary',
-          description: 'Imagen opcional',
+          description: 'Optional image',
         },
       },
     },
@@ -196,11 +199,11 @@ export class CourtTypeController {
   @ApiParam({ name: 'id', example: 1 })
   async update(
     @Param('id') id: number,
-    @Body() tipoCourtDto: UpdateTipoCourtDto,
+    @Body() courtTypeDto: UpdateCourtTypeDto,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<CourtType | null> {
     try {
-      return this.CourtTypeService.update(id, tipoCourtDto, file?.filename);
+      return this.CourtTypeService.update(id, courtTypeDto, file?.filename);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
@@ -208,7 +211,7 @@ export class CourtTypeController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Delete court type by ID' })
   @ApiResponse({ status: 200, description: 'Court type deleted successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid court type ID.' })

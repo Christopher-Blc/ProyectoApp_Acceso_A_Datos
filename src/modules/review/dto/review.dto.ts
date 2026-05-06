@@ -10,31 +10,24 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateReviewDto {
   @IsNumber()
   @ApiProperty({
-    description: 'ID of the review',
-    example: 1,
-  })
-  Review_id!: number;
-
-  @IsNumber()
-  @ApiProperty({
     description: 'ID of the user',
     example: 1,
   })
-  usuario_id!: number;
+  userId!: number;
 
   @IsNumber()
   @ApiProperty({
     description: 'ID of the Court',
     example: 1,
   })
-  pista_id!: number;
+  installationId!: number;
 
   @IsString()
   @ApiProperty({
     description: 'Title of the Review',
     example: 'Great experience!',
   })
-  titulo!: string;
+  title!: string;
 
   @IsOptional()
   @IsString()
@@ -43,28 +36,28 @@ export class CreateReviewDto {
     example:
       'The court was in excellent condition and the staff was very friendly.',
   })
-  texto?: string;
+  text?: string;
 
   @IsNumber()
   @ApiProperty({
     description: 'Rating of the comentario',
     example: 5,
   })
-  calificacion!: number;
+  rating!: number;
 
   @IsDateString()
   @ApiProperty({
     description: 'Date of the comentario',
     example: '2023-12-31T23:59:59Z',
   })
-  fecha_comentario!: string;
+  commentDate!: string;
 
   @IsBoolean()
   @ApiProperty({
     description: 'Visibility of the comentario',
     example: true,
   })
-  visible!: boolean;
+  isVisible!: boolean;
 }
 
 export class UpdateReviewDto {
@@ -74,7 +67,7 @@ export class UpdateReviewDto {
     description: 'Title of the comentario',
     example: 'Great experience!',
   })
-  titulo?: string;
+  title?: string;
 
   @IsOptional()
   @IsString()
@@ -83,7 +76,7 @@ export class UpdateReviewDto {
     example:
       'The court was in excellent condition and the staff was very friendly.',
   })
-  texto?: string;
+  text?: string;
 
   @IsOptional()
   @IsNumber()
@@ -91,7 +84,7 @@ export class UpdateReviewDto {
     description: 'Rating of the comentario',
     example: 5,
   })
-  calificacion?: number;
+  rating?: number;
 
   // @IsOptional()
   // @IsDateString()
@@ -103,5 +96,5 @@ export class UpdateReviewDto {
     description: 'Visibility of the comentario',
     example: true,
   })
-  visible?: boolean;
+  isVisible?: boolean;
 }

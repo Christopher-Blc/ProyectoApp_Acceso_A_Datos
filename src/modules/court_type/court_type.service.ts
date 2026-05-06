@@ -8,7 +8,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { CourtType } from './entities/court_type.entity';
-import { TipoCourtDto, UpdateTipoCourtDto } from './dto/court_type.dto';
+import {
+  CreateCourtTypeDto,
+  UpdateCourtTypeDto,
+} from './dto/court_type.dto';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -27,7 +30,7 @@ export class CourtTypeService {
   // Obtener uno por ID
   async findOne(id: number): Promise<CourtType> {
     const tipo = await this.tipoPistaRepository.findOneBy({
-      court_type_id: id,
+      id,
     });
     if (!tipo) {
       throw new NotFoundException(`No se ha encontrado ese tipo de Court`);
@@ -36,10 +39,10 @@ export class CourtTypeService {
   }
 
   // Crear un nuevo tipo
-  async create(dto: TipoCourtDto, imagenFilename?: string): Promise<CourtType> {
+  async create(dto: CreateCourtTypeDto, imageFilename?: string): Promise<CourtType> {
     //mirar primero si ya existe un tipo con ese nombre
     const existe = await this.tipoPistaRepository.findOne({
-      where: { nombre: dto.nombre },
+      where: { name: dto.name },
     });
 
     if (existe) {
@@ -49,7 +52,7 @@ export class CourtTypeService {
     try {
       const nuevoTipo = this.tipoPistaRepository.create({
         ...dto,
-        imagen: imagenFilename || dto.imagen,
+        image: imageFilename || dto.image,
       });
       return await this.tipoPistaRepository.save(nuevoTipo);
     } catch {
@@ -59,8 +62,8 @@ export class CourtTypeService {
 
   async update(
     id: number,
-    dto: UpdateTipoCourtDto,
-    imagenFilename?: string,
+    dto: UpdateCourtTypeDto,
+    imageFilename?: string,
   ): Promise<CourtType> {
     const tipo = await this.findOne(id);
 
@@ -68,12 +71,12 @@ export class CourtTypeService {
       throw new NotFoundException('No se ha encontrado ese tipo de Court');
     }
 
-    const updateData: UpdateTipoCourtDto = { ...dto };
+    const updateData: UpdateCourtTypeDto = { ...dto };
 
-    if (imagenFilename) {
+    if (imageFilename) {
       // Borrar imagen antigua si existe y se sube una nueva
-      if (tipo.imagen) {
-        const oldPath = path.resolve(process.cwd(), 'public', tipo.imagen);
+      if (tipo.image) {
+        const oldPath = path.resolve(process.cwd(), 'public', tipo.image);
         if (fs.existsSync(oldPath)) {
           try {
             fs.unlinkSync(oldPath);
@@ -82,7 +85,7 @@ export class CourtTypeService {
           }
         }
       }
-      updateData.imagen = imagenFilename;
+      updateData.image = imageFilename;
     }
 
     this.tipoPistaRepository.merge(tipo, updateData);
@@ -102,8 +105,8 @@ export class CourtTypeService {
     }
 
     // Solo borramos el archivo si la DB fue exitosa
-    if (tipo.imagen) {
-      const filePath = path.resolve(process.cwd(), 'public', tipo.imagen);
+    if (tipo.image) {
+      const filePath = path.resolve(process.cwd(), 'public', tipo.image);
       if (fs.existsSync(filePath)) {
         try {
           fs.unlinkSync(filePath);

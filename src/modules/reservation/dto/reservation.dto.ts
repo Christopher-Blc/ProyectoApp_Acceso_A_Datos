@@ -7,7 +7,7 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { estadoReserva } from '../entities/reservation.entity';
+import { ReservationStatus } from '../entities/reservation.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateReservationDto {
@@ -16,14 +16,14 @@ export class CreateReservationDto {
     description: 'ID of the Court being reserved',
     example: 1,
   })
-  pista_id!: number;
+  courtId!: number;
 
   @IsDateString()
   @ApiProperty({
     description: 'Date of the reservation',
     example: '2026-04-01',
   })
-  fecha_Reservation!: string;
+  reservationDate!: string;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
@@ -33,7 +33,7 @@ export class CreateReservationDto {
     description: 'Start time of the reservation',
     example: '09:00',
   })
-  hora_inicio!: string;
+  startTime!: string;
 
   @IsString()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
@@ -43,16 +43,16 @@ export class CreateReservationDto {
     description: 'End time of the reservation',
     example: '10:30',
   })
-  hora_fin!: string;
+  endTime!: string;
 
   @IsOptional()
-  @IsEnum(estadoReserva)
+  @IsEnum(ReservationStatus)
   @ApiProperty({
     description: 'State of the reservation',
-    enum: estadoReserva,
-    example: estadoReserva.PENDING,
+    enum: ReservationStatus,
+    example: ReservationStatus.PENDING,
   })
-  estado?: estadoReserva;
+  status?: ReservationStatus;
 
   @IsOptional()
   @IsString()
@@ -61,7 +61,7 @@ export class CreateReservationDto {
     description: 'Note for the reservation',
     example: 'Prefiero la Court cerca de la entrada',
   })
-  nota?: string;
+  note?: string;
 }
 
 export class UpdateReservationDto {
@@ -71,7 +71,7 @@ export class UpdateReservationDto {
     description: 'ID of the Court being reserved',
     example: 1,
   })
-  pista_id?: number;
+  courtId?: number;
 
   @IsOptional()
   @IsDateString()
@@ -80,7 +80,7 @@ export class UpdateReservationDto {
     example: '2026-04-01',
     required: false,
   })
-  fecha_Reservation?: string;
+  reservationDate?: string;
 
   @IsOptional()
   @IsString()
@@ -90,7 +90,7 @@ export class UpdateReservationDto {
     example: '11:00',
     required: false,
   })
-  hora_inicio?: string;
+  startTime?: string;
 
   @IsOptional()
   @IsString()
@@ -100,16 +100,16 @@ export class UpdateReservationDto {
     example: '12:30',
     required: false,
   })
-  hora_fin?: string;
+  endTime?: string;
 
   @IsOptional()
-  @IsEnum(estadoReserva)
+  @IsEnum(ReservationStatus)
   @ApiProperty({
     description: 'State of the reservation',
-    enum: estadoReserva,
+    enum: ReservationStatus,
     required: false,
   })
-  estado?: estadoReserva;
+  status?: ReservationStatus;
 
   @IsOptional()
   @IsString()
@@ -118,5 +118,5 @@ export class UpdateReservationDto {
     description: 'Note for the reservation',
     required: false,
   })
-  nota?: string;
+  note?: string;
 }
