@@ -2,20 +2,18 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Court } from '../../court/entities/court.entity'; // Importa la entidad Court
 import { Review } from '../../review/entities/review.entity';
 
-export enum estado_instalacion {
+export enum InstallationStatus {
   ACTIVE = 'activa',
   MAINTENANCE = 'en_mantenimiento',
   INACTIVE = 'inactiva',
 }
-
-export type InstallationStatus = estado_instalacion;
 @Entity()
 export class Installation {
   @PrimaryGeneratedColumn({ name: 'installation_id', type: 'int' })
-  installation_id!: number;
+  id!: number;
 
   @Column({ type: 'varchar', length: 100 })
-  nombre!: string;
+  name!: string;
 
   @Column({ type: 'varchar', length: 100 })
   address!: string;
@@ -34,27 +32,27 @@ export class Installation {
     default: () => 'CURRENT_DATE',
     name: 'creation_date',
   })
-  creation_date!: Date;
+  createdAt!: Date;
 
   @Column({
     type: 'enum',
-    enum: estado_instalacion,
-    default: estado_instalacion.INACTIVE, // default value
+    enum: InstallationStatus,
+    default: InstallationStatus.INACTIVE, // default value
   })
-  status!: estado_instalacion;
+  status!: InstallationStatus;
 
   @Column({ type: 'int', nullable: true })
-  max_capacity?: number;
+  maxCapacity?: number;
 
   @Column({ type: 'time', nullable: true })
-  opening_hours?: string;
+  openingHours?: string;
 
   @Column({ type: 'time', nullable: true })
-  closing_hours?: string;
+  closingHours?: string;
 
-  @OneToMany(() => Court, (c) => c.Installation)
+  @OneToMany(() => Court, (c) => c.installation)
   courts!: Court[];
 
-  @OneToMany(() => Review, (r) => r.Installation)
+  @OneToMany(() => Review, (r) => r.installation)
   reviews!: Review[];
 }

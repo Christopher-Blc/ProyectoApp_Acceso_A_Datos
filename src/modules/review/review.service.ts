@@ -15,13 +15,13 @@ export class ReviewService {
     return this.reviewRepository.find({ relations: ['user', 'installation'] });
   }
 
-  async findOne(review_id: number): Promise<Review> {
+  async findOne(reviewId: number): Promise<Review> {
     const review = await this.reviewRepository.findOne({
-      where: { review_id: review_id },
+      where: { id: reviewId },
       relations: ['user', 'installation'],
     });
     if (!review) {
-      throw new NotFoundException(`Review ${review_id} not found`);
+      throw new NotFoundException(`Review ${reviewId} not found`);
     }
     return review;
   }
@@ -32,14 +32,14 @@ export class ReviewService {
   }
 
   async update(
-    review_id: number,
-    info_review: UpdateReviewDto,
+    reviewId: number,
+    infoReview: UpdateReviewDto,
   ): Promise<Review> {
-    await this.reviewRepository.update(review_id, info_review);
-    return this.findOne(review_id);
+    await this.reviewRepository.update(reviewId, infoReview);
+    return this.findOne(reviewId);
   }
 
-  async remove(review_id: number): Promise<void> {
-    await this.reviewRepository.delete(review_id);
+  async remove(reviewId: number): Promise<void> {
+    await this.reviewRepository.delete(reviewId);
   }
 }

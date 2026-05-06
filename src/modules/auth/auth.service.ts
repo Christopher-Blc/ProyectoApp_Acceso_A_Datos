@@ -48,17 +48,17 @@ export class AuthService {
     const user = await this.usersService.findById(Number(payload.sub));
     if (!user) throw new UnauthorizedException('User does not exist');
     if (!user.isActive) throw new ForbiddenException('Inactive user');
-    if (!user.refresh_token_hash)
+    if (!user.refreshTokenHash)
       throw new UnauthorizedException('No refresh token saved');
 
-    const ok = await bcrypt.compare(refresh_token, user.refresh_token_hash);
+    const ok = await bcrypt.compare(refresh_token, user.refreshTokenHash);
     if (!ok) throw new UnauthorizedException('Invalid refresh token');
 
     // Reconstruimos el payload de la entidad actual para evitar datos obsoletos.
     // Escribimos como Record para mayor claridad, aunque JwtService.signAsync tiene limitaciones
     // en sus sobrecargas que requieren `as any` en la llamada.
     const newPayload: Record<string, string | number> = {
-      sub: String(user.usuario_id),
+      sub: String(user.id),
       email: user.email,
       role: String(user.role),
     };
@@ -80,7 +80,7 @@ export class AuthService {
 
     // Rotación de token de refresco: guardamos el hash del nuevo token.
     const newHash = await bcrypt.hash(new_refresh_token, 10);
-    await this.usersService.updateRefreshTokenHash(user.usuario_id, newHash);
+    await this.usersService.updateRefreshTokenHash(user.id, newHash);
 
     return { access_token, refresh_token: new_refresh_token };
   }
@@ -107,10 +107,10 @@ export class AuthService {
     const tokenHash = this.hashToken(token);
     const now = new Date();
     const record = await this.tokenBlacklistRepository.findOne({
-      where: { token_hash: tokenHash },
+      where: { tokenHash },
     });
 
-    return !!record && record.expires_at > now;
+    return !!record && record.expiresAt > now;
   }
 
   /**
@@ -132,10 +132,10 @@ export class AuthService {
     const created = await this.usersService.create({
       ...dto,
       password: dto.password,
-      role: UserRole.CLIENTE,
+      role: UserRole.CLIENT,
       isActive: true,
-      registration_date: new Date(),
-      date_of_birth: new Date(dto.fecha_nacimiento),
+      registrationDate: new Date(),
+      dateOfBirth: new Date(dto.dateOfBirth),
     });
 
     // Eliminamos datos sensibles de la respuesta pública.
@@ -165,13 +165,13 @@ export class AuthService {
     const ok = await bcrypt.compare(dto.password, user.password);
     if (!ok) throw new UnauthorizedException('Incorrect credentials');
     // Actualiza último login
-    await this.usersService.updateLastLogin(user.usuario_id);
+    await this.usersService.updateLastLogin(user.id);
 
     // Payload mínimo de identidad/autorización para JWT.
     // Escribimos como Record para mayor claridad, aunque JwtService.signAsync tiene limitaciones
     // en sus sobrecargas que requieren `as any` en la llamada.
     const payload: Record<string, string | number> = {
-      sub: String(user.usuario_id),
+      sub: String(user.id),
       email: user.email,
       role: String(user.role),
     };
@@ -193,15 +193,12 @@ export class AuthService {
 
     // Persistimos hash del refresh para validarlo en futuras renovaciones.
     const refreshHash = await bcrypt.hash(refresh_token, 10);
-    await this.usersService.updateRefreshTokenHash(
-      user.usuario_id,
-      refreshHash,
-    );
+    await this.usersService.updateRefreshTokenHash(user.id, refreshHash);
 
     // Sanitización final: nunca exponer password ni hash de refresh.
     const userSafe: Record<string, unknown> = { ...user };
     delete userSafe.password;
-    delete userSafe.refresh_token_hash;
+    delete userSafe.refreshTokenHash;
 
     return { access_token, refresh_token, user: userSafe };
   }
@@ -221,9 +218,9 @@ export class AuthService {
 
     const tokenHash = this.hashToken(accessToken);
     await this.tokenBlacklistRepository.save({
-      usuario_id: userId,
-      token_hash: tokenHash,
-      expires_at: expiresAt,
+      userId,
+      tokenHash,
+      expiresAt,
     });
 
     // Invalidas cualquier refresh existente

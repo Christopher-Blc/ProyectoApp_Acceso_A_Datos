@@ -1,6 +1,6 @@
 import {
   Installation,
-  estado_instalacion,
+  InstallationStatus,
 } from '../../../modules/installation/entities/installation.entity';
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
@@ -24,7 +24,7 @@ export class InstallationSeeder implements Seeder {
 
       const installationEntry = new Installation();
       // Campos que existen en la entidad
-      installationEntry.nombre = item.name;
+      installationEntry.name = item.name;
       installationEntry.address = item.address;
       installationEntry.phone = item.phone;
       installationEntry.email = item.email;
@@ -32,12 +32,12 @@ export class InstallationSeeder implements Seeder {
 
       // La fecha de creación tiene CURRENT_DATE por defecto,
       // pero la asignamos si viene en el inventario
-      installationEntry.creation_date = item.creation_date
-        ? new Date(item.creation_date)
+      installationEntry.createdAt = item.createdAt
+        ? new Date(item.createdAt)
         : new Date();
 
-      // El estado usa el enum estado_instalacion
-      installationEntry.status = item.status || estado_instalacion.INACTIVE;
+      // El estado usa el enum InstallationStatus
+      installationEntry.status = item.status || InstallationStatus.INACTIVE;
 
       installationEntries.push(installationEntry);
     }

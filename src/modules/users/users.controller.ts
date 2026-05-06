@@ -132,7 +132,7 @@ export class UsersController {
   //rutas de admnin (solo para superadmin y adnministracion)
 
   @Get()
-  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRACION)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRATION)
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'Users retrieved successfully.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -150,7 +150,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRACION)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRATION)
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiResponse({ status: 200, description: 'User retrieved successfully.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -166,7 +166,7 @@ export class UsersController {
   }
 
   @Post()
-  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRACION)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRATION)
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({ status: 201, description: 'User created successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
@@ -175,7 +175,7 @@ export class UsersController {
     try {
       return await this.userService.create({
         ...userDto,
-        date_of_birth: new Date(userDto.fecha_nacimiento),
+        dateOfBirth: new Date(userDto.dateOfBirth),
       });
     } catch (err) {
       const { message, status } = normalizeError(err);
@@ -184,7 +184,7 @@ export class UsersController {
   }
 
   @Put(':id')
-  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRACION)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRATION)
   @ApiOperation({ summary: 'Update user by ID' })
   @ApiResponse({ status: 200, description: 'User updated successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid user ID.' })
@@ -201,7 +201,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRACION)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRATION)
   @ApiOperation({ summary: 'Delete user by ID' })
   @ApiResponse({ status: 200, description: 'User deleted successfully.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })

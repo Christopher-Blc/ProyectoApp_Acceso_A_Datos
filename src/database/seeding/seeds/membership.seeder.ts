@@ -12,7 +12,7 @@ export class MembershipSeeder implements Seeder {
     for (const item of membershipData) {
       // Buscamos por nombre (Bronce, Plata, Oro) para evitar duplicados exactos
       const existing = await membershipRepository.findOne({
-        where: { nombre: item.nombre },
+        where: { name: item.name },
       });
 
       if (existing) {
@@ -22,9 +22,9 @@ export class MembershipSeeder implements Seeder {
       const membershipEntry = new Membership();
       // Mapeo directo a las columnas de la entidad
       membershipEntry.level = item.level;
-      membershipEntry.nombre = item.nombre;
+      membershipEntry.name = item.name;
       membershipEntry.discount = item.discount;
-      membershipEntry.required_reservations = item.required_reservations;
+      membershipEntry.requiredReservations = item.requiredReservations;
       membershipEntry.benefits = item.benefits;
 
       membershipEntries.push(membershipEntry);

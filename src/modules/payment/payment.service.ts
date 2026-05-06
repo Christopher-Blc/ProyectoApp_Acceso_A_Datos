@@ -13,36 +13,33 @@ export class PaymentService {
 
   findAll() {
     return this.pagoRepository.find({
-      relations: ['usuario', 'Reservation'],
+      relations: ['reservation'],
     });
   }
 
-  async findOne(Payment_id: number): Promise<Payment> {
-    const Payment = await this.pagoRepository.findOne({
-      where: { Payment_id },
-      relations: ['usuario', 'Reservation'],
+  async findOne(paymentId: number): Promise<Payment> {
+    const payment = await this.pagoRepository.findOne({
+      where: { id: paymentId },
+      relations: ['reservation'],
     });
-    if (!Payment) {
-      throw new NotFoundException(`Payment ${Payment_id} no encontrado`);
+    if (!payment) {
+      throw new NotFoundException(`Payment ${paymentId} not found`);
     }
-    return Payment;
+    return payment;
   }
 
   async create(data: Partial<Payment>) {
-    const Payment = this.pagoRepository.create(data);
-    return this.pagoRepository.save(Payment);
+    const payment = this.pagoRepository.create(data);
+    return this.pagoRepository.save(payment);
   }
 
-  async update(Payment_id: number, data: UpdatePaymentDto) {
-    await this.pagoRepository.update(Payment_id, data);
-    return this.findOne(Payment_id);
+  async update(paymentId: number, data: UpdatePaymentDto) {
+    await this.pagoRepository.update(paymentId, data);
+    return this.findOne(paymentId);
   }
 
-  async remove(Payment_id: number): Promise<void> {
-    const Payment = await this.findOne(Payment_id);
-    if (!Payment) {
-      throw new NotFoundException(`Payment ${Payment_id} no encontrado`);
-    }
-    await this.pagoRepository.delete(Payment_id);
+  async remove(paymentId: number): Promise<void> {
+    await this.findOne(paymentId);
+    await this.pagoRepository.delete(paymentId);
   }
 }

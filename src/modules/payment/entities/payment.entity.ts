@@ -10,25 +10,25 @@ import { Reservation } from '../../reservation/entities/reservation.entity';
 export enum PaymentMethod {
   VISA = 'Visa',
   MASTERCARD = 'MasterCard',
-  PAY_PAL = 'PayPal',
+  PAYPAL = 'PayPal',
   BIZUM = 'Bizum',
-  EFECTIVO = 'Efectivo',
+  CASH = 'Efectivo',
 }
 
 export enum PaymentStatus {
-  PAGADO = 'Pagado',
-  NO_PAGADO = 'No pagado',
-  EN_PROCESO = 'En proceso',
-  REEMBOLSADO = 'Reembolsado',
+  PAID = 'Pagado',
+  UNPAID = 'No pagado',
+  IN_PROGRESS = 'En proceso',
+  REFUNDED = 'Reembolsado',
 }
 
 @Entity('Payment')
 export class Payment {
-  @PrimaryGeneratedColumn({ name: 'Payment_id' })
-  Payment_id!: number;
+  @PrimaryGeneratedColumn({ name: 'payment_id' })
+  id!: number;
 
   @Column({ name: 'reservation_id', type: 'int' })
-  reservation_id!: number;
+  reservationId!: number;
 
   // de momento como solo habra un poli no lo ponemos
   // @Column({ name: "instalacion_id" })
@@ -38,28 +38,28 @@ export class Payment {
   amount!: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  payment_date!: Date;
+  paymentDate!: Date;
 
   @Column({
     type: 'enum',
     enum: PaymentMethod,
     default: PaymentMethod.VISA,
   })
-  payment_method!: PaymentMethod;
+  paymentMethod!: PaymentMethod;
 
   @Column({
     type: 'enum',
     enum: PaymentStatus,
-    default: PaymentStatus.NO_PAGADO,
+    default: PaymentStatus.UNPAID,
   })
-  payment_status!: PaymentStatus;
+  paymentStatus!: PaymentStatus;
 
   @Column({ type: 'text', nullable: true })
-  nota?: string;
+  note?: string;
 
   @ManyToOne(() => Reservation, (r) => r.payments)
   @JoinColumn({ name: 'reservation_id' })
-  Reservation!: Reservation;
+  reservation!: Reservation;
 
   // @ManyToOne(() => Installation)
   // @JoinColumn({ name: "instalacion_id" })

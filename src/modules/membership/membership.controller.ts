@@ -56,19 +56,19 @@ export class MembershipController {
   }
 
   @Post()
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new membership' })
   @ApiResponse({ status: 201, description: 'Membership created successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid membership data.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(
-    @Body() MembershipDto: CreateMembershipDto,
+    @Body() membershipDto: CreateMembershipDto,
   ): Promise<Membership> {
-    return this.MembershipService.create(MembershipDto);
+    return this.MembershipService.create(membershipDto);
   }
 
   @Put(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update a membership by ID' })
   @ApiResponse({ status: 200, description: 'Membership updated successfully.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -76,13 +76,13 @@ export class MembershipController {
   @ApiResponse({ status: 404, description: 'Membership not found.' })
   async update(
     @Param('id') id: number,
-    @Body() MembershipDto: UpdateMembershipDto,
+    @Body() membershipDto: UpdateMembershipDto,
   ): Promise<Membership | null> {
-    return this.MembershipService.update(id, MembershipDto);
+    return this.MembershipService.update(id, membershipDto);
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Delete a membership by ID' })
   @ApiResponse({ status: 200, description: 'Membership deleted successfully.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
-import { estadoReserva, Reservation } from './entities/reservation.entity';
+import { Reservation, ReservationStatus } from './entities/reservation.entity';
 import {
   CreateReservationDto,
   UpdateReservationDto,
@@ -25,111 +25,111 @@ export class ReservationService {
   ) {}
 
   async findAll(
-    pista_id?: number,
-    fecha_desde?: string,
+    courtId?: number,
+    fromDate?: string,
   ): Promise<Reservation[]> {
     const where: any = {};
 
-    if (pista_id) {
+    if (courtId) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      where.court_id = pista_id;
+      where.courtId = courtId;
     }
 
-    if (fecha_desde) {
+    if (fromDate) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      where.reservation_date = MoreThanOrEqual(fecha_desde);
+      where.reservationDate = MoreThanOrEqual(fromDate);
     }
 
     return this.reservaRepo.find({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       where,
-      relations: ['usuario', 'court', 'payments'],
-      order: { reservation_date: 'ASC', start_time: 'ASC' },
+      relations: ['user', 'court', 'payments'],
+      order: { reservationDate: 'ASC', startTime: 'ASC' },
     });
   }
 
-  async findOne(reserva_id: number): Promise<Reservation> {
+  async findOne(reservationId: number): Promise<Reservation> {
     const reservation = await this.reservaRepo.findOne({
-      where: { reservation_id: reserva_id },
-      relations: ['usuario', 'court', 'payments'],
+      where: { id: reservationId },
+      relations: ['user', 'court', 'payments'],
     });
     if (!reservation)
       throw new NotFoundException('No se ha encontrado esa reserva.');
     return reservation;
   }
 
-  async findByUserId(usuario_id: number): Promise<Reservation[]> {
-    if (!usuario_id) throw new ForbiddenException('No tienes permiso');
+  async findByUserId(userId: number): Promise<Reservation[]> {
+    if (!userId) throw new ForbiddenException('No tienes permiso');
     return this.reservaRepo.find({
-      where: { user_id: usuario_id },
-      relations: ['usuario', 'court', 'payments'],
+      where: { userId },
+      relations: ['user', 'court', 'payments'],
     });
   }
 
   async create(
     dto: CreateReservationDto,
-    usuario_id: number,
+    userId: number,
   ): Promise<Reservation> {
-    const Court = await this.pistaRepo.findOneBy({ court_id: dto.pista_id });
-    if (!Court) throw new NotFoundException('Court no encontrada');
+    const court = await this.pistaRepo.findOneBy({ id: dto.courtId });
+    if (!court) throw new NotFoundException('Court no encontrada');
 
     //calculamos el precio final aqui para que no se hagan trampas desde el front
     const precioCalculado = this.calcularPrecio(
-      Number(Court.price_per_hour),
-      dto.hora_inicio,
-      dto.hora_fin,
+      Number(court.pricePerHour),
+      dto.startTime,
+      dto.endTime,
     );
 
     const newReservation = this.reservaRepo.create({
       ...dto,
-      user_id: usuario_id,
-      total_price: precioCalculado,
-      status: estadoReserva.PENDING,
+      userId,
+      totalPrice: precioCalculado,
+      status: ReservationStatus.PENDING,
     });
 
     const saved = await this.reservaRepo.save(newReservation);
-    return this.findOne(saved.reservation_id);
+    return this.findOne(saved.id);
   }
 
   async update(
-    reserva_id: number,
+    reservationId: number,
     dto: UpdateReservationDto,
-    user_id: number,
+    userId: number,
     user_role: UserRole,
   ): Promise<Reservation> {
-    const reservation = await this.findOne(reserva_id);
+    const reservation = await this.findOne(reservationId);
 
     // 1. Verificamos permisos de edición
     const isAdmin =
       user_role === UserRole.SUPER_ADMIN ||
-      user_role === UserRole.ADMINISTRACION;
+      user_role === UserRole.ADMINISTRATION;
 
-    if (reservation.user_id !== user_id && !isAdmin) {
+    if (reservation.userId !== userId && !isAdmin) {
       throw new ForbiddenException(
         'No tienes permiso para editar esta Reservation',
       );
     }
 
     // 2. Bloqueo: los clientes no pueden tocar reservas ya procesadas
-    if (reservation.status !== estadoReserva.PENDING && !isAdmin) {
+    if (reservation.status !== ReservationStatus.PENDING && !isAdmin) {
       throw new ForbiddenException(
         'No puedes modificar una reserva ya procesada.',
       );
     }
 
     // 3. Recalcular precio solo si cambian campos clave
-    if (dto.pista_id || dto.hora_inicio || dto.hora_fin) {
-      const id_Court = dto.pista_id || reservation.court_id;
-      const h_inicio = dto.hora_inicio || reservation.start_time;
-      const h_fin = dto.hora_fin || reservation.end_time;
+    if (dto.courtId || dto.startTime || dto.endTime) {
+      const id_Court = dto.courtId || reservation.courtId;
+      const h_inicio = dto.startTime || reservation.startTime;
+      const h_fin = dto.endTime || reservation.endTime;
 
-      const Court = await this.pistaRepo.findOneBy({ court_id: id_Court });
-      if (!Court) throw new NotFoundException('That Court does not exist');
+      const court = await this.pistaRepo.findOneBy({ id: id_Court });
+      if (!court) throw new NotFoundException('That Court does not exist');
 
       // Actualizamos el precio_total en el objeto que se guardará
       const updatedDto = dto as Partial<Reservation>;
-      updatedDto.total_price = this.calcularPrecio(
-        Number(Court.price_per_hour),
+      updatedDto.totalPrice = this.calcularPrecio(
+        Number(court.pricePerHour),
         h_inicio,
         h_fin,
       );
@@ -137,23 +137,23 @@ export class ReservationService {
 
     // 4. Lógica de rango de usuario (membresía)
     const estadoAnterior = reservation.status;
-    const nuevoEstado = dto.estado;
+    const nuevoEstado = dto.status;
 
-    await this.reservaRepo.update(reserva_id, dto);
+    await this.reservaRepo.update(reservationId, dto);
 
     // Si el estado cambia a FINALIZADA (o deja de serlo), actualizamos rango
     if (nuevoEstado && nuevoEstado !== estadoAnterior) {
       if (
-        nuevoEstado === estadoReserva.COMPLETED ||
-        estadoAnterior === estadoReserva.COMPLETED
+        nuevoEstado === ReservationStatus.COMPLETED ||
+        estadoAnterior === ReservationStatus.COMPLETED
       ) {
-        await this.userService.updateUserRank(reservation.user_id);
+        await this.userService.updateUserRank(reservation.userId);
       }
 
       // El contador aumenta si pasa a finalizada
-      if (nuevoEstado === estadoReserva.COMPLETED) {
+      if (nuevoEstado === ReservationStatus.COMPLETED) {
         await this.pistaRepo.increment(
-          { court_id: reservation.court_id },
+          { id: reservation.courtId },
           'reservations_made',
           1,
         );
@@ -165,17 +165,17 @@ export class ReservationService {
       // }
     }
 
-    return this.findOne(reserva_id);
+    return this.findOne(reservationId);
   }
 
-  async remove(reserva_id: number): Promise<{ deleted: boolean }> {
-    const reservation = await this.findOne(reserva_id);
-    const eraFinalizada = reservation.status === estadoReserva.COMPLETED;
+  async remove(reservationId: number): Promise<{ deleted: boolean }> {
+    const reservation = await this.findOne(reservationId);
+    const eraFinalizada = reservation.status === ReservationStatus.COMPLETED;
 
-    await this.reservaRepo.delete(reservation.reservation_id);
+    await this.reservaRepo.delete(reservation.id);
 
     if (eraFinalizada) {
-      await this.userService.updateUserRank(reservation.user_id);
+      await this.userService.updateUserRank(reservation.userId);
     }
 
     return { deleted: true };

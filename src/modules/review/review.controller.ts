@@ -22,7 +22,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 import { Review } from './entities/review.entity';
 
-@ApiTags('resenyas')
+@ApiTags('reviews')
 @UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller('reviews')
@@ -50,17 +50,17 @@ export class ReviewController {
   }
 
   @Post()
-  @Roles(UserRole.CLIENTE, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.CLIENT, UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new review' })
   @ApiResponse({ status: 201, description: 'Review created successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid input.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async create(@Body() ReviewDto: CreateReviewDto): Promise<Review | null> {
-    return this.ReviewService.create(ReviewDto);
+  async create(@Body() reviewDto: CreateReviewDto): Promise<Review | null> {
+    return this.ReviewService.create(reviewDto);
   }
 
   @Put(':id')
-  @Roles(UserRole.CLIENTE, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.CLIENT, UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update a review by ID' })
   @ApiResponse({ status: 200, description: 'Review updated successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid input.' })
@@ -68,13 +68,13 @@ export class ReviewController {
   @ApiResponse({ status: 404, description: 'Review not found.' })
   async update(
     @Param('id') id: number,
-    @Body() ReviewDto: UpdateReviewDto,
+    @Body() reviewDto: UpdateReviewDto,
   ): Promise<Review | null> {
-    return this.ReviewService.update(id, ReviewDto);
+    return this.ReviewService.update(id, reviewDto);
   }
 
   @Delete(':id')
-  @Roles(UserRole.CLIENTE, UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.CLIENT, UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Delete a review by ID' })
   @ApiResponse({ status: 200, description: 'Review deleted successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid review ID.' })

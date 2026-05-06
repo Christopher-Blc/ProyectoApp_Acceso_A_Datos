@@ -18,35 +18,32 @@ export class InstallationService {
     return this.instalacionRepository.find({ relations: ['courts'] });
   }
 
-  async findOne(installation_id: number): Promise<Installation> {
-    const Installation = await this.instalacionRepository.findOne({
-      where: { installation_id: installation_id },
+  async findOne(installationId: number): Promise<Installation> {
+    const installation = await this.instalacionRepository.findOne({
+      where: { id: installationId },
       relations: ['courts'],
     });
-    if (!Installation) {
-      throw new NotFoundException(
-        `Installation ${installation_id} no encontrada`,
-      );
+    if (!installation) {
+      throw new NotFoundException(`Installation ${installationId} not found`);
     }
-    return Installation;
+    return installation;
   }
 
-  async create(info_Installation: CreateInstallationDto) {
-    const newInstallation =
-      this.instalacionRepository.create(info_Installation);
+  async create(infoInstallation: CreateInstallationDto) {
+    const newInstallation = this.instalacionRepository.create(infoInstallation);
     return this.instalacionRepository.save(newInstallation);
   }
 
   async update(
-    installation_id: number,
-    info_Installation: UpdateInstallationDto,
+    installationId: number,
+    infoInstallation: UpdateInstallationDto,
   ): Promise<Installation> {
-    await this.instalacionRepository.update(installation_id, info_Installation);
-    return this.findOne(installation_id);
+    await this.instalacionRepository.update(installationId, infoInstallation);
+    return this.findOne(installationId);
   }
 
-  async remove(installation_id: number): Promise<void> {
-    await this.findOne(installation_id);
-    await this.instalacionRepository.delete(installation_id);
+  async remove(installationId: number): Promise<void> {
+    await this.findOne(installationId);
+    await this.instalacionRepository.delete(installationId);
   }
 }

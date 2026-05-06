@@ -23,7 +23,10 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 import { normalizeError } from '../../common/utils/error.util';
 import { NotificationService } from './notification.service';
-import { CreateMassiveNotiDto, NotificationDto } from './dto/notification.dto';
+import {
+  CreateMassiveNotificationDto,
+  CreateNotificationDto,
+} from './dto/notification.dto';
 import { Notification } from './entities/notification.entity';
 
 @UseGuards(AuthGuard, RolesGuard)
@@ -70,7 +73,7 @@ export class NotificationController {
   }
 
   @Post()
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Crear una nueva notificación' })
   @ApiResponse({
     status: 201,
@@ -79,14 +82,14 @@ export class NotificationController {
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(
-    @Body() notificationDto: NotificationDto,
+    @Body() notificationDto: CreateNotificationDto,
   ): Promise<Notification | null> {
     try {
       const data = {
         ...notificationDto,
-        user_id: notificationDto.user_id ?? notificationDto.usuario_id,
-        fecha: notificationDto.fecha
-          ? new Date(notificationDto.fecha)
+        userId: notificationDto.userId,
+        createdAt: notificationDto.createdAt
+          ? new Date(notificationDto.createdAt)
           : undefined,
       };
       return this.notificationService.create(data);
@@ -97,7 +100,7 @@ export class NotificationController {
   }
 
   @Post('massive')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Crear notificación masiva y enviarla por push' })
   @ApiResponse({
     status: 201,
@@ -106,7 +109,7 @@ export class NotificationController {
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async createMassive(@Body() body: CreateMassiveNotiDto) {
+  async createMassive(@Body() body: CreateMassiveNotificationDto) {
     try {
       return await this.notificationService.createMassive(body);
     } catch (err) {
@@ -116,7 +119,7 @@ export class NotificationController {
   }
 
   @Put(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Actualizar una notificación por ID' })
   @ApiResponse({
     status: 200,
@@ -127,7 +130,7 @@ export class NotificationController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async update(
     @Param('id') id: number,
-    @Body() notificationDto: NotificationDto,
+    @Body() notificationDto: CreateNotificationDto,
   ): Promise<Notification | null> {
     try {
       return this.notificationService.update(id, notificationDto);
@@ -138,7 +141,7 @@ export class NotificationController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Eliminar una notificación por ID' })
   @ApiResponse({
     status: 200,

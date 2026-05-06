@@ -13,9 +13,9 @@ export class CourtSeeder implements Seeder {
       // Buscamos duplicados según la restricción @Unique de la entidad
       const existing = await courtRepository.findOne({
         where: {
-          nombre: item.nombre,
-          installation_id: item.installation_id,
-          day_of_week: item.day_of_week,
+          name: item.name,
+          installationId: item.installationId,
+          dayOfWeek: item.dayOfWeek,
         },
       });
 
@@ -25,19 +25,19 @@ export class CourtSeeder implements Seeder {
 
       const courtEntry = new Court();
       // Asignación de campos según la entidad
-      courtEntry.installation_id = item.installation_id;
-      courtEntry.court_type_id = item.court_type_id;
-      courtEntry.nombre = item.nombre;
+      courtEntry.installationId = item.installationId;
+      courtEntry.courtTypeId = item.courtTypeId;
+      courtEntry.name = item.name;
       courtEntry.capacity = item.capacity;
-      courtEntry.price_per_hour = item.price_per_hour;
-      courtEntry.covered = item.covered; // booleano
-      courtEntry.lighting = item.lighting;
+      courtEntry.pricePerHour = item.pricePerHour;
+      courtEntry.isCovered = item.isCovered; // booleano
+      courtEntry.hasLighting = item.hasLighting;
       courtEntry.description = item.description;
       courtEntry.status = item.status!;
-      courtEntry.opening_time = item.opening_time!;
-      courtEntry.closing_time = item.closing_time!;
-      courtEntry.day_of_week = item.day_of_week!;
-      courtEntry.reservations_made = item.reservations_made;
+      courtEntry.openingTime = item.openingTime!;
+      courtEntry.closingTime = item.closingTime!;
+      courtEntry.dayOfWeek = item.dayOfWeek!;
+      courtEntry.reservationsMade = item.reservationsMade;
 
       courtEntries.push(courtEntry);
     }

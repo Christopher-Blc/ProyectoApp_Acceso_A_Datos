@@ -4,13 +4,13 @@ import { Court } from '../../court/entities/court.entity';
 @Entity('tipos_Court')
 export class CourtType {
   @PrimaryGeneratedColumn({ name: 'court_type_id' })
-  court_type_id!: number;
+  id!: number;
 
   @Column()
-  nombre!: string;
+  name!: string;
 
   @Column({})
-  imagen!: string; // Aquí guardaremos algo como "Court-tenis.jpg"
+  image!: string; // Aquí guardaremos algo como "Court-tenis.jpg"
 
   @OneToMany(() => Court, (court) => court.courtType)
   courts!: Court[];

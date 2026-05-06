@@ -87,7 +87,7 @@ export class CreateUserDto {
   @ApiProperty({
     description: 'Role of the user',
     enum: UserRole,
-    example: UserRole.CLIENTE,
+    example: UserRole.CLIENT,
   })
   role?: UserRole;
 
@@ -104,14 +104,14 @@ export class CreateUserDto {
     description: 'Date of birth of the user',
     example: '1990-01-01',
   })
-  fecha_nacimiento!: string;
+  dateOfBirth!: string;
 
   @IsString()
   @ApiProperty({
     description: 'Address of the user',
     example: '123 Main St, City, Country',
   })
-  direccion!: string;
+  address!: string;
 }
 
 export class UpdateUserDto {
@@ -177,11 +177,11 @@ export class UpdateUserDto {
   @IsISO8601({ strict: true })
   @IsOptional()
   @IsDateString()
-  fecha_nacimiento?: Date;
+  dateOfBirth?: Date;
 
   @IsOptional()
   @IsString()
-  direccion?: string;
+  address?: string;
 
   @IsOptional()
   @IsInt()
@@ -191,7 +191,7 @@ export class UpdateUserDto {
     example: 2,
     required: false,
   })
-  Membership_id?: number;
+  membershipId?: number;
 }
 
 export class UpdatePushTokenDto {

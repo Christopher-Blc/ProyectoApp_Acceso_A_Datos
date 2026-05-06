@@ -1,6 +1,6 @@
 import { IsString, IsEnum, IsOptional, IsDateString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { estado_instalacion } from '../entities/installation.entity';
+import { InstallationStatus } from '../entities/installation.entity';
 
 export class CreateInstallationDto {
   @IsString()
@@ -8,21 +8,21 @@ export class CreateInstallationDto {
     description: 'Name of the installation',
     example: 'Gym Central',
   })
-  nombre!: string;
+  name!: string;
 
   @IsString()
   @ApiProperty({
     description: 'Address of the installation',
     example: '123 Main St',
   })
-  direccion!: string;
+  address!: string;
 
   @IsString()
   @ApiProperty({
     description: 'Phone number of the installation',
     example: '123456789',
   })
-  telefono!: string;
+  phone!: string;
 
   @IsString()
   @ApiProperty({
@@ -36,15 +36,15 @@ export class CreateInstallationDto {
     description: 'Description of the installation',
     example: 'A well-equipped gym with modern facilities',
   })
-  descripcion!: string;
+  description!: string;
 
   @IsOptional()
-  @IsEnum(estado_instalacion)
+  @IsEnum(InstallationStatus)
   @ApiPropertyOptional({
     description: 'State of the installation',
-    example: estado_instalacion.ACTIVE,
+    example: InstallationStatus.ACTIVE,
   })
-  estado?: estado_instalacion;
+  status?: InstallationStatus;
 }
 
 export class UpdateInstallationDto {
@@ -54,7 +54,7 @@ export class UpdateInstallationDto {
     description: 'Name of the installation',
     example: 'Gym Central',
   })
-  nombre?: string;
+  name?: string;
 
   @IsOptional()
   @IsString()
@@ -62,7 +62,7 @@ export class UpdateInstallationDto {
     description: 'Address of the installation',
     example: '123 Main St',
   })
-  direccion?: string;
+  address?: string;
 
   @IsOptional()
   @IsString()
@@ -70,7 +70,7 @@ export class UpdateInstallationDto {
     description: 'Phone number of the installation',
     example: '123456789',
   })
-  telefono?: string;
+  phone?: string;
 
   @IsOptional()
   @IsString()
@@ -86,7 +86,7 @@ export class UpdateInstallationDto {
     description: 'Description of the installation',
     example: 'A well-equipped gym with modern facilities',
   })
-  descripcion?: string;
+  description?: string;
 
   @IsOptional()
   @IsDateString()
@@ -94,13 +94,13 @@ export class UpdateInstallationDto {
     description: 'Creation date of the installation',
     example: '2023-01-01',
   })
-  fecha_creacion?: string;
+  createdAt?: string;
 
   @IsOptional()
-  @IsEnum(estado_instalacion)
+  @IsEnum(InstallationStatus)
   @ApiPropertyOptional({
     description: 'State of the installation',
-    example: estado_instalacion.ACTIVE,
+    example: InstallationStatus.ACTIVE,
   })
-  estado?: estado_instalacion;
+  status?: InstallationStatus;
 }

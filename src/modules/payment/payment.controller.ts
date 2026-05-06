@@ -27,7 +27,7 @@ export class PaymentController {
   constructor(private readonly PaymentService: PaymentService) {}
 
   @Get()
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Get all payments' })
   @ApiResponse({
     status: 200,
@@ -62,7 +62,7 @@ export class PaymentController {
   }
 
   @Post()
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new payment' })
   @ApiResponse({
     status: 201,
@@ -72,12 +72,12 @@ export class PaymentController {
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(
-    @Body() CreatePaymentDto: CreatePaymentDto,
+    @Body() paymentDto: CreatePaymentDto,
   ): Promise<Payment | null> {
     try {
       const pagoData = {
-        ...CreatePaymentDto,
-        payment_date: new Date(CreatePaymentDto.payment_date),
+        ...paymentDto,
+        paymentDate: new Date(paymentDto.paymentDate),
       };
       return this.PaymentService.create(pagoData);
     } catch (err) {
@@ -87,7 +87,7 @@ export class PaymentController {
   }
 
   @Put(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update a payment by ID' })
   @ApiResponse({
     status: 200,
@@ -99,10 +99,10 @@ export class PaymentController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async update(
     @Param('id') id: number,
-    @Body() UpdatePaymentDto: UpdatePaymentDto,
+    @Body() paymentDto: UpdatePaymentDto,
   ): Promise<Payment | null> {
     try {
-      return this.PaymentService.update(id, UpdatePaymentDto);
+      return this.PaymentService.update(id, paymentDto);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
@@ -110,7 +110,7 @@ export class PaymentController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMINISTRACION, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Delete a payment by ID' })
   @ApiResponse({ status: 200, description: 'Payment deleted successfully.' })
   @ApiResponse({ status: 404, description: 'Payment not found.' })

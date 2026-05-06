@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { Repository } from 'typeorm';
 import {
-  CreateMassiveNotiDto,
+  CreateMassiveNotificationDto,
   UpdateNotificationDto,
 } from './dto/notification.dto';
 import { User } from '../users/entities/user.entity';
@@ -52,33 +52,31 @@ export class NotificationService {
     });
   }
 
-  async findOne(Notification_id: number): Promise<Notification> {
-    const Notification = await this.notiRepository.findOne({
-      where: { notification_id: Notification_id },
+  async findOne(notificationId: number): Promise<Notification> {
+    const notification = await this.notiRepository.findOne({
+      where: { id: notificationId },
       relations: ['user'],
     });
-    if (!Notification) {
-      throw new NotFoundException(
-        `Notification ${Notification_id} no encontrada`,
-      );
+    if (!notification) {
+      throw new NotFoundException(`Notification ${notificationId} not found`);
     }
-    return Notification;
+    return notification;
   }
 
   async create(data: Partial<Notification>) {
-    if (!data.user_id) {
-      throw new BadRequestException('user_id is required');
+    if (!data.userId) {
+      throw new BadRequestException('userId is required');
     }
 
     const user = await this.userRepository.findOne({
-      where: { usuario_id: data.user_id },
+      where: { id: data.userId },
     });
     if (!user) {
-      throw new NotFoundException(`User ${data.user_id} no encontrado`);
+      throw new NotFoundException(`User ${data.userId} not found`);
     }
 
-    const Notification = this.notiRepository.create(data);
-    const savedNotification = await this.notiRepository.save(Notification);
+    const notification = this.notiRepository.create(data);
+    const savedNotification = await this.notiRepository.save(notification);
 
     if (user.expoPushToken) {
       await this.sendExpoPush(
@@ -91,14 +89,14 @@ export class NotificationService {
     return savedNotification;
   }
 
-  async createMassive(data: CreateMassiveNotiDto): Promise<{
+  async createMassive(data: CreateMassiveNotificationDto): Promise<{
     notificationsCreated: number;
     usersWithToken: number;
     pushesSent: number;
   }> {
     const users = await this.userRepository.find({
       where: {},
-      select: ['usuario_id', 'expoPushToken'],
+      select: ['id', 'expoPushToken'],
     });
 
     const recipients = users.filter((u) => !!u.expoPushToken);
@@ -112,10 +110,10 @@ export class NotificationService {
 
     const notifications = recipients.map((u) =>
       this.notiRepository.create({
-        user_id: u.usuario_id,
-        title: data.titulo,
-        message: data.mensaje,
-        notification_type: data.tipoNoti,
+        userId: u.id,
+        title: data.title,
+        message: data.message,
+        notificationType: data.notificationType,
       }),
     );
 
@@ -129,7 +127,7 @@ export class NotificationService {
         chunk.map(async (u) => {
           if (!u.expoPushToken) return;
           try {
-            await this.sendExpoPush(u.expoPushToken, data.titulo, data.mensaje);
+            await this.sendExpoPush(u.expoPushToken, data.title, data.message);
             pushesSent += 1;
           } catch {
             // Si falla un token no tumbamos el envío completo.
@@ -145,11 +143,11 @@ export class NotificationService {
     };
   }
 
-  async update(Notification_id: number, data: UpdateNotificationDto) {
-    await this.notiRepository.update(Notification_id, {
-      read: data.leida,
+  async update(notificationId: number, data: UpdateNotificationDto) {
+    await this.notiRepository.update(notificationId, {
+      isRead: data.isRead,
     });
-    return this.findOne(Notification_id);
+    return this.findOne(notificationId);
   }
 
   async remove(id: number) {

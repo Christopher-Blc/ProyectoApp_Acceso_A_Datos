@@ -7,22 +7,20 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity'; // Importa la entidad de usuario
 
-export enum tipoNoti {
+export enum NotificationType {
   ALERT = 'Aviso',
   REMINDER = 'Recordatorio',
   WARNING = 'Alerta',
   PROMOTION = 'Promocion',
 }
 
-export type NotificationType = tipoNoti;
-
 @Entity({ name: 'notificacion' })
 export class Notification {
   @PrimaryGeneratedColumn({ name: 'notification_id', type: 'int' })
-  notification_id!: number;
+  id!: number;
 
   @Column({ name: 'user_id', type: 'int' })
-  user_id!: number;
+  userId!: number;
 
   @Column({ name: 'titulo', length: 100, nullable: true })
   title?: string;
@@ -33,20 +31,20 @@ export class Notification {
   @Column({
     name: 'notification_type',
     type: 'enum',
-    enum: tipoNoti,
-    default: tipoNoti.REMINDER, // valor por defecto
+    enum: NotificationType,
+    default: NotificationType.REMINDER, // valor por defecto
   })
-  notification_type!: tipoNoti;
+  notificationType!: NotificationType;
 
   @Column({ name: 'leida', default: false })
-  read!: boolean;
+  isRead!: boolean;
 
   @Column({
     name: 'fecha',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  fecha!: Date;
+  createdAt!: Date;
 
   @ManyToOne(() => User, (user) => user.notifications)
   @JoinColumn({ name: 'user_id' })

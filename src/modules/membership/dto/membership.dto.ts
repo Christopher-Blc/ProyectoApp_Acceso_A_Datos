@@ -15,43 +15,43 @@ export class CreateMembershipDto {
   @Min(1)
   @Max(10)
   @ApiProperty({
-    description: 'Nivel de la membresía',
+    description: 'Membership level',
     example: 1,
   })
-  rango!: number;
+  level!: number;
 
   @IsString()
   @Length(1, 100)
   @ApiProperty({
-    description: 'Nombre visible de la membresía',
+    description: 'Visible membership name',
     example: 'Bronce',
   })
-  nombre!: string;
+  name!: string;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
   @Max(100)
   @ApiProperty({
-    description: 'Descuento aplicado a la membresía',
+    description: 'Membership discount',
     example: 5,
   })
-  descuento!: number;
+  discount!: number;
 
   @IsInt()
   @Min(0)
   @ApiProperty({
-    description: 'Número mínimo de reservas requeridas',
+    description: 'Minimum number of required reservations',
     example: 10,
   })
-  reservas_requeridas!: number;
+  requiredReservations!: number;
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({
-    description: 'Beneficios asociados a la membresía',
+    description: 'Membership benefits',
     example: '5% de descuento y prioridad en eventos.',
   })
-  beneficios?: string;
+  benefits?: string;
 }
 
 export class UpdateMembershipDto extends PartialType(CreateMembershipDto) {}

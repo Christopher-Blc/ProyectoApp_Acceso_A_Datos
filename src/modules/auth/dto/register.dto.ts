@@ -93,7 +93,7 @@ export class RegisterDto {
     description: 'Date of birth of the user',
     example: '1990-01-01',
   })
-  fecha_nacimiento!: string;
+  dateOfBirth!: string;
 
   //direccion
   @IsString()
@@ -102,5 +102,5 @@ export class RegisterDto {
     description: 'Address of the user',
     example: '123 Main St, City, Country',
   })
-  direccion!: string;
+  address!: string;
 }
