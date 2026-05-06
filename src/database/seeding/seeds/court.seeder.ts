@@ -27,7 +27,7 @@ export class CourtSeeder implements Seeder {
       // Asignación de campos según la entidad
       courtEntry.installation_id = item.installation_id;
       courtEntry.court_type_id = item.court_type_id;
-      courtEntry.nombre = item.nombre;
+      courtEntry.name = item.nombre;
       courtEntry.capacity = item.capacity;
       courtEntry.price_per_hour = item.price_per_hour;
       courtEntry.covered = item.covered; // booleano
