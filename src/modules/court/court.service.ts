@@ -6,13 +6,14 @@ import {
   In,
   MoreThanOrEqual,
   Between,
-  QueryDeepPartialEntity,
+  
 } from 'typeorm';
 import { CourtDto, UpdateCourtDto } from './dto/court.dto';
 import {
   Reservation,
   estadoReserva,
 } from '../reservation/entities/reservation.entity';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
 @Injectable()
 export class CourtService {
