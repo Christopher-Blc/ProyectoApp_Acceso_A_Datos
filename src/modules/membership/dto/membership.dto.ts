@@ -43,7 +43,7 @@ export class CreateMembershipDto {
     description: 'Minimum number of required reservations',
     example: 10,
   })
-  requiredReservations!: number;
+  required_reservations!: number;
 
   @IsOptional()
   @IsString()
