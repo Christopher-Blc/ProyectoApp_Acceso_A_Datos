@@ -81,7 +81,7 @@ export class CourtService {
       ...court,
       current_reservations: reservasDelDia
         .filter((r) => Number(r.court_id) === Number(court.id))
-        .map((r) => ({ inicio: r.start_time, fin: r.end_time })),
+        .map((r) => ({ start: r.start_time, end: r.end_time })),
     }));
   }
 
