@@ -92,21 +92,24 @@ export class UsersService {
   }
 
   async findAll(): Promise<any[]> {
-  return await this.userRepository
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.membership', 'membership')
+      .loadRelationCountAndMap('user.reservations_count', 'user.reservations')
+      .getMany();
+  }
+
+ async findOne(user_id: number): Promise<any> {
+  const user = await this.userRepository
     .createQueryBuilder('user')
     .leftJoinAndSelect('user.membership', 'membership')
-    .loadRelationCountAndMap('user.reservations_count', 'user.reservations')
-    .getMany();
-}
+    .loadRelationCountAndMap('user.reservations_count', 'user.reservations') // Crea el campo virtual
+    .where('user.id = :id', { id: user_id })
+    .getOne();
 
-  async findOne(user_id: number): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { id: user_id },
-      relations: ['reservations', 'membership'],
-    });
-    if (!user) throw new NotFoundException('user not found');
-    return user;
-  }
+  if (!user) throw new NotFoundException('User not found');
+  return user;
+}
 
   async create(data: Partial<User>): Promise<User> {
     try {
