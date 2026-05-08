@@ -75,7 +75,6 @@ export class CourtService {
 
     const reservasDelDia = await this.reservaRepo.find({
       where: { reservation_date: fechaString as any },
-      
     });
 
     return pistasValidas.map((court) => ({
