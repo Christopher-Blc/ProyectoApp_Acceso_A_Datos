@@ -50,7 +50,22 @@ services:
     depends_on:
       - database
     restart: unless-stopped
+    
+  frontend:
+    image: nginx:alpine
+    container_name: respi-frontend
+    ports:
+      - "8080:80"  # Access your app at http://your-ip:8080
+    volumes:
+      # Map the 'dist' folder you uploaded to the Nginx html folder
+      - /var/www/respi-expo:/usr/share/nginx/html:ro
+      # (Optional) Map a custom config to handle React Navigation routing
+      - /var/www/respi-expo/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+
 
 volumes:
   mariadb_data:
     driver: local
+    
+
