@@ -23,16 +23,19 @@ export class CourtService {
     private readonly reservaRepo: Repository<Reservation>,
   ) {}
 
-  async findAll(): Promise<Court[]> {
-    return this.pistaRepo.find({ relations: ['installation'] });
+  async findAll(): Promise<Court[]> { 
+    return this.pistaRepo.find({ 
+      relations: ['installation', 'courtType'] 
+    });
   }
 
   async findOne(courtId: number): Promise<Court> {
     const court = await this.pistaRepo.findOne({
       where: { id: courtId },
-      relations: ['installation'],
+      // Añadimos 'courtType' aquí también
+      relations: ['installation', 'courtType'],
     });
-    if (!court) throw new NotFoundException(`Court ${courtId} not found`);
+    if (!court) throw new NotFoundException(`Court not found`);
     return court;
   }
 
