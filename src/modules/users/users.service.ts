@@ -99,17 +99,17 @@ export class UsersService {
       .getMany();
   }
 
- async findOne(user_id: number): Promise<any> {
-  const user = await this.userRepository
-    .createQueryBuilder('user')
-    .leftJoinAndSelect('user.membership', 'membership')
-    .loadRelationCountAndMap('user.reservations_count', 'user.reservations') // Crea el campo virtual
-    .where('user.id = :id', { id: user_id })
-    .getOne();
+  async findOne(user_id: number): Promise<any> {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.membership', 'membership')
+      .loadRelationCountAndMap('user.reservations_count', 'user.reservations') // Crea el campo virtual
+      .where('user.id = :id', { id: user_id })
+      .getOne();
 
-  if (!user) throw new NotFoundException('User not found');
-  return user;
-}
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
 
   async create(data: Partial<User>): Promise<User> {
     try {
