@@ -79,7 +79,7 @@ export class CourtService {
 
     return pistasValidas.map((court) => ({
       ...court,
-      reservas_actuales: reservasDelDia
+      current_reservations: reservasDelDia
         .filter((r) => Number(r.court_id) === Number(court.id))
         .map((r) => ({ inicio: r.start_time, fin: r.end_time })),
     }));
