@@ -50,7 +50,7 @@ export class CourtController {
     }
   }
 
-  @Get('disponibilidad')
+  @Get('availability')
   @ApiOperation({ summary: 'Get court availability by date' })
   @ApiResponse({
     status: 200,
