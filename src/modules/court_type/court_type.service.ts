@@ -24,7 +24,7 @@ export class CourtTypeService {
 
   // Obtener todos los tipos de Court
   async findAll(): Promise<CourtType[]> {
-    return await this.tipoPistaRepository.find({ relations: ['pistas'] });
+    return await this.tipoPistaRepository.find();
   }
 
   // Obtener uno por ID
