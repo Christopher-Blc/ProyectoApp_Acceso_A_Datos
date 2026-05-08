@@ -74,14 +74,15 @@ export class CourtService {
     });
 
     const reservasDelDia = await this.reservaRepo.find({
-      where: { reservation_date: new Date(fechaString) },
+      where: { reservation_date: fechaString as any },
+      
     });
 
     return pistasValidas.map((court) => ({
       ...court,
       current_reservations: reservasDelDia
         .filter((r) => Number(r.court_id) === Number(court.id))
-        .map((r) => ({ start: r.start_time, end: r.end_time })),
+        .map((r) => ({ start: r.start_time, fin: r.end_time })),
     }));
   }
 
