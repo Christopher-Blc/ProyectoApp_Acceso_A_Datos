@@ -5,6 +5,7 @@ import {
   Put,
   Delete,
   Param,
+  ParseIntPipe,
   Body,
   HttpException,
   HttpStatus,
@@ -75,7 +76,7 @@ export class CourtController {
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 500, description: 'Error in some of the data.' })
-  async findOne(@Param('id') id: number): Promise<Court> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Court> {
     try {
       return this.CourtService.findOne(id);
     } catch (err) {
@@ -112,7 +113,7 @@ export class CourtController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Court not found.' })
   async update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() courtDto: UpdateCourtDto,
   ): Promise<Court> {
     try {
@@ -131,7 +132,7 @@ export class CourtController {
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Court not found.' })
-  async remove(@Param('id') id: number): Promise<void> {
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     try {
       await this.CourtService.remove(id);
     } catch (err) {
