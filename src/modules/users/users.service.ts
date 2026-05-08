@@ -91,11 +91,13 @@ export class UsersService {
     return this.findOne(user_id);
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.userRepository.find({
-      relations: ['reservations', 'membership'],
-    });
-  }
+  async findAll(): Promise<any[]> {
+  return await this.userRepository
+    .createQueryBuilder('user')
+    .leftJoinAndSelect('user.membership', 'membership')
+    .loadRelationCountAndMap('user.reservations_count', 'user.reservations')
+    .getMany();
+}
 
   async findOne(user_id: number): Promise<User> {
     const user = await this.userRepository.findOne({
