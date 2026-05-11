@@ -73,7 +73,7 @@ export class AuthService {
   }
 
   private buildVerificationUrl(plainToken: string): string {
-    return `${this.getFrontendBaseUrl()}/verify-email?token=${plainToken}`;
+    return `respi-app://verify-email?token=${plainToken}`;
   }
 
   private getMailTransporter(): Transporter | null {
