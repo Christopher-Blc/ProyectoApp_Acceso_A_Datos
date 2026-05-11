@@ -44,10 +44,9 @@ services:
     environment:
       PMA_HOST: database
       #PMA_PORT: ${DB_PORT}
-      PMA_USER: ""
-      PMA_PASSWORD: ""
+      #PMA_USER: ""
+      #PMA_PASSWORD: ""
       PMA_ARBITRARY: 1
-      PMA_AUTH_TYPE: cookie
     depends_on:
       - database
     restart: unless-stopped
