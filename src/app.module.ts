@@ -56,12 +56,12 @@ import { CourtTypeModule } from './modules/court_type/court_type.module';
       {
         name: 'default',
         ttl: 100, //
-        limit: 1000000000000, //
+        limit: 20, //
       },
       {
         name: 'auth',
-        ttl: 3600000, // 60 minutes
-        limit: 100,
+        ttl: 180000, // 60 minutes = 3600000 pero dejo media hora por tests
+        limit: 1000000000000,
       },
     ]),
 
