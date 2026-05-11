@@ -16,8 +16,8 @@ async function bootstrap() {
     prefix: '/public/',
   });
 
-  console.log(`🚀 Docker routes loaded`);
-  console.log(`📂 Looking for images in: ${publicPath}`);
+  console.log(`Docker routes loaded`);
+  console.log(`Images available in: ${publicPath}`);
 
   // Para que la app valide DTOs y devuelva los mensajes de error adecuados
   app.useGlobalPipes(
@@ -47,7 +47,7 @@ async function bootstrap() {
     })
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/', app, document, {
+  SwaggerModule.setup('swagger/', app, document, {
     swaggerOptions: {
       persistAuthorization: true,
     },
