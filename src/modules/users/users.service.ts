@@ -214,7 +214,7 @@ export class UsersService {
   }
 
   async markEmailAsVerified(user_id: number): Promise<void> {
-    await this.userRepository.update(
+    const result = await this.userRepository.update(
       { id: user_id },
       {
         email_verified: true,
@@ -222,5 +222,10 @@ export class UsersService {
         email_verification_expires_at: null,
       },
     );
+
+    // Si 'affected' es 0, es que el ID no existía en la BD
+    console.log(`Filas actualizadas: ${result.affected}`); 
   }
+
+  
 }
