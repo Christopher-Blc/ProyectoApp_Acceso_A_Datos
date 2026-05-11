@@ -40,8 +40,9 @@ services:
     platform: linux/arm64
     container_name: respi-phpmyadmin
     ports:
-      - "8081:80"
+      - "127.0.0.1:8081:80"
     environment:
+      PMA_ABSOLUTE_URI: https://respi.es/pma/
       PMA_HOST: database
       PMA_PORT: ${DB_PORT}
       PMA_ARBITRARY: 1
