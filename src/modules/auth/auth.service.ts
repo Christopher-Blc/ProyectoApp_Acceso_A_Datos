@@ -69,7 +69,7 @@ export class AuthService {
   }
 
   private getFrontendBaseUrl(): string {
-    return process.env.FRONTEND_URL || 'http://localhost:3000';
+    return 'https://respi.es';
   }
 
   private buildVerificationUrl(plainToken: string): string {

@@ -1,0 +1,11 @@
+<script>
+    function abrirApp() {
+        // Sacamos el token de la URL actual de la web
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        // IMPORTANTE: Ruta exacta según tu linking.ts
+        // respi-app://(auth)/verify-email?token=...
+        window.location.href = `respi-app://(auth)/verify-email?token=${token}`;
+    }
+</script>
