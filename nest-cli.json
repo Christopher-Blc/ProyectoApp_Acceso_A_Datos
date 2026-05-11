@@ -5,10 +5,7 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "assets": [
-      {
-        "include": "modules/auth/templates/**/*.hbs",
-        "outDir": "dist/modules/auth/templates"
-      }
+      "modules/auth/templates/**/*.hbs"
     ],
     "watchAssets": true
   }
