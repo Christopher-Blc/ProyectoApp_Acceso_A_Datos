@@ -17,6 +17,8 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
+import { ResendVerificationDto } from './dto/resend-verification.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { Throttle } from '../../common/decorators/throttle.decorator';
 import type { AuthenticatedRequest } from './types/auth.types';
@@ -37,7 +39,11 @@ export class AuthController {
 
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
-  @ApiResponse({ status: 201, description: 'User registered successfully.' })
+  @ApiResponse({
+    status: 201,
+    description:
+      'User registered successfully. Email verification is required before login.',
+  })
   @ApiResponse({
     status: 400,
     description: 'Validation failed or user already exists.',
@@ -46,6 +52,25 @@ export class AuthController {
     // El rol no se decide por el cliente
     // Si alguien intenta enviarlo, lo ideal es bloquearlo con ValidationPipe whitelist + forbidNonWhitelisted
     return this.authService.register(dto);
+  }
+
+  @Post('verify-email')
+  @ApiOperation({ summary: 'Verify user email with confirmation token' })
+  @ApiResponse({ status: 200, description: 'Email verified successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid or expired token.' })
+  verifyEmail(@Body() dto: VerifyEmailDto) {
+    return this.authService.verifyEmail(dto.token);
+  }
+
+  @Post('resend-verification')
+  @Throttle('auth')
+  @ApiOperation({ summary: 'Resend email verification link' })
+  @ApiResponse({
+    status: 200,
+    description: 'Verification email resend requested successfully.',
+  })
+  resendVerification(@Body() dto: ResendVerificationDto) {
+    return this.authService.resendVerificationEmail(dto.email);
   }
 
   @Post('login')

@@ -90,6 +90,15 @@ JWT_ACCESS_SECRET=super_clave_larga_y_segura
 JWT_EXPIRES_IN=1h
 JWT_REFRESH_SECRET=super_clave_muy_larga_y_mas_segura
 JWT_REFRESH_EXPIRES_IN=7d
+FRONTEND_URL=https://respi.es
+EMAIL_VERIFICATION_TTL_MINUTES=10
+NODE_ENV=development
+SMTP_HOST=smtp.tudominio.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=no-reply@respi.es
+SMTP_PASS=tu_password_smtp
+SMTP_FROM=Respi <no-reply@respi.es>
 ```
 
 Notas importantes:
@@ -98,6 +107,8 @@ Notas importantes:
 - En ejecucion local, `main.ts` usa `PORT` si existe; si no, arranca en `3000`.
 - Para ejecutar seeders fuera de Docker normalmente tendras que usar `DB_HOST=localhost`.
 - Las claves JWT deben cambiarse por valores seguros fuera de desarrollo.
+- Si `NODE_ENV=production` y falta configuracion SMTP, el registro devolvera error para no dejar usuarios sin correo de verificacion.
+- En desarrollo, si falta SMTP, el backend devuelve `verification_url` en el register para pruebas manuales.
 
 ## Instalacion local
 
@@ -213,6 +224,8 @@ docker exec -it respi-webserver npm run seed
 El modulo `auth` implementa:
 
 - `POST /auth/register`
+- `POST /auth/verify-email`
+- `POST /auth/resend-verification`
 - `POST /auth/login`
 - `POST /auth/refresh`
 - `POST /auth/logout`

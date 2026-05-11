@@ -2,9 +2,13 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  BadRequestException,
+  InternalServerErrorException,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import nodemailer, { type Transporter } from 'nodemailer';
 import { LoginDto } from './dto/login.dto';
 import { UserRole } from '../users/entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
@@ -12,7 +16,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { createHash } from 'crypto';
+import { createHash, randomBytes } from 'crypto';
 import { AuthTokenBlacklist } from './blacklist/auth_token_blacklist.entity';
 import { AuthUserPayload } from './types/auth.types';
 
@@ -27,6 +31,95 @@ import { AuthUserPayload } from './types/auth.types';
  */
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+  private mailTransporter: Transporter | null = null;
+
+  private buildEmailVerificationToken(): {
+    plainToken: string;
+    tokenHash: string;
+    expiresAt: Date;
+  } {
+    const ttlMinutes = Number(process.env.EMAIL_VERIFICATION_TTL_MINUTES || 30);
+    const plainToken = randomBytes(32).toString('hex');
+    const tokenHash = this.hashToken(plainToken);
+    const expiresAt = new Date(Date.now() + ttlMinutes * 60 * 1000);
+    return { plainToken, tokenHash, expiresAt };
+  }
+
+  private getFrontendBaseUrl(): string {
+    return process.env.FRONTEND_URL || 'http://localhost:3000';
+  }
+
+  private buildVerificationUrl(plainToken: string): string {
+    return `${this.getFrontendBaseUrl()}/verify-email?token=${plainToken}`;
+  }
+
+  private getMailTransporter(): Transporter | null {
+    if (this.mailTransporter) {
+      return this.mailTransporter;
+    }
+
+    const host = process.env.SMTP_HOST;
+    const portRaw = process.env.SMTP_PORT;
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+
+    if (!host || !portRaw || !user || !pass) {
+      return null;
+    }
+
+    const port = Number(portRaw);
+    const secure =
+      process.env.SMTP_SECURE === 'true' ||
+      (!Number.isNaN(port) && port === 465);
+
+    this.mailTransporter = nodemailer.createTransport({
+      host,
+      port: Number.isNaN(port) ? 587 : port,
+      secure,
+      auth: {
+        user,
+        pass,
+      },
+    });
+
+    return this.mailTransporter;
+  }
+
+  private async sendVerificationEmail(
+    targetEmail: string,
+    userName: string,
+    verifyUrl: string,
+  ): Promise<void> {
+    const transporter = this.getMailTransporter();
+
+    if (!transporter) {
+      if (process.env.NODE_ENV === 'production') {
+        throw new InternalServerErrorException(
+          'Email service not configured',
+        );
+      }
+
+      this.logger.warn(
+        'SMTP not configured. Skipping verification email delivery in non-production environment.',
+      );
+      return;
+    }
+
+    const fromAddress = process.env.SMTP_FROM || process.env.SMTP_USER;
+    if (!fromAddress) {
+      throw new InternalServerErrorException('SMTP_FROM or SMTP_USER is required');
+    }
+
+    await transporter.sendMail({
+      from: fromAddress,
+      to: targetEmail,
+      subject: 'Confirma tu correo en RESPI',
+      text: `Hola ${userName},\n\nConfirma tu correo pulsando este enlace:\n${verifyUrl}\n\nSi no has sido tu, ignora este mensaje.`,
+      html: `<p>Hola ${userName},</p><p>Confirma tu correo pulsando este enlace:</p><p><a href="${verifyUrl}">${verifyUrl}</a></p><p>Si no has sido tu, ignora este mensaje.</p>`,
+    });
+  }
+
   /**
    * Renews the access token using a valid refresh token.
    */
@@ -134,18 +227,96 @@ export class AuthService {
       password: dto.password,
       role: UserRole.CLIENT,
       is_active: true,
+      email_verified: false,
       registration_date: new Date(),
       date_of_birth: new Date(dto.date_of_birth),
     });
 
-    // Eliminamos datos sensibles de la respuesta pública.
-    const userSafe: Record<string, unknown> = { ...created };
-    delete userSafe.password;
-    return this.login({ email: dto.email, password: dto.password }).then(
-      (tokens) => {
-        return { ...tokens, user: userSafe };
-      },
+    const { plainToken, tokenHash, expiresAt } =
+      this.buildEmailVerificationToken();
+    await this.usersService.setEmailVerificationData(
+      created.id,
+      tokenHash,
+      expiresAt,
     );
+
+    const verifyUrl = this.buildVerificationUrl(plainToken);
+    await this.sendVerificationEmail(
+      created.email,
+      created.name || created.username,
+      verifyUrl,
+    );
+
+    return {
+      message:
+        'Registro completado. Revisa tu correo para confirmar la cuenta antes de iniciar sesion.',
+      ...(process.env.NODE_ENV === 'production'
+        ? {}
+        : {
+            verification_url: verifyUrl,
+          }),
+    };
+  }
+
+  async resendVerificationEmail(email: string): Promise<Record<string, string>> {
+    const user = await this.usersService.findByEmail(email);
+
+    if (!user) {
+      return {
+        message:
+          'Si el correo existe, se ha enviado un nuevo enlace de verificacion.',
+      };
+    }
+
+    if (user.email_verified) {
+      return {
+        message: 'El correo ya esta verificado.',
+      };
+    }
+
+    const { plainToken, tokenHash, expiresAt } =
+      this.buildEmailVerificationToken();
+    await this.usersService.setEmailVerificationData(user.id, tokenHash, expiresAt);
+
+    const verifyUrl = this.buildVerificationUrl(plainToken);
+    await this.sendVerificationEmail(
+      user.email,
+      user.name || user.username,
+      verifyUrl,
+    );
+
+    return {
+      message: 'Se ha enviado un nuevo correo de verificacion.',
+      ...(process.env.NODE_ENV === 'production'
+        ? {}
+        : {
+            verification_url: verifyUrl,
+          }),
+    };
+  }
+
+  async verifyEmail(token: string): Promise<{ message: string }> {
+    const tokenHash = this.hashToken(token);
+    const user = await this.usersService.findByEmailVerificationTokenHash(tokenHash);
+
+    if (!user) {
+      throw new BadRequestException('Invalid verification token');
+    }
+
+    if (user.email_verified) {
+      return { message: 'Email already verified' };
+    }
+
+    if (!user.email_verification_expires_at) {
+      throw new BadRequestException('Verification token has expired');
+    }
+
+    if (user.email_verification_expires_at.getTime() < Date.now()) {
+      throw new BadRequestException('Verification token has expired');
+    }
+
+    await this.usersService.markEmailAsVerified(user.id);
+    return { message: 'Email verified successfully' };
   }
 
   /**
@@ -160,6 +331,11 @@ export class AuthService {
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) throw new UnauthorizedException('Incorrect credentials');
     if (!user.is_active) throw new ForbiddenException('Inactive user');
+    if (!user.email_verified) {
+      throw new ForbiddenException(
+        'Email not verified. Please confirm your email before login',
+      );
+    }
 
     // Comparación segura de hash de contraseña.
     const ok = await bcrypt.compare(dto.password, user.password);

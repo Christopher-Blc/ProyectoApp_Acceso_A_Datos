@@ -99,7 +99,7 @@ export class AppService {
                 <a href="https://respi.es" class="hidden sm:block border border-[#F5CA7E]/40 px-5 py-2 rounded-lg text-sm font-bold text-[#F5CA7E] hover:bg-[#F5CA7E] hover:text-black transition">
                     VIEW WEBSITE
                 </a>
-                <a href="/api/swagger/" class="btn-brand px-6 py-2 rounded-lg text-sm font-bold transition transform hover:scale-105">
+                <a href="/api/swagger" class="btn-brand px-6 py-2 rounded-lg text-sm font-bold transition transform hover:scale-105">
                     SWAGGER API
                 </a>
             </div>
@@ -125,7 +125,7 @@ export class AppService {
                         Go to Respi.es
                     </a>
 
-                    <a href="/api/swagger/" class="px-8 py-4 btn-brand transition-all rounded-xl font-bold shadow-lg shadow-[#F5CA7E]/20">
+                    <a href="/api/swagger" class="px-8 py-4 btn-brand transition-all rounded-xl font-bold shadow-lg shadow-[#F5CA7E]/20">
                         API Documentation
                     </a>
                     
