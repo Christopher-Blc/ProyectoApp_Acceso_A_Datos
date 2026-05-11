@@ -50,6 +50,7 @@ async function bootstrap() {
       bearerFormat: 'JWT',
       in: 'header',
     })
+    .addServer('https://respi.es/api', 'Servidor de Producción/VPS')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document, {
