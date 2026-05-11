@@ -33,6 +33,7 @@
     "bcryptjs": "^3.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "handlebars": "^4.7.9",
     "mysql2": "^3.15.3",
     "nodemailer": "^8.0.7",
     "reflect-metadata": "^0.2.2",

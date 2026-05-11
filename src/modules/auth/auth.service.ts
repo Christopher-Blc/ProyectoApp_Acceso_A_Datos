@@ -9,6 +9,9 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import nodemailer, { type Transporter } from 'nodemailer';
+import Handlebars from 'handlebars';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 import { LoginDto } from './dto/login.dto';
 import { UserRole } from '../users/entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
@@ -33,6 +36,25 @@ import { AuthUserPayload } from './types/auth.types';
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   private mailTransporter: Transporter | null = null;
+
+  private async renderVerificationEmailTemplate(
+    userName: string,
+    verifyUrl: string,
+  ): Promise<string> {
+    const templatePath = join(__dirname, 'templates', 'verification-email.hbs');
+    const templateSource = await readFile(templatePath, 'utf8');
+    const compileTemplate = Handlebars.compile<{
+      userName: string;
+      verifyUrl: string;
+      year: number;
+    }>(templateSource, { strict: true });
+
+    return compileTemplate({
+      userName,
+      verifyUrl,
+      year: new Date().getFullYear(),
+    });
+  }
 
   private buildEmailVerificationToken(): {
     plainToken: string;
@@ -106,17 +128,18 @@ export class AuthService {
       return;
     }
 
-    const fromAddress = process.env.SMTP_FROM || process.env.SMTP_USER;
-    if (!fromAddress) {
-      throw new InternalServerErrorException('SMTP_FROM or SMTP_USER is required');
-    }
+    const fromAddress = process.env.SMTP_FROM || 'ResPi <no-reply@respi.es>';
+    const htmlBody = await this.renderVerificationEmailTemplate(
+      userName,
+      verifyUrl,
+    );
 
     await transporter.sendMail({
       from: fromAddress,
       to: targetEmail,
       subject: 'Confirma tu correo en RESPI',
       text: `Hola ${userName},\n\nConfirma tu correo pulsando este enlace:\n${verifyUrl}\n\nSi no has sido tu, ignora este mensaje.`,
-      html: `<p>Hola ${userName},</p><p>Confirma tu correo pulsando este enlace:</p><p><a href="${verifyUrl}">${verifyUrl}</a></p><p>Si no has sido tu, ignora este mensaje.</p>`,
+      html: htmlBody,
     });
   }
 
