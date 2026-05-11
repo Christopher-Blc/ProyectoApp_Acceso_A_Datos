@@ -95,7 +95,7 @@ export class AppService {
                 <a href="#repos" class="hover:text-white transition">Code</a>
                 <a href="#equipo" class="hover:text-white transition">Authors</a>
             </div>
-            <a href="/api" class="btn-brand px-6 py-2 rounded-lg text-sm font-bold transition transform hover:scale-105">
+            <a href="/api/swagger" class="btn-brand px-6 py-2 rounded-lg text-sm font-bold transition transform hover:scale-105">
                 SWAGGER API
             </a>
         </nav>
