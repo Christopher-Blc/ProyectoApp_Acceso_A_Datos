@@ -78,7 +78,6 @@ export class AppService {
                 50% { transform: translateY(-15px); }
             }
 
-            /* Scrollbar personalizada */
             ::-webkit-scrollbar { width: 8px; }
             ::-webkit-scrollbar-track { background: var(--respi-bg); }
             ::-webkit-scrollbar-thumb { background: var(--respi-surface); border-radius: 10px; }
@@ -95,9 +94,15 @@ export class AppService {
                 <a href="#repos" class="hover:text-white transition">Code</a>
                 <a href="#equipo" class="hover:text-white transition">Authors</a>
             </div>
-            <a href="/api/swagger" class="btn-brand px-6 py-2 rounded-lg text-sm font-bold transition transform hover:scale-105">
-                SWAGGER API
-            </a>
+            <div class="flex gap-3">
+                <!-- Botón Navbar para la Web Principal -->
+                <a href="https://respi.es" class="hidden sm:block border border-[#F5CA7E]/40 px-5 py-2 rounded-lg text-sm font-bold text-[#F5CA7E] hover:bg-[#F5CA7E] hover:text-black transition">
+                    VIEW WEBSITE
+                </a>
+                <a href="/api/swagger/" class="btn-brand px-6 py-2 rounded-lg text-sm font-bold transition transform hover:scale-105">
+                    SWAGGER API
+                </a>
+            </div>
         </nav>
 
         <section id="inicio" class="min-h-screen flex flex-col items-center justify-center pt-20 px-6 text-center">
@@ -114,16 +119,25 @@ export class AppService {
                     Optimization of reservations, memberships and automated payment flows.
                 </p>
                 <div class="flex flex-wrap justify-center gap-4">
+                    <!-- BOTÓN A LA WEB PRINCIPAL -->
+                    <a href="https://respi.es" class="px-8 py-4 bg-white text-black hover:bg-gray-200 transition-all rounded-xl font-bold flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        Go to Respi.es
+                    </a>
+
+                    <a href="/api/swagger/" class="px-8 py-4 btn-brand transition-all rounded-xl font-bold shadow-lg shadow-[#F5CA7E]/20">
+                        API Documentation
+                    </a>
+                    
                     <a href="#tecnologias" class="px-8 py-4 glass text-white hover:bg-white/5 transition-all rounded-xl font-bold border border-white/10">
                         Explore Stack
-                    </a>
-                    <a href="/api" class="px-8 py-4 btn-brand transition-all rounded-xl font-bold shadow-lg shadow-[#F5CA7E]/20">
-                        API Documentation
                     </a>
                 </div>
             </div>
         </section>
 
+        <!-- ... Resto de secciones (tecnologías, repos, equipo, footer) se mantienen igual ... -->
+        
         <section id="tecnologias" class="py-24 px-6 max-w-7xl mx-auto">
             <h2 class="text-center text-slate-500 uppercase tracking-[0.4em] text-xs font-bold mb-4" data-aos="fade-up">Fullstack Architecture</h2>
             <h3 class="text-4xl font-extrabold text-center mb-16" data-aos="fade-up">Main Technologies</h3>
@@ -222,8 +236,6 @@ export class AppService {
         <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <script>
             AOS.init({ duration: 800, once: true });
-            
-            // Smooth scroll effect
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
