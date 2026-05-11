@@ -7,5 +7,8 @@ RUN npm install pm2 -g
 # Expose ports needed to use Keymetrics.io
 EXPOSE 80 443 43554
 
+# Create app directory
+COPY static ./static
+
 # Start pm2.json process file
 CMD ["pm2-runtime", "start", "pm2.json"]

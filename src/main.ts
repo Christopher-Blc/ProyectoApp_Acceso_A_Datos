@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path/posix';
 
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   //app.setGlobalPrefix('api');
@@ -14,6 +15,10 @@ async function bootstrap() {
 
   app.useStaticAssets(publicPath, {
     prefix: '/public/',
+  });
+
+  app.useStaticAssets(join(rootPath, 'static'), {
+    prefix: '/', // Sin prefijo, para que se vea en respi.es/.well-known/...
   });
 
   console.log(`Docker routes loaded`);
