@@ -7,7 +7,7 @@ import { join } from 'path/posix';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.setGlobalPrefix('api');
+  //app.setGlobalPrefix('api');
 
   const rootPath = process.cwd();
   const publicPath = join(rootPath, 'public');
@@ -47,7 +47,7 @@ async function bootstrap() {
     })
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger/', app, document, {
+  SwaggerModule.setup('swagger', app, document, {
     swaggerOptions: {
       persistAuthorization: true,
     },

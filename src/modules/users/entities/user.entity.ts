@@ -79,6 +79,23 @@ export class User {
   @Column({ name: 'refresh_token_hash', type: 'text', nullable: true })
   refresh_token_hash!: string | null;
 
+  @Column({ name: 'email_verified', default: false })
+  email_verified!: boolean;
+
+  @Column({
+    name: 'email_verification_token_hash',
+    type: 'text',
+    nullable: true,
+  })
+  email_verification_token_hash!: string | null;
+
+  @Column({
+    name: 'email_verification_expires_at',
+    type: 'timestamp',
+    nullable: true,
+  })
+  email_verification_expires_at!: Date | null;
+
   @Column({ name: 'expo_push_token', type: 'text', nullable: true })
   expoPushToken!: string | null;
 

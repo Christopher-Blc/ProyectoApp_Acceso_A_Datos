@@ -191,4 +191,36 @@ export class UsersService {
       { refresh_token_hash: hash },
     );
   }
+
+  async setEmailVerificationData(
+    user_id: number,
+    tokenHash: string,
+    expiresAt: Date,
+  ): Promise<void> {
+    await this.userRepository.update(
+      { id: user_id },
+      {
+        email_verified: false,
+        email_verification_token_hash: tokenHash,
+        email_verification_expires_at: expiresAt,
+      },
+    );
+  }
+
+  async findByEmailVerificationTokenHash(tokenHash: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { email_verification_token_hash: tokenHash },
+    });
+  }
+
+  async markEmailAsVerified(user_id: number): Promise<void> {
+    await this.userRepository.update(
+      { id: user_id },
+      {
+        email_verified: true,
+        email_verification_token_hash: null,
+        email_verification_expires_at: null,
+      },
+    );
+  }
 }
