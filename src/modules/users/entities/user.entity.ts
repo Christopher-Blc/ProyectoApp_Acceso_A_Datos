@@ -99,6 +99,16 @@ export class User {
   @Column({ name: 'expo_push_token', type: 'text', nullable: true })
   expoPushToken!: string | null;
 
+  @Column({ name: 'password_reset_token_hash', type: 'text', nullable: true })
+  password_reset_token_hash!: string | null;
+
+  @Column({
+    name: 'password_reset_expires_at',
+    type: 'timestamp',
+    nullable: true,
+  })
+  password_reset_expires_at!: Date | null;
+
   @ManyToOne(() => Membership, (m) => m.users)
   @JoinColumn({ name: 'membership_id' })
   membership!: Membership;

@@ -235,8 +235,55 @@ export class UsersService {
     if (!result.affected) {
       throw new NotFoundException('User not found');
     }
-
   }
 
-  
+  async setPasswordResetData(
+    user_id: number,
+    tokenHash: string,
+    expiresAt: Date,
+  ): Promise<void> {
+    const result = await this.userRepository.update(
+      { id: user_id },
+      {
+        password_reset_token_hash: tokenHash,
+        password_reset_expires_at: expiresAt,
+      },
+    );
+
+    if (!result.affected) {
+      throw new NotFoundException('User not found');
+    }
+  }
+
+  async findByPasswordResetTokenHash(tokenHash: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { password_reset_token_hash: tokenHash },
+    });
+  }
+
+  async clearPasswordResetData(user_id: number): Promise<void> {
+    const result = await this.userRepository.update(
+      { id: user_id },
+      {
+        password_reset_token_hash: null,
+        password_reset_expires_at: null,
+      },
+    );
+
+    if (!result.affected) {
+      throw new NotFoundException('User not found');
+    }
+  }
+
+  async updatePassword(user_id: number, rawPassword: string): Promise<void> {
+    const hashedPassword = await bcrypt.hash(rawPassword, 10);
+    const result = await this.userRepository.update(
+      { id: user_id },
+      { password: hashedPassword },
+    );
+
+    if (!result.affected) {
+      throw new NotFoundException('User not found');
+    }
+  }
 }

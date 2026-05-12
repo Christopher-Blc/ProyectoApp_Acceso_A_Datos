@@ -19,9 +19,11 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { ResendVerificationDto } from './dto/resend-verification.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
-import { AuthGuard } from './guards/auth.guard';
+  import { AuthGuard } from './guards/auth.guard';
 import { Throttle } from '../../common/decorators/throttle.decorator';
 import type { AuthenticatedRequest } from './types/auth.types';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 /**
  * HTTP authentication controller.
@@ -71,6 +73,26 @@ export class AuthController {
   })
   resendVerification(@Body() dto: ResendVerificationDto) {
     return this.authService.resendVerificationEmail(dto.email);
+  }
+
+  @Post('forgot-password')
+  @Throttle('auth')
+  @ApiOperation({ summary: 'Request password reset email' })
+  @ApiResponse({
+    status: 200,
+    description: 'If the email exists, a reset link has been sent.',
+  })
+  forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto.email);
+  }
+
+  @Post('reset-password')
+  @Throttle('auth')
+  @ApiOperation({ summary: 'Reset password using reset token' })
+  @ApiResponse({ status: 200, description: 'Password updated successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid or expired reset token.' })
+  resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto.token, dto.new_password);
   }
 
   @Post('login')
