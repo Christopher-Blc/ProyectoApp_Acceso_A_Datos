@@ -78,7 +78,37 @@ export class UsersService {
       data.password = await bcrypt.hash(data.password, 10);
     }
 
-    await this.userRepository.update(user_id, data);
+    if (data.email) {
+      const existingByEmail = await this.findByEmail(data.email);
+      if (existingByEmail && existingByEmail.id !== user_id) {
+        throw new BadRequestException('Email already exists');
+      }
+    }
+
+    if (data.username) {
+      const existingByUsername = await this.findByUserName(data.username);
+      if (existingByUsername && existingByUsername.id !== user_id) {
+        throw new BadRequestException('Username already exists');
+      }
+    }
+
+    if (data.phone) {
+      const existingByPhone = await this.findByPhone(data.phone);
+      if (existingByPhone && existingByPhone.id !== user_id) {
+        throw new BadRequestException('Phone already exists');
+      }
+    }
+
+    try {
+      await this.userRepository.update(user_id, data);
+    } catch (error) {
+      const dbError = error as { code?: string };
+      if (dbError.code === '23505') {
+        throw new BadRequestException('Email/Username/Phone already exists');
+      }
+      throw new InternalServerErrorException();
+    }
+
     return this.findOne(user_id);
   }
 
