@@ -272,6 +272,7 @@ export class AuthService {
       ...(process.env.NODE_ENV === 'production'
         ? {}
         : {
+          console_message: `Verification URL (only in non-production): ${verifyUrl}`,
             verification_url: verifyUrl,
           }),
     };
