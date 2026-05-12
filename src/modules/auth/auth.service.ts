@@ -441,6 +441,8 @@ export class AuthService {
     // Busca usuario por email y valida estado de cuenta.
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) throw new UnauthorizedException('Incorrect credentials');
+    const ok = await bcrypt.compare(dto.password, user.password);
+    if (!ok) throw new UnauthorizedException('Incorrect credentials');
     if (!user.is_active) throw new ForbiddenException('Inactive user');
     if (!user.email_verified) {
       throw new ForbiddenException(
@@ -448,9 +450,7 @@ export class AuthService {
       );
     }
 
-    // Comparación segura de hash de contraseña.
-    const ok = await bcrypt.compare(dto.password, user.password);
-    if (!ok) throw new UnauthorizedException('Incorrect credentials');
+    
     // Actualiza último login
     await this.usersService.updateLastLogin(user.id);
 
