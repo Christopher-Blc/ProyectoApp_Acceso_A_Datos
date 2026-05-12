@@ -4,7 +4,6 @@ import {
   Injectable,
   BadRequestException,
   InternalServerErrorException,
-  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
@@ -34,7 +33,6 @@ import { AuthUserPayload } from './types/auth.types';
  */
 @Injectable()
 export class AuthService {
-  private readonly logger = new Logger(AuthService.name);
   private mailTransporter: Transporter | null = null;
 
   private async renderVerificationEmailTemplate(
@@ -68,8 +66,24 @@ export class AuthService {
     return { plainToken, tokenHash, expiresAt };
   }
 
+  private buildPasswordResetToken(): {
+    plainToken: string;
+    tokenHash: string;
+    expiresAt: Date;
+  } {
+    const ttlMinutes = Number(process.env.PASSWORD_RESET_TTL_MINUTES || 30);
+    const plainToken = randomBytes(32).toString('hex');
+    const tokenHash = this.hashToken(plainToken);
+    const expiresAt = new Date(Date.now() + ttlMinutes * 60 * 1000);
+    return { plainToken, tokenHash, expiresAt };
+  }
+
   private buildVerificationUrl(plainToken: string): string {
     return `https://respi.es/(auth)/verify-email?token=${encodeURIComponent(plainToken)}`;
+  }
+
+  private buildResetPasswordUrl(plainToken: string): string {
+    return `https://respi.es/(auth)/reset-password?token=${encodeURIComponent(plainToken)}`;
   }
 
   private getMailTransporter(): Transporter | null {
@@ -112,16 +126,7 @@ export class AuthService {
     const transporter = this.getMailTransporter();
 
     if (!transporter) {
-      if (process.env.NODE_ENV === 'production') {
-        throw new InternalServerErrorException(
-          'Email service not configured',
-        );
-      }
-
-      this.logger.warn(
-        'SMTP not configured. Skipping verification email delivery in non-production environment.',
-      );
-      return;
+      throw new InternalServerErrorException('Email service not configured');
     }
 
     const fromAddress = process.env.SMTP_FROM || 'ResPi <no-reply@respi.es>';
@@ -136,6 +141,28 @@ export class AuthService {
       subject: 'Confirma tu correo en RESPI',
       text: `Hola ${userName},\n\nConfirma tu correo pulsando este enlace:\n${verifyUrl}\n\nSi no has sido tu, ignora este mensaje.`,
       html: htmlBody,
+    });
+  }
+
+  private async sendPasswordResetEmail(
+    targetEmail: string,
+    userName: string,
+    resetUrl: string,
+  ): Promise<void> {
+    const transporter = this.getMailTransporter();
+
+    if (!transporter) {
+      throw new InternalServerErrorException('Email service not configured');
+    }
+
+    const fromAddress = process.env.SMTP_FROM || 'ResPi <no-reply@respi.es>';
+
+    await transporter.sendMail({
+      from: fromAddress,
+      to: targetEmail,
+      subject: 'Recupera tu contrasena en RESPI',
+      text: `Hola ${userName},\n\nPulsa este enlace para restablecer tu contrasena:\n${resetUrl}\n\nSi no has sido tu, ignora este mensaje.`,
+      html: `<p>Hola ${userName},</p><p>Pulsa este enlace para restablecer tu contrasena:</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>Si no has sido tu, ignora este mensaje.</p>`,
     });
   }
 
@@ -269,12 +296,6 @@ export class AuthService {
     return {
       message:
         'Registro completado. Revisa tu correo para confirmar la cuenta antes de iniciar sesion.',
-      ...(process.env.NODE_ENV === 'production'
-        ? {}
-        : {
-          console_message: `Verification URL (only in non-production): ${verifyUrl}`,
-            verification_url: verifyUrl,
-          }),
     };
   }
 
@@ -307,11 +328,6 @@ export class AuthService {
 
     return {
       message: 'Se ha enviado un nuevo correo de verificacion.',
-      ...(process.env.NODE_ENV === 'production'
-        ? {}
-        : {
-            verification_url: verifyUrl,
-          }),
     };
   }
 
@@ -337,6 +353,58 @@ export class AuthService {
 
     await this.usersService.markEmailAsVerified(user.id);
     return { message: 'Email verified successfully' };
+  }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const user = await this.usersService.findByEmail(email);
+
+    // Respuesta neutra para no exponer si el correo existe o no.
+    const genericResponse = {
+      message:
+        'Si el correo existe, se ha enviado un enlace para restablecer la contrasena.',
+    };
+
+    if (!user) {
+      return genericResponse;
+    }
+
+    const { plainToken, tokenHash, expiresAt } = this.buildPasswordResetToken();
+    await this.usersService.setPasswordResetData(user.id, tokenHash, expiresAt);
+
+    const resetUrl = this.buildResetPasswordUrl(plainToken);
+    await this.sendPasswordResetEmail(
+      user.email,
+      user.name || user.username,
+      resetUrl,
+    );
+
+    return genericResponse;
+  }
+
+  async resetPassword(
+    token: string,
+    newPassword: string,
+  ): Promise<{ message: string }> {
+    const tokenHash = this.hashToken(token);
+    const user = await this.usersService.findByPasswordResetTokenHash(tokenHash);
+
+    if (!user) {
+      throw new BadRequestException('Invalid reset token');
+    }
+
+    if (!user.password_reset_expires_at) {
+      throw new BadRequestException('Reset token has expired');
+    }
+
+    if (user.password_reset_expires_at.getTime() < Date.now()) {
+      throw new BadRequestException('Reset token has expired');
+    }
+
+    await this.usersService.updatePassword(user.id, newPassword);
+    await this.usersService.clearPasswordResetData(user.id);
+    await this.usersService.updateRefreshTokenHash(user.id, null);
+
+    return { message: 'Password reset successfully' };
   }
 
   /**
