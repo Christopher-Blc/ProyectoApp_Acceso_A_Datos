@@ -68,12 +68,8 @@ export class AuthService {
     return { plainToken, tokenHash, expiresAt };
   }
 
-  private getFrontendBaseUrl(): string {
-    return 'https://respi.es';
-  }
-
   private buildVerificationUrl(plainToken: string): string {
-    return `https://respi.es/(auth)/verify-email?token=${plainToken}`;
+    return `https://respi.es/(auth)/verify-email?token=${encodeURIComponent(plainToken)}`;
   }
 
   private getMailTransporter(): Transporter | null {
@@ -397,7 +393,7 @@ export class AuthService {
     // Sanitización final: nunca exponer password ni hash de refresh.
     const userSafe: Record<string, unknown> = { ...user };
     delete userSafe.password;
-    delete userSafe.refreshTokenHash;
+    delete userSafe.refresh_token_hash;
 
     return { access_token, refresh_token, user: userSafe };
   }

@@ -186,18 +186,23 @@ export class UsersService {
     user_id: number,
     hash: string | null,
   ): Promise<void> {
-    await this.userRepository.update(
+    const result = await this.userRepository.update(
       { id: user_id },
       { refresh_token_hash: hash },
     );
+
+    if (!result.affected) {
+      throw new NotFoundException('User not found');
+    }
   }
 
+  //Funciones de email que se usan en authservice
   async setEmailVerificationData(
     user_id: number,
     tokenHash: string,
     expiresAt: Date,
   ): Promise<void> {
-    await this.userRepository.update(
+    const result = await this.userRepository.update(
       { id: user_id },
       {
         email_verified: false,
@@ -205,6 +210,10 @@ export class UsersService {
         email_verification_expires_at: expiresAt,
       },
     );
+
+    if (!result.affected) {
+      throw new NotFoundException('User not found');
+    }
   }
 
   async findByEmailVerificationTokenHash(tokenHash: string): Promise<User | null> {
@@ -223,8 +232,10 @@ export class UsersService {
       },
     );
 
-    // Si 'affected' es 0, es que el ID no existía en la BD
-    console.log(`Filas actualizadas: ${result.affected}`); 
+    if (!result.affected) {
+      throw new NotFoundException('User not found');
+    }
+
   }
 
   
