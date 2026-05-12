@@ -54,6 +54,25 @@ export class AuthService {
     });
   }
 
+  private async renderPasswordResetEmailTemplate(
+    userName: string,
+    resetUrl: string,
+  ): Promise<string> {
+    const templatePath = join(__dirname, 'templates', 'password-reset-email.hbs');
+    const templateSource = await readFile(templatePath, 'utf8');
+    const compileTemplate = Handlebars.compile<{
+      userName: string;
+      resetUrl: string;
+      year: number;
+    }>(templateSource, { strict: true });
+
+    return compileTemplate({
+      userName,
+      resetUrl,
+      year: new Date().getFullYear(),
+    });
+  }
+
   private buildEmailVerificationToken(): {
     plainToken: string;
     tokenHash: string;
@@ -156,13 +175,17 @@ export class AuthService {
     }
 
     const fromAddress = process.env.SMTP_FROM || 'ResPi <no-reply@respi.es>';
+    const htmlBody = await this.renderPasswordResetEmailTemplate(
+      userName,
+      resetUrl,
+    );
 
     await transporter.sendMail({
       from: fromAddress,
       to: targetEmail,
       subject: 'Recupera tu contrasena en RESPI',
       text: `Hola ${userName},\n\nPulsa este enlace para restablecer tu contrasena:\n${resetUrl}\n\nSi no has sido tu, ignora este mensaje.`,
-      html: `<p>Hola ${userName},</p><p>Pulsa este enlace para restablecer tu contrasena:</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>Si no has sido tu, ignora este mensaje.</p>`,
+      html: htmlBody,
     });
   }
 
