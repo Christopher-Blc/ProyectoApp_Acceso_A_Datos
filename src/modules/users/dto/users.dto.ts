@@ -2,7 +2,6 @@ import {
   IsString,
   IsEmail,
   IsBoolean,
-  IsPhoneNumber,
   IsEnum,
   IsOptional,
   IsDateString,
@@ -59,13 +58,14 @@ export class CreateUserDto {
   })
   email!: string;
 
-  @IsPhoneNumber('ES')
+  @IsString()
   @Matches(VALIDATION_PATTERNS.phone.pattern, {
     message: VALIDATION_PATTERNS.phone.message,
   })
+  @Length(VALIDATION_LENGTHS.phone.min, VALIDATION_LENGTHS.phone.max)
   @ApiProperty({
-    description: 'Phone number of the user',
-    example: '600123456',
+    description: 'Phone number of the user, with optional international prefix',
+    example: '+34612345678',
   })
   phone!: string;
 
@@ -155,10 +155,14 @@ export class UpdateUserDto {
   email?: string;
 
   @IsOptional()
-  @IsPhoneNumber('ES')
+  @IsString()
+  @Matches(VALIDATION_PATTERNS.phone.pattern, {
+    message: VALIDATION_PATTERNS.phone.message,
+  })
+  @Length(VALIDATION_LENGTHS.phone.min, VALIDATION_LENGTHS.phone.max)
   @ApiProperty({
-    description: 'Phone number of the user',
-    example: '600123456',
+    description: 'Phone number of the user, with optional international prefix',
+    example: '+34612345678',
   })
   phone?: string;
 

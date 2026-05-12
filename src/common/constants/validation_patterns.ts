@@ -22,10 +22,10 @@ export const VALIDATION_PATTERNS = {
   },
 
   phone: {
-    pattern: /^\d{9}$/,
-    message: 'Phone must be exactly 9 digits',
-    example: '612345678',
-    description: 'National phone',
+    pattern: /^\+[1-9]\d{6,14}$/,
+    message: 'Phone must start with + followed by country code and number (e.g. +34612345678)',
+    example: '+34612345678',
+    description: 'International phone with mandatory country prefix',
   },
 
   dni: {
@@ -44,7 +44,7 @@ export const VALIDATION_LENGTHS = {
   address: { min: 5, max: 140 },
   message: { min: 2, max: 500 },
   title: { min: 2, max: 120 },
-  phone: { min: 9, max: 9 },
+  phone: { min: 7, max: 16 },
   dni: { min: 9, max: 9 },
 };
 

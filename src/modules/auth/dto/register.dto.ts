@@ -1,7 +1,6 @@
 import {
   IsString,
   IsEmail,
-  IsPhoneNumber,
   IsDateString,
   Length,
   Matches,
@@ -61,13 +60,14 @@ export class RegisterDto {
   email!: string;
 
   //Telefono
-  @IsPhoneNumber('ES')
+  @IsString()
   @Matches(VALIDATION_PATTERNS.phone.pattern, {
     message: VALIDATION_PATTERNS.phone.message,
   })
+  @Length(VALIDATION_LENGTHS.phone.min, VALIDATION_LENGTHS.phone.max)
   @ApiProperty({
-    description: 'Phone number of the user',
-    example: 123456789,
+    description: 'Phone number of the user, with optional international prefix',
+    example: '+34612345678',
   })
   phone!: string;
 
