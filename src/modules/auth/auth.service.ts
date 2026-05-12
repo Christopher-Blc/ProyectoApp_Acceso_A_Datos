@@ -79,11 +79,11 @@ export class AuthService {
   }
 
   private buildVerificationUrl(plainToken: string): string {
-    return `https://respi.es/(auth)/verify-email?token=${encodeURIComponent(plainToken)}`;
+    return `https://respi.es/verify-email?token=${encodeURIComponent(plainToken)}`;
   }
 
   private buildResetPasswordUrl(plainToken: string): string {
-    return `https://respi.es/(auth)/reset-password?token=${encodeURIComponent(plainToken)}`;
+    return `https://respi.es/reset-password?token=${encodeURIComponent(plainToken)}`;
   }
 
   private getMailTransporter(): Transporter | null {
