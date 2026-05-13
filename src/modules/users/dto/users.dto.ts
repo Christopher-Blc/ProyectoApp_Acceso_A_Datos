@@ -112,6 +112,14 @@ export class CreateUserDto {
     example: '123 Main St, City, Country',
   })
   address!: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Indicates if the user has verified their email address',
+    example: true,
+  })
+  email_verified?: boolean;
 }
 
 export class UpdateUserDto {
@@ -168,23 +176,44 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsString()
+  @ApiProperty({
+    description: 'password of the user. Must be between 8 and 100 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character.',
+    example: 'StrongP@ssw0rd!',
+  })
   password?: string;
 
   @IsEnum(UserRole)
   @IsOptional()
+  @ApiProperty({
+    description: 'Role of the user',
+    enum: UserRole,
+    example: UserRole.CLIENT,
+  })
   role?: UserRole;
 
   @IsBoolean()
   @IsOptional()
+  @ApiProperty({
+    description: 'Indicates if the user is active',
+    example: true,
+  })
   is_active?: boolean;
 
   @IsISO8601({ strict: true })
   @IsOptional()
   @IsDateString()
+  @ApiProperty({
+    description: 'Date of birth of the user',
+    example: '1990-01-01',
+  })
   date_of_birth?: Date;
 
   @IsOptional()
   @IsString()
+  @ApiProperty({
+    description: 'Address of the user',
+    example: '123 Main St, City, Country',
+  })
   address?: string;
 
   @IsOptional()
@@ -196,6 +225,14 @@ export class UpdateUserDto {
     required: false,
   })
   membership_id?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({
+    description: 'Indicates if the user has verified their email address',
+    example: true,
+  })
+  email_verified?: boolean;
 }
 
 export class UpdatePushTokenDto {
