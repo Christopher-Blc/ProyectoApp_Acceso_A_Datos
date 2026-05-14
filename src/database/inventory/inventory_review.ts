@@ -1,9 +1,9 @@
 export default [
   {
-    installation_id: 1,
+    court_id: 1,
     user_id: 1,
-    title: 'Comentario sobre la Installation',
-    text: 'La Installation estaba en excelentes condiciones',
+    title: 'Comentario sobre la Pista',
+    text: 'La pista estaba en excelentes condiciones',
     rating: 5,
     comment_date: new Date('2023-03-10T14:30:00'),
     is_visible: true,

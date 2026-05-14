@@ -1,26 +1,20 @@
 import {
   IsString,
   IsOptional,
-  IsDateString,
-  IsBoolean,
   IsNumber,
+  IsBoolean,
+  Min,
+  Max,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateReviewDto {
   @IsNumber()
   @ApiProperty({
-    description: 'ID of the user',
-    example: 1,
-  })
-  user_id!: number;
-
-  @IsNumber()
-  @ApiProperty({
     description: 'ID of the Court',
     example: 1,
   })
-  installation_id!: number;
+  court_id!: number;
 
   @IsString()
   @ApiProperty({
@@ -39,28 +33,26 @@ export class CreateReviewDto {
   text?: string;
 
   @IsNumber()
+  @Min(1)
+  @Max(5)
   @ApiProperty({
-    description: 'Rating of the comentario',
+    description: 'Rating of the comentario (entre 1 y 5)',
     example: 5,
+    minimum: 1,
+    maximum: 5,
   })
   rating!: number;
-
-  @IsDateString()
-  @ApiProperty({
-    description: 'Date of the comentario',
-    example: '2023-12-31T23:59:59Z',
-  })
-  comment_date!: string;
-
-  @IsBoolean()
-  @ApiProperty({
-    description: 'Visibility of the comentario',
-    example: true,
-  })
-  is_visible!: boolean;
 }
 
 export class UpdateReviewDto {
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({
+    description: 'ID of the Court',
+    example: 1,
+  })
+  court_id?: number;
+
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -85,10 +77,6 @@ export class UpdateReviewDto {
     example: 5,
   })
   rating?: number;
-
-  // @IsOptional()
-  // @IsDateString()
-  // fecha_comentario: Date;
 
   @IsOptional()
   @IsBoolean()

@@ -10,6 +10,8 @@ import {
 import { Reservation } from '../../reservation/entities/reservation.entity';
 import { Installation } from '../../installation/entities/installation.entity';
 import { CourtType } from '../../court_type/entities/court_type.entity';
+import { Review } from 'src/modules/review/entities/review.entity';
+import { max, min } from 'class-validator';
 
 export enum CourtStatus {
   AVAILABLE = 'DISPONIBLE',
@@ -83,6 +85,12 @@ export class Court {
   @Column({ type: 'int', default: 0 })
   reservations_made!: number;
 
+  @Column({ type: 'int', default: 0 })
+  total_reviews!: number;
+
+  @Column({ type: 'decimal', default: 0, precision: 2, scale: 1 })
+  average_rating!: number;
+
   @ManyToOne(() => Installation, (i) => i.courts)
   @JoinColumn({ name: 'installation_id' })
   installation!: Installation;
@@ -93,4 +101,8 @@ export class Court {
 
   @OneToMany(() => Reservation, (r) => r.court)
   reservations!: Reservation[];
+
+  @OneToMany(() => Review, (r) => r.court)
+  reviews!: Review[];
+
 }

@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Court } from '../../court/entities/court.entity'; // Importa la entidad Court
-import { Review } from '../../review/entities/review.entity';
 
 export enum InstallationStatus {
   ACTIVE = 'activa',
@@ -53,6 +52,4 @@ export class Installation {
   @OneToMany(() => Court, (c) => c.installation)
   courts!: Court[];
 
-  @OneToMany(() => Review, (r) => r.installation)
-  reviews!: Review[];
 }
