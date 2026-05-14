@@ -10,11 +10,11 @@ export class ReviewSeeder implements Seeder {
     const reviewEntries: Review[] = [];
 
     for (const item of comentarioData) {
-      // Buscamos duplicados por usuario, instalación y fecha
+      // Buscamos duplicados por usuario, pista y fecha
       const existing = await reviewRepository.findOne({
         where: {
           user_id: item.user_id,
-          installation_id: item.installation_id, // Añadido para filtrar
+          court_id: item.court_id,
           comment_date: item.comment_date,
         },
       });
@@ -25,7 +25,7 @@ export class ReviewSeeder implements Seeder {
 
       const reviewEntry = new Review();
       // Campos obligatorios según la entidad
-      reviewEntry.installation_id = item.installation_id; // Campo corregido
+      reviewEntry.court_id = item.court_id;
       reviewEntry.user_id = item.user_id;
       reviewEntry.title = item.title;
       reviewEntry.text = item.text;
