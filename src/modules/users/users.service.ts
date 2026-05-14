@@ -136,9 +136,13 @@ export class UsersService {
       .loadRelationCountAndMap('user.reservations_count', 'user.reservations') // Crea el campo virtual
       .where('user.id = :id', { id: user_id })
       .getOne();
+    
+    const totalReservationsCount = await this.reservaRepository.count({
+      where: { user_id , status: ReservationStatus.COMPLETED },
+    });
 
     if (!user) throw new NotFoundException('User not found');
-    return user;
+    return { ...user, total_reservations: totalReservationsCount };
   }
 
   async create(data: Partial<User>): Promise<User> {
