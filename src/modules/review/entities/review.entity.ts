@@ -7,7 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Court } from '../..//court/entities/court.entity';
+import { Court } from '../../court/entities/court.entity';
 
 @Entity()
 export class Review {
@@ -34,6 +34,9 @@ export class Review {
 
   @Column({ name: 'is_visible', default: true })
   is_visible!: boolean;
+
+  @Column({ name: 'admin_answer', nullable: true })
+  admin_answer?: string;
 
   @OneToOne(() => User, (u) => u.review)
   @JoinColumn({ name: 'user_id' })
