@@ -147,7 +147,7 @@ export class CourtTypeController {
   @Put(':id')
   @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @UseInterceptors(
-    FileInterceptor('imagen', {
+    FileInterceptor('image', {
       storage: diskStorage({
         destination: './public',
         filename: (req, file, cb) => {
