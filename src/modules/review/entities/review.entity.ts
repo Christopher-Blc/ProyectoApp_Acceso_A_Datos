@@ -7,7 +7,6 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Installation } from '../../installation/entities/installation.entity';
 import { Court } from 'src/modules/court/entities/court.entity';
 
 @Entity()
