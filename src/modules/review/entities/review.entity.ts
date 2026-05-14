@@ -7,7 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Court } from 'src/modules/court/entities/court.entity';
+import { Court } from '../..//court/entities/court.entity';
 
 @Entity()
 export class Review {

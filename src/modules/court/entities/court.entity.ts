@@ -10,9 +10,8 @@ import {
 import { Reservation } from '../../reservation/entities/reservation.entity';
 import { Installation } from '../../installation/entities/installation.entity';
 import { CourtType } from '../../court_type/entities/court_type.entity';
-import { Review } from 'src/modules/review/entities/review.entity';
-import { max, min } from 'class-validator';
-
+import { Review } from '../../review/entities/review.entity';
+ 
 export enum CourtStatus {
   AVAILABLE = 'DISPONIBLE',
   MAINTENANCE = 'MANTENIMIENTO',
