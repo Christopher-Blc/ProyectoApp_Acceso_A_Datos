@@ -72,9 +72,13 @@ export class UpdateReviewDto {
 
   @IsOptional()
   @IsNumber()
+  @Min(1)
+  @Max(5)
   @ApiProperty({
     description: 'Rating of the comentario',
     example: 5,
+    minimum: 1,
+    maximum: 5,
   })
   rating?: number;
 

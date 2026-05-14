@@ -25,7 +25,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserRole } from '../users/entities/user.entity';
 import { Review } from './entities/review.entity';
 import type { AuthenticatedRequest } from '../auth/types/auth.types';
-import { normalizeError } from 'src/common/utils/error.util';
+import { normalizeError } from '../../common/utils/error.util';
 
 @ApiTags('reviews')
 @UseGuards(AuthGuard, RolesGuard)
