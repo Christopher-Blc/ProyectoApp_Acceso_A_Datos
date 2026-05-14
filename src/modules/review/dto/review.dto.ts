@@ -75,7 +75,7 @@ export class UpdateReviewDto {
   @Min(1)
   @Max(5)
   @ApiProperty({
-    description: 'Rating of the comentario',
+    description: 'Rating of the review (between 1 and 5)',
     example: 5,
     minimum: 1,
     maximum: 5,
@@ -83,9 +83,18 @@ export class UpdateReviewDto {
   rating?: number;
 
   @IsOptional()
+  @IsString()
+  @ApiProperty({
+    description: 'Admin answer to the review',
+    example:
+      'Thank you for your feedback! We are glad you enjoyed your experience.',
+  })
+  admin_answer?: string;
+
+  @IsOptional()
   @IsBoolean()
   @ApiProperty({
-    description: 'Visibility of the comentario',
+    description: 'Visibility of the review',
     example: true,
   })
   is_visible?: boolean;
