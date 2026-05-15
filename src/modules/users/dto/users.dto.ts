@@ -235,6 +235,26 @@ export class UpdateUserDto {
   email_verified?: boolean;
 }
 
+export class ChangePasswordDto {
+  @IsString()
+  @ApiProperty({
+    description: 'Current password of the user',
+    example: 'OldP@ssw0rd!',
+  })
+  current_password!: string;
+
+  @IsString()
+  @Length(VALIDATION_LENGTHS.password.min, VALIDATION_LENGTHS.password.max)
+  @Matches(VALIDATION_PATTERNS.password.pattern, {
+    message: VALIDATION_PATTERNS.password.message,
+  })
+  @ApiProperty({
+    description: 'New password. Must be 8-128 characters including uppercase, lowercase, number and symbol.',
+    example: 'NewP@ssw0rd!',
+  })
+  new_password!: string;
+}
+
 export class UpdatePushTokenDto {
   @IsString()
   @ApiProperty({

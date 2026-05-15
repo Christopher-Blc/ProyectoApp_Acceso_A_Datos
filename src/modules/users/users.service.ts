@@ -309,6 +309,27 @@ export class UsersService {
     }
   }
 
+  async changePassword(
+    user_id: number,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id: user_id })
+      .addSelect('user.password')
+      .getOne();
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch)
+      throw new BadRequestException('Current password is incorrect');
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await this.userRepository.update(user_id, { password: hashed });
+  }
+
   async updatePassword(user_id: number, rawPassword: string): Promise<void> {
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
     const result = await this.userRepository.update(

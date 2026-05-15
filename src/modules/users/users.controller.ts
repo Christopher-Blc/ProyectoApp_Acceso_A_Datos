@@ -7,6 +7,7 @@ import {
   Delete,
   Param,
   Body,
+  HttpCode,
   HttpException,
   HttpStatus,
   UseGuards,
@@ -14,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
+  ChangePasswordDto,
   CreateUserDto,
   UpdatePushTokenDto,
   UpdateUserDto,
@@ -81,6 +83,31 @@ export class UsersController {
       if (!userId)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
       return await this.userService.update(Number(userId), userDto, true);
+    } catch (err) {
+      const { message, status } = normalizeError(err);
+      throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch('profile/change-password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Change my own password (requires current password)' })
+  @ApiResponse({ status: 204, description: 'Password changed successfully.' })
+  @ApiResponse({ status: 400, description: 'Current password is incorrect.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async changeMyPassword(
+    @Req() req: AuthenticatedRequest,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    try {
+      const userId = req.user?.sub;
+      if (!userId)
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      await this.userService.changePassword(
+        Number(userId),
+        dto.current_password,
+        dto.new_password,
+      );
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
