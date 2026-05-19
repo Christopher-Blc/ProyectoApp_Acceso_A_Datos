@@ -16,6 +16,7 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { CourtModule } from './modules/court/court.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CourtTypeModule } from './modules/court_type/court_type.module';
+import { StripeModule } from './modules/stripe/stripe.module';
 // Comentario de prueba para verificar subida a GitHub y despliegue en VPS
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { CourtTypeModule } from './modules/court_type/court_type.module';
     CourtModule,
     AuthModule,
     CourtTypeModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [
