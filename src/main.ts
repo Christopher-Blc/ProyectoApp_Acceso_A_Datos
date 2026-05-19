@@ -12,14 +12,14 @@ async function bootstrap() {
   const rootPath = process.cwd();
   const publicPath = join(rootPath, 'public');
 
-  // Configuración de la carpeta public (Donde guardas tu APK)
+  // Configuración de la carpeta public
   app.useStaticAssets(publicPath, {
     prefix: '/public/',
     setHeaders: (res, path) => {
-      // Si el archivo que se solicita termina en .apk, forzamos las cabeceras de descarga nativa
-      if (path.endsWith('.apk')) {
+      // Validamos que el archivo que se pide sea tu APK con su nombre real
+      if (path.endsWith('Respi_dev1.0.0.apk')) {
         res.set('Content-Type', 'application/vnd.android.package-archive');
-        res.set('Content-Disposition', 'attachment; filename="respi.apk"');
+        res.set('Content-Disposition', 'attachment; filename="Respi_dev1.0.0.apk"');
       }
     },
   });
