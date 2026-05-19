@@ -156,7 +156,7 @@ export class UsersController {
     }
   }
 
-  //rutas de admnin (solo para superadmin y adnministracion)
+  //rutas de admnins (solo para superadmin y adnministracion)
 
   @Get()
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMINISTRATION)
