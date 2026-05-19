@@ -163,6 +163,7 @@ export class UsersService {
   }
 
   async remove(user_id: number): Promise<void> {
+    // 1. Buscamos el usuario con sus reservas
     const user = await this.userRepository.findOne({
       where: { id: user_id },
       relations: ['reservations'],
@@ -170,16 +171,30 @@ export class UsersService {
 
     if (!user) throw new NotFoundException('User not found');
 
-    const hoy = new Date();
-    const tienePendientes = user.reservations.some(
-      (r) => new Date(r.reservation_date) >= hoy,
+    //validacion de reservas pendientes (¡Mantenla, es buenísima!)
+    const today = new Date();
+    const hasPending = user.reservations.some(
+      (r) => new Date(r.reservation_date) >= today,
     );
 
-    if (tienePendientes) {
-      throw new BadRequestException('Tienes reservas pendientes');
+    if (hasPending) {
+      throw new BadRequestException(
+        'No puedes eliminar tu cuenta porque tienes reservas pendientes o activas.',
+      );
     }
 
-    await this.userRepository.remove(user);
+    //simulamos un borrado del user pq sino reservas se queda sin FK
+    //asi que solo se hace update de su info para que simule un eliminado, 
+    // pero sin perder la integridad referencial de las reservas
+    user.username = `deleted_user_${user_id}`;
+    user.email = `deleted_${user_id}@deleted.com`;
+    user.password = `DELETED_${Math.random().toString(36).substring(2)}`; 
+    user.refresh_token_hash = null; // O hashedRefreshToken = null, según tu implementación
+
+    //Ponemos isactive a false
+    user.is_active = false; 
+    //Guardamos los cambios en lugar de eliminar la fila
+    await this.userRepository.save(user);
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -295,6 +310,7 @@ export class UsersService {
     });
   }
 
+  //Se utiliza para limpiar el token de reset después de cambiar la contraseña, para que no se pueda reutilizar
   async clearPasswordResetData(user_id: number): Promise<void> {
     const result = await this.userRepository.update(
       { id: user_id },
