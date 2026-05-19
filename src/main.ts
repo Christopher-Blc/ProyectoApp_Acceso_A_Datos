@@ -3,8 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-import { join } from 'path/posix';
-
+import { join } from 'path'; // Cambiado de 'path/posix' a 'path' para evitar problemas de compatibilidad en Windows/Linux
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
@@ -13,8 +12,16 @@ async function bootstrap() {
   const rootPath = process.cwd();
   const publicPath = join(rootPath, 'public');
 
+  // Configuración de la carpeta public (Donde guardas tu APK)
   app.useStaticAssets(publicPath, {
     prefix: '/public/',
+    setHeaders: (res, path) => {
+      // Si el archivo que se solicita termina en .apk, forzamos las cabeceras de descarga nativa
+      if (path.endsWith('.apk')) {
+        res.set('Content-Type', 'application/vnd.android.package-archive');
+        res.set('Content-Disposition', 'attachment; filename="respi.apk"');
+      }
+    },
   });
 
   app.useStaticAssets(join(rootPath, 'static'), {
@@ -40,6 +47,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
+
   const config = new DocumentBuilder()
     .setTitle('Respi API')
     .setDescription('API Documentation Respi Backend')
@@ -58,6 +66,7 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
+
   await app.listen(process.env.PORT ?? 3000);
   console.log(`-> App ready at: ${process.env.APP_URL}`);
 }
