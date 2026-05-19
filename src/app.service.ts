@@ -118,11 +118,9 @@ export class AppService {
                 Optimization of reservations, memberships and automated payment flows.
             </p>
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="/public/Respi_dev1.0.0.apk" download="Respi_dev1.0.0.apk" class="px-8 py-4 btn-brand transition-all rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-[#F5CA7E]/20 transform hover:scale-105">
-                    <svg xmlns="http://www.w3.org/2000/xl" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                <a href="/public/ResPi_dev1.0.0.apk" download="ResPi_dev1.0.0.apk" class="px-8 py-4 btn-brand ...">
                     DOWNLOAD APK
                 </a>
-
                 <a href="https://respi.es" class="px-8 py-4 glass text-white hover:bg-white/5 transition-all rounded-xl font-bold border border-white/10 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
                     Go to Respi.es
