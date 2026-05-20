@@ -13,6 +13,8 @@ import {
 import { UserRole } from '../users/entities/user.entity';
 import { Court } from '../court/entities/court.entity';
 import { UsersService } from '../users/users.service';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationType } from '../notification/entities/notification.entity';
 
 @Injectable()
 export class ReservationService {
@@ -22,6 +24,7 @@ export class ReservationService {
     @InjectRepository(Court)
     private readonly pistaRepo: Repository<Court>,
     private readonly userService: UsersService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async findAll(
@@ -143,6 +146,16 @@ export class ReservationService {
 
     // Si el estado cambia a FINALIZADA (o deja de serlo), actualizamos rango
     if (nuevoEstado && nuevoEstado !== estadoAnterior) {
+      // Notificar al usuario cuando su reserva es cancelada
+      if (nuevoEstado === ReservationStatus.CANCELLED) {
+        await this.notificationService.create({
+          user_id: reservation.user_id,
+          title: 'Reserva cancelada',
+          message: `Tu reserva del ${reservation.reservation_date} de ${reservation.start_time} a ${reservation.end_time} ha sido cancelada.`,
+          notification_type: NotificationType.ALERT,
+        });
+      }
+
       if (
         nuevoEstado === ReservationStatus.COMPLETED ||
         estadoAnterior === ReservationStatus.COMPLETED
