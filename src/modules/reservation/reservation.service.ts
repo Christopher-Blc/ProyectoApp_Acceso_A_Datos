@@ -151,7 +151,7 @@ export class ReservationService {
         await this.notificationService.create({
           user_id: reservation.user_id,
           title: 'Reserva cancelada',
-          message: `Tu reserva del ${reservation.reservation_date} de ${reservation.start_time} a ${reservation.end_time} ha sido cancelada.`,
+          message: `Tu reserva del ${new Date(reservation.reservation_date).toLocaleDateString('es-ES')} de ${reservation.start_time} a ${reservation.end_time} ha sido cancelada.`,
           notification_type: NotificationType.ALERT,
         });
       }
