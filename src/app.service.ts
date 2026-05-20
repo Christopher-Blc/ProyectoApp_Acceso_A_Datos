@@ -118,7 +118,7 @@ export class AppService {
                 Optimization of reservations, memberships and automated payment flows.
             </p>
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="/api/public/ResPi_dev1.0.0.apk" download="ResPi_dev1.0.0.apk" class="px-8 py-4 btn-brand transition-all rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-[#F5CA7E]/20 transform hover:scale-105">
+                <a href="/api/public/ResPi_dev1.0.1.apk" download="ResPi_dev1.0.1.apk" class="px-8 py-4 btn-brand transition-all rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-[#F5CA7E]/20 transform hover:scale-105">
                     <svg xmlns="http://www.w3.org/2000/xl" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
                     DOWNLOAD APK
                 </a>
