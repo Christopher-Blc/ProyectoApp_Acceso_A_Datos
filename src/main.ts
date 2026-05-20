@@ -16,9 +16,9 @@ async function bootstrap() {
   app.useStaticAssets(publicPath, {
     prefix: '/public/',
     setHeaders: (res, path) => {
-       if (path.endsWith('ResPi_dev1.0.0.apk')) { 
+       if (path.endsWith('ResPi_dev1.0.1.apk')) { 
         res.set('Content-Type', 'application/vnd.android.package-archive');
-        res.set('Content-Disposition', 'attachment; filename="ResPi_dev1.0.0.apk"');
+        res.set('Content-Disposition', 'attachment; filename="ResPi_dev1.0.1.apk"');
       }
     },
   });
