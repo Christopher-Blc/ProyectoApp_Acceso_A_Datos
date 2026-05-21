@@ -16,7 +16,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { CourtTypeService } from './court_type.service';
+import { CourtTypeService, CourtTypeWithCount } from './court_type.service';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -53,7 +53,7 @@ export class CourtTypeController {
   @ApiResponse({ status: 204, description: 'No content.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async findAll(): Promise<CourtType[]> {
+  async findAll(): Promise<CourtTypeWithCount[]> {
     try {
       return this.CourtTypeService.findAll();
     } catch (err) {
@@ -72,7 +72,7 @@ export class CourtTypeController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Court type not found.' })
   @ApiParam({ name: 'id', example: 1 })
-  async findOne(@Param('id') id: number): Promise<CourtType | null> {
+  async findOne(@Param('id') id: number): Promise<CourtTypeWithCount> {
     try {
       return this.CourtTypeService.findOne(id);
     } catch (err) {
