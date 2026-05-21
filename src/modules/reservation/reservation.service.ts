@@ -65,7 +65,7 @@ export class ReservationService {
     if (!user_id) throw new ForbiddenException('No tienes permiso');
     return this.reservaRepo.find({
       where: { user_id },
-      relations: ['user', 'court', 'court.tipos_Court', 'payments'],
+      relations: ['user', 'court', 'court.courtType', 'payments'],
     });
   }
 
