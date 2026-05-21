@@ -8,10 +8,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { CourtType } from './entities/court_type.entity';
+import { Court } from '../court/entities/court.entity';
 import {
   CreateCourtTypeDto,
   UpdateCourtTypeDto,
 } from './dto/court_type.dto';
+
+export type CourtTypeWithCount = CourtType & { totalCourts: number };
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -20,22 +23,46 @@ export class CourtTypeService {
   constructor(
     @InjectRepository(CourtType)
     private readonly tipoPistaRepository: Repository<CourtType>,
+    @InjectRepository(Court)
+    private readonly courtRepository: Repository<Court>,
   ) {}
 
+  // Cuenta las pistas únicas (por nombre) para un tipo de Court
+  private async countDistinctCourts(courtTypeId: number): Promise<number> {
+    const result = await this.courtRepository
+      .createQueryBuilder('c')
+      .select('COUNT(DISTINCT c.name)', 'total')
+      .where('c.court_type_id = :courtTypeId AND c.status = :status', {
+        courtTypeId,
+        status: 'DISPONIBLE',
+      })
+      .getRawOne<{ total: string }>();
+    return Number(result?.total ?? 0);
+  }
+
   // Obtener todos los tipos de Court
-  async findAll(): Promise<CourtType[]> {
-    return await this.tipoPistaRepository.find();
+  async findAll(): Promise<CourtTypeWithCount[]> {
+    const { entities, raw } = await this.tipoPistaRepository
+      .createQueryBuilder('ct')
+      .leftJoin('ct.courts', 'c', 'c.status = :status', { status: 'DISPONIBLE' })
+      .addSelect('COUNT(DISTINCT c.name)', 'totalCourts')
+      .groupBy('ct.id')
+      .getRawAndEntities();
+
+    return entities.map((entity, i) => ({
+      ...entity,
+      totalCourts: Number(raw[i].totalCourts ?? 0),
+    }));
   }
 
   // Obtener uno por ID
-  async findOne(id: number): Promise<CourtType> {
-    const tipo = await this.tipoPistaRepository.findOneBy({
-      id,
-    });
+  async findOne(id: number): Promise<CourtTypeWithCount> {
+    const tipo = await this.tipoPistaRepository.findOneBy({ id });
     if (!tipo) {
       throw new NotFoundException(`No se ha encontrado ese tipo de Court`);
     }
-    return tipo;
+    const totalCourts = await this.countDistinctCourts(id);
+    return { ...tipo, totalCourts };
   }
 
   // Crear un nuevo tipo
