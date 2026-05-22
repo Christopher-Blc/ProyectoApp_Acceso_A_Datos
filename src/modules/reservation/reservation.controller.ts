@@ -108,6 +108,20 @@ export class ReservationController {
     }
   }
 
+  @Get('validate/:code')
+  @ApiOperation({ summary: 'Validate Reservation by Code' })
+  @ApiResponse({
+    status: 200,
+    description: 'Reservation validated successfully.',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid Reservation Code.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Reservation not found.' })
+  @ApiParam({ name: 'code', example: 'RES-ABC123' })
+  async validarReserva(@Param('code') code: string) {
+    return this.ReservationService.validarCodigoReserva(code);
+  }
+
   @Post()
   @Roles(
     UserRole.CLIENT,

@@ -54,6 +54,9 @@ export class Reservation {
   @Column({ nullable: true })
   note?: string;
 
+  @Column({ type: 'varchar', length: 50, unique: true, nullable: true })
+  verification_code?: string;
+
   @ManyToOne(() => User, (u) => u.reservations)
   @JoinColumn({ name: 'user_id' })
   user!: User;
