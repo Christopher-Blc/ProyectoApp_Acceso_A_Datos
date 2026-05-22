@@ -256,8 +256,9 @@ export class ReservationService {
     const hoy = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
     
     // Si quieres que el backend avise si es de otro día:
-    if (reservation.reservation_date.toISOString().split('T')[0] !== hoy) {
-      throw new ForbiddenException(`Esta reserva no es para hoy. Es para el día ${reservation.reservation_date.toISOString().split('T')[0]}`);
+    const reservationDay = new Date(reservation.reservation_date).toISOString().split('T')[0];
+    if (reservationDay !== hoy) {
+      throw new ForbiddenException(`Esta reserva no es para hoy. Es para el día ${reservationDay}`);
     }
 
     return reservation;
