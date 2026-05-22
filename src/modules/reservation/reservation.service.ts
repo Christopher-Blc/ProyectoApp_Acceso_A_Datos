@@ -76,18 +76,22 @@ export class ReservationService {
     const court = await this.pistaRepo.findOneBy({ id: dto.court_id });
     if (!court) throw new NotFoundException('Court no encontrada');
 
-    //calculamos el precio final aqui para que no se hagan trampas desde el front
+    // Calculamos el precio final aquí
     const precioCalculado = this.calcularPrecio(
       Number(court.price_per_hour),
       dto.start_time,
       dto.end_time,
     );
 
+    // --- NUEVO: Generamos el código único ---
+    const verificationCode = this.generarCodigoVerificacion();
+
     const newReservation = this.reservaRepo.create({
       ...dto,
       user_id,
       total_price: precioCalculado,
       status: ReservationStatus.PENDING,
+      verification_code: verificationCode, // <-- Lo guardamos aquí
     });
 
     const saved = await this.reservaRepo.save(newReservation);
@@ -226,5 +230,36 @@ export class ReservationService {
 
     // Devolvemos el precio final calculado
     return Number((duracionHoras * pistaPrecio).toFixed(2));
+  }
+
+  private generarCodigoVerificacion(): string {
+    // Genera un código de 6 caracteres aleatorios en mayúsculas (Ej: A9X7RT)
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let codigo = 'RES-';
+    for (let i = 0; i < 6; i++) {
+      codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    }
+    return codigo;
+  }
+
+  async validarCodigoReserva(codigo: string): Promise<Reservation> {
+    const reservation = await this.reservaRepo.findOne({
+      where: { verification_code: codigo },
+      relations: ['user', 'court'],
+    });
+
+    if (!reservation) {
+      throw new NotFoundException('El código de reserva no existe.');
+    }
+
+    // Opcional: Aquí puedes añadir validaciones de negocio automáticas
+    const hoy = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    
+    // Si quieres que el backend avise si es de otro día:
+    if (reservation.reservation_date.toISOString().split('T')[0] !== hoy) {
+      throw new ForbiddenException(`Esta reserva no es para hoy. Es para el día ${reservation.reservation_date}`);
+    }
+
+    return reservation;
   }
 }
