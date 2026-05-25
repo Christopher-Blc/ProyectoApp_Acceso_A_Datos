@@ -114,7 +114,7 @@ export class AuthController {
 
   @Get('enviar-correo-manual')
   async enviarManual() {
-    await this.authService.sendTestEmail('chris.bolocan@gmail.com');
+    await this.authService.sendTestEmail('martinezdurantemaria@gmail.com');
     return 'Enviado';
   }
 

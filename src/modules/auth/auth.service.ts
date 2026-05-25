@@ -211,7 +211,7 @@ export class AuthService {
     await transporter.sendMail({
       from: fromAddress,
       to: targetEmail,
-      subject: 'Correo de prueba RESPI',
+      subject: 'Confirma tu reserva en ResPi',
       text: 'Correo de prueba enviado correctamente.',
       html: htmlBody,
     });
