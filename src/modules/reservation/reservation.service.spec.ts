@@ -89,7 +89,9 @@ describe('ReservationService', () => {
     );
   });
 
-  afterEach(async () => jest.clearAllMocks());
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   // ─── should be defined ────────────────────────────────────────────────────
 
