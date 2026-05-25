@@ -76,6 +76,9 @@ export class User {
   @Column({ name: 'address' })
   address!: string;
 
+  @Column({ name: 'last_ip', type: 'varchar', length: 45, nullable: true })
+  last_ip!: string | null;
+
   @Column({ name: 'refresh_token_hash', type: 'text', nullable: true })
   refresh_token_hash!: string | null;
 

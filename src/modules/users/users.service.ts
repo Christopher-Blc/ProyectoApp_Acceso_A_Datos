@@ -221,6 +221,10 @@ export class UsersService {
     );
   }
 
+  async updateLastIp(user_id: number, ip: string | null): Promise<void> {
+    await this.userRepository.update({ id: user_id }, { last_ip: ip });
+  }
+
   async findById(user_id: number): Promise<User | null> {
     return await this.userRepository.findOne({ where: { id: user_id } });
   }

@@ -24,6 +24,7 @@ import { Throttle } from '../../common/decorators/throttle.decorator';
 import type { AuthenticatedRequest } from './types/auth.types';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import type { Request } from 'express';
 
 /**
  * HTTP authentication controller.
@@ -38,6 +39,21 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  private getClientIp(req: Request): string | null {
+    const forwardedFor = req.headers['x-forwarded-for'];
+    const xForwardedFor = Array.isArray(forwardedFor)
+      ? forwardedFor[0]
+      : forwardedFor;
+
+    const candidate =
+      (xForwardedFor?.split(',')[0]?.trim() || req.ip || '').replace(
+        /^::ffff:/,
+        '',
+      );
+
+    return candidate || null;
+  }
 
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
@@ -118,8 +134,9 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 401, description: 'Incorrect credentials' })
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto);
+  login(@Body() dto: LoginDto, @Req() req: Request) {
+    const clientIp = this.getClientIp(req);
+    return this.authService.login(dto, clientIp);
   }
 
   @Post('refresh')
@@ -145,8 +162,9 @@ export class AuthController {
     status: 401,
     description: 'Refresh token expired or unauthorized',
   })
-  refresh(@Body() dto: RefreshDto) {
-    return this.authService.refresh(dto.refresh_token);
+  refresh(@Body() dto: RefreshDto, @Req() req: Request) {
+    const clientIp = this.getClientIp(req);
+    return this.authService.refresh(dto.refresh_token, clientIp);
   }
 
   @UseGuards(AuthGuard)
