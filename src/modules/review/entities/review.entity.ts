@@ -23,7 +23,7 @@ export class Review {
   @Column({ name: 'title' })
   title!: string;
 
-  @Column({ name: 'text' })
+  @Column({ name: 'text', type: "longtext" })
   text!: string;
 
   @Column({ name: 'rating', type: 'int' })
