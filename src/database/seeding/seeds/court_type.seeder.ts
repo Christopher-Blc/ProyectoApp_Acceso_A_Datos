@@ -18,8 +18,9 @@ export class CourtTypeSeeder implements Seeder {
       if (existing) continue;
 
       const entry = new CourtType();
-      // Solo tiene id (auto) y nombre según la entidad
+      // Solo tiene id (auto), nombre e imagen según la entidad
       entry.name = item.name;
+      entry.image = item.image;
 
       entries.push(entry);
     }

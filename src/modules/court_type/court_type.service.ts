@@ -15,6 +15,8 @@ import {
 } from './dto/court_type.dto';
 
 export type CourtTypeWithCount = CourtType & { totalCourts: number };
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class CourtTypeService {
@@ -64,7 +66,7 @@ export class CourtTypeService {
   }
 
   // Crear un nuevo tipo
-  async create(dto: CreateCourtTypeDto): Promise<CourtType> {
+  async create(dto: CreateCourtTypeDto, imageFilename?: string): Promise<CourtType> {
     //mirar primero si ya existe un tipo con ese nombre
     const existe = await this.tipoPistaRepository.findOne({
       where: { name: dto.name },
@@ -75,7 +77,10 @@ export class CourtTypeService {
     }
 
     try {
-      const nuevoTipo = this.tipoPistaRepository.create(dto);
+      const nuevoTipo = this.tipoPistaRepository.create({
+        ...dto,
+        image: imageFilename || dto.image,
+      });
       return await this.tipoPistaRepository.save(nuevoTipo);
     } catch {
       throw new InternalServerErrorException('Error al crear el tipo de Court');
@@ -85,6 +90,7 @@ export class CourtTypeService {
   async update(
     id: number,
     dto: UpdateCourtTypeDto,
+    imageFilename?: string,
   ): Promise<CourtType> {
     const tipo = await this.findOne(id);
 
@@ -93,6 +99,21 @@ export class CourtTypeService {
     }
 
     const updateData: UpdateCourtTypeDto = { ...dto };
+
+    if (imageFilename) {
+      // Borrar imagen antigua si existe y se sube una nueva
+      if (tipo.image) {
+        const oldPath = path.resolve(process.cwd(), 'public', tipo.image);
+        if (fs.existsSync(oldPath)) {
+          try {
+            fs.unlinkSync(oldPath);
+          } catch {
+            console.warn(`No se pudo eliminar la imagen antigua: ${oldPath}`);
+          }
+        }
+      }
+      updateData.image = imageFilename;
+    }
 
     this.tipoPistaRepository.merge(tipo, updateData);
 
@@ -108,6 +129,19 @@ export class CourtTypeService {
       throw new BadRequestException(
         'No se puede eliminar el tipo porque tiene pistas asociadas. Elimina primero las pistas.',
       );
+    }
+
+    // Solo borramos el archivo si la DB fue exitosa
+    if (tipo.image) {
+      const filePath = path.resolve(process.cwd(), 'public', tipo.image);
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch {
+          // Log but don't fail the request
+          console.warn(`No se pudo eliminar la imagen: ${filePath}`);
+        }
+      }
     }
 
     return { deleted: true };
