@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Req,
   UnauthorizedException,
@@ -109,6 +110,12 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Invalid or expired reset token.' })
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto.token, dto.new_password);
+  }
+
+  @Get('enviar-correo-manual')
+  async enviarManual() {
+    await this.authService.sendTestEmail('chris.bolocan@gmail.com');
+    return 'Enviado';
   }
 
   @Post('login')
