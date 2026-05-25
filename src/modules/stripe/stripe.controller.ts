@@ -49,6 +49,25 @@ export class StripeController {
     }
   }
 
+  @Post('manual-confirm')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Confirma manualmente una reserva tras el pago (fallback sin webhook)' })
+  async manualConfirm(
+    @Body() dto: { paymentIntentId: string },
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = Number(req.user!.sub);
+    try {
+      await this.stripeService.confirmByPaymentIntentId(dto.paymentIntentId, userId);
+      return { success: true };
+    } catch (error) {
+      const { message } = normalizeError(error);
+      this.logger.error(`Error en manual-confirm: ${message}`);
+      throw error;
+    }
+  }
+
   @Post('refund')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
