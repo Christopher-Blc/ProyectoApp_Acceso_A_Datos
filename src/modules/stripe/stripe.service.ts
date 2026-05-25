@@ -176,6 +176,25 @@ export class StripeService {
     );
   }
 
+  async confirmByPaymentIntentId(paymentIntentId: string, userId: number): Promise<void> {
+    const pi = await this.stripe.paymentIntents.retrieve(paymentIntentId);
+
+    if (pi.status !== 'succeeded') {
+      throw new BadRequestException('El pago aún no ha sido confirmado por Stripe');
+    }
+
+    const piUserId = Number(pi.metadata?.user_id);
+    if (piUserId !== userId) {
+      throw new ForbiddenException('No tienes permiso para confirmar este pago');
+    }
+
+    await this.handlePaymentSucceeded({
+      id: pi.id,
+      amount_received: pi.amount_received,
+      metadata: pi.metadata as Record<string, string>,
+    });
+  }
+
   async processRefund(reservationId: number): Promise<void> {
     const payment = await this.paymentRepo.findOne({
       where: {
