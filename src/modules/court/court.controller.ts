@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   Post,
@@ -11,12 +12,19 @@ import {
   HttpStatus,
   UseGuards,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import { CourtService } from './court.service';
 import { CreateCourtDto, UpdateCourtDto } from './dto/court.dto';
 import { Court } from './entities/court.entity';
 import {
+  ApiBody,
   ApiBearerAuth,
+  ApiConsumes,
   ApiOperation,
   ApiQuery,
   ApiResponse,
@@ -88,13 +96,85 @@ export class CourtController {
   // Ruta /Court (POST) -> crear una pista nueva
   @Post()
   @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './public',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        const allowedMimes = [
+          'image/jpeg',
+          'image/png',
+          'image/webp',
+          'image/gif',
+        ];
+        if (allowedMimes.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(
+            new BadRequestException(
+              'Solo se permiten imágenes (jpg, png, webp, gif)',
+            ),
+            false,
+          );
+        }
+      },
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
   @ApiOperation({ summary: 'Create a new court' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: [
+        'installation_id',
+        'court_type_id',
+        'name',
+        'image',
+        'capacity',
+        'price_per_hour',
+        'is_covered',
+        'has_lighting',
+        'status',
+        'opening_time',
+        'closing_time',
+        'day_of_week',
+      ],
+      properties: {
+        installation_id: { type: 'number', example: 1 },
+        court_type_id: { type: 'number', example: 1 },
+        name: { type: 'string', example: 'Court Central Tenis' },
+        image: { type: 'string', format: 'binary' },
+        capacity: { type: 'number', example: 4 },
+        price_per_hour: { type: 'number', example: 20.5 },
+        is_covered: { type: 'boolean', example: true },
+        has_lighting: { type: 'boolean', example: true },
+        description: { type: 'string', example: 'Court de tenis indoor' },
+        status: { type: 'string', example: 'DISPONIBLE' },
+        opening_time: { type: 'string', example: '09:00' },
+        closing_time: { type: 'string', example: '22:00' },
+        day_of_week: { type: 'string', example: 'LUNES' },
+      },
+    },
+  })
   @ApiResponse({ status: 201, description: 'Court created successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async create(@Body() courtDto: CreateCourtDto): Promise<Court> {
+  async create(
+    @Body() courtDto: CreateCourtDto,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Court> {
     try {
-      return this.CourtService.create(courtDto);
+      if (!file) {
+        throw new BadRequestException('No image file has been uploaded');
+      }
+      return this.CourtService.create(courtDto, file.filename);
     } catch (err) {
       const { message, status } = normalizeError(err);
       console.error('Error creating court:', err);
@@ -105,8 +185,60 @@ export class CourtController {
   // Ruta /Court/:id (PUT) -> actualizar una pista existente
   @Put(':id')
   @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './public',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        const allowedMimes = [
+          'image/jpeg',
+          'image/png',
+          'image/webp',
+          'image/gif',
+        ];
+        if (allowedMimes.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(
+            new BadRequestException(
+              'Solo se permiten imágenes (jpg, png, webp, gif)',
+            ),
+            false,
+          );
+        }
+      },
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
   @ApiOperation({
     summary: 'Update court - Supports selective maintenance dates',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        installation_id: { type: 'number', example: 1 },
+        court_type_id: { type: 'number', example: 1 },
+        name: { type: 'string', example: 'Court Central Tenis' },
+        image: { type: 'string', format: 'binary' },
+        capacity: { type: 'number', example: 4 },
+        price_per_hour: { type: 'number', example: 20.5 },
+        is_covered: { type: 'boolean', example: true },
+        has_lighting: { type: 'boolean', example: true },
+        description: { type: 'string', example: 'Court de tenis indoor' },
+        status: { type: 'string', example: 'DISPONIBLE' },
+        opening_time: { type: 'string', example: '09:00' },
+        closing_time: { type: 'string', example: '22:00' },
+        day_of_week: { type: 'string', example: 'LUNES' },
+      },
+    },
   })
   @ApiResponse({ status: 200, description: 'Court updated successfully.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
@@ -115,9 +247,10 @@ export class CourtController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() courtDto: UpdateCourtDto,
+    @UploadedFile() file?: Express.Multer.File,
   ): Promise<Court> {
     try {
-      return this.CourtService.update(id, courtDto);
+      return this.CourtService.update(id, courtDto, file?.filename);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);

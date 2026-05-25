@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -9,18 +8,11 @@ import {
   Param,
   Post,
   Put,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { CourtTypeService, CourtTypeWithCount } from './court_type.service';
 import {
   ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -83,61 +75,13 @@ export class CourtTypeController {
 
   @Post()
   @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './public',
-        filename: (req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-        },
-      }),
-      fileFilter: (req, file, cb) => {
-        const allowedMimes = [
-          'image/jpeg',
-          'image/png',
-          'image/webp',
-          'image/gif',
-        ];
-        if (allowedMimes.includes(file.mimetype)) {
-          cb(null, true);
-        } else {
-          cb(
-            new BadRequestException(
-              'Solo se permiten imágenes (jpg, png, webp, gif)',
-            ),
-            false,
-          );
-        }
-      },
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-    }),
-  )
-  @ApiOperation({ summary: 'Create a new court type with image' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      required: ['name', 'image'],
-      properties: {
-        name: { type: 'string', example: 'Tennis' },
-        image: { type: 'string', format: 'binary' },
-      },
-    },
-  })
+  @ApiOperation({ summary: 'Create a new court type' })
   @ApiResponse({ status: 201, description: 'Court type created successfully.' })
-  @ApiResponse({ status: 400, description: 'Bad request or invalid file.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async create(
-    @Body() courtTypeDto: CreateCourtTypeDto,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<CourtType | null> {
+  async create(@Body() courtTypeDto: CreateCourtTypeDto): Promise<CourtType | null> {
     try {
-      if (!file) {
-        throw new BadRequestException('No image file has been uploaded');
-      }
-      return this.CourtTypeService.create(courtTypeDto, file.filename);
+      return this.CourtTypeService.create(courtTypeDto);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
@@ -146,52 +90,7 @@ export class CourtTypeController {
 
   @Put(':id')
   @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './public',
-        filename: (req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-        },
-      }),
-      fileFilter: (req, file, cb) => {
-        const allowedMimes = [
-          'image/jpeg',
-          'image/png',
-          'image/webp',
-          'image/gif',
-        ];
-        if (allowedMimes.includes(file.mimetype)) {
-          cb(null, true);
-        } else {
-          cb(
-            new BadRequestException(
-              'Solo se permiten imágenes (jpg, png, webp, gif)',
-            ),
-            false,
-          );
-        }
-      },
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-    }),
-  )
-  @ApiOperation({ summary: 'Update an existing court type (image optional)' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        name: { type: 'string', example: 'Tennis' },
-        image: {
-          type: 'string',
-          format: 'binary',
-          description: 'Optional image',
-        },
-      },
-    },
-  })
+  @ApiOperation({ summary: 'Update an existing court type' })
   @ApiResponse({ status: 200, description: 'Court type updated successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid court type ID.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -200,10 +99,9 @@ export class CourtTypeController {
   async update(
     @Param('id') id: number,
     @Body() courtTypeDto: UpdateCourtTypeDto,
-    @UploadedFile() file: Express.Multer.File,
   ): Promise<CourtType | null> {
     try {
-      return this.CourtTypeService.update(id, courtTypeDto, file?.filename);
+      return this.CourtTypeService.update(id, courtTypeDto);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);

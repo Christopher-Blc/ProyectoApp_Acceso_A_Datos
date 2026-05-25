@@ -28,6 +28,7 @@ export class CourtSeeder implements Seeder {
       courtEntry.installation_id = item.installation_id;
       courtEntry.court_type_id = item.court_type_id;
       courtEntry.name = item.name;
+      courtEntry.image = item.image;
       courtEntry.capacity = item.capacity;
       courtEntry.price_per_hour = item.price_per_hour;
       courtEntry.is_covered = item.is_covered;

@@ -31,6 +31,14 @@ export class CreateCourtDto {
   })
   name!: string;
 
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Court picture filename',
+    example: 'court-central-tenis.jpg',
+  })
+  image?: string;
+
   @IsNumber()
   @ApiProperty({
     description: 'Capacity of the court',
@@ -122,6 +130,14 @@ export class UpdateCourtDto {
     example: 'Central tennis court',
   })
   name?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Court picture filename',
+    example: 'court-central-tenis.jpg',
+  })
+  image?: string;
 
   @IsNumber()
   @IsOptional()

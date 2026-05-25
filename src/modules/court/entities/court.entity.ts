@@ -45,6 +45,9 @@ export class Court {
   @Column({})
   name!: string;
 
+  @Column({ nullable: true })
+  image?: string;
+
   @Column({ type: 'int' })
   capacity!: number;
 
