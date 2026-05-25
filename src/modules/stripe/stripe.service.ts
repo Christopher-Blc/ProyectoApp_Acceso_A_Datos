@@ -176,23 +176,41 @@ export class StripeService {
     );
   }
 
-  async confirmByPaymentIntentId(paymentIntentId: string, userId: number): Promise<void> {
-    const pi = await this.stripe.paymentIntents.retrieve(paymentIntentId);
-
-    if (pi.status !== 'succeeded') {
-      throw new BadRequestException('El pago aún no ha sido confirmado por Stripe');
-    }
-
-    const piUserId = Number(pi.metadata?.user_id);
-    if (piUserId !== userId) {
-      throw new ForbiddenException('No tienes permiso para confirmar este pago');
-    }
-
-    await this.handlePaymentSucceeded({
-      id: pi.id,
-      amount_received: pi.amount_received,
-      metadata: pi.metadata as Record<string, string>,
+  async confirmReservationAfterPayment(
+    reservationId: number,
+    userId: number,
+    paymentIntentId?: string,
+  ): Promise<void> {
+    const reservation = await this.reservationRepo.findOne({
+      where: { id: reservationId },
     });
+
+    if (!reservation) throw new NotFoundException('Reserva no encontrada');
+    if (reservation.user_id !== userId) throw new ForbiddenException('Sin permiso');
+
+    if (reservation.status === ReservationStatus.CONFIRMED) {
+      this.logger.log(`Reserva ${reservationId} ya confirmada — ignorando (idempotente)`);
+      return;
+    }
+
+    await this.reservationRepo.update(reservationId, {
+      status: ReservationStatus.CONFIRMED,
+    });
+
+    await this.paymentRepo.save(
+      this.paymentRepo.create({
+        reservation_id: reservationId,
+        amount: Number(reservation.total_price),
+        payment_method: PaymentMethod.VISA,
+        payment_status: PaymentStatus.PAID,
+        stripe_payment_intent_id: paymentIntentId,
+        note: `Pago Stripe — PaymentIntent ${paymentIntentId ?? 'manual'}`,
+      }),
+    );
+
+    this.logger.log(
+      `Reserva ${reservationId} confirmada manualmente tras pago (PI: ${paymentIntentId ?? 'N/A'})`,
+    );
   }
 
   async processRefund(reservationId: number): Promise<void> {

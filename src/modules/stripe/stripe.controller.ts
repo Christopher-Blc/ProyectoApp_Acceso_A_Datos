@@ -52,14 +52,18 @@ export class StripeController {
   @Post('manual-confirm')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Confirma manualmente una reserva tras el pago (fallback sin webhook)' })
+  @ApiOperation({ summary: 'Confirma una reserva tras el pago (fallback sin webhook)' })
   async manualConfirm(
-    @Body() dto: { paymentIntentId: string },
+    @Body() dto: { reservationId: number; paymentIntentId?: string },
     @Req() req: AuthenticatedRequest,
   ) {
     const userId = Number(req.user!.sub);
     try {
-      await this.stripeService.confirmByPaymentIntentId(dto.paymentIntentId, userId);
+      await this.stripeService.confirmReservationAfterPayment(
+        dto.reservationId,
+        userId,
+        dto.paymentIntentId,
+      );
       return { success: true };
     } catch (error) {
       const { message } = normalizeError(error);
