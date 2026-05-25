@@ -11,7 +11,7 @@ import { Reservation } from '../../reservation/entities/reservation.entity';
 import { Installation } from '../../installation/entities/installation.entity';
 import { CourtType } from '../../court_type/entities/court_type.entity';
 import { Review } from '../../review/entities/review.entity';
- 
+
 export enum CourtStatus {
   AVAILABLE = 'DISPONIBLE',
   MAINTENANCE = 'MANTENIMIENTO',
@@ -106,5 +106,4 @@ export class Court {
 
   @OneToMany(() => Review, (r) => r.court)
   reviews!: Review[];
-
 }

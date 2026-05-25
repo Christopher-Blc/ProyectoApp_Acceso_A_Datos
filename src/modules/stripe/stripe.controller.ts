@@ -38,7 +38,10 @@ export class StripeController {
       `Usuario ${userId} solicita PaymentIntent para reserva ${dto.reservationId}`,
     );
     try {
-      return await this.stripeService.createPaymentIntent(dto.reservationId, userId);
+      return await this.stripeService.createPaymentIntent(
+        dto.reservationId,
+        userId,
+      );
     } catch (error) {
       const { message } = normalizeError(error);
       this.logger.error(`Error creando PaymentIntent: ${message}`);
@@ -49,13 +52,14 @@ export class StripeController {
   @Post('refund')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Procesa el reembolso Stripe de una reserva cancelada' })
-  async refund(
-    @Body() dto: RefundDto,
-    @Req() req: AuthenticatedRequest,
-  ) {
+  @ApiOperation({
+    summary: 'Procesa el reembolso Stripe de una reserva cancelada',
+  })
+  async refund(@Body() dto: RefundDto, @Req() req: AuthenticatedRequest) {
     const userId = Number(req.user!.sub);
-    this.logger.log(`Usuario ${userId} solicita reembolso para reserva ${dto.reservationId}`);
+    this.logger.log(
+      `Usuario ${userId} solicita reembolso para reserva ${dto.reservationId}`,
+    );
     try {
       await this.stripeService.processRefund(dto.reservationId);
       return { success: true, message: 'Reembolso procesado correctamente' };
@@ -74,9 +78,13 @@ export class StripeController {
   @Post('webhook')
   @HttpCode(HttpStatus.OK)
   @SkipThrottle()
-  @ApiOperation({ summary: 'Webhook de Stripe (uso interno, no llamar manualmente)' })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async webhook(@Req() req: any, @Headers('stripe-signature') signature: string) {
+  @ApiOperation({
+    summary: 'Webhook de Stripe (uso interno, no llamar manualmente)',
+  })
+  async webhook(
+    @Req() req: any,
+    @Headers('stripe-signature') signature: string,
+  ) {
     try {
       const rawBody: Buffer = req.rawBody;
       await this.stripeService.handleWebhook(signature, rawBody);

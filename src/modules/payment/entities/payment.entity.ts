@@ -37,7 +37,11 @@ export class Payment {
   @Column({ name: 'amount', type: 'decimal', precision: 10, scale: 2 })
   amount!: number;
 
-  @Column({ name: 'payment_date', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'payment_date',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   payment_date!: Date;
 
   @Column({
@@ -56,13 +60,29 @@ export class Payment {
   })
   payment_status!: PaymentStatus;
 
-  @Column({ name: 'stripe_payment_intent_id', type: 'varchar', length: 255, nullable: true })
+  @Column({
+    name: 'stripe_payment_intent_id',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   stripe_payment_intent_id?: string;
 
-  @Column({ name: 'stripe_refund_id', type: 'varchar', length: 255, nullable: true })
+  @Column({
+    name: 'stripe_refund_id',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   stripe_refund_id?: string;
 
-  @Column({ name: 'refund_amount', type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({
+    name: 'refund_amount',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
   refund_amount?: number;
 
   @Column({ name: 'refund_date', type: 'timestamp', nullable: true })

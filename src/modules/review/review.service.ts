@@ -1,9 +1,17 @@
-import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
 import { CreateReviewDto, UpdateReviewDto } from './dto/review.dto';
-import { Reservation, ReservationStatus } from '../reservation/entities/reservation.entity';
+import {
+  Reservation,
+  ReservationStatus,
+} from '../reservation/entities/reservation.entity';
 import { Court } from '../court/entities/court.entity';
 
 @Injectable()
@@ -47,8 +55,12 @@ export class ReviewService {
       .getMany();
 
     //Calcular el promedio
-    const totalRatings = reviews.reduce((sum, review) => sum + review.rating, 0);
-    const averageRating = reviews.length > 0 ? totalRatings / reviews.length : 0;
+    const totalRatings = reviews.reduce(
+      (sum, review) => sum + review.rating,
+      0,
+    );
+    const averageRating =
+      reviews.length > 0 ? totalRatings / reviews.length : 0;
     const totalReviews = reviews.length;
 
     //Actualizar TODAS las pistas con ese nombre
@@ -140,9 +152,7 @@ export class ReviewService {
       });
 
       if (existingReview && existingReview.id !== reviewId) {
-        throw new ConflictException(
-          'Ya tienes una review para esa pista.',
-        );
+        throw new ConflictException('Ya tienes una review para esa pista.');
       }
     }
 
@@ -156,7 +166,10 @@ export class ReviewService {
     return this.findOne(reviewId);
   }
 
-  async remove(reviewId: number, userId: number): Promise<{ deleted: boolean }> {
+  async remove(
+    reviewId: number,
+    userId: number,
+  ): Promise<{ deleted: boolean }> {
     // Verificar que existe la review
     const review = await this.findOne(reviewId);
     const courtId = review.court_id;

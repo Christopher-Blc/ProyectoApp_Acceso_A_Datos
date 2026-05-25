@@ -31,10 +31,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { CourtType } from './entities/court_type.entity';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
-import {
-  CreateCourtTypeDto,
-  UpdateCourtTypeDto,
-} from './dto/court_type.dto';
+import { CreateCourtTypeDto, UpdateCourtTypeDto } from './dto/court_type.dto';
 import { normalizeError } from '../../common/utils/error.util';
 
 @ApiTags('court-types')

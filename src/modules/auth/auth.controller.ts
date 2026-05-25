@@ -19,7 +19,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { ResendVerificationDto } from './dto/resend-verification.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
-  import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { Throttle } from '../../common/decorators/throttle.decorator';
 import type { AuthenticatedRequest } from './types/auth.types';
 import { ResetPasswordDto } from './dto/reset-password.dto';

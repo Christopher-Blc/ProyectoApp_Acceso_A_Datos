@@ -58,7 +58,11 @@ export class AuthService {
     userName: string,
     resetUrl: string,
   ): Promise<string> {
-    const templatePath = join(__dirname, 'templates', 'password-reset-email.hbs');
+    const templatePath = join(
+      __dirname,
+      'templates',
+      'password-reset-email.hbs',
+    );
     const templateSource = await readFile(templatePath, 'utf8');
     const compileTemplate = Handlebars.compile<{
       userName: string;
@@ -322,7 +326,9 @@ export class AuthService {
     };
   }
 
-  async resendVerificationEmail(email: string): Promise<Record<string, string>> {
+  async resendVerificationEmail(
+    email: string,
+  ): Promise<Record<string, string>> {
     const user = await this.usersService.findByEmail(email);
 
     if (!user) {
@@ -340,7 +346,11 @@ export class AuthService {
 
     const { plainToken, tokenHash, expiresAt } =
       this.buildEmailVerificationToken();
-    await this.usersService.setEmailVerificationData(user.id, tokenHash, expiresAt);
+    await this.usersService.setEmailVerificationData(
+      user.id,
+      tokenHash,
+      expiresAt,
+    );
 
     const verifyUrl = this.buildVerificationUrl(plainToken);
     await this.sendVerificationEmail(
@@ -356,7 +366,8 @@ export class AuthService {
 
   async verifyEmail(token: string): Promise<{ message: string }> {
     const tokenHash = this.hashToken(token);
-    const user = await this.usersService.findByEmailVerificationTokenHash(tokenHash);
+    const user =
+      await this.usersService.findByEmailVerificationTokenHash(tokenHash);
 
     if (!user) {
       throw new BadRequestException('Invalid verification token');
@@ -409,7 +420,8 @@ export class AuthService {
     newPassword: string,
   ): Promise<{ message: string }> {
     const tokenHash = this.hashToken(token);
-    const user = await this.usersService.findByPasswordResetTokenHash(tokenHash);
+    const user =
+      await this.usersService.findByPasswordResetTokenHash(tokenHash);
 
     if (!user) {
       throw new BadRequestException('Invalid reset token');
@@ -450,7 +462,6 @@ export class AuthService {
       );
     }
 
-    
     // Actualiza último login
     await this.usersService.updateLastLogin(user.id);
 

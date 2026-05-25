@@ -37,7 +37,9 @@ export class StripeService {
     private readonly paymentRepo: Repository<Payment>,
   ) {
     if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error('STRIPE_SECRET_KEY no está definida en las variables de entorno');
+      throw new Error(
+        'STRIPE_SECRET_KEY no está definida en las variables de entorno',
+      );
     }
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: '2026-04-22.dahlia',
@@ -83,7 +85,9 @@ export class StripeService {
     );
 
     if (!paymentIntent.client_secret) {
-      throw new BadRequestException('Stripe no devolvió un client_secret válido');
+      throw new BadRequestException(
+        'Stripe no devolvió un client_secret válido',
+      );
     }
 
     return { clientSecret: paymentIntent.client_secret };
@@ -91,7 +95,9 @@ export class StripeService {
 
   async handleWebhook(signature: string, rawBody: Buffer): Promise<void> {
     if (!process.env.STRIPE_WEBHOOK_SECRET) {
-      throw new Error('STRIPE_WEBHOOK_SECRET no está definida en las variables de entorno');
+      throw new Error(
+        'STRIPE_WEBHOOK_SECRET no está definida en las variables de entorno',
+      );
     }
 
     let event: ReturnType<typeof this.stripe.webhooks.constructEvent>;
@@ -172,11 +178,16 @@ export class StripeService {
 
   async processRefund(reservationId: number): Promise<void> {
     const payment = await this.paymentRepo.findOne({
-      where: { reservation_id: reservationId, payment_status: PaymentStatus.PAID },
+      where: {
+        reservation_id: reservationId,
+        payment_status: PaymentStatus.PAID,
+      },
     });
 
     if (!payment) {
-      this.logger.log(`Reserva ${reservationId}: sin pago activo que reembolsar`);
+      this.logger.log(
+        `Reserva ${reservationId}: sin pago activo que reembolsar`,
+      );
       return;
     }
 
@@ -185,9 +196,13 @@ export class StripeService {
       await this.paymentRepo.update(payment.id, {
         payment_status: PaymentStatus.REFUNDED,
         refund_date: new Date(),
-        note: (payment.note ? payment.note + ' | ' : '') + 'Reembolsado al cancelar reserva',
+        note:
+          (payment.note ? payment.note + ' | ' : '') +
+          'Reembolsado al cancelar reserva',
       });
-      this.logger.log(`Reserva ${reservationId}: pago no-Stripe marcado como reembolsado`);
+      this.logger.log(
+        `Reserva ${reservationId}: pago no-Stripe marcado como reembolsado`,
+      );
       return;
     }
 
@@ -201,10 +216,14 @@ export class StripeService {
         stripe_refund_id: refund.id,
         refund_amount: refund.amount / 100,
         refund_date: new Date(),
-        note: (payment.note ? payment.note + ' | ' : '') + `Reembolso Stripe — ${refund.id}`,
+        note:
+          (payment.note ? payment.note + ' | ' : '') +
+          `Reembolso Stripe — ${refund.id}`,
       });
 
-      this.logger.log(`Reembolso ${refund.id} procesado para reserva ${reservationId} (${refund.amount / 100}€)`);
+      this.logger.log(
+        `Reembolso ${refund.id} procesado para reserva ${reservationId} (${refund.amount / 100}€)`,
+      );
     } catch (error) {
       this.logger.warn(
         `Stripe no pudo procesar el reembolso para reserva ${reservationId}: ${(error as Error).message} — simulando reembolso`,
@@ -216,9 +235,13 @@ export class StripeService {
         stripe_refund_id: simRefundId,
         refund_amount: Number(payment.amount),
         refund_date: new Date(),
-        note: (payment.note ? payment.note + ' | ' : '') + `Reembolso simulado — ${simRefundId}`,
+        note:
+          (payment.note ? payment.note + ' | ' : '') +
+          `Reembolso simulado — ${simRefundId}`,
       });
-      this.logger.log(`Reembolso simulado ${simRefundId} aplicado para reserva ${reservationId}`);
+      this.logger.log(
+        `Reembolso simulado ${simRefundId} aplicado para reserva ${reservationId}`,
+      );
     }
   }
 }

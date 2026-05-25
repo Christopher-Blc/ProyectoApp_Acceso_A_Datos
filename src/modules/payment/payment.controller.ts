@@ -71,9 +71,7 @@ export class PaymentController {
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async create(
-    @Body() paymentDto: CreatePaymentDto,
-  ): Promise<Payment | null> {
+  async create(@Body() paymentDto: CreatePaymentDto): Promise<Payment | null> {
     try {
       const pagoData = {
         ...paymentDto,

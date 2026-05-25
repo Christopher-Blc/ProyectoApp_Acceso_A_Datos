@@ -9,10 +9,7 @@ import { Repository } from 'typeorm';
 
 import { CourtType } from './entities/court_type.entity';
 import { Court } from '../court/entities/court.entity';
-import {
-  CreateCourtTypeDto,
-  UpdateCourtTypeDto,
-} from './dto/court_type.dto';
+import { CreateCourtTypeDto, UpdateCourtTypeDto } from './dto/court_type.dto';
 
 export type CourtTypeWithCount = CourtType & { totalCourts: number };
 import * as fs from 'fs';
@@ -44,7 +41,9 @@ export class CourtTypeService {
   async findAll(): Promise<CourtTypeWithCount[]> {
     const { entities, raw } = await this.tipoPistaRepository
       .createQueryBuilder('ct')
-      .leftJoin('ct.courts', 'c', 'c.status = :status', { status: 'DISPONIBLE' })
+      .leftJoin('ct.courts', 'c', 'c.status = :status', {
+        status: 'DISPONIBLE',
+      })
       .addSelect('COUNT(DISTINCT c.name)', 'totalCourts')
       .groupBy('ct.id')
       .getRawAndEntities();
@@ -66,7 +65,10 @@ export class CourtTypeService {
   }
 
   // Crear un nuevo tipo
-  async create(dto: CreateCourtTypeDto, imageFilename?: string): Promise<CourtType> {
+  async create(
+    dto: CreateCourtTypeDto,
+    imageFilename?: string,
+  ): Promise<CourtType> {
     //mirar primero si ya existe un tipo con ese nombre
     const existe = await this.tipoPistaRepository.findOne({
       where: { name: dto.name },

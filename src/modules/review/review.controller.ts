@@ -60,20 +60,24 @@ export class ReviewController {
   @ApiResponse({ status: 201, description: 'Review created successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid input.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 409, description: 'User already has a review for this court.' })
-  async create(@Body() reviewDto: CreateReviewDto, @Req() req: AuthenticatedRequest): Promise<Review | null> {
+  @ApiResponse({
+    status: 409,
+    description: 'User already has a review for this court.',
+  })
+  async create(
+    @Body() reviewDto: CreateReviewDto,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<Review | null> {
     try {
       const userId = req.user?.sub;
       if (!userId)
-          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
       return this.ReviewService.create(reviewDto, Number(userId));
     } catch (error) {
       const { message, status } = normalizeError(error);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
     }
   }
-
-  
 
   @Put(':id')
   @Roles(UserRole.CLIENT, UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)

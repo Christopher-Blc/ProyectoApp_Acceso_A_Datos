@@ -55,7 +55,10 @@ export class InstallationController {
   @Post()
   @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new installation' })
-  @ApiResponse({ status: 201, description: 'Installation created successfully.' })
+  @ApiResponse({
+    status: 201,
+    description: 'Installation created successfully.',
+  })
   @ApiResponse({ status: 400, description: 'Invalid installation data.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(
@@ -67,7 +70,10 @@ export class InstallationController {
   @Put(':id')
   @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update an installation by ID' })
-  @ApiResponse({ status: 200, description: 'Installation updated successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Installation updated successfully.',
+  })
   @ApiResponse({ status: 400, description: 'Invalid installation data.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Installation not found.' })
@@ -81,7 +87,10 @@ export class InstallationController {
   @Delete(':id')
   @Roles(UserRole.ADMINISTRATION, UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Delete an installation by ID' })
-  @ApiResponse({ status: 200, description: 'Installation deleted successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Installation deleted successfully.',
+  })
   @ApiResponse({ status: 400, description: 'Invalid installation ID.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Installation not found.' })

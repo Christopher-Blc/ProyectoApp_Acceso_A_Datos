@@ -91,7 +91,9 @@ export class UsersController {
 
   @Patch('profile/change-password')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Change my own password (requires current password)' })
+  @ApiOperation({
+    summary: 'Change my own password (requires current password)',
+  })
   @ApiResponse({ status: 204, description: 'Password changed successfully.' })
   @ApiResponse({ status: 400, description: 'Current password is incorrect.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })

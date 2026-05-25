@@ -6,7 +6,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path'; // Cambiado de 'path/posix' a 'path' para evitar problemas de compatibilidad en Windows/Linux
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  });
   //app.setGlobalPrefix('api');
 
   const rootPath = process.cwd();
@@ -16,9 +18,12 @@ async function bootstrap() {
   app.useStaticAssets(publicPath, {
     prefix: '/public/',
     setHeaders: (res, path) => {
-       if (path.endsWith('ResPi_dev1.0.2.apk')) { 
+      if (path.endsWith('ResPi_dev1.0.2.apk')) {
         res.set('Content-Type', 'application/vnd.android.package-archive');
-        res.set('Content-Disposition', 'attachment; filename="ResPi_dev1.0.2.apk"');
+        res.set(
+          'Content-Disposition',
+          'attachment; filename="ResPi_dev1.0.2.apk"',
+        );
       }
     },
   });

@@ -49,7 +49,9 @@ export class ReservationsSeeder implements Seeder {
       if (totalMinutos > 0) {
         const duracionHoras = totalMinutos / 60;
         // Usamos el price_per_hour de la pista encontrada
-        precioCalculado = Number((duracionHoras * court.price_per_hour).toFixed(2));
+        precioCalculado = Number(
+          (duracionHoras * court.price_per_hour).toFixed(2),
+        );
       }
 
       // 4. Mapeo a la entidad

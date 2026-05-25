@@ -23,7 +23,8 @@ export const VALIDATION_PATTERNS = {
 
   phone: {
     pattern: /^\+[1-9]\d{6,14}$/,
-    message: 'Phone must start with + followed by country code and number (e.g. +34612345678)',
+    message:
+      'Phone must start with + followed by country code and number (e.g. +34612345678)',
     example: '+34612345678',
     description: 'International phone with mandatory country prefix',
   },
