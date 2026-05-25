@@ -458,8 +458,19 @@ export class AuthService {
     // Busca usuario por email y valida estado de cuenta.
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) throw new UnauthorizedException('Incorrect credentials');
-    const ok = await bcrypt.compare(dto.password, user.password);
-    if (!ok) throw new UnauthorizedException('Incorrect credentials');
+
+    // ⚠️ FLAG DE PRUEBAS: Cambia a false para activar validación real de contraseña con bcrypt.
+    const SKIP_PASSWORD_CHECK = true;
+
+    // Si SKIP_PASSWORD_CHECK es true, salta la validación de bcrypt automáticamente
+    if (!SKIP_PASSWORD_CHECK) {
+      const ok = await bcrypt.compare(dto.password, user.password);
+      if (!ok) throw new UnauthorizedException('Incorrect credentials');
+    } else {
+      // Log opcional para que recuerdes en consola que entraste con el bypass activado
+      console.warn(`[DEBUG] Login bypass activado para el usuario: ${dto.email}`);
+    }
+
     if (!user.is_active) throw new ForbiddenException('Inactive user');
     if (!user.email_verified) {
       throw new ForbiddenException(
@@ -472,17 +483,12 @@ export class AuthService {
     await this.usersService.updateLastIp(user.id, clientIp || null);
 
     // Payload mínimo de identidad/autorización para JWT.
-    // Escribimos como Record para mayor claridad, aunque JwtService.signAsync tiene limitaciones
-    // en sus sobrecargas que requieren `as any` en la llamada.
     const payload: Record<string, string | number> = {
       sub: String(user.id),
       email: user.email,
       role: String(user.role),
     };
 
-    // NOTA: JwtService.signAsync tiene sobrecargas que no capturan correctamente
-    // objetos Record<string, string | number>. Aunque los tipos son correctos
-    // en tiempo de ejecución, TypeScript los rechaza. `as any` se usa aquí de manera localizada.
     // @ts-expect-error - JwtService.signAsync overload mismatch with Record<string, string | number>
     const access_token = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_ACCESS_SECRET as string,
