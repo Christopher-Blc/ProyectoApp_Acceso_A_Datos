@@ -9,6 +9,9 @@ export class CourtType {
   @Column()
   name!: string;
 
+  @Column({})
+  image!: string; // Aquí guardaremos algo como "Court-tenis.jpg"
+
   @OneToMany(() => Court, (court) => court.courtType)
   courts!: Court[];
 }
