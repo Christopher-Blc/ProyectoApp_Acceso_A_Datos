@@ -39,7 +39,7 @@ export class Review {
   @Column({ name: 'is_visible', default: true })
   is_visible!: boolean;
 
-  @Column({ name: 'admin_answer', nullable: true })
+  @Column({ name: 'admin_answer', nullable: true, type: "longtext" })
   admin_answer?: string;
 
   @OneToOne(() => User, (u) => u.review)
