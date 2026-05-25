@@ -56,6 +56,18 @@ export class Payment {
   })
   payment_status!: PaymentStatus;
 
+  @Column({ name: 'stripe_payment_intent_id', type: 'varchar', length: 255, nullable: true })
+  stripe_payment_intent_id?: string;
+
+  @Column({ name: 'stripe_refund_id', type: 'varchar', length: 255, nullable: true })
+  stripe_refund_id?: string;
+
+  @Column({ name: 'refund_amount', type: 'decimal', precision: 10, scale: 2, nullable: true })
+  refund_amount?: number;
+
+  @Column({ name: 'refund_date', type: 'timestamp', nullable: true })
+  refund_date?: Date;
+
   @Column({ type: 'text', nullable: true })
   note?: string;
 

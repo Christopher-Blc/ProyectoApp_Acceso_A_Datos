@@ -9,5 +9,6 @@ import { Payment } from '../payment/entities/payment.entity';
   imports: [TypeOrmModule.forFeature([Reservation, Payment])],
   controllers: [StripeController],
   providers: [StripeService],
+  exports: [StripeService],
 })
 export class StripeModule {}

@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,9 +16,12 @@ import { Court } from '../court/entities/court.entity';
 import { UsersService } from '../users/users.service';
 import { NotificationService } from '../notification/notification.service';
 import { NotificationType } from '../notification/entities/notification.entity';
+import { StripeService } from '../stripe/stripe.service';
 
 @Injectable()
 export class ReservationService {
+  private readonly logger = new Logger(ReservationService.name);
+
   constructor(
     @InjectRepository(Reservation)
     private readonly reservaRepo: Repository<Reservation>,
@@ -25,6 +29,7 @@ export class ReservationService {
     private readonly pistaRepo: Repository<Court>,
     private readonly userService: UsersService,
     private readonly notificationService: NotificationService,
+    private readonly stripeService: StripeService,
   ) {}
 
   async findAll(
@@ -158,6 +163,18 @@ export class ReservationService {
           message: `Tu reserva del ${new Date(reservation.reservation_date).toLocaleDateString('es-ES')} de ${reservation.start_time} a ${reservation.end_time} ha sido cancelada.`,
           notification_type: NotificationType.ALERT,
         });
+
+        // Si la reserva estaba confirmada (pagada), procesar reembolso automático
+        if (estadoAnterior === ReservationStatus.CONFIRMED) {
+          try {
+            await this.stripeService.processRefund(reservationId);
+            this.logger.log(`Reembolso procesado automáticamente para reserva ${reservationId}`);
+          } catch (error) {
+            this.logger.error(
+              `No se pudo procesar el reembolso automático para reserva ${reservationId}: ${(error as Error).message}`,
+            );
+          }
+        }
       }
 
       if (
