@@ -29,7 +29,11 @@ export class Review {
   @Column({ name: 'rating', type: 'int' })
   rating!: number;
 
-  @Column({ name: 'comment_date', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'comment_date',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   comment_date!: Date;
 
   @Column({ name: 'is_visible', default: true })

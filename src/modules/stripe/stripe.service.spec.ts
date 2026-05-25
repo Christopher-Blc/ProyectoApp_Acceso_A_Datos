@@ -1,4 +1,8 @@
-import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { ReservationStatus } from '../reservation/entities/reservation.entity';
 import { PaymentStatus } from '../payment/entities/payment.entity';
@@ -39,7 +43,7 @@ describe('StripeService', () => {
     reservationRepo = buildMockReservationRepo();
     paymentRepo = buildMockPaymentRepo();
 
-    service = new StripeService(reservationRepo as any, paymentRepo as any);
+    service = new StripeService(reservationRepo, paymentRepo);
 
     mockStripe = buildMockStripe();
     (service as any).stripe = mockStripe;
@@ -82,13 +86,20 @@ describe('StripeService', () => {
     it('lanza NotFoundException si la reserva no existe', async () => {
       reservationRepo.findOne.mockResolvedValue(null);
 
-      await expect(service.createPaymentIntent(99, 10)).rejects.toThrow(NotFoundException);
+      await expect(service.createPaymentIntent(99, 10)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('lanza ForbiddenException si la reserva pertenece a otro usuario', async () => {
-      reservationRepo.findOne.mockResolvedValue({ ...baseReservation, user_id: 999 });
+      reservationRepo.findOne.mockResolvedValue({
+        ...baseReservation,
+        user_id: 999,
+      });
 
-      await expect(service.createPaymentIntent(1, 10)).rejects.toThrow(ForbiddenException);
+      await expect(service.createPaymentIntent(1, 10)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('lanza BadRequestException si la reserva ya está CONFIRMADA', async () => {
@@ -97,7 +108,9 @@ describe('StripeService', () => {
         status: ReservationStatus.CONFIRMED,
       });
 
-      await expect(service.createPaymentIntent(1, 10)).rejects.toThrow(BadRequestException);
+      await expect(service.createPaymentIntent(1, 10)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -115,7 +128,10 @@ describe('StripeService', () => {
 
     it('emite un reembolso en Stripe y actualiza el pago a REEMBOLSADO', async () => {
       paymentRepo.findOne.mockResolvedValue(paidPayment);
-      mockStripe.refunds.create.mockResolvedValue({ id: 're_test_789', amount: 2000 });
+      mockStripe.refunds.create.mockResolvedValue({
+        id: 're_test_789',
+        amount: 2000,
+      });
 
       await service.processRefund(1);
 
@@ -140,7 +156,10 @@ describe('StripeService', () => {
     });
 
     it('marca como REEMBOLSADO sin llamar a Stripe si no hay stripe_payment_intent_id', async () => {
-      paymentRepo.findOne.mockResolvedValue({ ...paidPayment, stripe_payment_intent_id: undefined });
+      paymentRepo.findOne.mockResolvedValue({
+        ...paidPayment,
+        stripe_payment_intent_id: undefined,
+      });
 
       await service.processRefund(1);
 
@@ -153,7 +172,9 @@ describe('StripeService', () => {
 
     it('simula el reembolso si Stripe devuelve un error (modo TFG)', async () => {
       paymentRepo.findOne.mockResolvedValue(paidPayment);
-      mockStripe.refunds.create.mockRejectedValue(new Error('Stripe API error'));
+      mockStripe.refunds.create.mockRejectedValue(
+        new Error('Stripe API error'),
+      );
 
       await expect(service.processRefund(1)).resolves.toBeUndefined();
 
@@ -170,7 +191,11 @@ describe('StripeService', () => {
   // ─── handleWebhook ────────────────────────────────────────────────────────
 
   describe('handleWebhook', () => {
-    const pendingReservation = { id: 1, user_id: 10, status: ReservationStatus.PENDING };
+    const pendingReservation = {
+      id: 1,
+      user_id: 10,
+      status: ReservationStatus.PENDING,
+    };
 
     it('confirma la reserva y guarda el pago con stripe_payment_intent_id', async () => {
       mockStripe.webhooks.constructEvent.mockReturnValue({
@@ -227,9 +252,9 @@ describe('StripeService', () => {
         throw new Error('Firma inválida');
       });
 
-      await expect(service.handleWebhook('bad_sig', Buffer.from('{}'))).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(
+        service.handleWebhook('bad_sig', Buffer.from('{}')),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 });

@@ -48,7 +48,7 @@ export class UserSeeder implements Seeder {
       // Fechas (aseguramos objeto Date)
       userEntry.registration_date = item.registration_date || new Date();
       userEntry.last_login_date = item.last_login_date || new Date();
-      userEntry.date_of_birth = new Date(item.date_of_birth!);
+      userEntry.date_of_birth = new Date(item.date_of_birth);
 
       userEntries.push(userEntry);
     }

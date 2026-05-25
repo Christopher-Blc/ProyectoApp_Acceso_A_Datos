@@ -32,10 +32,7 @@ export class ReservationService {
     private readonly stripeService: StripeService,
   ) {}
 
-  async findAll(
-    court_id?: number,
-    fromDate?: string,
-  ): Promise<Reservation[]> {
+  async findAll(court_id?: number, fromDate?: string): Promise<Reservation[]> {
     const where: any = {};
 
     if (court_id) {
@@ -123,7 +120,13 @@ export class ReservationService {
     }
 
     // 2. Bloqueo: los clientes no pueden tocar reservas ya procesadas
-    if (reservation.status !== ReservationStatus.PENDING && !isAdmin) {
+    //    Excepción: sí pueden cancelar sus propias reservas (PENDIENTE o CONFIRMADA)
+    const isCancellation = dto.status === ReservationStatus.CANCELLED;
+    if (
+      reservation.status !== ReservationStatus.PENDING &&
+      !isAdmin &&
+      !isCancellation
+    ) {
       throw new ForbiddenException(
         'No puedes modificar una reserva ya procesada.',
       );
@@ -168,7 +171,9 @@ export class ReservationService {
         if (estadoAnterior === ReservationStatus.CONFIRMED) {
           try {
             await this.stripeService.processRefund(reservationId);
-            this.logger.log(`Reembolso procesado automáticamente para reserva ${reservationId}`);
+            this.logger.log(
+              `Reembolso procesado automáticamente para reserva ${reservationId}`,
+            );
           } catch (error) {
             this.logger.error(
               `No se pudo procesar el reembolso automático para reserva ${reservationId}: ${(error as Error).message}`,
@@ -254,7 +259,9 @@ export class ReservationService {
     const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let codigo = 'RES-';
     for (let i = 0; i < 6; i++) {
-      codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+      codigo += caracteres.charAt(
+        Math.floor(Math.random() * caracteres.length),
+      );
     }
     return codigo;
   }
@@ -271,11 +278,15 @@ export class ReservationService {
 
     // Opcional: Aquí puedes añadir validaciones de negocio automáticas
     const hoy = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
-    
+
     // Si quieres que el backend avise si es de otro día:
-    const reservationDay = new Date(reservation.reservation_date).toISOString().split('T')[0];
+    const reservationDay = new Date(reservation.reservation_date)
+      .toISOString()
+      .split('T')[0];
     if (reservationDay !== hoy) {
-      throw new ForbiddenException(`Esta reserva no es para hoy. Es para el día ${reservationDay}`);
+      throw new ForbiddenException(
+        `Esta reserva no es para hoy. Es para el día ${reservationDay}`,
+      );
     }
 
     return reservation;

@@ -51,5 +51,4 @@ export class Installation {
 
   @OneToMany(() => Court, (c) => c.installation)
   courts!: Court[];
-
 }

@@ -51,10 +51,7 @@ export class UsersService {
       },
     });
 
-    if (
-      mejorMembership &&
-      user.membership_id !== mejorMembership.id
-    ) {
+    if (mejorMembership && user.membership_id !== mejorMembership.id) {
       await this.userRepository.update(user_id, {
         membership_id: mejorMembership.id,
       });
@@ -112,10 +109,7 @@ export class UsersService {
     return this.findOne(user_id);
   }
 
-  async updatePushToken(
-    user_id: number,
-    expoPushToken: string,
-  ): Promise<User> {
+  async updatePushToken(user_id: number, expoPushToken: string): Promise<User> {
     await this.findOne(user_id);
     await this.userRepository.update(user_id, { expoPushToken });
     return this.findOne(user_id);
@@ -136,9 +130,9 @@ export class UsersService {
       .loadRelationCountAndMap('user.reservations_count', 'user.reservations') // Crea el campo virtual
       .where('user.id = :id', { id: user_id })
       .getOne();
-    
+
     const totalReservationsCount = await this.reservaRepository.count({
-      where: { user_id , status: ReservationStatus.COMPLETED },
+      where: { user_id, status: ReservationStatus.COMPLETED },
     });
 
     if (!user) throw new NotFoundException('User not found');
@@ -184,15 +178,15 @@ export class UsersService {
     }
 
     //simulamos un borrado del user pq sino reservas se queda sin FK
-    //asi que solo se hace update de su info para que simule un eliminado, 
+    //asi que solo se hace update de su info para que simule un eliminado,
     // pero sin perder la integridad referencial de las reservas
     user.username = `deleted_user_${user_id}`;
     user.email = `deleted_${user_id}@deleted.com`;
-    user.password = `DELETED_${Math.random().toString(36).substring(2)}`; 
+    user.password = `DELETED_${Math.random().toString(36).substring(2)}`;
     user.refresh_token_hash = null; // O hashedRefreshToken = null, según tu implementación
 
     //Ponemos isactive a false
-    user.is_active = false; 
+    user.is_active = false;
     //Guardamos los cambios en lugar de eliminar la fila
     await this.userRepository.save(user);
   }
@@ -265,7 +259,9 @@ export class UsersService {
     }
   }
 
-  async findByEmailVerificationTokenHash(tokenHash: string): Promise<User | null> {
+  async findByEmailVerificationTokenHash(
+    tokenHash: string,
+  ): Promise<User | null> {
     return await this.userRepository.findOne({
       where: { email_verification_token_hash: tokenHash },
     });

@@ -1,4 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from '@jest/globals';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { ReservationStatus } from './entities/reservation.entity';
@@ -74,11 +81,11 @@ describe('ReservationService', () => {
     stripeService = buildStripeService();
 
     service = new ReservationService(
-      reservaRepo as any,
-      pistaRepo as any,
-      userService as any,
-      notificationService as any,
-      stripeService as any,
+      reservaRepo,
+      pistaRepo,
+      userService,
+      notificationService,
+      stripeService,
     );
   });
 
@@ -95,12 +102,25 @@ describe('ReservationService', () => {
   describe('create', () => {
     it('calcula el precio y asigna estado PENDIENTE', async () => {
       pistaRepo.findOneBy.mockResolvedValue(COURT);
-      const saved = { id: 99, status: ReservationStatus.PENDING, total_price: 10 };
+      const saved = {
+        id: 99,
+        status: ReservationStatus.PENDING,
+        total_price: 10,
+      };
       reservaRepo.save.mockResolvedValue(saved);
-      reservaRepo.findOne.mockResolvedValue({ ...saved, court: COURT, payments: [] });
+      reservaRepo.findOne.mockResolvedValue({
+        ...saved,
+        court: COURT,
+        payments: [],
+      });
 
       const result = await service.create(
-        { court_id: 2, reservation_date: '2025-08-01', start_time: '10:00', end_time: '11:00' } as any,
+        {
+          court_id: 2,
+          reservation_date: '2025-08-01',
+          start_time: '10:00',
+          end_time: '11:00',
+        } as any,
         10,
       );
 
@@ -113,7 +133,12 @@ describe('ReservationService', () => {
 
       await expect(
         service.create(
-          { court_id: 99, reservation_date: '2025-08-01', start_time: '10:00', end_time: '11:00' } as any,
+          {
+            court_id: 99,
+            reservation_date: '2025-08-01',
+            start_time: '10:00',
+            end_time: '11:00',
+          } as any,
           10,
         ),
       ).rejects.toThrow(NotFoundException);
@@ -129,7 +154,12 @@ describe('ReservationService', () => {
       notificationService.create.mockResolvedValue(undefined);
       stripeService.processRefund.mockResolvedValue(undefined);
 
-      await service.update(1, { status: ReservationStatus.CANCELLED } as any, 10, 'SUPER_ADMIN' as any);
+      await service.update(
+        1,
+        { status: ReservationStatus.CANCELLED } as any,
+        10,
+        'SUPER_ADMIN' as any,
+      );
 
       expect(stripeService.processRefund).toHaveBeenCalledWith(1);
       expect(notificationService.create).toHaveBeenCalledWith(
@@ -142,7 +172,12 @@ describe('ReservationService', () => {
       reservaRepo.update.mockResolvedValue(undefined);
       notificationService.create.mockResolvedValue(undefined);
 
-      await service.update(1, { status: ReservationStatus.CANCELLED } as any, 10, 'SUPER_ADMIN' as any);
+      await service.update(
+        1,
+        { status: ReservationStatus.CANCELLED } as any,
+        10,
+        'SUPER_ADMIN' as any,
+      );
 
       expect(stripeService.processRefund).not.toHaveBeenCalled();
     });
@@ -154,7 +189,12 @@ describe('ReservationService', () => {
       stripeService.processRefund.mockRejectedValue(new Error('Stripe error'));
 
       await expect(
-        service.update(1, { status: ReservationStatus.CANCELLED } as any, 10, 'SUPER_ADMIN' as any),
+        service.update(
+          1,
+          { status: ReservationStatus.CANCELLED } as any,
+          10,
+          'SUPER_ADMIN' as any,
+        ),
       ).resolves.not.toThrow();
 
       expect(reservaRepo.update).toHaveBeenCalledWith(
@@ -168,19 +208,39 @@ describe('ReservationService', () => {
 
   describe('update – permisos', () => {
     it('lanza ForbiddenException si un cliente intenta editar la reserva de otro usuario', async () => {
-      reservaRepo.findOne.mockResolvedValue(pendingReservation({ user_id: 999 }));
+      reservaRepo.findOne.mockResolvedValue(
+        pendingReservation({ user_id: 999 }),
+      );
 
       await expect(
         service.update(1, { note: 'hack' } as any, 10, 'CLIENTE' as any),
       ).rejects.toThrow(ForbiddenException);
     });
 
-    it('lanza ForbiddenException si un cliente intenta modificar una reserva ya procesada', async () => {
+    it('lanza ForbiddenException si un cliente intenta modificar (no cancelar) una reserva ya procesada', async () => {
       reservaRepo.findOne.mockResolvedValue(confirmedReservation());
 
       await expect(
         service.update(1, { note: 'update' } as any, 10, 'CLIENTE' as any),
       ).rejects.toThrow(ForbiddenException);
+    });
+
+    it('permite a un cliente cancelar una reserva CONFIRMADA propia', async () => {
+      reservaRepo.findOne.mockResolvedValue(confirmedReservation());
+      reservaRepo.update.mockResolvedValue(undefined);
+      notificationService.create.mockResolvedValue(undefined);
+      stripeService.processRefund.mockResolvedValue(undefined);
+
+      await expect(
+        service.update(
+          1,
+          { status: ReservationStatus.CANCELLED } as any,
+          10,
+          'CLIENTE' as any,
+        ),
+      ).resolves.not.toThrow();
+
+      expect(stripeService.processRefund).toHaveBeenCalledWith(1);
     });
   });
 
@@ -192,7 +252,12 @@ describe('ReservationService', () => {
       pistaRepo.findOneBy.mockResolvedValue(COURT);
       reservaRepo.update.mockResolvedValue(undefined);
 
-      await service.update(1, { end_time: '12:00' } as any, 10, 'SUPER_ADMIN' as any);
+      await service.update(
+        1,
+        { end_time: '12:00' } as any,
+        10,
+        'SUPER_ADMIN' as any,
+      );
 
       // price_per_hour=10, duración 10:00–12:00 = 2h → 20€
       expect(reservaRepo.update).toHaveBeenCalledWith(
@@ -208,7 +273,9 @@ describe('ReservationService', () => {
     it('lanza NotFoundException si el código no existe', async () => {
       reservaRepo.findOne.mockResolvedValue(null);
 
-      await expect(service.validarCodigoReserva('RES-FAKE99')).rejects.toThrow(NotFoundException);
+      await expect(service.validarCodigoReserva('RES-FAKE99')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('lanza ForbiddenException si la reserva no es de hoy', async () => {
@@ -217,7 +284,9 @@ describe('ReservationService', () => {
         reservation_date: new Date('2020-01-01'),
       });
 
-      await expect(service.validarCodigoReserva('RES-ABC123')).rejects.toThrow(ForbiddenException);
+      await expect(service.validarCodigoReserva('RES-ABC123')).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 });

@@ -1,11 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DayOfWeek, Court, CourtStatus } from './entities/court.entity';
-import {
-  Repository,
-  In,
-  MoreThanOrEqual,
-} from 'typeorm';
+import { Repository, In, MoreThanOrEqual } from 'typeorm';
 import { CreateCourtDto, UpdateCourtDto } from './dto/court.dto';
 import {
   Reservation,
@@ -24,9 +20,9 @@ export class CourtService {
     private readonly reservaRepo: Repository<Reservation>,
   ) {}
 
-  async findAll(): Promise<Court[]> { 
-    return this.pistaRepo.find({ 
-      relations: ['installation', 'courtType'] 
+  async findAll(): Promise<Court[]> {
+    return this.pistaRepo.find({
+      relations: ['installation', 'courtType'],
     });
   }
 
@@ -86,7 +82,10 @@ export class CourtService {
     }));
   }
 
-  async create(infoCourt: CreateCourtDto, imageFilename?: string): Promise<Court> {
+  async create(
+    infoCourt: CreateCourtDto,
+    imageFilename?: string,
+  ): Promise<Court> {
     const data = {
       ...infoCourt,
       image: imageFilename || infoCourt.image,
@@ -126,7 +125,11 @@ export class CourtService {
 
     if (imageFilename) {
       if (currentCourt.image) {
-        const oldPath = path.resolve(process.cwd(), 'public', currentCourt.image);
+        const oldPath = path.resolve(
+          process.cwd(),
+          'public',
+          currentCourt.image,
+        );
         if (fs.existsSync(oldPath)) {
           try {
             fs.unlinkSync(oldPath);
@@ -153,7 +156,9 @@ export class CourtService {
           : 'Court cerrada por mantenimiento programado.';
 
       // Definimos el filtro de fechas
-      const filtroFecha = MoreThanOrEqual(new Date(new Date().toISOString().split('T')[0]));
+      const filtroFecha = MoreThanOrEqual(
+        new Date(new Date().toISOString().split('T')[0]),
+      );
 
       await this.reservaRepo.update(
         {

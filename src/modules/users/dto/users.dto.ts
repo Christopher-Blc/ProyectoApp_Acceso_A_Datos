@@ -177,7 +177,8 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   @ApiProperty({
-    description: 'password of the user. Must be between 8 and 100 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character.',
+    description:
+      'password of the user. Must be between 8 and 100 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character.',
     example: 'StrongP@ssw0rd!',
   })
   password?: string;
@@ -249,7 +250,8 @@ export class ChangePasswordDto {
     message: VALIDATION_PATTERNS.password.message,
   })
   @ApiProperty({
-    description: 'New password. Must be 8-128 characters including uppercase, lowercase, number and symbol.',
+    description:
+      'New password. Must be 8-128 characters including uppercase, lowercase, number and symbol.',
     example: 'NewP@ssw0rd!',
   })
   new_password!: string;
