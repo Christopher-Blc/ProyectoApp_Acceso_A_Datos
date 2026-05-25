@@ -77,6 +77,11 @@ export class AuthService {
     });
   }
 
+  private async renderTestEmailTemplate(): Promise<string> {
+    const templatePath = join(__dirname, 'templates', 'test.hbs');
+    return await readFile(templatePath, 'utf8');
+  }
+
   private buildEmailVerificationToken(): {
     plainToken: string;
     tokenHash: string;
@@ -189,6 +194,25 @@ export class AuthService {
       to: targetEmail,
       subject: 'Recupera tu contrasena en RESPI',
       text: `Hola ${userName},\n\nPulsa este enlace para restablecer tu contrasena:\n${resetUrl}\n\nSi no has sido tu, ignora este mensaje.`,
+      html: htmlBody,
+    });
+  }
+
+  async sendTestEmail(targetEmail: string): Promise<void> {
+    const transporter = this.getMailTransporter();
+
+    if (!transporter) {
+      throw new InternalServerErrorException('Email service not configured');
+    }
+
+    const fromAddress = process.env.SMTP_FROM || 'ResPi <no-reply@respi.es>';
+    const htmlBody = await this.renderTestEmailTemplate();
+
+    await transporter.sendMail({
+      from: fromAddress,
+      to: targetEmail,
+      subject: 'Correo de prueba RESPI',
+      text: 'Correo de prueba enviado correctamente.',
       html: htmlBody,
     });
   }
