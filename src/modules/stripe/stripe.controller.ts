@@ -13,6 +13,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { StripeService } from './stripe.service';
 import { CreatePaymentIntentDto } from './dto/create-payment-intent.dto';
+import { RefundDto } from './dto/refund.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import type { AuthenticatedRequest } from '../auth/types/auth.types';
 import { normalizeError } from '../../common/utils/error.util';
@@ -41,6 +42,26 @@ export class StripeController {
     } catch (error) {
       const { message } = normalizeError(error);
       this.logger.error(`Error creando PaymentIntent: ${message}`);
+      throw error;
+    }
+  }
+
+  @Post('refund')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Procesa el reembolso Stripe de una reserva cancelada' })
+  async refund(
+    @Body() dto: RefundDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = Number(req.user!.sub);
+    this.logger.log(`Usuario ${userId} solicita reembolso para reserva ${dto.reservationId}`);
+    try {
+      await this.stripeService.processRefund(dto.reservationId);
+      return { success: true, message: 'Reembolso procesado correctamente' };
+    } catch (error) {
+      const { message } = normalizeError(error);
+      this.logger.error(`Error procesando reembolso: ${message}`);
       throw error;
     }
   }

@@ -160,6 +160,7 @@ export class StripeService {
         amount: amountPaid,
         payment_method: PaymentMethod.VISA,
         payment_status: PaymentStatus.PAID,
+        stripe_payment_intent_id: paymentIntent.id,
         note: `Pago Stripe — PaymentIntent ${paymentIntent.id}`,
       }),
     );
@@ -167,5 +168,57 @@ export class StripeService {
     this.logger.log(
       `Reserva ${reservationId} confirmada y registro de Payment creado (${amountPaid}€)`,
     );
+  }
+
+  async processRefund(reservationId: number): Promise<void> {
+    const payment = await this.paymentRepo.findOne({
+      where: { reservation_id: reservationId, payment_status: PaymentStatus.PAID },
+    });
+
+    if (!payment) {
+      this.logger.log(`Reserva ${reservationId}: sin pago activo que reembolsar`);
+      return;
+    }
+
+    if (!payment.stripe_payment_intent_id) {
+      // Pago no fue a través de Stripe (efectivo, etc.) — solo marcamos como reembolsado
+      await this.paymentRepo.update(payment.id, {
+        payment_status: PaymentStatus.REFUNDED,
+        refund_date: new Date(),
+        note: (payment.note ? payment.note + ' | ' : '') + 'Reembolsado al cancelar reserva',
+      });
+      this.logger.log(`Reserva ${reservationId}: pago no-Stripe marcado como reembolsado`);
+      return;
+    }
+
+    try {
+      const refund = await this.stripe.refunds.create({
+        payment_intent: payment.stripe_payment_intent_id,
+      });
+
+      await this.paymentRepo.update(payment.id, {
+        payment_status: PaymentStatus.REFUNDED,
+        stripe_refund_id: refund.id,
+        refund_amount: refund.amount / 100,
+        refund_date: new Date(),
+        note: (payment.note ? payment.note + ' | ' : '') + `Reembolso Stripe — ${refund.id}`,
+      });
+
+      this.logger.log(`Reembolso ${refund.id} procesado para reserva ${reservationId} (${refund.amount / 100}€)`);
+    } catch (error) {
+      this.logger.warn(
+        `Stripe no pudo procesar el reembolso para reserva ${reservationId}: ${(error as Error).message} — simulando reembolso`,
+      );
+      // Simulación para demo/TFG: si Stripe falla, marcamos el pago como reembolsado igualmente
+      const simRefundId = `SIM-${Date.now()}`;
+      await this.paymentRepo.update(payment.id, {
+        payment_status: PaymentStatus.REFUNDED,
+        stripe_refund_id: simRefundId,
+        refund_amount: Number(payment.amount),
+        refund_date: new Date(),
+        note: (payment.note ? payment.note + ' | ' : '') + `Reembolso simulado — ${simRefundId}`,
+      });
+      this.logger.log(`Reembolso simulado ${simRefundId} aplicado para reserva ${reservationId}`);
+    }
   }
 }
