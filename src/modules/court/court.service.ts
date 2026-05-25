@@ -5,7 +5,6 @@ import {
   Repository,
   In,
   MoreThanOrEqual,
-  Between,
 } from 'typeorm';
 import { CreateCourtDto, UpdateCourtDto } from './dto/court.dto';
 import {
@@ -13,6 +12,8 @@ import {
   ReservationStatus,
 } from '../reservation/entities/reservation.entity';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class CourtService {
@@ -85,9 +86,10 @@ export class CourtService {
     }));
   }
 
-  async create(infoCourt: CreateCourtDto): Promise<Court> {
+  async create(infoCourt: CreateCourtDto, imageFilename?: string): Promise<Court> {
     const data = {
       ...infoCourt,
+      image: imageFilename || infoCourt.image,
       opening_time: this.formatTime(infoCourt.opening_time),
       closing_time: this.formatTime(infoCourt.closing_time),
     };
@@ -97,7 +99,11 @@ export class CourtService {
   // Edita la pista con los datos recibidos y, cuando se pone en mantenimiento o inactiva,
   // cancela reservas futuras relacionadas. También puede recibir rango de fechas
   // para cancelar solo las reservas dentro de ese intervalo.
-  async update(courtId: number, infoCourt: UpdateCourtDto): Promise<Court> {
+  async update(
+    courtId: number,
+    infoCourt: UpdateCourtDto,
+    imageFilename?: string,
+  ): Promise<Court> {
     const currentCourt = await this.findOne(courtId);
 
     let dataNormalizada: QueryDeepPartialEntity<Court> = {
@@ -117,6 +123,23 @@ export class CourtService {
         ...dataNormalizada,
         closing_time: this.formatTime(cierre),
       } as QueryDeepPartialEntity<Court>;
+
+    if (imageFilename) {
+      if (currentCourt.image) {
+        const oldPath = path.resolve(process.cwd(), 'public', currentCourt.image);
+        if (fs.existsSync(oldPath)) {
+          try {
+            fs.unlinkSync(oldPath);
+          } catch {
+            console.warn(`No se pudo eliminar la imagen antigua: ${oldPath}`);
+          }
+        }
+      }
+      dataNormalizada = {
+        ...dataNormalizada,
+        image: imageFilename,
+      } as QueryDeepPartialEntity<Court>;
+    }
 
     // Lógica de mantenimiento selectivo
     if (
@@ -171,6 +194,7 @@ export class CourtService {
   }
 
   async remove(courtId: number): Promise<void> {
+    const court = await this.findOne(courtId);
     const hoy = new Date().toISOString().split('T')[0];
 
     // 1. Cancelamos lo pendiente antes de que el ID deje de existir
@@ -186,5 +210,16 @@ export class CourtService {
       },
     );
     await this.pistaRepo.delete(courtId);
+
+    if (court.image) {
+      const filePath = path.resolve(process.cwd(), 'public', court.image);
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch {
+          console.warn(`No se pudo eliminar la imagen: ${filePath}`);
+        }
+      }
+    }
   }
 }
