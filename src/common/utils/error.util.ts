@@ -1,3 +1,5 @@
+import { HttpException } from '@nestjs/common';
+
 /**
  * Normaliza errores de ejecución a un contrato común `{ message, status }`.
  *
@@ -14,6 +16,32 @@ export function normalizeError(err: unknown): {
   message: string;
   status: number;
 } {
+  // Caso de excepciones HTTP de NestJS (BadRequestException, NotFoundException, etc.)
+  // para preservar status y mensaje de negocio.
+  if (err instanceof HttpException) {
+    const status = err.getStatus();
+    const response = err.getResponse();
+
+    if (typeof response === 'string') {
+      return { message: response, status };
+    }
+
+    if (typeof response === 'object' && response !== null) {
+      const record = response as Record<string, unknown>;
+      const rawMessage = record.message;
+
+      if (typeof rawMessage === 'string') {
+        return { message: rawMessage, status };
+      }
+
+      if (Array.isArray(rawMessage) && rawMessage.length > 0) {
+        return { message: String(rawMessage[0]), status };
+      }
+    }
+
+    return { message: err.message, status };
+  }
+
   // Caso típico de excepciones JS/TS (`throw new Error(...)`).
   if (err instanceof Error) {
     return { message: err.message, status: 500 };

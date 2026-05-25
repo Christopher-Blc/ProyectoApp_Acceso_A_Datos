@@ -460,7 +460,7 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('Incorrect credentials');
 
     // ⚠️ FLAG DE PRUEBAS: Cambia a false para activar validación real de contraseña con bcrypt.
-    const SKIP_PASSWORD_CHECK = true;
+    const SKIP_PASSWORD_CHECK = false;
 
     // Si SKIP_PASSWORD_CHECK es true, salta la validación de bcrypt automáticamente
     if (!SKIP_PASSWORD_CHECK) {
