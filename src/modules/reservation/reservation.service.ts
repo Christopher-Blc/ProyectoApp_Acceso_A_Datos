@@ -75,6 +75,11 @@ export class ReservationService {
     dto: CreateReservationDto,
     user_id: number,
   ): Promise<Reservation> {
+    const user = await this.userService.findById(user_id);
+    if (!user) {
+      throw new NotFoundException('User no encontrado');
+    }
+
     const court = await this.pistaRepo.findOneBy({ id: dto.court_id });
     if (!court) throw new NotFoundException('Court no encontrada');
 

@@ -11,6 +11,16 @@ import { ReservationStatus } from '../entities/reservation.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateReservationDto {
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({
+    description:
+      'ID of the user for the reservation (only for admin/manager flows)',
+    example: 12,
+    required: false,
+  })
+  user_id?: number;
+
   @IsNumber()
   @ApiProperty({
     description: 'ID of the Court being reserved',
