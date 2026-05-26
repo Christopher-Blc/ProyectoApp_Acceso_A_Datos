@@ -72,8 +72,8 @@ export class User {
   @Column({ name: 'date_of_birth', type: 'date' })
   date_of_birth!: Date;
 
-  @Column({ name: 'address' })
-  address!: string;
+  @Column({ name: 'address', nullable: true })
+  address?: string;
 
   @Column({ name: 'last_ip', type: 'varchar', length: 45, nullable: true })
   last_ip!: string | null;
