@@ -222,7 +222,19 @@ export class UsersService {
   }
 
   async updateLastIp(user_id: number, ip: string | null): Promise<void> {
-    await this.userRepository.update({ id: user_id }, { last_ip: ip });
+    const user = await this.userRepository.findOne({ where: { id: user_id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.last_ip === ip) {
+      return;
+    }
+
+    await this.userRepository.update(
+      { id: user_id },
+      { last_ip: ip, last_ip_changed_at: new Date() },
+    );
   }
 
   async findById(user_id: number): Promise<User | null> {

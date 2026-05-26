@@ -79,6 +79,9 @@ export class User {
   @Column({ name: 'last_ip', type: 'varchar', length: 45, nullable: true })
   last_ip!: string | null;
 
+  @Column({ name: 'last_ip_changed_at', type: 'timestamp', nullable: true })
+  last_ip_changed_at!: Date | null;
+
   @Column({ name: 'refresh_token_hash', type: 'text', nullable: true })
   refresh_token_hash!: string | null;
 
