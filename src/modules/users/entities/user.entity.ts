@@ -5,7 +5,6 @@ import {
   OneToMany,
   JoinColumn,
   ManyToOne,
-  OneToOne,
 } from 'typeorm';
 import { Notification } from '../../notification/entities/notification.entity';
 import { Review } from '../../review/entities/review.entity';
@@ -125,6 +124,6 @@ export class User {
   @OneToMany(() => Notification, (n) => n.user)
   notifications!: Notification[];
 
-  @OneToOne(() => Review, (r) => r.user)
-  review!: Review;
+  @OneToMany(() => Review, (r) => r.user)
+  reviews!: Review[];
 }

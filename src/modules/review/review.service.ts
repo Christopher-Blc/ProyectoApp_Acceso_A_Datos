@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   ConflictException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -111,7 +112,18 @@ export class ReviewService {
       user_id: userId,
     });
 
-    const savedReview = await this.reviewRepository.save(newReview);
+    let savedReview: Review;
+    try {
+      savedReview = await this.reviewRepository.save(newReview);
+    } catch (error) {
+      const dbError = error as { code?: string };
+      if (dbError.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException(
+          'Ya has hecho una review para esta pista. No puedes hacer otra.',
+        );
+      }
+      throw new InternalServerErrorException();
+    }
 
     //Recalcular average_rating y total_reviews para TODAS las pistas con ese nombre
     await this.recalculateCourtRating(court_id);
@@ -157,7 +169,15 @@ export class ReviewService {
     }
 
     // Actualizar la review
-    await this.reviewRepository.update(reviewId, infoReview);
+    try {
+      await this.reviewRepository.update(reviewId, infoReview);
+    } catch (error) {
+      const dbError = error as { code?: string };
+      if (dbError.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException('Ya tienes una review para esa pista.');
+      }
+      throw new InternalServerErrorException();
+    }
 
     //Recalcular average_rating (en update NO incrementamos total_reviews)
     const courtIdToUpdate = infoReview.court_id || review.court_id;
