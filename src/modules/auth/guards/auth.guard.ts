@@ -4,11 +4,14 @@ import {
   Injectable,
   UnauthorizedException,
   Optional,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
 import { AuthenticatedRequest, AuthUserPayload } from '../types/auth.types';
 import { normalizeError } from '../../../common/utils/error.util';
+import { UsersService } from '../../users/users.service';
 
 /**
  * Guard de autenticación JWT.
@@ -27,6 +30,9 @@ export class AuthGuard implements CanActivate {
     @Optional() private readonly jwtService: JwtService,
     // Servicio de auth para consultar si el token fue revocado
     @Optional() private readonly authService: AuthService,
+    @Inject(forwardRef(() => UsersService))
+    @Optional()
+    private readonly usersService: UsersService,
   ) {}
 
   /**
@@ -61,6 +67,17 @@ export class AuthGuard implements CanActivate {
 
       // Se comparte identidad autenticada para controladores y servicios.
       request.user = payload;
+
+      // Mantiene trazabilidad: cada request autenticada refresca última IP y última vez visto.
+      const userId = Number(payload.sub);
+      const clientIp = this.extractClientIp(request);
+      if (!Number.isNaN(userId)) {
+        try {
+          await this.usersService?.updateLastIp(userId, clientIp);
+        } catch {
+          // No bloqueamos la request por un fallo de telemetría de sesión.
+        }
+      }
     } catch (error) {
       // Homogeneiza el error para no acceder propiedades sobre `unknown`.
       const { message } = normalizeError(error);
@@ -78,5 +95,20 @@ export class AuthGuard implements CanActivate {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     // Se acepta solo el esquema Bearer para evitar tokens ambiguos.
     return type === 'Bearer' ? token : undefined;
+  }
+
+  private extractClientIp(request: AuthenticatedRequest): string | null {
+    const forwardedFor = request.headers['x-forwarded-for'];
+    const xForwardedFor = Array.isArray(forwardedFor)
+      ? forwardedFor[0]
+      : forwardedFor;
+
+    const candidate =
+      (xForwardedFor?.split(',')[0]?.trim() || request.ip || '').replace(
+        /^::ffff:/,
+        '',
+      );
+
+    return candidate || null;
   }
 }
