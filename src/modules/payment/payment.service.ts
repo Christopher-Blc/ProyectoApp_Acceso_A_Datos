@@ -13,14 +13,15 @@ export class PaymentService {
 
   findAll() {
     return this.pagoRepository.find({
-      relations: ['reservation'],
+      relations: ['reservation', 'reservation.user', 'reservation.court'],
+      order: { payment_date: 'DESC' },
     });
   }
 
   async findOne(paymentId: number): Promise<Payment> {
     const payment = await this.pagoRepository.findOne({
       where: { id: paymentId },
-      relations: ['reservation'],
+      relations: ['reservation', 'reservation.user', 'reservation.court'],
     });
     if (!payment) {
       throw new NotFoundException(`Payment ${paymentId} not found`);
