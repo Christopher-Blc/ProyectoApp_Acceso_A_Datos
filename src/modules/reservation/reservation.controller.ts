@@ -135,11 +135,24 @@ export class ReservationController {
     @Req() req: AuthenticatedRequest,
   ): Promise<Reservation | null> {
     try {
-      // Vinculamos la reserva al usuario del token para evitar suplantaciones.
-      const userId = req.user?.sub;
-      if (!userId)
+      const authUserId = req.user?.sub;
+      const userRole =
+        (req.user?.role as unknown as UserRole) ?? UserRole.CLIENT;
+
+      if (!authUserId)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-      return this.ReservationService.create(reservationDto, Number(userId));
+
+      const isAdminLike =
+        userRole === UserRole.SUPER_ADMIN ||
+        userRole === UserRole.ADMINISTRATION ||
+        userRole === UserRole.RESERVATION_MANAGER;
+
+      const targetUserId =
+        isAdminLike && reservationDto.user_id
+          ? Number(reservationDto.user_id)
+          : Number(authUserId);
+
+      return this.ReservationService.create(reservationDto, targetUserId);
     } catch (err) {
       const { message, status } = normalizeError(err);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
