@@ -2,14 +2,15 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  OneToOne,
   ManyToOne,
   JoinColumn,
   UpdateDateColumn,
+  Unique,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Court } from '../../court/entities/court.entity';
 
+@Unique(['user_id', 'court_id'])
 @Entity()
 export class Review {
   @PrimaryGeneratedColumn({ name: 'review_id', type: 'int' })
@@ -51,7 +52,7 @@ export class Review {
   })
   updated_at!: Date;
 
-  @OneToOne(() => User, (u) => u.review)
+  @ManyToOne(() => User, (u) => u.reviews)
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
