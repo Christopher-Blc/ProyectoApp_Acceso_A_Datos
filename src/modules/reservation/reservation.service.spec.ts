@@ -30,6 +30,7 @@ const buildCourtRepo = (): any => ({
 });
 
 const buildUserService = (): any => ({
+  findById: jest.fn(),
   updateUserRank: jest.fn(),
 });
 
@@ -103,6 +104,7 @@ describe('ReservationService', () => {
 
   describe('create', () => {
     it('calcula el precio y asigna estado PENDIENTE', async () => {
+      userService.findById.mockResolvedValue({ id: 10 });
       pistaRepo.findOneBy.mockResolvedValue(COURT);
       const saved = {
         id: 99,
@@ -131,6 +133,7 @@ describe('ReservationService', () => {
     });
 
     it('lanza NotFoundException si la pista no existe', async () => {
+      userService.findById.mockResolvedValue({ id: 10 });
       pistaRepo.findOneBy.mockResolvedValue(null);
 
       await expect(
