@@ -5,6 +5,7 @@ import {
   OneToOne,
   ManyToOne,
   JoinColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Court } from '../../court/entities/court.entity';
@@ -41,6 +42,14 @@ export class Review {
 
   @Column({ name: 'admin_answer', nullable: true, type: "longtext" })
   admin_answer?: string;
+
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updated_at!: Date;
 
   @OneToOne(() => User, (u) => u.review)
   @JoinColumn({ name: 'user_id' })
