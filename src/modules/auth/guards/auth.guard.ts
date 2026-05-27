@@ -73,7 +73,12 @@ export class AuthGuard implements CanActivate {
       const clientIp = this.extractClientIp(request);
       if (!Number.isNaN(userId)) {
         try {
-          await this.usersService?.updateLastIp(userId, clientIp);
+          const actionOrEndpoint = `${request.method} ${request.originalUrl}`;
+          await this.usersService?.updateLastIp(
+            userId,
+            clientIp,
+            actionOrEndpoint,
+          );
         } catch {
           // No bloqueamos la request por un fallo de telemetría de sesión.
         }

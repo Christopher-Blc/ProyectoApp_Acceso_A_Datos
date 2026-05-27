@@ -143,7 +143,8 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Incorrect credentials' })
   login(@Body() dto: LoginDto, @Req() req: Request) {
     const clientIp = this.getClientIp(req);
-    return this.authService.login(dto, clientIp);
+    const actionOrEndpoint = `${req.method} ${req.originalUrl}`;
+    return this.authService.login(dto, clientIp, actionOrEndpoint);
   }
 
   @Post('refresh')
@@ -171,7 +172,8 @@ export class AuthController {
   })
   refresh(@Body() dto: RefreshDto, @Req() req: Request) {
     const clientIp = this.getClientIp(req);
-    return this.authService.refresh(dto.refresh_token, clientIp);
+    const actionOrEndpoint = `${req.method} ${req.originalUrl}`;
+    return this.authService.refresh(dto.refresh_token, clientIp, actionOrEndpoint);
   }
 
   @UseGuards(AuthGuard)
