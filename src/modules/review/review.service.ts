@@ -14,6 +14,11 @@ import {
   ReservationStatus,
 } from '../reservation/entities/reservation.entity';
 import { Court } from '../court/entities/court.entity';
+import { UserRole } from '../users/entities/user.entity';
+import {
+  NotificationType,
+} from '../notification/entities/notification.entity';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class ReviewService {
@@ -24,6 +29,7 @@ export class ReviewService {
     private readonly reservationRepository: Repository<Reservation>,
     @InjectRepository(Court)
     private readonly courtRepository: Repository<Court>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async findAll(): Promise<Review[]> {
@@ -135,9 +141,11 @@ export class ReviewService {
     reviewId: number,
     infoReview: UpdateReviewDto,
     userId: number,
+    userRole?: string,
   ): Promise<Review> {
     // Verificar que existe la review
     const review = await this.findOne(reviewId);
+    const previousAdminAnswer = review.admin_answer;
 
     // Si se intenta cambiar la pista, verificar que tenga reserva finalizada en la nueva pista
     if (infoReview.court_id && infoReview.court_id !== review.court_id) {
@@ -182,6 +190,22 @@ export class ReviewService {
     //Recalcular average_rating (en update NO incrementamos total_reviews)
     const courtIdToUpdate = infoReview.court_id || review.court_id;
     await this.recalculateCourtRating(courtIdToUpdate);
+
+    const isAdminAnswerUpdate =
+      typeof infoReview.admin_answer === 'string' &&
+      infoReview.admin_answer.trim().length > 0 &&
+      infoReview.admin_answer !== previousAdminAnswer;
+    const isAdminActor =
+      userRole === UserRole.ADMINISTRATION || userRole === UserRole.SUPER_ADMIN;
+
+    if (isAdminAnswerUpdate && isAdminActor && review.user_id !== userId) {
+      await this.notificationService.create({
+        user_id: review.user_id,
+        title: 'Tu reseña tiene respuesta',
+        message: 'Un administrador ha respondido tu reseña.',
+        notification_type: NotificationType.REMINDER,
+      });
+    }
 
     return this.findOne(reviewId);
   }

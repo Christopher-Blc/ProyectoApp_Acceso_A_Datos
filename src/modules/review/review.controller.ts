@@ -93,9 +93,15 @@ export class ReviewController {
   ): Promise<Review | null> {
     try {
       const userId = req.user?.sub;
+      const userRole = req.user?.role;
       if (!userId)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-      return this.ReviewService.update(id, reviewDto, Number(userId));
+      return this.ReviewService.update(
+        id,
+        reviewDto,
+        Number(userId),
+        typeof userRole === 'string' ? userRole : undefined,
+      );
     } catch (error) {
       const { message, status } = normalizeError(error);
       throw new HttpException(message, status || HttpStatus.BAD_REQUEST);
