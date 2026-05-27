@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThanOrEqual } from 'typeorm';
@@ -18,6 +19,8 @@ import {
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -221,15 +224,34 @@ export class UsersService {
     );
   }
 
-  async updateLastIp(user_id: number, ip: string | null): Promise<void> {
+  async updateLastIp(
+    user_id: number,
+    ip: string | null,
+    actionOrEndpoint: string,
+  ): Promise<void> {
+    const user = await this.findById(user_id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const now = new Date();
     const result = await this.userRepository.update(
       { id: user_id },
-      { last_ip: ip, last_time_seen: new Date() },
+      { last_ip: ip, last_time_seen: now },
     );
 
     if (!result.affected) {
       throw new NotFoundException('User not found');
     }
+
+    this.logger.log(
+      `last_time_seen updated | user=${JSON.stringify({
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      })} | time=${now.toISOString()} | action=${actionOrEndpoint}`,
+    );
   }
 
   async findById(user_id: number): Promise<User | null> {

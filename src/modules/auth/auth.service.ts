@@ -223,6 +223,7 @@ export class AuthService {
   async refresh(
     refresh_token: string,
     clientIp?: string | null,
+    actionOrEndpoint: string = 'POST /auth/refresh',
   ): Promise<{ access_token: string; refresh_token: string }> {
     // El payload se escribe explícitamente para evitar propagar `any`.
     let payload: AuthUserPayload;
@@ -272,7 +273,11 @@ export class AuthService {
     // Rotación de token de refresco: guardamos el hash del nuevo token.
     const newHash = await bcrypt.hash(new_refresh_token, 10);
     await this.usersService.updateRefreshTokenHash(user.id, newHash);
-    await this.usersService.updateLastIp(user.id, clientIp || null);
+    await this.usersService.updateLastIp(
+      user.id,
+      clientIp || null,
+      actionOrEndpoint,
+    );
 
     return { access_token, refresh_token: new_refresh_token };
   }
@@ -474,6 +479,7 @@ export class AuthService {
   async login(
     dto: LoginDto,
     clientIp?: string | null,
+    actionOrEndpoint: string = 'POST /auth/login',
   ): Promise<{
     access_token: string;
     refresh_token: string;
@@ -504,7 +510,11 @@ export class AuthService {
 
     // Actualiza último login
     await this.usersService.updateLastLogin(user.id);
-    await this.usersService.updateLastIp(user.id, clientIp || null);
+    await this.usersService.updateLastIp(
+      user.id,
+      clientIp || null,
+      actionOrEndpoint,
+    );
 
     // Payload mínimo de identidad/autorización para JWT.
     const payload: Record<string, string | number> = {
