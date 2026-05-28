@@ -93,6 +93,7 @@ export class CourtTypeController {
       fileFilter: (req, file, cb) => {
         const allowedMimes = [
           'image/jpeg',
+          'image/jpg',
           'image/png',
           'image/webp',
           'image/gif',
@@ -102,7 +103,7 @@ export class CourtTypeController {
         } else {
           cb(
             new BadRequestException(
-              'Solo se permiten imágenes (jpg, png, webp, gif)',
+              'Solo se permiten imágenes (jpg, jpeg, png, webp, gif)',
             ),
             false,
           );
@@ -156,6 +157,7 @@ export class CourtTypeController {
       fileFilter: (req, file, cb) => {
         const allowedMimes = [
           'image/jpeg',
+          'image/jpg',
           'image/png',
           'image/webp',
           'image/gif',
@@ -165,7 +167,7 @@ export class CourtTypeController {
         } else {
           cb(
             new BadRequestException(
-              'Solo se permiten imágenes (jpg, png, webp, gif)',
+              'Solo se permiten imágenes (jpg, jpeg, png, webp, gif)',
             ),
             false,
           );
