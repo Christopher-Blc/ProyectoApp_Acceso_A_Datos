@@ -2,10 +2,12 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { join } from 'path'; // Cambiado de 'path/posix' a 'path' para evitar problemas de compatibilidad en Windows/Linux
+import type { Request, Response, NextFunction } from 'express';
 
 async function bootstrap() {
+  const httpLogger = new Logger('HTTP');
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     rawBody: true,
   });
@@ -34,6 +36,20 @@ async function bootstrap() {
 
   console.log(`Docker routes loaded`);
   console.log(`Images available in: ${publicPath}`);
+
+  // Logging global por request para trazabilidad completa (incluye errores 4xx/5xx).
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const startedAt = Date.now();
+    const method = req.method;
+    const url = req.originalUrl || req.url;
+
+    res.on('finish', () => {
+      const elapsedMs = Date.now() - startedAt;
+      httpLogger.log(`${method} ${url} ${res.statusCode} - ${elapsedMs}ms`);
+    });
+
+    next();
+  });
 
   // Para que la app valide DTOs y devuelva los mensajes de error adecuados
   app.useGlobalPipes(

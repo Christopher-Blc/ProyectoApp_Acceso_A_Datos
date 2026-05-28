@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from './modules/users/users.module';
@@ -17,6 +17,7 @@ import { CourtModule } from './modules/court/court.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CourtTypeModule } from './modules/court_type/court_type.module';
 import { StripeModule } from './modules/stripe/stripe.module';
+import { RequestContextInterceptor } from './common/interceptors/request-context.interceptor';
 // Comentario de prueba para verificar subida a GitHub y despliegue en VPS
 @Module({
   imports: [
@@ -94,6 +95,10 @@ import { StripeModule } from './modules/stripe/stripe.module';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RequestContextInterceptor,
     },
   ],
 })
