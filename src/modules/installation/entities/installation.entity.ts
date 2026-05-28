@@ -23,7 +23,7 @@ export class Installation {
   @Column({ name: 'email', type: 'varchar', length: 100 })
   email!: string;
 
-  @Column({ name: 'description', type: 'varchar', length: 100, nullable: true })
+  @Column({ name: 'description', type: "longtext", nullable: true })
   description?: string;
 
   @Column({
