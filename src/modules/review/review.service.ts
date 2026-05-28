@@ -191,10 +191,11 @@ export class ReviewService {
     const courtIdToUpdate = infoReview.court_id || review.court_id;
     await this.recalculateCourtRating(courtIdToUpdate);
 
+    const adminAnswer = infoReview.admin_answer?.trim();
     const isAdminAnswerUpdate =
-      typeof infoReview.admin_answer === 'string' &&
-      infoReview.admin_answer.trim().length > 0 &&
-      infoReview.admin_answer !== previousAdminAnswer;
+      typeof adminAnswer === 'string' &&
+      adminAnswer.length > 0 &&
+      adminAnswer !== previousAdminAnswer;
     const isAdminActor =
       userRole === UserRole.ADMINISTRATION || userRole === UserRole.SUPER_ADMIN;
 
@@ -202,7 +203,7 @@ export class ReviewService {
       await this.notificationService.create({
         user_id: review.user_id,
         title: 'Tu reseña tiene respuesta',
-        message: 'Un administrador ha respondido tu reseña.',
+        message: adminAnswer,
         notification_type: NotificationType.REMINDER,
       });
     }

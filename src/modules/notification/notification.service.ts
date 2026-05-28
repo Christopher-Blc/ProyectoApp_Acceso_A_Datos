@@ -100,24 +100,14 @@ export class NotificationService {
     });
 
     const recipients = users.filter((u) => !!u.expoPushToken);
-    if (recipients.length === 0) {
-      return {
-        notificationsCreated: 0,
-        usersWithToken: 0,
-        pushesSent: 0,
-      };
-    }
+    const globalNotification = this.notiRepository.create({
+      user_id: null,
+      title: data.title,
+      message: data.message,
+      notification_type: data.notification_type,
+    });
 
-    const notifications = recipients.map((u) =>
-      this.notiRepository.create({
-        user_id: u.id,
-        title: data.title,
-        message: data.message,
-        notification_type: data.notification_type,
-      }),
-    );
-
-    await this.notiRepository.insert(notifications);
+    await this.notiRepository.save(globalNotification);
 
     let pushesSent = 0;
     const chunkSize = 100;
@@ -137,7 +127,7 @@ export class NotificationService {
     }
 
     return {
-      notificationsCreated: notifications.length,
+      notificationsCreated: 1,
       usersWithToken: recipients.length,
       pushesSent,
     };
