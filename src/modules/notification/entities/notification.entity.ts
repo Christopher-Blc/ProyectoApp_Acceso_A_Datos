@@ -19,8 +19,8 @@ export class Notification {
   @PrimaryGeneratedColumn({ name: 'notification_id', type: 'int' })
   id!: number;
 
-  @Column({ name: 'user_id', type: 'int' })
-  user_id!: number;
+  @Column({ name: 'user_id', type: 'int', nullable: true })
+  user_id?: number | null;
 
   @Column({ name: 'title', length: 100, nullable: true })
   title?: string;
@@ -46,7 +46,7 @@ export class Notification {
   })
   created_at!: Date;
 
-  @ManyToOne(() => User, (user) => user.notifications)
+  @ManyToOne(() => User, (user) => user.notifications, { nullable: true })
   @JoinColumn({ name: 'user_id' })
-  user!: User;
+  user?: User | null;
 }
