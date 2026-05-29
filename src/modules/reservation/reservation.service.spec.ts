@@ -185,6 +185,7 @@ describe('ReservationService', () => {
       );
 
       expect(stripeService.processRefund).not.toHaveBeenCalled();
+      expect(notificationService.create).not.toHaveBeenCalled();
     });
 
     it('la cancelación se completa aunque falle el reembolso', async () => {
