@@ -164,7 +164,10 @@ export class ReservationService {
     // Si el estado cambia a FINALIZADA (o deja de serlo), actualizamos rango
     if (nuevoEstado && nuevoEstado !== estadoAnterior) {
       // Notificar al usuario cuando su reserva es cancelada
-      if (nuevoEstado === ReservationStatus.CANCELLED) {
+      if (
+        nuevoEstado === ReservationStatus.CANCELLED &&
+        estadoAnterior === ReservationStatus.CONFIRMED
+      ) {
         await this.notificationService.create({
           user_id: reservation.user_id,
           title: 'Reserva cancelada',
@@ -173,17 +176,15 @@ export class ReservationService {
         });
 
         // Si la reserva estaba confirmada (pagada), procesar reembolso automático
-        if (estadoAnterior === ReservationStatus.CONFIRMED) {
-          try {
-            await this.stripeService.processRefund(reservationId);
-            this.logger.log(
-              `Reembolso procesado automáticamente para reserva ${reservationId}`,
-            );
-          } catch (error) {
-            this.logger.error(
-              `No se pudo procesar el reembolso automático para reserva ${reservationId}: ${(error as Error).message}`,
-            );
-          }
+        try {
+          await this.stripeService.processRefund(reservationId);
+          this.logger.log(
+            `Reembolso procesado automáticamente para reserva ${reservationId}`,
+          );
+        } catch (error) {
+          this.logger.error(
+            `No se pudo procesar el reembolso automático para reserva ${reservationId}: ${(error as Error).message}`,
+          );
         }
       }
 
