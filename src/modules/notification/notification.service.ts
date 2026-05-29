@@ -14,6 +14,8 @@ import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class NotificationService {
+  private static readonly EXPO_MASSIVE_BODY_PREVIEW_LENGTH = 90;
+
   constructor(
     @InjectRepository(Notification)
     private readonly notiRepository: Repository<Notification>,
@@ -44,6 +46,15 @@ export class NotificationService {
     if (!response.ok) {
       throw new Error(`Expo push failed with status ${response.status}`);
     }
+  }
+
+  private buildExpoPreviewBody(message: string): string {
+    const maxLength = NotificationService.EXPO_MASSIVE_BODY_PREVIEW_LENGTH;
+    if (message.length <= maxLength) {
+      return message;
+    }
+
+    return `${message.slice(0, maxLength)}...`;
   }
 
   findAll() {
@@ -117,7 +128,11 @@ export class NotificationService {
         chunk.map(async (u) => {
           if (!u.expoPushToken) return;
           try {
-            await this.sendExpoPush(u.expoPushToken, data.title, data.message);
+            await this.sendExpoPush(
+              u.expoPushToken,
+              data.title,
+              this.buildExpoPreviewBody(data.message),
+            );
             pushesSent += 1;
           } catch {
             // Si falla un token no tumbamos el envío completo.
