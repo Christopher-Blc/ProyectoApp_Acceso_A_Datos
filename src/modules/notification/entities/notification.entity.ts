@@ -25,7 +25,7 @@ export class Notification {
   @Column({ name: 'title', length: 100, nullable: true })
   title?: string;
 
-  @Column({ name: 'message' })
+  @Column({ name: 'message' ,type: "longtext" })
   message!: string;
 
   @Column({
