@@ -6,11 +6,13 @@ import { User } from './entities/user.entity';
 import { AuthModule } from '../auth/auth.module';
 import { Membership } from '../membership/entities/membership.entity';
 import { Reservation } from '../reservation/entities/reservation.entity';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Membership, Reservation]),
     forwardRef(() => AuthModule),
+    NotificationModule,
   ],
   providers: [UsersService],
   controllers: [UsersController],

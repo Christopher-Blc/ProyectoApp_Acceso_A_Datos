@@ -16,6 +16,8 @@ import {
   Reservation,
   ReservationStatus,
 } from '../reservation/entities/reservation.entity';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationType } from '../notification/entities/notification.entity';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +30,21 @@ export class UsersService {
     private readonly membresiaRepository: Repository<Membership>,
     @InjectRepository(Reservation)
     private readonly reservaRepository: Repository<Reservation>,
+    private readonly notificationService: NotificationService,
   ) {}
+
+  private async findBestMembershipForReservations(
+    totalReservations: number,
+  ): Promise<Membership | null> {
+    return this.membresiaRepository.findOne({
+      where: {
+        required_reservations: LessThanOrEqual(totalReservations),
+      },
+      order: {
+        required_reservations: 'DESC',
+      },
+    });
+  }
 
   async updateUserRank(user_id: number): Promise<void> {
     const user = await this.userRepository.findOne({
@@ -45,18 +61,20 @@ export class UsersService {
       },
     });
 
-    const mejorMembership = await this.membresiaRepository.findOne({
-      where: {
-        required_reservations: LessThanOrEqual(totalFinalizadas),
-      },
-      order: {
-        required_reservations: 'DESC',
-      },
-    });
+    const mejorMembership = await this.findBestMembershipForReservations(
+      totalFinalizadas,
+    );
 
     if (mejorMembership && user.membership_id !== mejorMembership.id) {
       await this.userRepository.update(user_id, {
         membership_id: mejorMembership.id,
+      });
+
+      await this.notificationService.create({
+        user_id,
+        title: 'Rango actualizado',
+        message: `Tu rango ha sido actualizado a ${mejorMembership.name}.`,
+        notification_type: NotificationType.ALERT,
       });
     }
   }
@@ -147,6 +165,14 @@ export class UsersService {
       if (data.password) {
         data.password = await bcrypt.hash(data.password, 10);
       }
+
+      if (!data.membership_id) {
+        const initialMembership = await this.findBestMembershipForReservations(0);
+        if (initialMembership) {
+          data.membership_id = initialMembership.id;
+        }
+      }
+
       const user = this.userRepository.create(data);
       return await this.userRepository.save(user);
     } catch (error) {
