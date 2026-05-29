@@ -60,7 +60,7 @@ export class Court {
   @Column({ name: 'has_lighting', type: 'boolean', default: false })
   has_lighting!: boolean;
 
-  @Column({})
+  @Column({type: "longtext"})
   description?: string;
 
   @Column({
