@@ -45,7 +45,7 @@ describe('UsersService', () => {
       name: 'Bronce',
       required_reservations: 0,
     });
-    userRepository.save.mockImplementation(async (data: any) => ({
+    userRepository.save.mockImplementation((data: any) => ({
       id: 5,
       ...data,
     }));
