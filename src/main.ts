@@ -50,6 +50,16 @@ async function bootstrap() {
     next();
   });
 
+  // Logging específico para chats.html
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.path === '/public/chats.html' || req.url.includes('chats.html')) {
+      const ip = req.ip || req.socket.remoteAddress || 'Unknown IP';
+      const userAgent = req.get('user-agent') || 'Unknown';
+      httpLogger.log(`✉️  CHATS OPENED: IP=${ip} | UA=${userAgent}`);
+    }
+    next();
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
