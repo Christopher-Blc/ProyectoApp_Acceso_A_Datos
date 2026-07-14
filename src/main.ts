@@ -15,6 +15,17 @@ async function bootstrap() {
   const rootPath = process.cwd();
   const publicPath = join(rootPath, 'public');
 
+  // Logging específico para chats.html ANTES de servir assets
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.path === '/public/chats.html' || req.url.includes('chats.html')) {
+      const ip = req.ip || req.socket.remoteAddress || 'Unknown IP';
+      const userAgent = req.get('user-agent') || 'Unknown';
+      const timestamp = new Date().toISOString();
+      httpLogger.log(`✉️  CHATS OPENED: [${timestamp}] IP=${ip} | UA=${userAgent}`);
+    }
+    next();
+  });
+
   // Servir /public primero (más específico)
   app.useStaticAssets(publicPath, {
     prefix: '/public/',
@@ -47,16 +58,6 @@ async function bootstrap() {
       httpLogger.log(`${method} ${url} ${res.statusCode} - ${elapsedMs}ms`);
     });
 
-    next();
-  });
-
-  // Logging específico para chats.html
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    if (req.path === '/public/chats.html' || req.url.includes('chats.html')) {
-      const ip = req.ip || req.socket.remoteAddress || 'Unknown IP';
-      const userAgent = req.get('user-agent') || 'Unknown';
-      httpLogger.log(`✉️  CHATS OPENED: IP=${ip} | UA=${userAgent}`);
-    }
     next();
   });
 
