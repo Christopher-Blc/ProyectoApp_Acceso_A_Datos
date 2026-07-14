@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 import type { Request, Response, NextFunction } from 'express';
+import * as requestIp from 'request-ip';
 
 async function bootstrap() {
   const httpLogger = new Logger('HTTP');
@@ -15,13 +16,16 @@ async function bootstrap() {
   const rootPath = process.cwd();
   const publicPath = join(rootPath, 'public');
 
+  // Confiar en proxies para obtener IP real
+  app.set('trust proxy', true);
+
   // Logging específico para chats.html ANTES de servir assets
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.path === '/public/chats.html' || req.url.includes('chats.html')) {
-      const ip = req.ip || req.socket.remoteAddress || 'Unknown IP';
+      const clientIp = requestIp.getClientIp(req) || 'Unknown IP';
       const userAgent = req.get('user-agent') || 'Unknown';
       const timestamp = new Date().toISOString();
-      httpLogger.log(`✉️  CHATS OPENED: [${timestamp}] IP=${ip} | UA=${userAgent}`);
+      httpLogger.log(`✉️  CHATS OPENED: [${timestamp}] IP=${clientIp} | UA=${userAgent}`);
     }
     next();
   });
