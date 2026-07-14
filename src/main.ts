@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { join } from 'path'; // Cambiado de 'path/posix' a 'path' para evitar problemas de compatibilidad en Windows/Linux
+import { join } from 'path';
 import type { Request, Response, NextFunction } from 'express';
 
 async function bootstrap() {
@@ -11,12 +11,11 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     rawBody: true,
   });
-  //app.setGlobalPrefix('api');
 
   const rootPath = process.cwd();
   const publicPath = join(rootPath, 'public');
 
-  // Configuración de la carpeta public
+  // Servir /public primero (más específico)
   app.useStaticAssets(publicPath, {
     prefix: '/public/',
     setHeaders: (res, path) => {
@@ -30,14 +29,14 @@ async function bootstrap() {
     },
   });
 
+  // Luego /static (fallback genérico)
   app.useStaticAssets(join(rootPath, 'static'), {
-    prefix: '/', // Sin prefijo, para que se vea en respi.es/.well-known/...
+    prefix: '/',
   });
 
-  console.log(`Docker routes loaded`);
   console.log(`Images available in: ${publicPath}`);
 
-  // Logging global por request para trazabilidad completa (incluye errores 4xx/5xx).
+  // Logging global por request
   app.use((req: Request, res: Response, next: NextFunction) => {
     const startedAt = Date.now();
     const method = req.method;
@@ -51,18 +50,16 @@ async function bootstrap() {
     next();
   });
 
-  // Para que la app valide DTOs y devuelva los mensajes de error adecuados
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // elimina campos que no están en el DTO
-      forbidNonWhitelisted: true, // si se envían campos extra, devuelve 400
-      transform: true, // transforma tipos si se usa class-transformer
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
       transformOptions: { enableImplicitConversion: true },
     }),
   );
 
   app.enableCors({
-    // en producción, no se usaría * para restringir acceso a la API
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
