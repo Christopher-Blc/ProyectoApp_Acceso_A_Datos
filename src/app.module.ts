@@ -18,6 +18,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CourtTypeModule } from './modules/court_type/court_type.module';
 import { StripeModule } from './modules/stripe/stripe.module';
 import { RequestContextInterceptor } from './common/interceptors/request-context.interceptor';
+import { ConfigController } from './config.controller';
 // Comentario de prueba para verificar subida a GitHub y despliegue en VPS
 @Module({
   imports: [
@@ -89,7 +90,7 @@ import { RequestContextInterceptor } from './common/interceptors/request-context
     CourtTypeModule,
     StripeModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController ,ConfigController ],
   providers: [
     AppService,
     {
