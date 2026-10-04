@@ -321,8 +321,9 @@
             </div>
 
             <div id="viewEdicion" style="display: none;">
-                <h3 style="margin-top:0; color:#f8fafc; font-size:1.1rem; text-align:center;">Editar Personalización</h3>
-                
+                <h3 style="margin-top:0; color:#f8fafc; font-size:1.1rem; text-align:center;">Editar Personalización
+                </h3>
+
                 <div style="display: flex; gap: 0.5rem;">
                     <div style="flex: 1;">
                         <label>Emoji 1:</label>
@@ -334,7 +335,8 @@
                     </div>
                     <div style="flex: 1;">
                         <label>Fondo:</label>
-                        <input type="color" id="editColor" value="#0f172a" style="height: 38px; padding: 0; cursor: pointer;">
+                        <input type="color" id="editColor" value="#0f172a"
+                            style="height: 38px; padding: 0; cursor: pointer;">
                     </div>
                 </div>
 
@@ -348,7 +350,8 @@
 
                 <label style="margin-top: 1rem;">Versículos (Texto y Referencia):</label>
                 <div id="containerVersiculos" class="lista-editable-container"></div>
-                <button type="button" class="btn-add-item" onclick="agregarFilaVersiculo('', '')">+ Añadir versículo</button>
+                <button type="button" class="btn-add-item" onclick="agregarFilaVersiculo('', '')">+ Añadir
+                    versículo</button>
 
                 <div class="modal-buttons">
                     <button class="btn-save" onclick="guardarEdicionPersonalizada()">Guardar</button>
@@ -427,12 +430,39 @@
             versiculos: versiculosBase
         };
 
+        function normalizarFechaLocal(valor) {
+            if (!valor) {
+                return "";
+            }
+
+            const fecha = new Date(valor);
+            if (Number.isNaN(fecha.getTime())) {
+                return "";
+            }
+
+            const anio = fecha.getFullYear();
+            const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+            const dia = String(fecha.getDate()).padStart(2, '0');
+            const horas = String(fecha.getHours()).padStart(2, '0');
+            const minutos = String(fecha.getMinutes()).padStart(2, '0');
+
+            return `${anio}-${mes}-${dia}T${horas}:${minutos}`;
+        }
+
+        function esFechaValida(valor) {
+            return !!valor && !Number.isNaN(new Date(valor).getTime());
+        }
+
         async function cargarDatosServidor() {
             try {
                 const res = await fetch('/api/config');
                 if (res.ok) {
                     const data = await res.json();
                     configGlobal = { ...configGlobal, ...data };
+
+                    if (!esFechaValida(configGlobal.fechaInicio)) {
+                        configGlobal.fechaInicio = "2026-09-15T12:00";
+                    }
                 }
             } catch (e) {
                 console.error("Usando valores por defecto o error de conexión con el servidor");
@@ -450,7 +480,10 @@
                     body: JSON.stringify(nuevaConfig)
                 });
                 if (res.ok) {
-                    configGlobal = nuevaConfig;
+                    configGlobal = { ...configGlobal, ...nuevaConfig };
+                    if (!esFechaValida(configGlobal.fechaInicio)) {
+                        configGlobal.fechaInicio = "2026-09-15T12:00";
+                    }
                     aplicarEstilosVisuales();
                     cargarContenidoAleatorio();
                     actualizarContador();
@@ -505,7 +538,7 @@
             document.getElementById("viewEdicion").style.display = "none";
             document.getElementById("errorMsg").style.display = "none";
             document.getElementById("passwordInput").value = "";
-            document.getElementById("fechaInput").value = configGlobal.fechaInicio;
+            document.getElementById("fechaInput").value = normalizarFechaLocal(configGlobal.fechaInicio);
             document.getElementById("modal").style.display = "flex";
             document.body.style.overflow = 'hidden';
         }
@@ -590,10 +623,20 @@
                 return;
             }
 
-            if (nuevaFechaStr) {
-                configGlobal.fechaInicio = nuevaFechaStr;
-                const exito = await guardarDatosServidor(configGlobal);
-                if (exito) cerrarModal();
+            if (!esFechaValida(nuevaFechaStr)) {
+                document.getElementById("errorMsg").innerText = "Fecha inválida";
+                document.getElementById("errorMsg").style.display = "block";
+                return;
+            }
+
+            const nuevaConfig = { ...configGlobal, fechaInicio: nuevaFechaStr };
+            const exito = await guardarDatosServidor(nuevaConfig);
+            if (exito) {
+                configGlobal = nuevaConfig;
+                cerrarModal();
+            } else {
+                document.getElementById("errorMsg").innerText = "No se pudo guardar en el servidor";
+                document.getElementById("errorMsg").style.display = "block";
             }
         }
 

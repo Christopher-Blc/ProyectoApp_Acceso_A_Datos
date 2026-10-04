@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 
-@Controller('api/config')
+@Controller(['api/config', 'config'])
 export class ConfigController {
   private filePath = path.resolve(process.cwd(), 'config.json');
 
