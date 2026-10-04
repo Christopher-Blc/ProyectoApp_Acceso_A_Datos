@@ -13,17 +13,18 @@ export class ConfigController {
         const data = fs.readFileSync(this.filePath, 'utf8');
         return JSON.parse(data);
       }
-    } catch (e) {}
+    } catch (e: unknown) {}
     return { fechaInicio: "2026-09-15T12:00" };
   }
 
   @Post()
-  saveConfig(@Body() body: any) {
+  saveConfig(@Body() body: Record<string, unknown>) {
     try {
       fs.writeFileSync(this.filePath, JSON.stringify(body, null, 2), 'utf8');
       return { success: true };
-    } catch (e) {
-      return { success: false, error: e.message };
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Unknown error';
+      return { success: false, error: message };
     }
   }
 }
