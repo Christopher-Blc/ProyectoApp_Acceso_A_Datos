@@ -13,8 +13,10 @@ export class ConfigController {
         const data = fs.readFileSync(this.filePath, 'utf8');
         return JSON.parse(data);
       }
-    } catch (e: unknown) {}
-    return { fechaInicio: "2026-09-15T12:00" };
+    } catch {
+      return { fechaInicio: '2026-09-15T12:00' };
+    }
+    return { fechaInicio: '2026-09-15T12:00' };
   }
 
   @Post()
