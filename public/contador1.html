@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Tiempo sin hablar</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background-color: var(--bg-color, #0f172a);
+            background-image:
+                radial-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)),
+                var(--bg-pattern, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ctext x='10' y='30' font-size='24'%3E🐧%3C/text%3E%3Ctext x='45' y='60' font-size='24'%3E🐻‍❄️%3C/text%3E%3C/svg%3E"));
+            background-repeat: repeat;
+
+            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Botón de edición flotante en la esquina superior derecha */
+        .btn-corner-edit {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(30, 41, 59, 0.7);
+            color: #94a3b8;
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 10;
+        }
+
+        .btn-corner-edit:active {
+            background-color: #475569;
+            transform: scale(0.95);
+        }
+
+        /* Versículo bíblico arriba */
+        .verse-box {
+            text-align: center;
+            max-width: 420px;
+            margin-bottom: 1.2rem;
+            padding: 0 1rem;
+        }
+
+        .verse-text {
+            font-size: 0.95rem;
+            font-style: italic;
+            color: #93c5fd;
+            line-height: 1.4;
+            margin-bottom: 0.3rem;
+        }
+
+        .verse-ref {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 1rem;
+            background: rgba(30, 41, 59, 0.85);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .counter {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #38bdf8;
+            margin-bottom: 1.5rem;
+            word-wrap: break-word;
+        }
+
+        .btn-config {
+            background-color: #334155;
+            color: #94a3b8;
+            border: none;
+            padding: 0.75rem 1.2rem;
+            font-size: 0.9rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-config:active {
+            background-color: #475569;
+            transform: scale(0.98);
+        }
+
+        /* Frase random abajo en pequeño */
+        .random-phrase {
+            margin-top: 1.2rem;
+            font-size: 0.8rem;
+            color: #64748b;
+            text-align: center;
+            max-width: 400px;
+            padding: 0 1rem;
+        }
+
+        /* Estilos del modal */
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: left;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid #475569;
+            box-sizing: border-box;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            display: block;
+            margin-top: 0.75rem;
+            margin-bottom: 0.25rem;
+            font-weight: bold;
+        }
+
+        .modal-content input {
+            background: #0f172a;
+            border: 1px solid #475569;
+            color: white;
+            padding: 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            width: 100%;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+        }
+
+        /* Contenedores de listas individuales */
+        .lista-editable-container {
+            max-height: 220px;
+            overflow-y: auto;
+            border: 1px solid #334155;
+            background: #0f172a;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .item-fila {
+            display: flex;
+            gap: 0.4rem;
+            margin-bottom: 0.4rem;
+            align-items: center;
+        }
+
+        .item-fila input {
+            flex: 1;
+            margin: 0;
+        }
+
+        .item-fila textarea {
+            flex: 1;
+            background: #0f172a;
+            border: 1px solid #475569;
+            color: white;
+            padding: 0.4rem;
+            border-radius: 0.4rem;
+            font-size: 0.85rem;
+            resize: vertical;
+            height: 38px;
+            font-family: inherit;
+        }
+
+        .btn-eliminar-item {
+            background: #7f1d1d;
+            color: #fca5a5;
+            border: none;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .btn-eliminar-item:active {
+            background: #991b1b;
+        }
+
+        .btn-add-item {
+            background: #1e3a8a;
+            color: #93c5fd;
+            border: none;
+            padding: 0.4rem;
+            width: 100%;
+            border-radius: 0.4rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            font-weight: bold;
+        }
+
+        .btn-add-item:active {
+            background: #1d4ed8;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .modal-content button.btn-save {
+            background: #38bdf8;
+            color: #0f172a;
+            flex: 1;
+            font-weight: bold;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .modal-content button.btn-cancel {
+            background: #475569;
+            color: white;
+            flex: 1;
+            font-weight: bold;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .error-msg {
+            color: #f87171;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Botón de edición pequeño en la esquina superior derecha -->
+    <button class="btn-corner-edit" onclick="verificarPasswordEdicion()">✏ Editar</button>
+
+    <!-- Versículo bíblico aleatorio arriba -->
+    <div class="verse-box" id="verseBox">
+        <div class="verse-text" id="verseText">Cargando versículo...</div>
+        <div class="verse-ref" id="verseRef"></div>
+    </div>
+
+    <div class="container">
+        <h1>Time since no Talkingeation :(</h1>
+        <div id="counter" class="counter">Calculando...</div>
+        <button class="btn-config" onclick="abrirModal()">⚙️ Ajustar Fecha</button>
+    </div>
+
+    <!-- Frase random del diccionario abajo -->
+    <div class="random-phrase" id="randomPhrase">✨ Cargando...</div>
+
+    <!-- Modal único para ajustes y edición -->
+    <div id="modal">
+        <div class="modal-content">
+            <div id="viewAjustes">
+                <h3 style="margin-top:0; color:#f8fafc; font-size:1.1rem; text-align:center;">Ajustar Fecha</h3>
+                <label>Introduce la clave (plis):</label>
+                <input type="password" id="passwordInput" placeholder="La password">
+
+                <label>Nueva fecha:</label>
+                <input type="datetime-local" id="fechaInput">
+
+                <div id="errorMsg" class="error-msg">Nop , esa no es</div>
+
+                <div class="modal-buttons">
+                    <button class="btn-save" onclick="verificarYGuardarFecha()">Guardar</button>
+                    <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                </div>
+            </div>
+
+            <div id="viewEdicion" style="display: none;">
+                <h3 style="margin-top:0; color:#f8fafc; font-size:1.1rem; text-align:center;">Editar Personalización</h3>
+                
+                <div style="display: flex; gap: 0.5rem;">
+                    <div style="flex: 1;">
+                        <label>Emoji 1:</label>
+                        <input type="text" id="editEmoji1" maxlength="5">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Emoji 2:</label>
+                        <input type="text" id="editEmoji2" maxlength="5">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Fondo:</label>
+                        <input type="color" id="editColor" value="#0f172a" style="height: 38px; padding: 0; cursor: pointer;">
+                    </div>
+                </div>
+
+                <label>Palabras tipo ✨:</label>
+                <div id="containerSparkles" class="lista-editable-container"></div>
+                <button type="button" class="btn-add-item" onclick="agregarFilaSparkle('')">+ Añadir palabra ✨</button>
+
+                <label style="margin-top: 1rem;">Palabras tipo 🌟:</label>
+                <div id="containerStars" class="lista-editable-container"></div>
+                <button type="button" class="btn-add-item" onclick="agregarFilaStar('')">+ Añadir palabra 🌟</button>
+
+                <label style="margin-top: 1rem;">Versículos (Texto y Referencia):</label>
+                <div id="containerVersiculos" class="lista-editable-container"></div>
+                <button type="button" class="btn-add-item" onclick="agregarFilaVersiculo('', '')">+ Añadir versículo</button>
+
+                <div class="modal-buttons">
+                    <button class="btn-save" onclick="guardarEdicionPersonalizada()">Guardar</button>
+                    <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LISTA DE VERSÍCULOS POR DEFECTO ---
+        const versiculosBase = [
+            { texto: "Por tanto, amados hermanos mios, estad firmes y constantes, creciendo en la obra del Señor siempre...", ref: "1 Corintios 15:58" },
+            { texto: "Espérame en Jehová; esfuérzate, y aliéntese tu corazón; sí, espera a Jehová.", ref: "Salmos 27:14" },
+            { texto: "Jehová es bueno para los que en él esperan, para el alma que le busca.", ref: "Lamentaciones 3:25" },
+            { texto: "Y esta es la confianza que tenemos en él, que si pedimos alguna cosa conforme a su voluntad, él nos oye.", ref: "1 Juan 5:14" },
+            { texto: "Enséñame a hacer tu voluntad, porque tú eres mi Dios; tu buen espíritu me guíe a tierra de rectitud.", ref: "Salmos 143:10" },
+            { texto: "Fíate de Jehová de todo tu corazón, y no te apoyes en tu propia prudencia. Reconócelo en todos tus caminos, y él enderezará tus veredas.", ref: "Proverbios 3:5-6" },
+            { texto: "Por nada estéis afanosos, sino sean notorias vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias.", ref: "Filipenses 4:6" },
+            { texto: "Bueno es esperar en silencio la salvación de Jehová.", ref: "Lamentaciones 3:26" },
+            { texto: "Y el Dios de esperanza os llene de todo gozo y paz en el creer, para que abundéis en esperanza por el poder del Espíritu Santo.", ref: "Romanos 15:13" },
+            { texto: "Muchos pensamientos hay en el corazón del hombre; mas el consejo de Jehová permanecerá.", ref: "Proverbios 19:21" },
+            { texto: "Encomienda a Jehová tu camino, y confía en él; y él hará.", ref: "Salmos 37:5" },
+            { texto: "Aunque la higuera no florezca, ni en las vides haya frutos... con todo, yo me alegraré en Jehová, y me gozaré en el Dios de mi salvación.", ref: "Habacuc 3:17-18" },
+            { texto: "El Señor no retarda su promesa... sino que es paciente para con nosotros, no queriendo que ninguno perezca, sino que todos procedan al arrepentimiento.", ref: "2 Pedro 3:9" },
+            { texto: "Lámpara es a mis pies tu palabra, y lumbrera a mi camino.", ref: "Salmos 119:105" },
+            { texto: "Es, pues, la fe la certeza de lo que se espera, la convicción de lo que no se ve.", ref: "Hebreos 11:1" },
+            { texto: "Y todo lo que pidiereis en oración, creyendo, lo recibiréis.", ref: "Mateo 21:22" },
+            { texto: "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas.", ref: "Mateo 6:33" },
+            { texto: "Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis.", ref: "Jeremías 29:11" },
+            { texto: "Si me amáis, guardad mis mandamientos.", ref: "Juan 14:15" },
+            { texto: "Y el Dios de paz os santifique por completo... fiel es el que os llama, el cual también lo hará.", ref: "1 Tesalonicenses 5:23-24" },
+            { texto: "Él da esfuerzo al cansado, y multiplica las fuerzas al que no tiene ningunas.", ref: "Isaías 40:29" },
+            { texto: "He aquí que yo soy Jehová, Dios de toda carne, ¿habrá algo que sea difícil para mí?", ref: "Jeremías 32:27" },
+            { texto: "Buscad a Jehová y su poder; buscad su rostro continuamente.", ref: "1 Crónicas 16:11" },
+            { texto: "Deléitate asimismo en Jehová, y él te concederá las peticiones de tu corazón.", ref: "Salmos 37:4" },
+            { texto: "Cercano está Jehová a los quebrantados de corazón; y salva a los contritos de espíritu.", ref: "Salmos 34:18" },
+            { texto: "El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente.", ref: "Salmos 91:1" },
+            { texto: "Por lo cual, por amor a Cristo me gozo en las debilidades, en afrentas, en necesidades, en persecuciones, en angustias; porque cuando soy débil, entonces soy fuerte.", ref: "2 Corintios 12:10" },
+            { texto: "Clama a mí, y yo te responderé, y te enseñaré cosas grandes y ocultas que tú no conoces.", ref: "Jeremías 33:3" },
+            { texto: "Y el Dios de toda gracia, que nos llamó a su gloria eterna en Jesucristo, después que hayáis padecido un poco de tiempo, él mismo os perfeccione, afirme, fortalezca y establezca.", ref: "1 Pedro 5:10" },
+            { texto: "No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios que te fortalezco; siempre te ayudaré, siempre te sustentaré con la diestra de mi justicia.", ref: "Isaías 41:10" },
+            { texto: "Mas los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas; correrán, y no se cansarán; caminarán, y no se fatigarán.", ref: "Isaías 40:31" },
+            { texto: "Guarda silencio ante Jehová, y espera en él.", ref: "Salmos 37:7" }
+        ];
+
+        // --- DICCIONARIO BASE SEPARADO POR TIPO DE ESTRELLA ---
+        const sparkleBase = [
+            "✨ Iky (I know you)", "✨ Tysm (Thank you so much)", "✨ Stealado", "✨ Wym (What do you mean)",
+            "✨ Yk (You know)", "✨ Talkingear", "✨ Bromeating", "✨ Ywlcm", "✨ Dwrry", "✨ Ofkors",
+            "✨ Waitear", "✨ Dtbvm", "✨ Dificultation", "✨ Despeditate", "✨ Aguantate", "✨ Jopetaskund",
+            "✨ Enfadating", "✨ Cositation", "✨ Imysm :(((((((", "✨ Chaito con cacao", "✨ mmqd",
+            "✨ No wanting", "✨ Cooked", "✨ Descansate", "✨ Disfrute", "✨ Tyuu", "✨ Mtyk", "✨ Dress",
+            "✨ Velncianation", "✨ Ptv", "✨ Camon", "✨ Iwmy", "✨ Lo (little one)", "✨ Yw"
+        ];
+
+        const starBase = [
+            "🌟 ✨ Esto ✨", "🌟 Valle de los huesos secos", "🌟 One last time", "🌟 Secar lágrimas",
+            "🌟 Sigamos el viaje", "🌟 :) / :(", "🌟 :(()", "🌟 “Cuando se pueda”", "🌟 Muerte de mi corazón",
+            "🌟 Extintor", "🌟 Miss María / Mrs Martínez", "🌟 Máquina", "🌟 Bubbles", "🌟 Ok",
+            "🌟 Ya stop / stop ya", "🌟 Mhm", "🌟 Shalom", "🌟 It’s okay", "🌟 Broken", "🌟 Mil pedazos",
+            "🌟 Joke", "🌟 (1)", "🌟 La madam business woman", "🌟 Petite", "🌟 Shhh", "🌟 Duele mucho / tanto",
+            "🌟 Nose", "🌟 Cejas", "🌟 Wink", "🌟 “Diría mucho más”", "🌟 Oro 4 you always", "🌟 My pleasure",
+            "🌟 Some day", "🌟 Nadita chocolatita", "🌟 Wao", "🌟 Ay que ver", "🌟 Ayayay", "🌟 “Un día diré”",
+            "🌟 Toma / Toma ya", "🌟 Ayyy", "🌟 Jooo", "🌟 Mdm", "🌟 Chuletona (chulica)", "🌟 Es broma",
+            "🌟 I don’t want / no want", "🌟 Que fuerte", "🌟 Para enmarcar", "🌟 Gluten", "🌟 No al ok",
+            "🌟 It’s okey", "🌟 Okey", "🌟 Un nuevo amanecer", "🌟 best regards (M invention)"
+        ];
+
+        const PASSWORD_CORRECTA = "CM231806";
+        const FECHA_POR_DEFECTO = new Date(2026, 8, 15, 12, 0, 0);
+
+        function obtenerConfigPersonalizada() {
+            let versiculosGuardados = localStorage.getItem("dic_versiculos");
+            let versiculosArray = versiculosBase;
+            if (versiculosGuardados) {
+                try { versiculosArray = JSON.parse(versiculosGuardados); } catch (e) {}
+            }
+
+            return {
+                emoji1: localStorage.getItem("emoji_1") || "🐧",
+                emoji2: localStorage.getItem("emoji_2") || "🐻‍❄️",
+                bgColor: localStorage.getItem("bg_color") || "#0f172a",
+                sparkles: JSON.parse(localStorage.getItem("dic_sparkles")) || sparkleBase,
+                stars: JSON.parse(localStorage.getItem("dic_stars")) || starBase,
+                versiculos: versiculosArray
+            };
+        }
+
+        function aplicarEstilosVisuales() {
+            const config = obtenerConfigPersonalizada();
+            document.documentElement.style.setProperty('--bg-color', config.bgColor);
+            
+            const svgPattern = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ctext x='10' y='30' font-size='24'%3E${encodeURIComponent(config.emoji1)}%3C/text%3E%3Ctext x='45' y='60' font-size='24'%3E${encodeURIComponent(config.emoji2)}%3C/text%3E%3C/svg%3E")`;
+            document.documentElement.style.setProperty('--bg-pattern', svgPattern);
+        }
+
+        function cargarContenidoAleatorio() {
+            aplicarEstilosVisuales();
+            const config = obtenerConfigPersonalizada();
+            
+            const vIndex = Math.floor(Math.random() * config.versiculos.length);
+            const versiculoActual = config.versiculos[vIndex];
+            document.getElementById("verseText").innerText = `“${versiculoActual.texto}”`;
+            document.getElementById("verseRef").innerText = `— ${versiculoActual.ref}`;
+
+            const diccionarioTotal = [...config.sparkles, ...config.stars];
+            const dIndex = Math.floor(Math.random() * diccionarioTotal.length);
+            document.getElementById("randomPhrase").innerText = diccionarioTotal[dIndex];
+        }
+
+        function obtenerFechaInicio() {
+            const guardada = localStorage.getItem("fecha_inicio_contador");
+            return guardada ? new Date(guardada) : FECHA_POR_DEFECTO;
+        }
+
+        function actualizarContador() {
+            const fechaInicio = obtenerFechaInicio();
+            const ahora = new Date();
+            const diferencia = ahora - fechaInicio;
+
+            if (diferencia < 0) {
+                document.getElementById("counter").innerText = "La fecha es futura";
+                return;
+            }
+
+            const segundos = Math.floor(diferencia / 1000) % 60;
+            const minutos = Math.floor(diferencia / (1000 * 60)) % 60;
+            const horas = Math.floor(diferencia / (1000 * 60 * 60)) % 24;
+            const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+
+            document.getElementById("counter").innerText =
+                `${dias} días\n${horas} horas\n${minutos} min y ${segundos} seg`;
+        }
+
+        function abrirModal() {
+            document.getElementById("viewAjustes").style.display = "block";
+            document.getElementById("viewEdicion").style.display = "none";
+            document.getElementById("errorMsg").style.display = "none";
+            document.getElementById("passwordInput").value = "";
+            const fechaActual = obtenerFechaInicio();
+            document.getElementById("fechaInput").value = fechaActual.toISOString().slice(0, 16);
+            document.getElementById("modal").style.display = "flex";
+            document.body.style.overflow = 'hidden';
+        }
+
+        // --- FUNCIONES PARA CONSTRUIR LAS LISTAS VISUALES EN EL MODAL ---
+        function agregarFilaSparkle(valor) {
+            const container = document.getElementById("containerSparkles");
+            const div = document.createElement("div");
+            div.className = "item-fila";
+            div.innerHTML = `
+                <input type="text" class="input-sparkle" value="${valor}" placeholder="Ej: ✨ Hola">
+                <button type="button" class="btn-eliminar-item" onclick="this.parentElement.remove()">✕</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function agregarFilaStar(valor) {
+            const container = document.getElementById("containerStars");
+            const div = document.createElement("div");
+            div.className = "item-fila";
+            div.innerHTML = `
+                <input type="text" class="input-star" value="${valor}" placeholder="Ej: 🌟 Adiós">
+                <button type="button" class="btn-eliminar-item" onclick="this.parentElement.remove()">✕</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function agregarFilaVersiculo(texto, ref) {
+            const container = document.getElementById("containerVersiculos");
+            const div = document.createElement("div");
+            div.className = "item-fila";
+            div.innerHTML = `
+                <textarea class="input-verse-text" placeholder="Texto del versículo">${texto}</textarea>
+                <input type="text" class="input-verse-ref" value="${ref}" placeholder="Referencia (ej: Juan 3:16)" style="flex: 0.7;">
+                <button type="button" class="btn-eliminar-item" onclick="this.parentElement.remove()">✕</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function verificarPasswordEdicion() {
+            const pass = prompt("Introduce la clave para editar:");
+            if (pass === null) return;
+
+            if (pass !== PASSWORD_CORRECTA) {
+                alert("Nop , esa no es");
+                return;
+            }
+
+            document.getElementById("viewAjustes").style.display = "none";
+            document.getElementById("viewEdicion").style.display = "block";
+
+            const config = obtenerConfigPersonalizada();
+            document.getElementById("editEmoji1").value = config.emoji1;
+            document.getElementById("editEmoji2").value = config.emoji2;
+            document.getElementById("editColor").value = config.bgColor;
+
+            // Rellenar lista Sparkles
+            const contSparkles = document.getElementById("containerSparkles");
+            contSparkles.innerHTML = "";
+            config.sparkles.forEach(s => agregarFilaSparkle(s));
+
+            // Rellenar lista Stars
+            const contStars = document.getElementById("containerStars");
+            contStars.innerHTML = "";
+            config.stars.forEach(s => agregarFilaStar(s));
+
+            // Rellenar lista Versículos
+            const contVersiculos = document.getElementById("containerVersiculos");
+            contVersiculos.innerHTML = "";
+            config.versiculos.forEach(v => agregarFilaVersiculo(v.texto, v.ref));
+
+            document.getElementById("modal").style.display = "flex";
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModal() {
+            document.getElementById("modal").style.display = "none";
+            document.body.style.overflow = '';
+        }
+
+        function verificarYGuardarFecha() {
+            const pass = document.getElementById("passwordInput").value;
+            const nuevaFechaStr = document.getElementById("fechaInput").value;
+
+            if (pass !== PASSWORD_CORRECTA) {
+                document.getElementById("errorMsg").style.display = "block";
+                return;
+            }
+
+            if (nuevaFechaStr) {
+                localStorage.setItem("fecha_inicio_contador", nuevaFechaStr);
+                cerrarModal();
+                actualizarContador();
+            }
+        }
+
+        function guardarEdicionPersonalizada() {
+            const emoji1 = document.getElementById("editEmoji1").value.trim() || "🐧";
+            const emoji2 = document.getElementById("editEmoji2").value.trim() || "🐻‍❄️";
+            const bgColor = document.getElementById("editColor").value;
+
+            // Recoger Sparkles de cada cajita individual
+            const sparkles = [];
+            document.querySelectorAll("#containerSparkles .input-sparkle").forEach(input => {
+                if (input.value.trim()) sparkles.push(input.value.trim());
+            });
+
+            // Recoger Stars de cada cajita individual
+            const stars = [];
+            document.querySelectorAll("#containerStars .input-star").forEach(input => {
+                if (input.value.trim()) stars.push(input.value.trim());
+            });
+
+            // Recoger Versículos de cada tarjeta individual
+            const nuevosVersiculos = [];
+            const filasVersos = document.querySelectorAll("#containerVersiculos .item-fila");
+            filasVersos.forEach(fila => {
+                const texto = fila.querySelector(".input-verse-text").value.trim();
+                const ref = fila.querySelector(".input-verse-ref").value.trim();
+                if (texto && ref) {
+                    nuevosVersiculos.push({ texto, ref });
+                }
+            });
+
+            const listaFinalVersiculos = nuevosVersiculos.length > 0 ? nuevosVersiculos : versiculosBase;
+
+            localStorage.setItem("emoji_1", emoji1);
+            localStorage.setItem("emoji_2", emoji2);
+            localStorage.setItem("bg_color", bgColor);
+            localStorage.setItem("dic_sparkles", JSON.stringify(sparkles));
+            localStorage.setItem("dic_stars", JSON.stringify(stars));
+            localStorage.setItem("dic_versiculos", JSON.stringify(listaFinalVersiculos));
+
+            cerrarModal();
+            cargarContenidoAleatorio();
+        }
+
+        // Ejecutar al cargar la página
+        cargarContenidoAleatorio();
+        setInterval(actualizarContador, 1000);
+        actualizarContador();
+    </script>
+</body>
+
+</html>
