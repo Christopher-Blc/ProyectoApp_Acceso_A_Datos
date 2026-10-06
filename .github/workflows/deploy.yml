@@ -93,7 +93,8 @@ jobs:
               echo "No changes detected on origin/main — skipping deploy."
               exit 0
             fi
-            git pull origin main
+            echo "Syncing VPS checkout to origin/main (discarding local tracked changes)."
+            git reset --hard origin/main
 
             if ! command -v docker >/dev/null 2>&1; then
               echo "docker not found on VPS; aborting deploy"
