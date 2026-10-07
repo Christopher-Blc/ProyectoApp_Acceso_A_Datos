@@ -34,10 +34,16 @@
             position: relative;
         }
 
-        .btn-corner-edit {
+        .corner-buttons {
             position: absolute;
             top: 1rem;
             right: 1rem;
+            display: flex;
+            gap: 0.4rem;
+            z-index: 10;
+        }
+
+        .btn-corner {
             background-color: rgba(30, 41, 59, 0.7);
             color: #94a3b8;
             border: 1px solid rgba(71, 85, 105, 0.5);
@@ -47,10 +53,9 @@
             cursor: pointer;
             transition: background 0.2s;
             -webkit-tap-highlight-color: transparent;
-            z-index: 10;
         }
 
-        .btn-corner-edit:active {
+        .btn-corner:active {
             background-color: #475569;
             transform: scale(0.95);
         }
@@ -181,7 +186,7 @@
         }
 
         .lista-editable-container {
-            max-height: 220px;
+            max-height: 200px;
             overflow-y: auto;
             border: 1px solid #334155;
             background: #0f172a;
@@ -368,7 +373,10 @@
 
 <body>
 
-    <button class="btn-corner-edit" onclick="verificarPasswordEdicion()">✏ Editar</button>
+    <div class="corner-buttons">
+        <button class="btn-corner" onclick="dispararCelebracionManual()" title="Ver última celebración">🎉</button>
+        <button class="btn-corner" onclick="verificarPasswordEdicion()">✏ Editar</button>
+    </div>
 
     <div class="verse-box" id="verseBox">
         <div class="verse-text" id="verseText">Cargando versículo...</div>
@@ -421,18 +429,29 @@
                     </div>
                 </div>
 
-                <label>Palabras tipo ✨:</label>
+                <label>Mensajes 24 horas:</label>
+                <div id="containerMsg24" class="lista-editable-container"></div>
+                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerMsg24', '')">+ Añadir frase 24h</button>
+
+                <label style="margin-top: 0.8rem;">Mensajes Semanales (1 sem, 2 sem...):</label>
+                <div id="containerMsgSemanas" class="lista-editable-container"></div>
+                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerMsgSemanas', '')">+ Añadir frase semanal</button>
+
+                <label style="margin-top: 0.8rem;">Mensajes Mensuales (Cada mes):</label>
+                <div id="containerMsgMeses" class="lista-editable-container"></div>
+                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerMsgMeses', '')">+ Añadir frase mensual</button>
+
+                <label style="margin-top: 0.8rem;">Palabras tipo ✨:</label>
                 <div id="containerSparkles" class="lista-editable-container"></div>
-                <button type="button" class="btn-add-item" onclick="agregarFilaSparkle('')">+ Añadir palabra ✨</button>
+                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerSparkles', '')">+ Añadir palabra ✨</button>
 
-                <label style="margin-top: 1rem;">Palabras tipo 🌟:</label>
+                <label style="margin-top: 0.8rem;">Palabras tipo 🌟:</label>
                 <div id="containerStars" class="lista-editable-container"></div>
-                <button type="button" class="btn-add-item" onclick="agregarFilaStar('')">+ Añadir palabra 🌟</button>
+                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerStars', '')">+ Añadir palabra 🌟</button>
 
-                <label style="margin-top: 1rem;">Versículos (Texto y Referencia):</label>
+                <label style="margin-top: 0.8rem;">Versículos (Texto y Referencia):</label>
                 <div id="containerVersiculos" class="lista-editable-container"></div>
-                <button type="button" class="btn-add-item" onclick="agregarFilaVersiculo('', '')">+ Añadir
-                    versículo</button>
+                <button type="button" class="btn-add-item" onclick="agregarFilaVersiculo('', '')">+ Añadir versículo</button>
 
                 <div class="modal-buttons">
                     <button class="btn-save" onclick="guardarEdicionPersonalizada()">Guardar</button>
@@ -500,26 +519,39 @@
             "🌟 It’s okey", "🌟 Okey", "🌟 Un nuevo amanecer", "🌟 best regards (M invention)"
         ];
 
+        const mensajes24hBase = [
+            "💫 Ya han pasado 24h jaj, podemos más, podemos más..",
+            "✨ ¡1 día cumplido! Vamos muy bien 🐧"
+        ];
+
+        const mensajesSemanasBase = [
+            "💫 Uff 1 semana yaa.. es mucho en verdad ... y difícil too , espero que you seguir goodings :)✨",
+            "🌟 ¡Semana superada! A seguir a tope 💪"
+        ];
+
+        const mensajesMesesBase = [
+            "🙏🏼 Ayyyy un messss (o un mes másss) quien lo diría.. menos mal que el Señor nos ayuda porque para aguantar un messs.. Celebralo , ves al MC o algo jaja que hemos aguantado mucho.. a seguir asi....() :)🥺😔💫✨",
+            "🏆 Bua ya un mes, quien lo diría.. El Señor nos ha ayudado :)"
+        ];
+
         const PASSWORD_CORRECTA = "CM231806";
         let configGlobal = {
             fechaInicio: "2026-09-15T12:00",
             emoji1: "🐧",
-            emoji2: "🐻‍❄️",
+            emoji2: "🐻‍‍❄️",
             bgColor: "#0f172a",
             sparkles: sparkleBase,
             stars: starBase,
-            versiculos: versiculosBase
+            versiculos: versiculosBase,
+            msg24h: mensajes24hBase,
+            msgSemanas: mensajesSemanasBase,
+            msgMeses: mensajesMesesBase
         };
 
         function normalizarFechaLocal(valor) {
-            if (!valor) {
-                return "";
-            }
-
+            if (!valor) return "";
             const fecha = new Date(valor);
-            if (Number.isNaN(fecha.getTime())) {
-                return "";
-            }
+            if (Number.isNaN(fecha.getTime())) return "";
 
             const anio = fecha.getFullYear();
             const mes = String(fecha.getMonth() + 1).padStart(2, '0');
@@ -534,45 +566,32 @@
             return !!valor && !Number.isNaN(new Date(valor).getTime());
         }
 
-        const hitosCelebracion = [
-            { id: "1-dia", dias: 1, texto: "🎉 ¡Ya 1 día! Qué bien vas :)" },
-            { id: "1-semana", dias: 7, texto: "🥳 ¡Wow, racha de 1 semana! A seguir así 💪" },
-            { id: "2-semanas", dias: 14, texto: "🎆 ¡2 semanas! Qué fuerte, vas genial 😎" },
-            { id: "3-semanas", dias: 21, texto: "🚀 ¡3 semanas! Esto no para, a tope 🔥" },
-            { id: "1-mes", dias: 30, texto: "🏆 ¡1 mes! Increíble racha, sigue así ✨" }
-        ];
-
-        const prefijoStorageCelebraciones = "contadorCelebracionesMostradas:";
         const celebracionesSesion = new Set();
 
-        function obtenerClaveCelebraciones() {
-            return `${prefijoStorageCelebraciones}${normalizarFechaLocal(configGlobal.fechaInicio) || "sin-fecha"}`;
+        function obtenerClaveStorage() {
+            return `contadorHitosLanzados:${normalizarFechaLocal(configGlobal.fechaInicio) || "sin-fecha"}`;
         }
 
-        function leerCelebracionesMostradas() {
+        function leerHitosGuardados() {
             try {
-                const valor = localStorage.getItem(obtenerClaveCelebraciones());
-                if (!valor) return [];
-                const parsed = JSON.parse(valor);
+                const val = localStorage.getItem(obtenerClaveStorage());
+                if (!val) return [];
+                const parsed = JSON.parse(val);
                 return Array.isArray(parsed) ? parsed : [];
-            } catch (error) {
+            } catch (e) {
                 return [];
             }
         }
 
-        function guardarCelebracionesMostradas(coleccion) {
+        function guardarHitosGuardados(hitos) {
             try {
-                localStorage.setItem(obtenerClaveCelebraciones(), JSON.stringify(Array.from(coleccion)));
-            } catch (error) {
-                console.warn("No se pudo guardar el estado de celebraciones");
-            }
+                localStorage.setItem(obtenerClaveStorage(), JSON.stringify(Array.from(hitos)));
+            } catch (e) {}
         }
 
         function lanzarPetardosConfetti() {
             const capaExistente = document.querySelector(".firework-layer");
-            if (capaExistente) {
-                capaExistente.remove();
-            }
+            if (capaExistente) capaExistente.remove();
 
             const capa = document.createElement("div");
             capa.className = "firework-layer";
@@ -604,9 +623,7 @@
 
         function mostrarMensajeCelebracion(texto) {
             const existente = document.getElementById("celebrationBanner");
-            if (existente) {
-                existente.remove();
-            }
+            if (existente) existente.remove();
 
             const banner = document.createElement("div");
             banner.id = "celebrationBanner";
@@ -616,25 +633,119 @@
             setTimeout(() => banner.remove(), 5600);
         }
 
-        function verificarYMostrarCelebracion(dias) {
-            const hitosAlcanzados = hitosCelebracion.filter(hito => dias >= hito.dias);
-            if (!hitosAlcanzados.length) return;
+        // Función para determinar el ÚLTIMO hito alcanzado según el tiempo transcurrido
+        function obtenerUltimoHitoAlcanzado() {
+            const fechaInicio = new Date(configGlobal.fechaInicio);
+            const ahora = new Date();
+            const diffMs = ahora - fechaInicio;
+            if (diffMs < 0) return null;
 
-            const celebracionesGuardadas = new Set(leerCelebracionesMostradas());
-            const hitosPendientes = hitosAlcanzados.filter(hito => !celebracionesGuardadas.has(hito.id));
-            if (!hitosPendientes.length) return;
+            const horasTotales = diffMs / (1000 * 60 * 60);
+            const diasTotales = diffMs / (1000 * 60 * 60 * 24);
 
-            const hitoParaMostrar = hitosPendientes[hitosPendientes.length - 1];
-            const claveSesion = `${obtenerClaveCelebraciones()}::${hitoParaMostrar.id}`;
+            // Comprobamos de mayor a menor jerarquía temporal
+            // 1. ¿Ha pasado al menos 1 mes natural o más?
+            const aniosDiff = ahora.getFullYear() - fechaInicio.getFullYear();
+            const mesesDiff = (ahora.getMonth() - fechaInicio.getMonth()) + (aniosDiff * 12);
+            if (mesesDiff >= 1) {
+                const diaInicio = fechaInicio.getDate();
+                const hoyDia = ahora.getDate();
+                if (hoyDia > diaInicio || (hoyDia === diaInicio && ahora.getHours() >= fechaInicio.getHours())) {
+                    const lista = configGlobal.msgMeses && configGlobal.msgMeses.length ? configGlobal.msgMeses : mensajesMesesBase;
+                    return lista[Math.floor(Math.random() * lista.length)];
+                }
+            }
 
-            if (celebracionesSesion.has(claveSesion)) return;
-            celebracionesSesion.add(claveSesion);
+            // 2. ¿Ha pasado 1 semana o más (múltiplos de 168h)?
+            const semanaActual = Math.floor(horasTotales / 168);
+            if (semanaActual >= 1) {
+                const lista = configGlobal.msgSemanas && configGlobal.msgSemanas.length ? configGlobal.msgSemanas : mensajesSemanasBase;
+                let textoOriginal = lista[Math.floor(Math.random() * lista.length)];
+                return textoOriginal.replace(/1 semana/g, `${semanaActual} semanas`).replace(/una semana/g, `${semanaActual} semanas`);
+            }
 
-            hitosAlcanzados.forEach(hito => celebracionesGuardadas.add(hito.id));
-            guardarCelebracionesMostradas(celebracionesGuardadas);
+            // 3. ¿Han pasado al menos 24 horas?
+            if (horasTotales >= 24) {
+                const lista = configGlobal.msg24h && configGlobal.msg24h.length ? configGlobal.msg24h : mensajes24hBase;
+                return lista[Math.floor(Math.random() * lista.length)];
+            }
 
+            return null;
+        }
+
+        function dispararCelebracionManual() {
+            const textoElegido = obtenerUltimoHitoAlcanzado();
+            if (!textoElegido) {
+                alert("Aún no se ha alcanzado el primer hito de 24 horas. ¡Ánimo! ✨");
+                return;
+            }
             lanzarPetardosConfetti();
-            mostrarMensajeCelebracion(hitoParaMostrar.texto);
+            mostrarMensajeCelebracion(textoElegido);
+        }
+
+        function verificarHitosTemporales() {
+            const fechaInicio = new Date(configGlobal.fechaInicio);
+            const ahora = new Date();
+            const diffMs = ahora - fechaInicio;
+            if (diffMs < 0) return;
+
+            const horasTotales = diffMs / (1000 * 60 * 60);
+            const hitosLanzados = new Set(leerHitosGuardados());
+            let idHitoACatar = null;
+            let textoACatar = null;
+
+            // 1. Primeras 24 horas
+            if (horasTotales >= 24 && horasTotales < 48) {
+                const id = "hito-24h-1";
+                if (!hitosLanzados.has(id)) {
+                    idHitoACatar = id;
+                    const lista = configGlobal.msg24h && configGlobal.msg24h.length ? configGlobal.msg24h : mensajes24hBase;
+                    textoACatar = lista[Math.floor(Math.random() * lista.length)];
+                }
+            }
+
+            // 2. Cada 168 horas / 1 semana
+            const semanaActual = Math.floor(horasTotales / 168);
+            if (semanaActual >= 1 && !idHitoACatar) {
+                const id = `hito-semana-${semanaActual}`;
+                if (!hitosLanzados.has(id)) {
+                    idHitoACatar = id;
+                    const lista = configGlobal.msgSemanas && configGlobal.msgSemanas.length ? configGlobal.msgSemanas : mensajesSemanasBase;
+                    let textoOriginal = lista[Math.floor(Math.random() * lista.length)];
+                    textoACatar = textoOriginal.replace(/1 semana/g, `${semanaActual} semanas`).replace(/una semana/g, `${semanaActual} semanas`);
+                }
+            }
+
+            // 3. Cada mes natural
+            if (!idHitoACatar) {
+                const aniosDiff = ahora.getFullYear() - fechaInicio.getFullYear();
+                const mesesDiff = (ahora.getMonth() - fechaInicio.getMonth()) + (aniosDiff * 12);
+                
+                if (mesesDiff >= 1) {
+                    const diaInicio = fechaInicio.getDate();
+                    const hoyDia = ahora.getDate();
+                    
+                    if (hoyDia === diaInicio && ahora.getHours() >= fechaInicio.getHours()) {
+                        const id = `hito-mes-${mesesDiff}`;
+                        if (!hitosLanzados.has(id)) {
+                            idHitoACatar = id;
+                            const lista = configGlobal.msgMeses && configGlobal.msgMeses.length ? configGlobal.msgMeses : mensajesMesesBase;
+                            textoACatar = lista[Math.floor(Math.random() * lista.length)];
+                        }
+                    }
+                }
+            }
+
+            if (idHitoACatar && textoACatar) {
+                if (celebracionesSesion.has(idHitoACatar)) return;
+                celebracionesSesion.add(idHitoACatar);
+
+                hitosLanzados.add(idHitoACatar);
+                guardarHitosGuardados(hitosLanzados);
+
+                lanzarPetardosConfetti();
+                mostrarMensajeCelebracion(textoACatar);
+            }
         }
 
         async function cargarDatosServidor() {
@@ -716,7 +827,7 @@
             document.getElementById("counter").innerText =
                 `${dias} días\n${horas} horas\n${minutos} min y ${segundos} seg`;
 
-            verificarYMostrarCelebracion(dias);
+            verificarHitosTemporales();
         }
 
         function abrirModal() {
@@ -729,23 +840,12 @@
             document.body.style.overflow = 'hidden';
         }
 
-        function agregarFilaSparkle(valor) {
-            const container = document.getElementById("containerSparkles");
+        function agregarFilaTextoEditable(containerId, valor, placeholderText = "Escribe aquí...") {
+            const container = document.getElementById(containerId);
             const div = document.createElement("div");
             div.className = "item-fila";
             div.innerHTML = `
-                <input type="text" class="input-sparkle" value="${valor}" placeholder="Ej: ✨ Hola">
-                <button type="button" class="btn-eliminar-item" onclick="this.parentElement.remove()">✕</button>
-            `;
-            container.appendChild(div);
-        }
-
-        function agregarFilaStar(valor) {
-            const container = document.getElementById("containerStars");
-            const div = document.createElement("div");
-            div.className = "item-fila";
-            div.innerHTML = `
-                <input type="text" class="input-star" value="${valor}" placeholder="Ej: 🌟 Adiós">
+                <input type="text" class="input-item-dinamico" value="${valor}" placeholder="${placeholderText}">
                 <button type="button" class="btn-eliminar-item" onclick="this.parentElement.remove()">✕</button>
             `;
             container.appendChild(div);
@@ -779,13 +879,18 @@
             document.getElementById("editEmoji2").value = configGlobal.emoji2;
             document.getElementById("editColor").value = configGlobal.bgColor;
 
-            const contSparkles = document.getElementById("containerSparkles");
-            contSparkles.innerHTML = "";
-            (configGlobal.sparkles || sparkleBase).forEach(s => agregarFilaSparkle(s));
+            const rellenarLista = (containerId, datos, fallback) => {
+                const cont = document.getElementById(containerId);
+                cont.innerHTML = "";
+                const items = (datos && datos.length) ? datos : fallback;
+                items.forEach(item => agregarFilaTextoEditable(containerId, item));
+            };
 
-            const contStars = document.getElementById("containerStars");
-            contStars.innerHTML = "";
-            (configGlobal.stars || starBase).forEach(s => agregarFilaStar(s));
+            rellenarLista("containerMsg24", configGlobal.msg24h, mensajes24hBase);
+            rellenarLista("containerMsgSemanas", configGlobal.msgSemanas, mensajesSemanasBase);
+            rellenarLista("containerMsgMeses", configGlobal.msgMeses, mensajesMesesBase);
+            rellenarLista("containerSparkles", configGlobal.sparkles, sparkleBase);
+            rellenarLista("containerStars", configGlobal.stars, starBase);
 
             const contVersiculos = document.getElementById("containerVersiculos");
             contVersiculos.innerHTML = "";
@@ -818,7 +923,6 @@
             const nuevaConfig = { ...configGlobal, fechaInicio: nuevaFechaStr };
             const exito = await guardarDatosServidor(nuevaConfig);
             if (exito) {
-                configGlobal = nuevaConfig;
                 cerrarModal();
             } else {
                 document.getElementById("errorMsg").innerText = "No se pudo guardar en el servidor";
@@ -828,18 +932,22 @@
 
         async function guardarEdicionPersonalizada() {
             const emoji1 = document.getElementById("editEmoji1").value.trim() || "🐧";
-            const emoji2 = document.getElementById("editEmoji2").value.trim() || "🐻‍❄️";
+            const emoji2 = document.getElementById("editEmoji2").value.trim() || "🐻‍‍❄️";
             const bgColor = document.getElementById("editColor").value;
 
-            const sparkles = [];
-            document.querySelectorAll("#containerSparkles .input-sparkle").forEach(input => {
-                if (input.value.trim()) sparkles.push(input.value.trim());
-            });
+            const extraerLista = (containerId) => {
+                const lista = [];
+                document.querySelectorAll(`#${containerId} .input-item-dinamico`).forEach(input => {
+                    if (input.value.trim()) lista.push(input.value.trim());
+                });
+                return lista;
+            };
 
-            const stars = [];
-            document.querySelectorAll("#containerStars .input-star").forEach(input => {
-                if (input.value.trim()) stars.push(input.value.trim());
-            });
+            const msg24h = extraerLista("containerMsg24");
+            const msgSemanas = extraerLista("containerMsgSemanas");
+            const msgMeses = extraerLista("containerMsgMeses");
+            const sparkles = extraerLista("containerSparkles");
+            const stars = extraerLista("containerStars");
 
             const nuevosVersiculos = [];
             document.querySelectorAll("#containerVersiculos .item-fila").forEach(fila => {
@@ -848,15 +956,23 @@
                 if (texto && ref) nuevosVersiculos.push({ texto, ref });
             });
 
-            configGlobal.emoji1 = emoji1;
-            configGlobal.emoji2 = emoji2;
-            configGlobal.bgColor = bgColor;
-            configGlobal.sparkles = sparkles;
-            configGlobal.stars = stars;
-            configGlobal.versiculos = nuevosVersiculos.length > 0 ? nuevosVersiculos : versiculosBase;
+            const nuevaConfig = {
+                ...configGlobal,
+                emoji1,
+                emoji2,
+                bgColor,
+                msg24h: msg24h.length > 0 ? msg24h : mensajes24hBase,
+                msgSemanas: msgSemanas.length > 0 ? msgSemanas : mensajesSemanasBase,
+                msgMeses: msgMeses.length > 0 ? msgMeses : mensajesMesesBase,
+                sparkles: sparkles.length > 0 ? sparkles : sparkleBase,
+                stars: stars.length > 0 ? stars : starBase,
+                versiculos: nuevosVersiculos.length > 0 ? nuevosVersiculos : versiculosBase
+            };
 
-            const exito = await guardarDatosServidor(configGlobal);
-            if (exito) cerrarModal();
+            const exito = await guardarDatosServidor(nuevaConfig);
+            if (exito) {
+                cerrarModal();
+            }
         }
 
         cargarDatosServidor();
