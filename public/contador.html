@@ -43,6 +43,13 @@
             z-index: 10;
         }
 
+        .bottom-version-button {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 12;
+        }
+
         .btn-corner {
             background-color: rgba(30, 41, 59, 0.7);
             color: #94a3b8;
@@ -53,6 +60,19 @@
             cursor: pointer;
             transition: background 0.2s;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-version-bottom {
+            background: rgba(14, 116, 144, 0.82);
+            color: #dff7ff;
+            border: 1px solid rgba(103, 232, 249, 0.55);
+            font-weight: 700;
+            min-width: 2.7rem;
+            min-height: 2.7rem;
+            font-size: 1.4rem;
+            padding: 0.2rem 0.75rem;
+            border-radius: 0.8rem;
+            box-shadow: 0 10px 25px rgba(14, 116, 144, 0.25);
         }
 
         .btn-corner:active {
@@ -486,21 +506,23 @@
 
     <div class="corner-buttons">
         <button class="btn-corner" onclick="dispararCelebracionManual()" title="Ver última celebración">🎉</button>
-        <button id="btnMejoras" class="btn-corner btn-mejoras" onclick="togglePanelMejoras()"
-            title="Ver versiones de código">🚀
-            MC Counter v1.0</button>
-        <button id="btnAjustes" class="btn-corner" onclick="togglePanelAjustes()" title="Ver cambios de ajustes">⚙️
-            Ajustes</button>
+        <button id="btnAjustes" class="btn-corner" onclick="togglePanelAjustes()" title="Ver cambios">⚙️
+            Cambios</button>
         <button class="btn-corner" onclick="verificarPasswordEdicion()">✏ Editar</button>
     </div>
 
+    <div class="bottom-version-button">
+        <button id="btnMejoras" class="btn-corner btn-mejoras btn-version-bottom" onclick="togglePanelMejoras()"
+            title="Ver MC Counter" aria-label="Abrir MC Counter">⋯</button>
+    </div>
+
     <div id="panelMejoras" class="panel-mejoras" aria-live="polite">
-        <h4>Versiones de código</h4>
+        <h4>MC Counter</h4>
         <div id="listaMejoras"></div>
     </div>
 
     <div id="panelAjustes" class="panel-ajustes" aria-live="polite">
-        <h4>Cambios de ajustes</h4>
+        <h4>Cambios</h4>
         <div id="listaAjustes"></div>
     </div>
 
@@ -854,7 +876,9 @@
         function actualizarBotonMejoras() {
             const btn = document.getElementById('btnMejoras');
             if (!btn) return;
-            btn.innerText = `🚀 MC Counter v${formatearVersion(releaseVersionActual)}`;
+            btn.innerText = '⋯';
+            btn.title = 'MC Counter';
+            btn.setAttribute('aria-label', 'Abrir MC Counter');
         }
 
         function renderPanelMejoras() {
