@@ -21,4 +21,23 @@ describe('ConfigController', () => {
 
     expect(controller.getConfig()).toEqual({ fechaInicio: '2026-09-15T12:00' });
   });
+
+  it('adds no-cache headers to config responses', () => {
+    const controller = new ConfigController();
+    const res = { set: jest.fn() } as any;
+    const expectedConfig = { fechaInicio: '2026-09-15T12:00' };
+
+    fs.writeFileSync(tempFilePath, JSON.stringify(expectedConfig), 'utf8');
+    (controller as { filePath: string }).filePath = tempFilePath;
+
+    const result = controller.getConfig(res);
+
+    expect(result).toEqual(expectedConfig);
+    expect(res.set).toHaveBeenCalledWith(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate, proxy-revalidate',
+    );
+    expect(res.set).toHaveBeenCalledWith('Pragma', 'no-cache');
+    expect(res.set).toHaveBeenCalledWith('Expires', '0');
+  });
 });

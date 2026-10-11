@@ -60,6 +60,114 @@
             transform: scale(0.95);
         }
 
+        .btn-mejoras {
+            background: rgba(14, 116, 144, 0.82);
+            color: #dff7ff;
+            border: 1px solid rgba(103, 232, 249, 0.55);
+            font-weight: 700;
+        }
+
+        .panel-mejoras {
+            position: fixed;
+            top: 3.7rem;
+            right: 1rem;
+            width: min(320px, calc(100vw - 2rem));
+            max-height: 70vh;
+            overflow: auto;
+            background: rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(103, 232, 249, 0.4);
+            border-radius: 0.9rem;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+            padding: 0.9rem 0.9rem 0.5rem;
+            z-index: 1500;
+            display: none;
+        }
+
+        .panel-mejoras.visible {
+            display: block;
+        }
+
+        .panel-mejoras h4 {
+            margin: 0 0 0.65rem;
+            color: #e0f2fe;
+            font-size: 0.95rem;
+        }
+
+        .mejora-item {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            border-radius: 0.7rem;
+            padding: 0.6rem 0.7rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mejora-item strong {
+            color: #67e8f9;
+            font-size: 0.8rem;
+        }
+
+        .mejora-item .fecha {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .mejora-item .detalle {
+            font-size: 0.78rem;
+            line-height: 1.4;
+            color: #e2e8f0;
+        }
+
+        .aviso-mejora {
+            position: fixed;
+            left: 50%;
+            bottom: 1.2rem;
+            transform: translateX(-50%);
+            background: rgba(12, 74, 110, 0.96);
+            color: #ecfeff;
+            border: 1px solid rgba(103, 232, 249, 0.7);
+            border-radius: 0.8rem;
+            padding: 0.7rem 0.9rem;
+            font-size: 0.8rem;
+            max-width: min(460px, calc(100vw - 2rem));
+            box-shadow: 0 15px 30px rgba(8, 47, 73, 0.45);
+            z-index: 1800;
+            display: none;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .aviso-mejora.visible {
+            display: flex;
+            animation: avisoSlideIn 0.3s ease-out;
+        }
+
+        .aviso-mejora .close-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: white;
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        @keyframes avisoSlideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
         .verse-box {
             text-align: center;
             max-width: 420px;
@@ -375,7 +483,18 @@
 
     <div class="corner-buttons">
         <button class="btn-corner" onclick="dispararCelebracionManual()" title="Ver última celebración">🎉</button>
+        <button id="btnMejoras" class="btn-corner btn-mejoras" onclick="togglePanelMejoras()" title="Ver mejoras">🛠️ v1</button>
         <button class="btn-corner" onclick="verificarPasswordEdicion()">✏ Editar</button>
+    </div>
+
+    <div id="panelMejoras" class="panel-mejoras" aria-live="polite">
+        <h4>Historial de mejoras</h4>
+        <div id="listaMejoras"></div>
+    </div>
+
+    <div id="avisoMejora" class="aviso-mejora" aria-live="polite">
+        <span id="textoAvisoMejora">✅ Mejora aplicada</span>
+        <button type="button" class="close-btn" onclick="cerrarAvisoMejora()">×</button>
     </div>
 
     <div class="verse-box" id="verseBox">
@@ -431,27 +550,33 @@
 
                 <label>Mensajes 24 horas:</label>
                 <div id="containerMsg24" class="lista-editable-container"></div>
-                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerMsg24', '')">+ Añadir frase 24h</button>
+                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerMsg24', '')">+
+                    Añadir frase 24h</button>
 
                 <label style="margin-top: 0.8rem;">Mensajes Semanales (1 sem, 2 sem...):</label>
                 <div id="containerMsgSemanas" class="lista-editable-container"></div>
-                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerMsgSemanas', '')">+ Añadir frase semanal</button>
+                <button type="button" class="btn-add-item"
+                    onclick="agregarFilaTextoEditable('containerMsgSemanas', '')">+ Añadir frase semanal</button>
 
                 <label style="margin-top: 0.8rem;">Mensajes Mensuales (Cada mes):</label>
                 <div id="containerMsgMeses" class="lista-editable-container"></div>
-                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerMsgMeses', '')">+ Añadir frase mensual</button>
+                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerMsgMeses', '')">+
+                    Añadir frase mensual</button>
 
                 <label style="margin-top: 0.8rem;">Palabras tipo ✨:</label>
                 <div id="containerSparkles" class="lista-editable-container"></div>
-                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerSparkles', '')">+ Añadir palabra ✨</button>
+                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerSparkles', '')">+
+                    Añadir palabra ✨</button>
 
                 <label style="margin-top: 0.8rem;">Palabras tipo 🌟:</label>
                 <div id="containerStars" class="lista-editable-container"></div>
-                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerStars', '')">+ Añadir palabra 🌟</button>
+                <button type="button" class="btn-add-item" onclick="agregarFilaTextoEditable('containerStars', '')">+
+                    Añadir palabra 🌟</button>
 
                 <label style="margin-top: 0.8rem;">Versículos (Texto y Referencia):</label>
                 <div id="containerVersiculos" class="lista-editable-container"></div>
-                <button type="button" class="btn-add-item" onclick="agregarFilaVersiculo('', '')">+ Añadir versículo</button>
+                <button type="button" class="btn-add-item" onclick="agregarFilaVersiculo('', '')">+ Añadir
+                    versículo</button>
 
                 <div class="modal-buttons">
                     <button class="btn-save" onclick="guardarEdicionPersonalizada()">Guardar</button>
@@ -535,6 +660,7 @@
         ];
 
         const PASSWORD_CORRECTA = "CM231806";
+        const MEJORAS_STORAGE_KEY = "contadorVersionesVistas";
         let configGlobal = {
             fechaInicio: "2026-09-15T12:00",
             emoji1: "🐧",
@@ -545,7 +671,9 @@
             versiculos: versiculosBase,
             msg24h: mensajes24hBase,
             msgSemanas: mensajesSemanasBase,
-            msgMeses: mensajesMesesBase
+            msgMeses: mensajesMesesBase,
+            version: 1,
+            mejoras: []
         };
 
         function normalizarFechaLocal(valor) {
@@ -586,7 +714,7 @@
         function guardarHitosGuardados(hitos) {
             try {
                 localStorage.setItem(obtenerClaveStorage(), JSON.stringify(Array.from(hitos)));
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function lanzarPetardosConfetti() {
@@ -631,6 +759,97 @@
             banner.innerText = texto;
             document.body.appendChild(banner);
             setTimeout(() => banner.remove(), 5600);
+        }
+
+        function leerVersionesVistas() {
+            try {
+                const raw = localStorage.getItem(MEJORAS_STORAGE_KEY);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed.map(String) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function guardarVersionVistas(versiones) {
+            try {
+                localStorage.setItem(MEJORAS_STORAGE_KEY, JSON.stringify(Array.from(new Set(versiones.map(String)))));
+            } catch (e) {}
+        }
+
+        function formatearFechaMejora(valor) {
+            const fecha = new Date(valor);
+            if (Number.isNaN(fecha.getTime())) return 'Fecha desconocida';
+            return fecha.toLocaleString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function obtenerUltimaMejora() {
+            const mejoras = Array.isArray(configGlobal.mejoras) ? configGlobal.mejoras : [];
+            return mejoras.length ? mejoras[mejoras.length - 1] : null;
+        }
+
+        function actualizarBotonMejoras() {
+            const btn = document.getElementById('btnMejoras');
+            if (!btn) return;
+            const version = Number(configGlobal.version || 1);
+            btn.innerText = `🛠️ v${version}`;
+        }
+
+        function renderPanelMejoras() {
+            const contenedor = document.getElementById('listaMejoras');
+            if (!contenedor) return;
+
+            const mejoras = Array.isArray(configGlobal.mejoras) && configGlobal.mejoras.length
+                ? [...configGlobal.mejoras].reverse()
+                : [{ version: Number(configGlobal.version || 1), fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
+
+            contenedor.innerHTML = mejoras.map((mejora) => `
+                <div class="mejora-item">
+                    <strong>v${Number(mejora.version || 1)}</strong>
+                    <span class="fecha">${formatearFechaMejora(mejora.fecha || new Date().toISOString())}</span>
+                    <div class="detalle">${mejora.detalle || 'Mejora aplicada'}</div>
+                </div>
+            `).join('');
+        }
+
+        function cerrarAvisoMejora() {
+            const aviso = document.getElementById('avisoMejora');
+            if (!aviso) return;
+            const mejora = obtenerUltimaMejora();
+            if (mejora) {
+                const vistas = leerVersionesVistas();
+                guardarVersionVistas([...vistas, String(mejora.version)]);
+            }
+            aviso.classList.remove('visible');
+        }
+
+        function mostrarAvisoMejora() {
+            const mejora = obtenerUltimaMejora();
+            const aviso = document.getElementById('avisoMejora');
+            const texto = document.getElementById('textoAvisoMejora');
+            if (!mejora || !aviso || !texto) return;
+
+            const vistas = leerVersionesVistas();
+            if (vistas.includes(String(mejora.version))) {
+                aviso.classList.remove('visible');
+                return;
+            }
+
+            texto.textContent = `✅ Mejora aplicada · v${mejora.version} · ${mejora.detalle}`;
+            aviso.classList.add('visible');
+        }
+
+        function togglePanelMejoras() {
+            const panel = document.getElementById('panelMejoras');
+            if (!panel) return;
+            panel.classList.toggle('visible');
         }
 
         // Función para determinar el ÚLTIMO hito alcanzado según el tiempo transcurrido
@@ -720,11 +939,11 @@
             if (!idHitoACatar) {
                 const aniosDiff = ahora.getFullYear() - fechaInicio.getFullYear();
                 const mesesDiff = (ahora.getMonth() - fechaInicio.getMonth()) + (aniosDiff * 12);
-                
+
                 if (mesesDiff >= 1) {
                     const diaInicio = fechaInicio.getDate();
                     const hoyDia = ahora.getDate();
-                    
+
                     if (hoyDia === diaInicio && ahora.getHours() >= fechaInicio.getHours()) {
                         const id = `hito-mes-${mesesDiff}`;
                         if (!hitosLanzados.has(id)) {
@@ -748,40 +967,86 @@
             }
         }
 
+        function normalizarConfigGlobal(data = {}) {
+            const base = { ...configGlobal, ...data };
+            const version = Number(base.version || 1);
+            const mejoras = Array.isArray(base.mejoras) && base.mejoras.length
+                ? base.mejoras
+                : [{ version, fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
+
+            base.version = version;
+            base.mejoras = mejoras;
+
+            if (!esFechaValida(base.fechaInicio)) {
+                base.fechaInicio = "2026-09-15T12:00";
+            }
+
+            return base;
+        }
+
         async function cargarDatosServidor() {
             try {
-                const res = await fetch('/api/config');
+                const res = await fetch(`/api/config?t=${Date.now()}`, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
                 if (res.ok) {
                     const data = await res.json();
-                    configGlobal = { ...configGlobal, ...data };
-
-                    if (!esFechaValida(configGlobal.fechaInicio)) {
-                        configGlobal.fechaInicio = "2026-09-15T12:00";
-                    }
+                    configGlobal = normalizarConfigGlobal(data);
                 }
             } catch (e) {
                 console.error("Usando valores por defecto o error de conexión con el servidor");
             }
+            configGlobal = normalizarConfigGlobal(configGlobal);
             aplicarEstilosVisuales();
             cargarContenidoAleatorio();
             actualizarContador();
+            actualizarBotonMejoras();
+            renderPanelMejoras();
+            mostrarAvisoMejora();
         }
 
-        async function guardarDatosServidor(nuevaConfig) {
+        async function guardarDatosServidor(nuevaConfig, detalle = 'Mejora aplicada') {
             try {
+                const versionActual = Number((nuevaConfig.version ?? configGlobal.version ?? 1) || 1);
+                const nuevaVersion = versionActual + 1;
+                const mejorasPrevias = Array.isArray(nuevaConfig.mejoras) ? nuevaConfig.mejoras : [];
+                const nuevaMejora = {
+                    version: nuevaVersion,
+                    fecha: new Date().toISOString(),
+                    detalle
+                };
+
+                nuevaConfig = {
+                    ...nuevaConfig,
+                    version: nuevaVersion,
+                    mejoras: [...mejorasPrevias, nuevaMejora]
+                };
+
                 const res = await fetch('/api/config', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    cache: 'no-store',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    },
                     body: JSON.stringify(nuevaConfig)
                 });
                 if (res.ok) {
-                    configGlobal = { ...configGlobal, ...nuevaConfig };
+                    configGlobal = normalizarConfigGlobal(nuevaConfig);
                     if (!esFechaValida(configGlobal.fechaInicio)) {
                         configGlobal.fechaInicio = "2026-09-15T12:00";
                     }
                     aplicarEstilosVisuales();
                     cargarContenidoAleatorio();
                     actualizarContador();
+                    actualizarBotonMejoras();
+                    renderPanelMejoras();
+                    mostrarAvisoMejora();
                     return true;
                 }
             } catch (e) {
@@ -921,7 +1186,7 @@
             }
 
             const nuevaConfig = { ...configGlobal, fechaInicio: nuevaFechaStr };
-            const exito = await guardarDatosServidor(nuevaConfig);
+            const exito = await guardarDatosServidor(nuevaConfig, 'Fecha de inicio actualizada');
             if (exito) {
                 cerrarModal();
             } else {
@@ -969,7 +1234,7 @@
                 versiculos: nuevosVersiculos.length > 0 ? nuevosVersiculos : versiculosBase
             };
 
-            const exito = await guardarDatosServidor(nuevaConfig);
+            const exito = await guardarDatosServidor(nuevaConfig, 'Personalización visual actualizada');
             if (exito) {
                 cerrarModal();
             }
@@ -977,6 +1242,9 @@
 
         cargarDatosServidor();
         setInterval(actualizarContador, 1000);
+        setInterval(() => {
+            cargarDatosServidor();
+        }, 5000);
     </script>
 </body>
 

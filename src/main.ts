@@ -30,23 +30,29 @@ async function bootstrap() {
     next();
   });
 
+  const noCacheStaticHeaders = (res: Response, filePath: string) => {
+    if (filePath.endsWith('.html') || filePath.endsWith('.htm')) {
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
+    }
+
+    if (filePath.endsWith('ResPi_dev1.0.2.apk')) {
+      res.set('Content-Type', 'application/vnd.android.package-archive');
+      res.set('Content-Disposition', 'attachment; filename="ResPi_dev1.0.2.apk"');
+    }
+  };
+
   // Servir /public primero (más específico)
   app.useStaticAssets(publicPath, {
     prefix: '/public/',
-    setHeaders: (res, path) => {
-      if (path.endsWith('ResPi_dev1.0.2.apk')) {
-        res.set('Content-Type', 'application/vnd.android.package-archive');
-        res.set(
-          'Content-Disposition',
-          'attachment; filename="ResPi_dev1.0.2.apk"',
-        );
-      }
-    },
+    setHeaders: noCacheStaticHeaders,
   });
 
   // Luego /static (fallback genérico)
   app.useStaticAssets(join(rootPath, 'static'), {
     prefix: '/',
+    setHeaders: noCacheStaticHeaders,
   });
 
   console.log(`Images available in: ${publicPath}`);
