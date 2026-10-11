@@ -32,8 +32,8 @@
         }
 
         body {
-            background-color: var(--bg-color, #0f172a);
-            background-image: var(--bg-pattern, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ctext x='10' y='30' font-size='24'%3E🐧%3C/text%3E%3Ctext x='45' y='60' font-size='24'%3E🐻‍‍❄️%3C/text%3E%3C/svg%3E"));
+            background-color: color-mix(in srgb, var(--bg-color, #0f172a) 35%, #0b1120 65%);
+            background-image: linear-gradient(rgba(7, 11, 18, 0.10), rgba(7, 11, 18, 0.10)), var(--bg-pattern, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ctext x='10' y='30' font-size='18'%3E🐧%3C/text%3E%3Ctext x='45' y='60' font-size='18'%3E🐻‍‍❄️%3C/text%3E%3C/svg%3E"));
             background-repeat: repeat;
             background-size: auto;
             color: var(--text);
@@ -78,17 +78,17 @@
         }
 
         .btn-version-bottom {
-            background: rgba(30, 41, 59, 0.9);
+            background: rgba(34, 42, 54, 0.82);
             color: #e2e8f0;
-            border: 1px solid rgba(148, 163, 184, 0.5);
-            font-weight: 700;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            font-weight: 600;
             min-width: 2.7rem;
             min-height: 2.7rem;
             font-size: 1.4rem;
             padding: 0.2rem 0.75rem;
             border-radius: 0.8rem;
-            box-shadow: none;
-            opacity: 0.96;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.22);
+            opacity: 0.92;
         }
 
         .btn-corner:active {
@@ -97,10 +97,10 @@
         }
 
         .btn-mejoras {
-            background: #0f8199;
+            background: rgba(34, 42, 54, 0.82);
             color: #ebfeff;
-            border: 1px solid #6ee7f9;
-            font-weight: 700;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            font-weight: 600;
         }
 
         .panel-mejoras,
@@ -715,7 +715,7 @@
         const RELEASE_SEEN_KEY = "MC CounterReleaseVistas";
         const AJUSTES_HISTORY_KEY = "MC CounterAjustesHistory";
         let contenidoAleatorioInicializado = false;
-        let releaseVersionActual = 1.0;
+        let releaseVersionActual = 1.1;
         let releaseHistory = [];
         let configGlobal = {
             fechaInicio: "2026-09-15T12:00",
@@ -728,7 +728,7 @@
             msg24h: mensajes24hBase,
             msgSemanas: mensajesSemanasBase,
             msgMeses: mensajesMesesBase,
-            version: 1.0,
+            version: 1.1,
             mejoras: []
         };
 
@@ -1111,12 +1111,13 @@
 
         function normalizarConfigGlobal(data = {}) {
             const base = { ...configGlobal, ...data };
-            const version = Number(base.version || 1.0);
+            const version = Number(base.version || 1.1);
+            const versionFinal = Number.isFinite(version) && version < 1.1 ? 1.1 : version;
             const mejoras = Array.isArray(base.mejoras) && base.mejoras.length
                 ? base.mejoras
-                : [{ version, fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
+                : [{ version: versionFinal, fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
 
-            base.version = version;
+            base.version = versionFinal;
             base.mejoras = mejoras;
 
             if (!esFechaValida(base.fechaInicio)) {
@@ -1128,17 +1129,37 @@
 
         function inicializarReleaseHistory() {
             const historial = leerHistorialVersionesCodigo();
+            const ultimo = historial.length ? Number(historial[historial.length - 1].version || 1.0) : 1.0;
+
             if (historial.length === 0) {
-                const inicial = [{ version: 1.0, fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
+                const inicial = [
+                    { version: 1.0, fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' },
+                    {
+                        version: 1.1,
+                        fecha: new Date().toISOString(),
+                        detalle: 'Se ha cambiado la forma de guardar y sincronizar la configuración para que se refleje correctamente para todos; añadido el botón de registro de cambios y el historial de mejoras.'
+                    }
+                ];
                 guardarHistorialVersionesCodigo(inicial);
                 return inicial;
             }
+
+            if (ultimo < 1.1) {
+                const actualizado = [...historial, {
+                    version: 1.1,
+                    fecha: new Date().toISOString(),
+                    detalle: 'Se ha cambiado la forma de guardar y sincronizar la configuración para que se refleje correctamente para todos; añadido el botón de registro de cambios y el historial de mejoras.'
+                }];
+                guardarHistorialVersionesCodigo(actualizado);
+                return actualizado;
+            }
+
             return historial;
         }
 
         function registrarCambioCodigo(detalle = 'Se ha mejorado la funcionalidad del contador.') {
             const historialActual = leerHistorialVersionesCodigo();
-            const versionAnterior = historialActual.length ? Number(historialActual[historialActual.length - 1].version || 1.0) : 1.0;
+            const versionAnterior = historialActual.length ? Number(historialActual[historialActual.length - 1].version || 1.1) : 1.1;
             const nuevaVersion = Number((versionAnterior + 0.1).toFixed(1));
             const nuevoRegistro = {
                 version: nuevaVersion,
@@ -1188,7 +1209,7 @@
                 const mejorasPrevias = Array.isArray(nuevaConfig.mejoras) ? nuevaConfig.mejoras : [];
                 const detalleValido = detalle && String(detalle).trim() ? String(detalle).trim() : 'Se ha cambiado la configuración.';
                 const nuevaMejora = {
-                    version: Number(nuevaConfig.version ?? configGlobal.version ?? 1.0),
+                    version: Number(nuevaConfig.version ?? configGlobal.version ?? 1.1),
                     fecha: new Date().toISOString(),
                     detalle: detalleValido
                 };
@@ -1227,7 +1248,7 @@
 
         function aplicarEstilosVisuales() {
             document.documentElement.style.setProperty('--bg-color', configGlobal.bgColor);
-            const svgPattern = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ctext x='10' y='30' font-size='24'%3E${encodeURIComponent(configGlobal.emoji1)}%3C/text%3E%3Ctext x='45' y='60' font-size='24'%3E${encodeURIComponent(configGlobal.emoji2)}%3C/text%3E%3C/svg%3E")`;
+            const svgPattern = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ctext x='10' y='30' font-size='18' opacity='0.35'%3E${encodeURIComponent(configGlobal.emoji1)}%3C/text%3E%3Ctext x='45' y='60' font-size='18' opacity='0.35'%3E${encodeURIComponent(configGlobal.emoji2)}%3C/text%3E%3C/svg%3E")`;
             document.documentElement.style.setProperty('--bg-pattern', svgPattern);
         }
 
@@ -1423,7 +1444,7 @@
         }
 
         releaseHistory = inicializarReleaseHistory();
-        releaseVersionActual = releaseHistory.length ? Number(releaseHistory[releaseHistory.length - 1].version || 1.0) : 1.0;
+        releaseVersionActual = releaseHistory.length ? Number(releaseHistory[releaseHistory.length - 1].version || 1.1) : 1.1;
         window.registrarCambioCodigo = registrarCambioCodigo;
 
         cargarDatosServidor();
