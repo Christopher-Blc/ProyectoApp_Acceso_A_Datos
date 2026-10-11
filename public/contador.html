@@ -67,7 +67,8 @@
             font-weight: 700;
         }
 
-        .panel-mejoras {
+        .panel-mejoras,
+        .panel-ajustes {
             position: fixed;
             top: 3.7rem;
             right: 1rem;
@@ -83,11 +84,13 @@
             display: none;
         }
 
-        .panel-mejoras.visible {
+        .panel-mejoras.visible,
+        .panel-ajustes.visible {
             display: block;
         }
 
-        .panel-mejoras h4 {
+        .panel-mejoras h4,
+        .panel-ajustes h4 {
             margin: 0 0 0.65rem;
             color: #e0f2fe;
             font-size: 0.95rem;
@@ -484,14 +487,21 @@
     <div class="corner-buttons">
         <button class="btn-corner" onclick="dispararCelebracionManual()" title="Ver última celebración">🎉</button>
         <button id="btnMejoras" class="btn-corner btn-mejoras" onclick="togglePanelMejoras()"
-            title="Ver registro de cambios">📝
+            title="Ver versiones de código">🚀
             ourCounter v1.0</button>
+        <button id="btnAjustes" class="btn-corner" onclick="togglePanelAjustes()" title="Ver cambios de ajustes">⚙️
+            Ajustes</button>
         <button class="btn-corner" onclick="verificarPasswordEdicion()">✏ Editar</button>
     </div>
 
     <div id="panelMejoras" class="panel-mejoras" aria-live="polite">
-        <h4>Registro de cambios</h4>
+        <h4>Versiones de código</h4>
         <div id="listaMejoras"></div>
+    </div>
+
+    <div id="panelAjustes" class="panel-ajustes" aria-live="polite">
+        <h4>Cambios de ajustes</h4>
+        <div id="listaAjustes"></div>
     </div>
 
     <div id="avisoMejora" class="aviso-mejora" aria-live="polite">
@@ -663,7 +673,12 @@
 
         const PASSWORD_CORRECTA = "CM231806";
         const MEJORAS_STORAGE_KEY = "contadorVersionesVistas";
+        const RELEASE_HISTORY_KEY = "ourCounterReleaseHistory";
+        const RELEASE_SEEN_KEY = "ourCounterReleaseVistas";
+        const AJUSTES_HISTORY_KEY = "ourCounterAjustesHistory";
         let contenidoAleatorioInicializado = false;
+        let releaseVersionActual = 1.0;
+        let releaseHistory = [];
         let configGlobal = {
             fechaInicio: "2026-09-15T12:00",
             emoji1: "🐧",
@@ -781,6 +796,40 @@
             } catch (e) { }
         }
 
+        function leerHistorialVersionesCodigo() {
+            try {
+                const raw = localStorage.getItem(RELEASE_HISTORY_KEY);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function guardarHistorialVersionesCodigo(historial) {
+            try {
+                localStorage.setItem(RELEASE_HISTORY_KEY, JSON.stringify(Array.isArray(historial) ? historial : []));
+            } catch (e) { }
+        }
+
+        function leerVersionesCodigoVistas() {
+            try {
+                const raw = localStorage.getItem(RELEASE_SEEN_KEY);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed.map(String) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function guardarVersionesCodigoVistas(versiones) {
+            try {
+                localStorage.setItem(RELEASE_SEEN_KEY, JSON.stringify(Array.from(new Set(versiones.map(String)))));
+            } catch (e) { }
+        }
+
         function formatearFechaMejora(valor) {
             const fecha = new Date(valor);
             if (Number.isNaN(fecha.getTime())) return 'Fecha desconocida';
@@ -794,30 +843,49 @@
         }
 
         function obtenerUltimaMejora() {
-            const mejoras = Array.isArray(configGlobal.mejoras) ? configGlobal.mejoras : [];
+            const mejoras = leerHistorialVersionesCodigo();
             return mejoras.length ? mejoras[mejoras.length - 1] : null;
+        }
+
+        function formatearVersion(version) {
+            return Number(version || 1.0).toFixed(1);
         }
 
         function actualizarBotonMejoras() {
             const btn = document.getElementById('btnMejoras');
             if (!btn) return;
-            const version = Number(configGlobal.version || 1.0);
-            btn.innerText = `📝 ourCounter v${version.toFixed(1)}`;
+            btn.innerText = `🚀 ourCounter v${formatearVersion(releaseVersionActual)}`;
         }
 
         function renderPanelMejoras() {
             const contenedor = document.getElementById('listaMejoras');
             if (!contenedor) return;
 
-            const mejoras = Array.isArray(configGlobal.mejoras) && configGlobal.mejoras.length
+            const mejoras = leerHistorialVersionesCodigo();
+            const historial = mejoras.length ? [...mejoras].reverse() : [{ version: 1.0, fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
+
+            contenedor.innerHTML = historial.map((mejora) => `
+                <div class="mejora-item">
+                    <strong>v${formatearVersion(mejora.version)}</strong>
+                    <span class="fecha">${formatearFechaMejora(mejora.fecha || new Date().toISOString())}</span>
+                    <div class="detalle">${mejora.detalle || 'Actualización de código aplicada'}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderPanelAjustes() {
+            const contenedor = document.getElementById('listaAjustes');
+            if (!contenedor) return;
+
+            const ajustes = Array.isArray(configGlobal.mejoras) && configGlobal.mejoras.length
                 ? [...configGlobal.mejoras].reverse()
                 : [{ version: Number(configGlobal.version || 1.0), fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
 
-            contenedor.innerHTML = mejoras.map((mejora) => `
+            contenedor.innerHTML = ajustes.map((ajuste) => `
                 <div class="mejora-item">
-                    <strong>v${Number(mejora.version || 1.0).toFixed(1)}</strong>
-                    <span class="fecha">${formatearFechaMejora(mejora.fecha || new Date().toISOString())}</span>
-                    <div class="detalle">${mejora.detalle || 'Actualización aplicada'}</div>
+                    <strong>v${formatearVersion(ajuste.version || configGlobal.version || 1.0)}</strong>
+                    <span class="fecha">${formatearFechaMejora(ajuste.fecha || new Date().toISOString())}</span>
+                    <div class="detalle">${ajuste.detalle || 'Cambio de ajustes aplicado'}</div>
                 </div>
             `).join('');
         }
@@ -827,8 +895,8 @@
             if (!aviso) return;
             const mejora = obtenerUltimaMejora();
             if (mejora) {
-                const vistas = leerVersionesVistas();
-                guardarVersionVistas([...vistas, String(mejora.version)]);
+                const vistas = leerVersionesCodigoVistas();
+                guardarVersionesCodigoVistas([...vistas, String(mejora.version)]);
             }
             aviso.classList.remove('visible');
         }
@@ -839,7 +907,7 @@
             const texto = document.getElementById('textoAvisoMejora');
             if (!mejora || !aviso || !texto) return;
 
-            const vistas = leerVersionesVistas();
+            const vistas = leerVersionesCodigoVistas();
             if (vistas.includes(String(mejora.version))) {
                 aviso.classList.remove('visible');
                 return;
@@ -849,14 +917,28 @@
                 ? String(mejora.detalle).trim()
                 : 'Se ha aplicado una actualización funcional.';
 
-            texto.textContent = `✅ ourCounter v${Number(mejora.version || 1.0).toFixed(1)} · ${detalleMejora}`;
+            texto.textContent = `✅ ourCounter v${formatearVersion(mejora.version)} · ${detalleMejora}`;
             aviso.classList.add('visible');
         }
 
         function togglePanelMejoras() {
             const panel = document.getElementById('panelMejoras');
+            const panelAjustes = document.getElementById('panelAjustes');
             if (!panel) return;
+            const visible = panel.classList.contains('visible');
             panel.classList.toggle('visible');
+            if (panelAjustes) panelAjustes.classList.remove('visible');
+            if (visible) panel.classList.remove('visible');
+        }
+
+        function togglePanelAjustes() {
+            const panel = document.getElementById('panelAjustes');
+            const panelRelease = document.getElementById('panelMejoras');
+            if (!panel) return;
+            const visible = panel.classList.contains('visible');
+            panel.classList.toggle('visible');
+            if (panelRelease) panelRelease.classList.remove('visible');
+            if (visible) panel.classList.remove('visible');
         }
 
         // Función para determinar el ÚLTIMO hito alcanzado según el tiempo transcurrido
@@ -991,6 +1073,35 @@
             return base;
         }
 
+        function inicializarReleaseHistory() {
+            const historial = leerHistorialVersionesCodigo();
+            if (historial.length === 0) {
+                const inicial = [{ version: 1.0, fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
+                guardarHistorialVersionesCodigo(inicial);
+                return inicial;
+            }
+            return historial;
+        }
+
+        function registrarCambioCodigo(detalle = 'Se ha mejorado la funcionalidad del contador.') {
+            const historialActual = leerHistorialVersionesCodigo();
+            const versionAnterior = historialActual.length ? Number(historialActual[historialActual.length - 1].version || 1.0) : 1.0;
+            const nuevaVersion = Number((versionAnterior + 0.1).toFixed(1));
+            const nuevoRegistro = {
+                version: nuevaVersion,
+                fecha: new Date().toISOString(),
+                detalle: String(detalle || 'Se ha mejorado la funcionalidad del contador.')
+            };
+
+            const siguiente = [...historialActual, nuevoRegistro];
+            guardarHistorialVersionesCodigo(siguiente);
+            releaseHistory = siguiente;
+            releaseVersionActual = nuevaVersion;
+            actualizarBotonMejoras();
+            renderPanelMejoras();
+            mostrarAvisoMejora();
+        }
+
         async function cargarDatosServidor() {
             try {
                 const res = await fetch(`/api/config?t=${Date.now()}`, {
@@ -1015,6 +1126,7 @@
             actualizarContador();
             actualizarBotonMejoras();
             renderPanelMejoras();
+            renderPanelAjustes();
             mostrarAvisoMejora();
         }
 
@@ -1053,8 +1165,7 @@
                     aplicarEstilosVisuales();
                     actualizarContador();
                     actualizarBotonMejoras();
-                    renderPanelMejoras();
-                    mostrarAvisoMejora();
+                    renderPanelAjustes();
                     return true;
                 }
             } catch (e) {
@@ -1250,6 +1361,10 @@
                 cerrarModal();
             }
         }
+
+        releaseHistory = inicializarReleaseHistory();
+        releaseVersionActual = releaseHistory.length ? Number(releaseHistory[releaseHistory.length - 1].version || 1.0) : 1.0;
+        window.registrarCambioCodigo = registrarCambioCodigo;
 
         cargarDatosServidor();
         setInterval(actualizarContador, 1000);
