@@ -488,7 +488,7 @@
         <button class="btn-corner" onclick="dispararCelebracionManual()" title="Ver última celebración">🎉</button>
         <button id="btnMejoras" class="btn-corner btn-mejoras" onclick="togglePanelMejoras()"
             title="Ver versiones de código">🚀
-            ourCounter v1.0</button>
+            MC Counter v1.0</button>
         <button id="btnAjustes" class="btn-corner" onclick="togglePanelAjustes()" title="Ver cambios de ajustes">⚙️
             Ajustes</button>
         <button class="btn-corner" onclick="verificarPasswordEdicion()">✏ Editar</button>
@@ -673,9 +673,9 @@
 
         const PASSWORD_CORRECTA = "CM231806";
         const MEJORAS_STORAGE_KEY = "contadorVersionesVistas";
-        const RELEASE_HISTORY_KEY = "ourCounterReleaseHistory";
-        const RELEASE_SEEN_KEY = "ourCounterReleaseVistas";
-        const AJUSTES_HISTORY_KEY = "ourCounterAjustesHistory";
+        const RELEASE_HISTORY_KEY = "MC CounterReleaseHistory";
+        const RELEASE_SEEN_KEY = "MC CounterReleaseVistas";
+        const AJUSTES_HISTORY_KEY = "MC CounterAjustesHistory";
         let contenidoAleatorioInicializado = false;
         let releaseVersionActual = 1.0;
         let releaseHistory = [];
@@ -854,7 +854,7 @@
         function actualizarBotonMejoras() {
             const btn = document.getElementById('btnMejoras');
             if (!btn) return;
-            btn.innerText = `🚀 ourCounter v${formatearVersion(releaseVersionActual)}`;
+            btn.innerText = `🚀 MC Counter v${formatearVersion(releaseVersionActual)}`;
         }
 
         function renderPanelMejoras() {
@@ -917,7 +917,7 @@
                 ? String(mejora.detalle).trim()
                 : 'Se ha aplicado una actualización funcional.';
 
-            texto.textContent = `✅ ourCounter v${formatearVersion(mejora.version)} · ${detalleMejora}`;
+            texto.textContent = `✅ MC Counter v${formatearVersion(mejora.version)} · ${detalleMejora}`;
             aviso.classList.add('visible');
         }
 
