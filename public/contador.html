@@ -483,12 +483,14 @@
 
     <div class="corner-buttons">
         <button class="btn-corner" onclick="dispararCelebracionManual()" title="Ver última celebración">🎉</button>
-        <button id="btnMejoras" class="btn-corner btn-mejoras" onclick="togglePanelMejoras()" title="Ver mejoras">🛠️ v1</button>
+        <button id="btnMejoras" class="btn-corner btn-mejoras" onclick="togglePanelMejoras()"
+            title="Ver registro de cambios">📝
+            ourCounter v1.0</button>
         <button class="btn-corner" onclick="verificarPasswordEdicion()">✏ Editar</button>
     </div>
 
     <div id="panelMejoras" class="panel-mejoras" aria-live="polite">
-        <h4>Historial de mejoras</h4>
+        <h4>Registro de cambios</h4>
         <div id="listaMejoras"></div>
     </div>
 
@@ -661,6 +663,7 @@
 
         const PASSWORD_CORRECTA = "CM231806";
         const MEJORAS_STORAGE_KEY = "contadorVersionesVistas";
+        let contenidoAleatorioInicializado = false;
         let configGlobal = {
             fechaInicio: "2026-09-15T12:00",
             emoji1: "🐧",
@@ -672,7 +675,7 @@
             msg24h: mensajes24hBase,
             msgSemanas: mensajesSemanasBase,
             msgMeses: mensajesMesesBase,
-            version: 1,
+            version: 1.0,
             mejoras: []
         };
 
@@ -775,7 +778,7 @@
         function guardarVersionVistas(versiones) {
             try {
                 localStorage.setItem(MEJORAS_STORAGE_KEY, JSON.stringify(Array.from(new Set(versiones.map(String)))));
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function formatearFechaMejora(valor) {
@@ -798,8 +801,8 @@
         function actualizarBotonMejoras() {
             const btn = document.getElementById('btnMejoras');
             if (!btn) return;
-            const version = Number(configGlobal.version || 1);
-            btn.innerText = `🛠️ v${version}`;
+            const version = Number(configGlobal.version || 1.0);
+            btn.innerText = `📝 ourCounter v${version.toFixed(1)}`;
         }
 
         function renderPanelMejoras() {
@@ -808,13 +811,13 @@
 
             const mejoras = Array.isArray(configGlobal.mejoras) && configGlobal.mejoras.length
                 ? [...configGlobal.mejoras].reverse()
-                : [{ version: Number(configGlobal.version || 1), fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
+                : [{ version: Number(configGlobal.version || 1.0), fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
 
             contenedor.innerHTML = mejoras.map((mejora) => `
                 <div class="mejora-item">
-                    <strong>v${Number(mejora.version || 1)}</strong>
+                    <strong>v${Number(mejora.version || 1.0).toFixed(1)}</strong>
                     <span class="fecha">${formatearFechaMejora(mejora.fecha || new Date().toISOString())}</span>
-                    <div class="detalle">${mejora.detalle || 'Mejora aplicada'}</div>
+                    <div class="detalle">${mejora.detalle || 'Actualización aplicada'}</div>
                 </div>
             `).join('');
         }
@@ -842,7 +845,11 @@
                 return;
             }
 
-            texto.textContent = `✅ Mejora aplicada · v${mejora.version} · ${mejora.detalle}`;
+            const detalleMejora = (mejora.detalle && String(mejora.detalle).trim())
+                ? String(mejora.detalle).trim()
+                : 'Se ha aplicado una actualización funcional.';
+
+            texto.textContent = `✅ ourCounter v${Number(mejora.version || 1.0).toFixed(1)} · ${detalleMejora}`;
             aviso.classList.add('visible');
         }
 
@@ -969,7 +976,7 @@
 
         function normalizarConfigGlobal(data = {}) {
             const base = { ...configGlobal, ...data };
-            const version = Number(base.version || 1);
+            const version = Number(base.version || 1.0);
             const mejoras = Array.isArray(base.mejoras) && base.mejoras.length
                 ? base.mejoras
                 : [{ version, fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
@@ -1002,17 +1009,19 @@
             }
             configGlobal = normalizarConfigGlobal(configGlobal);
             aplicarEstilosVisuales();
-            cargarContenidoAleatorio();
+            if (!contenidoAleatorioInicializado) {
+                cargarContenidoAleatorio();
+            }
             actualizarContador();
             actualizarBotonMejoras();
             renderPanelMejoras();
             mostrarAvisoMejora();
         }
 
-        async function guardarDatosServidor(nuevaConfig, detalle = 'Mejora aplicada') {
+        async function guardarDatosServidor(nuevaConfig, detalle = 'Actualización aplicada') {
             try {
-                const versionActual = Number((nuevaConfig.version ?? configGlobal.version ?? 1) || 1);
-                const nuevaVersion = versionActual + 1;
+                const versionActual = Number((nuevaConfig.version ?? configGlobal.version ?? 1.0) || 1.0);
+                const nuevaVersion = Number((versionActual + 0.1).toFixed(1));
                 const mejorasPrevias = Array.isArray(nuevaConfig.mejoras) ? nuevaConfig.mejoras : [];
                 const nuevaMejora = {
                     version: nuevaVersion,
@@ -1042,7 +1051,6 @@
                         configGlobal.fechaInicio = "2026-09-15T12:00";
                     }
                     aplicarEstilosVisuales();
-                    cargarContenidoAleatorio();
                     actualizarContador();
                     actualizarBotonMejoras();
                     renderPanelMejoras();
@@ -1062,6 +1070,8 @@
         }
 
         function cargarContenidoAleatorio() {
+            if (contenidoAleatorioInicializado) return;
+
             const vList = configGlobal.versiculos && configGlobal.versiculos.length ? configGlobal.versiculos : versiculosBase;
             const vIndex = Math.floor(Math.random() * vList.length);
             document.getElementById("verseText").innerText = `“${vList[vIndex].texto}”`;
@@ -1072,6 +1082,7 @@
             const diccionarioTotal = [...sp, ...st];
             const dIndex = Math.floor(Math.random() * diccionarioTotal.length);
             document.getElementById("randomPhrase").innerText = diccionarioTotal[dIndex];
+            contenidoAleatorioInicializado = true;
         }
 
         function actualizarContador() {
@@ -1186,7 +1197,7 @@
             }
 
             const nuevaConfig = { ...configGlobal, fechaInicio: nuevaFechaStr };
-            const exito = await guardarDatosServidor(nuevaConfig, 'Fecha de inicio actualizada');
+            const exito = await guardarDatosServidor(nuevaConfig, 'Funcionalidad: la fecha de inicio se actualiza correctamente y se refleja para todos los usuarios.');
             if (exito) {
                 cerrarModal();
             } else {
@@ -1234,7 +1245,7 @@
                 versiculos: nuevosVersiculos.length > 0 ? nuevosVersiculos : versiculosBase
             };
 
-            const exito = await guardarDatosServidor(nuevaConfig, 'Personalización visual actualizada');
+            const exito = await guardarDatosServidor(nuevaConfig, 'Funcionalidad: la personalización visual y los textos se guardan en la configuración global y quedan sincronizados.');
             if (exito) {
                 cerrarModal();
             }
