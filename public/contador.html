@@ -32,13 +32,10 @@
         }
 
         body {
-            background-color: var(--bg-deep);
-            background-image:
-                radial-gradient(circle at top, rgba(94, 201, 255, 0.12), transparent 35%),
-                radial-gradient(rgba(15, 28, 44, 0.92), rgba(15, 28, 44, 0.92)),
-                var(--bg-pattern, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ctext x='10' y='30' font-size='24'%3E🐧%3C/text%3E%3Ctext x='45' y='60' font-size='24'%3E🐻‍‍❄️%3C/text%3E%3C/svg%3E"));
+            background-color: var(--bg-color, #0f172a);
+            background-image: var(--bg-pattern, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ctext x='10' y='30' font-size='24'%3E🐧%3C/text%3E%3Ctext x='45' y='60' font-size='24'%3E🐻‍‍❄️%3C/text%3E%3C/svg%3E"));
             background-repeat: repeat;
-
+            background-size: auto;
             color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
@@ -81,16 +78,17 @@
         }
 
         .btn-version-bottom {
-            background: #0f8199;
-            color: #ebfeff;
-            border: 1px solid #6ee7f9;
+            background: rgba(30, 41, 59, 0.9);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.5);
             font-weight: 700;
             min-width: 2.7rem;
             min-height: 2.7rem;
             font-size: 1.4rem;
             padding: 0.2rem 0.75rem;
             border-radius: 0.8rem;
-            box-shadow: 0 10px 25px rgba(15, 129, 153, 0.28);
+            box-shadow: none;
+            opacity: 0.96;
         }
 
         .btn-corner:active {
@@ -894,7 +892,7 @@
         function formatearDetalleCambio(detalle, prefijo = 'Se ha cambiado') {
             const texto = detalle && String(detalle).trim();
             if (!texto) {
-                return `${prefijo} la funcionalidad del contador.`;
+                return `${prefijo} la configuración.`;
             }
 
             const normalizado = texto.replace(/^\s+|\s+$/g, '');
@@ -936,11 +934,11 @@
 
             const ajustes = Array.isArray(configGlobal.mejoras) && configGlobal.mejoras.length
                 ? [...configGlobal.mejoras].reverse()
-                : [{ version: Number(configGlobal.version || 1.0), fecha: new Date().toISOString(), detalle: 'Versión inicial del contador' }];
+                : [{ version: Number(configGlobal.version || 1.0), fecha: new Date().toISOString(), detalle: 'Se ha cambiado la configuración inicial.' }];
 
             contenedor.innerHTML = ajustes.map((ajuste) => `
                 <div class="mejora-item">
-                    <strong>v${formatearVersion(ajuste.version || configGlobal.version || 1.0)}</strong>
+                    <strong>Cambio</strong>
                     <span class="fecha">${formatearFechaMejora(ajuste.fecha || new Date().toISOString())}</span>
                     <div class="detalle">${formatearDetalleCambio(ajuste.detalle, 'Se ha cambiado')}</div>
                 </div>
@@ -1185,20 +1183,18 @@
             mostrarAvisoMejora();
         }
 
-        async function guardarDatosServidor(nuevaConfig, detalle = 'Actualización aplicada') {
+        async function guardarDatosServidor(nuevaConfig, detalle = 'Se ha cambiado la configuración.') {
             try {
-                const versionActual = Number((nuevaConfig.version ?? configGlobal.version ?? 1.0) || 1.0);
-                const nuevaVersion = Number((versionActual + 0.1).toFixed(1));
                 const mejorasPrevias = Array.isArray(nuevaConfig.mejoras) ? nuevaConfig.mejoras : [];
+                const detalleValido = detalle && String(detalle).trim() ? String(detalle).trim() : 'Se ha cambiado la configuración.';
                 const nuevaMejora = {
-                    version: nuevaVersion,
+                    version: Number(nuevaConfig.version ?? configGlobal.version ?? 1.0),
                     fecha: new Date().toISOString(),
-                    detalle
+                    detalle: detalleValido
                 };
 
                 nuevaConfig = {
                     ...nuevaConfig,
-                    version: nuevaVersion,
                     mejoras: [...mejorasPrevias, nuevaMejora]
                 };
 
@@ -1363,7 +1359,7 @@
             }
 
             const nuevaConfig = { ...configGlobal, fechaInicio: nuevaFechaStr };
-            const exito = await guardarDatosServidor(nuevaConfig, 'Funcionalidad: la fecha de inicio se actualiza correctamente y se refleja para todos los usuarios.');
+            const exito = await guardarDatosServidor(nuevaConfig, 'Se ha cambiado la fecha de inicio.');
             if (exito) {
                 cerrarModal();
             } else {
@@ -1398,6 +1394,15 @@
                 if (texto && ref) nuevosVersiculos.push({ texto, ref });
             });
 
+            const cambios = [];
+            if (emoji1 !== configGlobal.emoji1) cambios.push('el emoji 1');
+            if (emoji2 !== configGlobal.emoji2) cambios.push('el emoji 2');
+            if (bgColor !== configGlobal.bgColor) cambios.push('el color de fondo');
+
+            const detalleCambio = cambios.length
+                ? `Se ha cambiado ${cambios.join(', ')}`
+                : 'Se ha cambiado la configuración.';
+
             const nuevaConfig = {
                 ...configGlobal,
                 emoji1,
@@ -1411,7 +1416,7 @@
                 versiculos: nuevosVersiculos.length > 0 ? nuevosVersiculos : versiculosBase
             };
 
-            const exito = await guardarDatosServidor(nuevaConfig, 'Funcionalidad: la personalización visual y los textos se guardan en la configuración global y quedan sincronizados.');
+            const exito = await guardarDatosServidor(nuevaConfig, detalleCambio);
             if (exito) {
                 cerrarModal();
             }
