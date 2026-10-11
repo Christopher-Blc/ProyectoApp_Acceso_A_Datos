@@ -7,6 +7,21 @@
 
     <title>Tiempo sin hablar</title>
     <style>
+        :root {
+            color-scheme: dark;
+            --bg-deep: #0f1c2c;
+            --bg-mid: #1d2e42;
+            --panel: #1c2b3b;
+            --panel-soft: #2a394e;
+            --panel-alt: #273a52;
+            --accent: #5ec9ff;
+            --accent-strong: #0ea5e9;
+            --accent-teal: #4cc9d9;
+            --text: #edf6ff;
+            --muted: #aac0d5;
+            --border: #4d647d;
+        }
+
         html,
         body {
             height: 100%;
@@ -17,13 +32,14 @@
         }
 
         body {
-            background-color: var(--bg-color, #0f172a);
+            background-color: var(--bg-deep);
             background-image:
-                radial-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)),
+                radial-gradient(circle at top, rgba(94, 201, 255, 0.12), transparent 35%),
+                radial-gradient(rgba(15, 28, 44, 0.92), rgba(15, 28, 44, 0.92)),
                 var(--bg-pattern, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ctext x='10' y='30' font-size='24'%3E🐧%3C/text%3E%3Ctext x='45' y='60' font-size='24'%3E🐻‍‍❄️%3C/text%3E%3C/svg%3E"));
             background-repeat: repeat;
 
-            color: #f8fafc;
+            color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             flex-direction: column;
@@ -32,6 +48,8 @@
             padding: 1rem;
             box-sizing: border-box;
             position: relative;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
         }
 
         .corner-buttons {
@@ -51,9 +69,9 @@
         }
 
         .btn-corner {
-            background-color: rgba(30, 41, 59, 0.7);
-            color: #94a3b8;
-            border: 1px solid rgba(71, 85, 105, 0.5);
+            background-color: #2d3f58;
+            color: #dfeaf7;
+            border: 1px solid #5c728a;
             padding: 0.4rem 0.6rem;
             font-size: 0.8rem;
             border-radius: 0.5rem;
@@ -63,27 +81,27 @@
         }
 
         .btn-version-bottom {
-            background: rgba(14, 116, 144, 0.82);
-            color: #dff7ff;
-            border: 1px solid rgba(103, 232, 249, 0.55);
+            background: #0f8199;
+            color: #ebfeff;
+            border: 1px solid #6ee7f9;
             font-weight: 700;
             min-width: 2.7rem;
             min-height: 2.7rem;
             font-size: 1.4rem;
             padding: 0.2rem 0.75rem;
             border-radius: 0.8rem;
-            box-shadow: 0 10px 25px rgba(14, 116, 144, 0.25);
+            box-shadow: 0 10px 25px rgba(15, 129, 153, 0.28);
         }
 
         .btn-corner:active {
-            background-color: #475569;
+            background-color: #415b7e;
             transform: scale(0.95);
         }
 
         .btn-mejoras {
-            background: rgba(14, 116, 144, 0.82);
-            color: #dff7ff;
-            border: 1px solid rgba(103, 232, 249, 0.55);
+            background: #0f8199;
+            color: #ebfeff;
+            border: 1px solid #6ee7f9;
             font-weight: 700;
         }
 
@@ -95,10 +113,10 @@
             width: min(320px, calc(100vw - 2rem));
             max-height: 70vh;
             overflow: auto;
-            background: rgba(15, 23, 42, 0.96);
-            border: 1px solid rgba(103, 232, 249, 0.4);
+            background: #172335;
+            border: 1px solid #5ec9ff;
             border-radius: 0.9rem;
-            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.38);
             padding: 0.9rem 0.9rem 0.5rem;
             z-index: 1500;
             display: none;
@@ -147,14 +165,14 @@
             left: 50%;
             bottom: 1.2rem;
             transform: translateX(-50%);
-            background: rgba(12, 74, 110, 0.96);
+            background: #0b4d68;
             color: #ecfeff;
-            border: 1px solid rgba(103, 232, 249, 0.7);
+            border: 1px solid #7dd3fc;
             border-radius: 0.8rem;
             padding: 0.7rem 0.9rem;
             font-size: 0.8rem;
             max-width: min(460px, calc(100vw - 2rem));
-            box-shadow: 0 15px 30px rgba(8, 47, 73, 0.45);
+            box-shadow: 0 15px 30px rgba(2, 18, 28, 0.42);
             z-index: 1800;
             display: none;
             gap: 0.6rem;
@@ -216,12 +234,12 @@
             text-align: center;
             padding: 2rem;
             border-radius: 1rem;
-            background: rgba(30, 41, 59, 0.85);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            background: #24364a;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.46);
             width: 100%;
             max-width: 400px;
             box-sizing: border-box;
-            border: 1px solid rgba(56, 189, 248, 0.2);
+            border: 1px solid #4d6a87;
         }
 
         h1 {
@@ -873,6 +891,21 @@
             return Number(version || 1.0).toFixed(1);
         }
 
+        function formatearDetalleCambio(detalle, prefijo = 'Se ha cambiado') {
+            const texto = detalle && String(detalle).trim();
+            if (!texto) {
+                return `${prefijo} la funcionalidad del contador.`;
+            }
+
+            const normalizado = texto.replace(/^\s+|\s+$/g, '');
+            if (normalizado.toLowerCase().startsWith(prefijo.toLowerCase())) {
+                return normalizado;
+            }
+
+            const sinPunto = normalizado.endsWith('.') ? normalizado.slice(0, -1) : normalizado;
+            return `${prefijo} ${sinPunto.charAt(0).toLowerCase()}${sinPunto.slice(1)}.`;
+        }
+
         function actualizarBotonMejoras() {
             const btn = document.getElementById('btnMejoras');
             if (!btn) return;
@@ -892,7 +925,7 @@
                 <div class="mejora-item">
                     <strong>v${formatearVersion(mejora.version)}</strong>
                     <span class="fecha">${formatearFechaMejora(mejora.fecha || new Date().toISOString())}</span>
-                    <div class="detalle">${mejora.detalle || 'Actualización de código aplicada'}</div>
+                    <div class="detalle">${formatearDetalleCambio(mejora.detalle, 'Se ha cambiado')}</div>
                 </div>
             `).join('');
         }
@@ -909,7 +942,7 @@
                 <div class="mejora-item">
                     <strong>v${formatearVersion(ajuste.version || configGlobal.version || 1.0)}</strong>
                     <span class="fecha">${formatearFechaMejora(ajuste.fecha || new Date().toISOString())}</span>
-                    <div class="detalle">${ajuste.detalle || 'Cambio de ajustes aplicado'}</div>
+                    <div class="detalle">${formatearDetalleCambio(ajuste.detalle, 'Se ha cambiado')}</div>
                 </div>
             `).join('');
         }
@@ -937,9 +970,7 @@
                 return;
             }
 
-            const detalleMejora = (mejora.detalle && String(mejora.detalle).trim())
-                ? String(mejora.detalle).trim()
-                : 'Se ha aplicado una actualización funcional.';
+            const detalleMejora = formatearDetalleCambio(mejora.detalle, 'Se ha cambiado');
 
             texto.textContent = `✅ MC Counter v${formatearVersion(mejora.version)} · ${detalleMejora}`;
             aviso.classList.add('visible');
